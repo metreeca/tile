@@ -1,0 +1,38 @@
+{
+	"name": "@metreeca/tile",
+	"version": "0.0.0",
+	"description": "A lightweight Preact toolkit for rapid REST/JSON-LD frontend development",
+	"keywords": [
+		"preact",
+		"rest-api",
+		"json-ld"
+	],
+	"homepage": "https://github.com/metreeca/tile#readme",
+	"repository": "github:metreeca/tile",
+	"bugs": {
+		"url": "https://github.com/metreeca/tile/issues",
+		"email": "help@metreeca.com"
+	},
+	"license": "Apache-2.0",
+	"author": {
+		"name": "Metreeca",
+		"email": "info@metreeca.com",
+		"url": "https://www.metreeca.com"
+	},
+	"type": "module",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"scripts": {
+		"clean": "rm -rf dist docs node_modules",
+		"build": "rm -rf dist && tsc && copyfiles package.json LICENSE README.md dist && copyfiles --up 1 'code/**/*.less' dist",
+		"issue": "npm run build && cd dist && npm publish --access public"
+	},
+	"peerDependencies": {
+		"preact": "^10.5.13",
+		"preact-feather": "^4.2.1"
+	},
+	"devDependencies": {
+		"copyfiles": "^2.4.1",
+		"typescript": "^4.2.3"
+	}
+}

@@ -1,6 +1,6 @@
 {
 	"name": "@metreeca/tile",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "A lightweight Preact toolkit for rapid REST/JSON-LD frontend development",
 	"keywords": [
 		"preact",

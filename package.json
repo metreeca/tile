@@ -1,6 +1,6 @@
 {
 	"name": "@metreeca/tile",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"description": "A lightweight Preact toolkit for rapid REST/JSON-LD frontend development",
 	"keywords": [
 		"preact",
@@ -24,7 +24,7 @@
 	"types": "index.d.ts",
 	"scripts": {
 		"clean": "rm -rf dist docs node_modules",
-		"build": "rm -rf dist && tsc && copyfiles package.json LICENSE README.md dist && copyfiles --up 1 'code/**/*.less' dist",
+		"build": "rm -rf dist/* && tsc && copyfiles package.json LICENSE README.md dist && copyfiles --up 1 'code/**/*.less' dist",
 		"issue": "npm run build && cd dist && npm publish --access public"
 	},
 	"peerDependencies": {

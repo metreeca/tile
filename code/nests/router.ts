@@ -16,11 +16,15 @@
 
 import { createElement, FunctionComponent, RenderableProps } from "preact";
 import { useEffect, useMemo, useReducer } from "preact/hooks";
-import { label } from "../graphs/index";
+import { label } from "../graphs";
 
-const Base=new URL((document.querySelector("base") as HTMLBaseElement)?.href || "/", location.href)
-	.pathname.replace(/(^.*?)\/?$/, "$1/"); // make sure base has a trailing slash
+const Base=new URL(
+	((document.querySelector("base") as HTMLBaseElement)?.href || "/")
+		.replace(/(^.*?)\/?$/, "$1/"), // make sure base has a trailing slash
+	location.href
+);
 
+const Root=Base.pathname;
 const Title=document.title;
 
 
@@ -38,9 +42,9 @@ window.addEventListener("unhandledrejection", (e: PromiseRejectionEvent) => {
  */
 function root(route: string): string {
 	return route.startsWith(location.origin) ? root(route.substring(location.origin.length))
-		: route.startsWith(Base) ? route
-			: route.startsWith("/") ? Base+route.substring(1)
-				: Base+route;
+		: route.startsWith(Root) ? route
+			: route.startsWith("/") ? Root+route.substring(1)
+				: Root+route;
 }
 
 /**
@@ -48,7 +52,7 @@ function root(route: string): string {
  */
 function base(route: string): string {
 	return route.startsWith(location.origin) ? base(route.substring(location.origin.length))
-		: route.startsWith(Base) ? route.substring(Base.length-1)
+		: route.startsWith(Root) ? route.substring(Root.length-1)
 			: route.startsWith("/") ? route
 				: "/"+route;
 }
@@ -241,14 +245,19 @@ export function Router({
 	useEffect(() => {
 
 		function click(e: MouseEvent) {
-			if ( e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented ) { return true; } else {
+			if ( !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) ) { // only plain events
 
 				for (let node: Node=e.target as Node; node.parentNode; node=node.parentNode) {
 					if ( node.nodeName === "A" ) {
 
-						e.preventDefault();
+						const href=(node as HTMLAnchorElement).href || "";
 
-						return push((node as HTMLAnchorElement).href || "");
+						if ( href.startsWith(Base.href) ) { // only internal links
+
+							e.preventDefault();
+							push(href);
+
+						}
 
 					}
 				}

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { model, Value } from "../graphs/index";
+import { label, model, Value } from "../graphs";
 import { useTerms } from "../hooks/entry";
 import { Custom } from "./custom";
 import "./options.less";
-import { ToolSpinner } from "./spinner";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +113,7 @@ export function ToolOptions({
 
 		</>;
 
-	})) || <ToolSpinner/>}</Custom>;
+	}))}</Custom>;
 }
 
 
@@ -124,11 +123,11 @@ function option(value: any, count: number, selected: boolean, available: boolean
 
 	const key: Value=model(value) ? value.id : value; // !!! handle structured literals
 
-	return <label key={key} class={available ? "avaliable" : "unavailable"}>
+	return <label key={key} className={available ? "avaliable" : "unavailable"}>
 
 		<input type="checkbox" checked={selected} onChange={action}/>
 
-		{model(value) ? <a href={value.id}>{value.label || value.id}</a> : <span>{value}</span>}
+		{model(value) ? <a href={value.id}>{label(value)}</a> : <span>{value}</span>}
 
 		<span>{count}</span>
 

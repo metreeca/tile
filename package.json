@@ -24,8 +24,9 @@
 	"types": "index.d.ts",
 	"scripts": {
 		"clean": "rm -rf dist docs node_modules",
-		"build": "rm -rf dist/* && tsc && copyfiles package.json LICENSE README.md dist && copyfiles --up 1 'code/**/*.less' dist",
-		"issue": "npm run build && cd dist && npm publish --access public"
+		"build": "rm -rf dist && tsc && copyfiles package.json LICENSE README.md dist && copyfiles --up 1 'code/**/*.less' dist",
+		"issue": "npm run build && cd dist && npm publish --access public",
+		"share": "npm run build && for i in work/*; do cp -R dist/* $i/node_modules/@metreeca/tile; done"
 	},
 	"peerDependencies": {
 		"preact": "^10.5.13",

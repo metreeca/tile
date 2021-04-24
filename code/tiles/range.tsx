@@ -18,7 +18,7 @@ import { useCallback } from "preact/hooks";
 import { useStats } from "../hooks/entry";
 import { trailing } from "../index";
 import { Custom } from "./custom";
-import "./range.less";
+import "./range.css";
 import { ToolSpinner } from "./spinner";
 
 

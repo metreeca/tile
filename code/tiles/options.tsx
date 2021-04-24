@@ -17,7 +17,7 @@
 import { label, model, Value } from "../graphs";
 import { useTerms } from "../hooks/entry";
 import { Custom } from "./custom";
-import "./options.less";
+import "./options.css";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

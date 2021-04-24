@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-import "./icon.css";
+:root {
+	--tile-icon-size: 1em;
+}
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+svg[viewBox="0 0 24 24"] { /* ;-( match unstyled feather icons */
 
-export * from "preact-feather";
+	width: var(--tile-icon-size);
+	height: var(--tile-icon-size);
+
+	vertical-align: middle;
+
+}

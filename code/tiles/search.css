@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-tool-search {
-
+:root {
 	--tool-search-width-side: 2em;
+	--tool-search-width-side: 2em;
+}
+
+tool-search {
 
 	display: grid;
 	grid-template-columns: var(--tool-search-width-side) 1fr var(--tool-search-width-side);
@@ -25,11 +28,11 @@ tool-search {
 
 	isolation: isolate;
 
-	> * {
+	& > * {
 		grid-row: 1;
 	}
 
-	> input {
+	& > input {
 		grid-column: 1 / span 3;
 		padding: 0.3em var(--tool-search-width-side) 0.2em;
 		border-style: solid;
@@ -41,29 +44,27 @@ tool-search {
 		box-shadow: inset var(--tool--box-shadow-focus);
 	}
 
-	> :first-child,
-	> :last-child {
+	& > :first-child,
+	& > :last-child {
 
 		z-index: 1;
 		color: #999;
 		background-color: transparent;
 
-		> svg {
+		& > svg {
 
-			@size: 0.9em;
-
-			width: @size;
-			height: @size;
+			width: 0.9em;
+			height: 0.9em;
 
 		}
 
 	}
 
-	> :first-child {
+	& > :first-child {
 		grid-column: 1;
 	}
 
-	> :last-child {
+	& > :last-child {
 		grid-column: 3;
 	}
 

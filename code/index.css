@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-@import url("https://fonts.googleapis.com/css?family=Roboto:300|Roboto+Mono:300|Roboto+Condensed:300,400");
+@import url(https://fonts.googleapis.com/css?family=Roboto:300|Roboto+Mono:300|Roboto+Condensed:300,400);
 
-html {
+
+:root {
 
 	--tool--border-style: solid;
 	--tool--border-color: #CCC;
@@ -51,7 +52,7 @@ html {
 }
 
 
-//// Fonts /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**** Fonts ***********************************************************************************************************/
 
 body {
 	font-family: Roboto, "Helvetica", Arial, sans-serif;
@@ -71,7 +72,7 @@ code {
 }
 
 
-//// Blocks ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**** Blocks **********************************************************************************************************/
 
 html, body {
 	width: 100%;
@@ -82,7 +83,7 @@ ul, ol {
 
 	padding-left: 1.5em;
 
-	> li {
+	& > li {
 		list-style-type: square;
 	}
 
@@ -90,7 +91,7 @@ ul, ol {
 
 p {
 
-	* + & {
+	&:not(:first-child) {
 		margin-top: 1em;
 	}
 
@@ -103,18 +104,15 @@ dt, th {
 }
 
 
-//// Inlines ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**** Inlines *********************************************************************************************************/
 
 a, a:visited {
 
 	text-decoration: none;
 	font-weight: 400;
+	color: var(--tool--color-enabled);
 
 	cursor: pointer;
-
-	& {
-		color: var(--tool--color-enabled);
-	}
 
 	&:focus {
 		text-decoration: underline !important;
@@ -131,7 +129,7 @@ a, a:visited {
 }
 
 
-//// Controls //////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**** Controls ********************************************************************************************************/
 
 input {
 
@@ -184,7 +182,7 @@ button {
 
 
 .spinning {
-	animation: spin var(--tool--spinning-period) infinite linear;
+	animation: tool-spinner var(--tool--spinning-period) infinite linear;
 }
 
 

@@ -11,6 +11,7 @@
 		"jsxImportSource": "preact",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
+		"isolatedModules": true,
 		"declaration": true,
 		"removeComments": false,
 		"rootDir": "code",

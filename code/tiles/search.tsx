@@ -18,7 +18,7 @@ import { useCallback } from "preact/hooks";
 import { trailing } from "../index";
 import { Custom } from "./custom";
 import { Search, XCircle } from "./icon";
-import "./search.less";
+import "./search.css";
 
 const DelayDefault=500;
 

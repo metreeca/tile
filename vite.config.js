@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
+import {defineConfig} from "vite";
 
-svg[viewBox="0 0 24 24"] { // ;-( match unstyled feather icons
+import preact from "@preact/preset-vite";
+import postcssNesting from "postcss-nesting";
 
-	@size: 1em;
+export default defineConfig({ // https://vitejs.dev/config/
 
-	width: @size;
-	height: @size;
+	root: "demo",
 
-	vertical-align: middle;
+	plugins: [preact()],
 
-}
+	css: {
+		postcss: {
+			plugins: [postcssNesting()]
+		}
+	},
+
+	build: {
+		outDir: "../dist/demo",
+		assetsDir: ".",
+		emptyOutDir: true
+	}
+
+});

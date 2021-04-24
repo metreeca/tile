@@ -14,39 +14,25 @@
  * limitations under the License.
  */
 
-tool-spinner {
+import { render } from "preact";
+import * as React from "preact/compat";
+import "../code/index.css";
+import { Router } from "../code/nests/router";
+import { TilePage } from "../code/tiles/page";
 
-	display: grid;
+render(<TilePage side={<>
 
-	width: 100%;
-	height: 100%;
+	<a href={"/uno"}>uno</a>
+	<a href={"/due"}>due</a>
 
-	&::before {
+</>}>
 
-		content: "";
+	<Router routes={{
 
-		display: block;
-		box-sizing: border-box;
+		"/": () => <div>!</div>,
+		"/uno": () => <div>uno!</div>,
+		"/due": () => <div>due!</div>
 
-		width: var(--tool-spinner-size);
-		height: var(--tool-spinner-size);
+	}}/>
 
-		margin: auto;
-
-		border-radius: 50%;
-		border-width: var(--tool-spinner-thickness);
-		border-style: solid;
-
-		border-color: transparent var(--tool-spinner-color) var(--tool-spinner-color);
-
-		animation: spin var(--tool-spinner-period) infinite linear;
-
-		@keyframes spin {
-			100% {
-				transform: rotate(360deg);
-			}
-		}
-
-	}
-
-}
+</TilePage>, document.body);

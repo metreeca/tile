@@ -26,7 +26,7 @@
 		"clean": "rm -rf dist docs node_modules",
 		"build": "rm -rf dist && tsc && copyfiles package.json LICENSE README.md dist && copyup 'code/**/*.css' dist",
 		"issue": "npm run build && npm publish --access public ./dist",
-		"share": "npm run build && for i in work/*; do cp -R dist/* $i/node_modules/@metreeca/tile; done"
+		"share": "npm run build && cd dist && npm link"
 	},
 	"peerDependencies": {
 		"preact": "^10.5.13",

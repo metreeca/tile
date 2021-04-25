@@ -70,7 +70,7 @@ export interface Switch {
 	 *
 	 * @param route the route to be rendered
 	 *
-	 * @returns a a rendered view for `route` or a new route if a redirection is required
+	 * @returns a a `route` rendering or a new route if a redirection is required
 	 */
 	(route: string): VNode<any> | string
 
@@ -82,9 +82,9 @@ export interface Switch {
 export interface Table {
 
 	/**
-	 * Maps glob patterns either to components or redirection patterns
+	 * Maps glob patterns either to components or redirection patterns.
 	 *
-	 * Patterns may include the following wildcards:
+	 * Patterns may include the following wildcards, where `id` is a sequence of word chars:
 	 *
 	 * - `{id}` matches a non empty named path step
 	 * - `{}` matches a non-empty anonymous path step
@@ -93,8 +93,13 @@ export interface Table {
 	 * Redirection patterns may refer to wildcards in the matched route pattern as:
 	 *
 	 * - `{id}` replaced with the matched non empty named path step
-	 * - `{*}` replaced with the matched trailing path
 	 * - `{}` replaced with the whole matched route
+	 * - `/*` replaced with the matched trailing path
+	 *
+	 * Named path step in the matched route pattern are also included in the `props` argument of the component as:
+	 *
+	 * - `id` the matched non empty named path step
+	 * - `$` the matched trailing path
 	 */
 	readonly [pattern: string]: FunctionComponent<any> | string
 
@@ -278,7 +283,7 @@ export function Router({
 	}, []);
 
 
-	let route=base(store());
+	let route=base(store()).replace(/\/index.x?html$/, "/");
 
 	const redirects=new Set([route]);
 
@@ -319,7 +324,7 @@ function compile(table: Table): Switch {
 			.replace(/\\{(\w+)\\}/g, "(?<$1>[^/]+)") // convert glob named parameters
 			.replace(/\\{\\}/g, "(?:[^/]+)") // convert glob anonymous parameters
 			.replace(/\/\\\*$/, "(?<$>/.*)") // convert glob trailing path
-		}(/(index)?)?(\.x?html)?([#?].*)?$`; // ignore trailing slash/index/extension/query/hash
+		}([/#?].*)?$`; // ignore trailing slash/query/hash
 	}
 
 	const patterns: { [pattern: string]: FunctionComponent | string }={};
@@ -341,13 +346,13 @@ function compile(table: Table): Switch {
 
 		if ( typeof delegate === "string" ) {
 
-			return delegate.replace(/{(\w*)}/g, ($0, $1) => // replace wildcard references
-				$1 === "*" ? match?.groups?.$ || "" : $1 ? match?.groups?.[$1] || "" : root(match?.input || "")
+			return delegate.replace(/{(\w*)}|\/\*$/g, ($0, $1) => // replace wildcard references
+				$0 === "/*" ? match?.groups?.$ || "" : $1 ? match?.groups?.[$1] || "" : route
 			);
 
 		} else {
 
-			return createElement(delegate, { $: route, ...match?.groups });
+			return createElement(delegate, { ...match?.groups });
 
 		}
 

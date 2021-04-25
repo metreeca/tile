@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-import { ComponentChildren, JSX } from "preact";
+import { ComponentChildren } from "preact";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function Custom({ tag, children=[] }: { tag: string, children?: ComponentChildren }) {
-
-	const Tag=tag as keyof JSX.IntrinsicElements;
-
-	return <Tag>{children}</Tag>;
-
+	return h(tag, {}, children);
 }

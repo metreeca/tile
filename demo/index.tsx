@@ -15,12 +15,15 @@
  */
 
 import { render } from "preact";
-import * as React from "preact/compat";
 import "../code/index.css";
 import { Router } from "../code/nests/router";
+import { ToolOptions } from "../code/tiles/options";
 import { TilePage } from "../code/tiles/page";
 
 render(<TilePage side={<>
+
+	<ToolOptions label="Product Line" path={""} state={[{}, () => {}]}/>
+	<ToolOptions label="Scale" path={""} state={[{}, () => {}]}/>
 
 	<a href={"/uno"}>uno</a>
 	<a href={"/due"}>due</a>

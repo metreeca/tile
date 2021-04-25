@@ -132,7 +132,7 @@ tile-page {
 
 		& > section {
 
-			& > * {
+			& > a {
 				display: block;
 				width: 100%;
 			}

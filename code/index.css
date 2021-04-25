@@ -151,10 +151,6 @@ input {
 
 button {
 
-	display: inline-grid;
-	align-items: center;
-	justify-content: center;
-
 	&:disabled {
 		color: var(--tool--color-disabled);
 		pointer-events: none;

@@ -32,9 +32,15 @@ export default defineConfig({ // https://vitejs.dev/config/
 	},
 
 	build: {
+
 		outDir: "../dist/demo",
 		assetsDir: ".",
-		emptyOutDir: true
+		emptyOutDir: true,
+
+		rollupOptions: {
+			output: { manualChunks: undefined }
+		}
+
 	}
 
 });

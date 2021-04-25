@@ -18,7 +18,7 @@
 	--tile-icon-size: 1em;
 }
 
-svg[viewBox="0 0 24 24"] { /* ;-( match unstyled feather icons */
+svg[viewBox="0 0 24 24"] { /* ;-( match feather icons */
 
 	width: var(--tile-icon-size);
 	height: var(--tile-icon-size);

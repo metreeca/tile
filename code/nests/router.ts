@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createElement, FunctionComponent, RenderableProps } from "preact";
+import { createElement, FunctionComponent, VNode } from "preact";
 import { useEffect, useMemo, useReducer } from "preact/hooks";
 import { label } from "../graphs";
 
@@ -70,9 +70,9 @@ export interface Switch {
 	 *
 	 * @param route the route to be rendered
 	 *
-	 * @returns a component responsible for rendering `route` or a new route if a redirection is required
+	 * @returns a a rendered view for `route` or a new route if a redirection is required
 	 */
-	(route: string): FunctionComponent<any> | string
+	(route: string): VNode<any> | string
 
 }
 
@@ -284,15 +284,15 @@ export function Router({
 
 	while ( true ) {
 
-		const component=selector(route);
+		const selection=selector(route);
 
-		if ( typeof component === "string" ) {
+		if ( typeof selection === "string" ) {
 
-			if ( redirects.has(component) ) {
+			if ( redirects.has(selection) ) {
 				throw new Error(`cyclic redirection <${Array.from(redirects)}>`);
 			}
 
-			redirects.add(route=component);
+			redirects.add(route=selection);
 
 		} else { // ;( no useEffect() / history must be effectively updated before component is rendered
 
@@ -300,7 +300,7 @@ export function Router({
 
 			title(label(location.pathname));
 
-			return useMemo(() => createElement(component, {}), [route]);
+			return selection;
 
 		}
 
@@ -347,13 +347,7 @@ function compile(table: Table): Switch {
 
 		} else {
 
-			const parameters={ $: route, ...match?.groups };
-
-			const component=(props: RenderableProps<any>, context?: any) => delegate({ ...parameters, ...props }, context);
-
-			return Object.assign(component, delegate, {
-				defaultProps: Object.assign({}, delegate.defaultProps, parameters)
-			});
+			return createElement(delegate, { $: route, ...match?.groups });
 
 		}
 

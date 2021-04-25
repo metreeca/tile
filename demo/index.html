@@ -32,9 +32,11 @@
 
 		<link rel="icon" type="image/svg+xml" href="./index.svg"/>
 
+		<script type="module" src="./index.tsx"></script>
+
 		<style>
 
-			html {
+			:root {
 
 				--tool-loader-color-one: #345;
 				--tool-loader-color-two: #D60;
@@ -50,7 +52,7 @@
 				overflow: hidden;
 			}
 
-			body > script:only-child {
+			body > tool-page:empty {
 				display: block;
 				width: 15vh;
 				height: 15vh;
@@ -60,8 +62,8 @@
 				animation: loader-rotate 2s infinite linear;
 			}
 
-			body > script:only-child::before,
-			body > script:only-child::after {
+			body > tool-page:empty::before,
+			body > tool-page:empty::after {
 				content: '';
 				position: absolute;
 				left: 0;
@@ -73,12 +75,12 @@
 				animation: loader-bounce 2s infinite ease-in-out;
 			}
 
-			body > script:only-child::before {
+			body > tool-page:empty::before {
 				top: 0;
 				background-color: var(--tool-loader-color-one);
 			}
 
-			body > script:only-child::after {
+			body > tool-page:empty::after {
 				bottom: 0;
 				background-color: var(--tool-loader-color-two);
 				animation-delay: -1s;
@@ -105,7 +107,7 @@
 
 	<body>
 
-		<script type="module" src="./index.tsx"></script>
+		<tool-page></tool-page>
 
 	</body>
 

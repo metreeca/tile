@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ComponentChild, ComponentChildren } from "preact";
+import { ComponentChildren } from "preact";
 import { label } from "../graphs";
 import { Custom } from "./custom";
 import "./page.css";
@@ -28,11 +28,11 @@ const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement).c
 
 export interface Props {
 
-	home?: ComponentChild
-	side?: ComponentChild
+	home?: ComponentChildren
+	side?: ComponentChildren
 
-	name?: ComponentChild
-	menu?: ComponentChild
+	name?: ComponentChildren
+	menu?: ComponentChildren
 
 	children?: ComponentChildren
 
@@ -75,16 +75,4 @@ export function TilePage({
 	);
 
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function Hidden() {
-	return (
-		<ul>
-			<li><a href="/ewp/" target={"_blank"}>EWP APIs</a></li>
-			<li><a href="/sparql" target={"_blank"}>SPARQL</a></li>
-		</ul>
-	);
-}
-
 

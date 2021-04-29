@@ -29,8 +29,8 @@
 		"share": "npm run build && cd dist && npm link"
 	},
 	"peerDependencies": {
-		"preact": "^10.5.13",
-		"preact-feather": "^4.2.1"
+		"lucide-preact": "^0.15.1-beta.1",
+		"preact": "^10.5.13"
 	},
 	"devDependencies": {
 		"@preact/preset-vite": "^2.1.0",

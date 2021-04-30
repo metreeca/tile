@@ -19,6 +19,11 @@
 
 :root {
 
+	--tool--font: 300 14pt/1.2 sans-serif;
+	--tool--font-base: "Roboto", "Helvetica", Arial, sans-serif;
+	--tool--font-meta: "Roboto Condensed", "Helvetica", Arial, sans-serif;
+	--tool--font-mono: "Roboto Mono", "Helvetica", Arial, sans-serif;
+
 	--tool--border-style: solid;
 	--tool--border-color: #CCC;
 	--tool--border-width: 1px;
@@ -55,20 +60,18 @@
 /**** Fonts ***********************************************************************************************************/
 
 body {
-	font-family: Roboto, "Helvetica", Arial, sans-serif;
-	font-weight: 300;
-	font-size: 14pt;
-	line-height: 1.2;
+	font: var(--tool--font);
+	font-family: var(--tool--font-base);
 	color: #000;
 	background-color: #FFF;
 }
 
 header, footer, h1, h2, h3, dt, th, a, strong {
-	font-family: "Roboto Condensed", "Helvetica", Arial, sans-serif;
+	font-family: var(--tool--font-meta);
 }
 
 code {
-	font-family: "Roboto Mono", "Helvetica", Arial, sans-serif;
+	font-family: var(--tool--font-mono);
 }
 
 

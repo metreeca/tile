@@ -17,6 +17,7 @@
 import { render } from "preact";
 import "../code/index.css";
 import { Router } from "../code/nests/router";
+import { X } from "../code/tiles/icon";
 import { ToolOptions } from "../code/tiles/options";
 import { TilePage } from "../code/tiles/page";
 
@@ -34,7 +35,7 @@ render(<TilePage side={<>
 
 		"/": () => <div>!</div>,
 		"/uno": () => <div>uno!</div>,
-		"/due": () => <div>due!</div>
+		"/due": () => <div><X/></div>
 
 	}}/>
 

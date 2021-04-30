@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ComponentChildren } from "preact";
+import { ComponentChildren, createElement } from "preact";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function Custom({ tag, children=[] }: { tag: string, children?: ComponentChildren }) {
-	return h(tag, {}, children);
+	return createElement(tag, {}, children);
 }

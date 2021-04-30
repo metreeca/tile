@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { ComponentChildren } from "preact";
-import { X } from "preact-feather";
+import { ComponentChildren, createElement } from "preact";
 import { useState } from "preact/hooks";
 import { label, model, Value } from "../graphs";
 import { useTerms } from "../hooks/entry";
+import { X } from "./icon";
 import "./options.css";
 
 
@@ -62,7 +62,7 @@ export function ToolOptions({
 		}, {})
 	);
 
-	return h("tool-options", { className: collapsed ? "collapsed" : "expanded" }, <>
+	return createElement("tool-options", { className: collapsed ? "collapsed" : "expanded" }, <>
 
 		<header>
 			<button title="Toggle" onClick={() => setCollapsed(!collapsed)}>{label}</button>

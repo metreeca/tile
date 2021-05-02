@@ -38,7 +38,7 @@ export interface Props {
 	path: string
 
 	/**
-	 * The DelayDefault in ms before changes are auto-submitted after the last edit; 0 to disable.
+	 * The delay in ms before changes are auto-submitted after the last edit; 0 to disable.
 	 *
 	 * @defaultValue [[DelayDefault]]
 	 */

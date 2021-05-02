@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-@import url(https://fonts.googleapis.com/css?family=Roboto:300|Roboto+Mono:300|Roboto+Condensed:300,400);
-
-
 :root {
-
-	--tool--font: 300 14pt/1.2 sans-serif;
-	--tool--font-base: "Roboto", "Helvetica", Arial, sans-serif;
-	--tool--font-meta: "Roboto Condensed", "Helvetica", Arial, sans-serif;
-	--tool--font-mono: "Roboto Mono", "Helvetica", Arial, sans-serif;
 
 	--tool--border-style: solid;
 	--tool--border-color: #CCC;
@@ -57,29 +49,16 @@
 }
 
 
-/**** Fonts ***********************************************************************************************************/
-
-body {
-	font: var(--tool--font);
-	font-family: var(--tool--font-base);
-	color: #000;
-	background-color: #FFF;
-}
-
-header, footer, h1, h2, h3, dt, th, a, strong {
-	font-family: var(--tool--font-meta);
-}
-
-code {
-	font-family: var(--tool--font-mono);
-}
-
-
 /**** Blocks **********************************************************************************************************/
 
 html, body {
 	width: 100%;
 	height: 100%;
+}
+
+body {
+	color: #000;
+	background-color: #FFF;
 }
 
 ul, ol {
@@ -102,8 +81,6 @@ p {
 
 dt, th {
 	text-align: left;
-	font-size: 90%;
-	font-weight: 700;
 }
 
 
@@ -112,7 +89,6 @@ dt, th {
 a, a:visited {
 
 	text-decoration: none;
-	font-weight: 400;
 	color: var(--tool--color-enabled);
 
 	cursor: pointer;

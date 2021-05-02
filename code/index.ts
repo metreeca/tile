@@ -17,12 +17,22 @@
 import { createContext } from "preact";
 import { LinkGraph } from "./graphs/link";
 
+
 //// Contexts //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const Graph=createContext(LinkGraph());
 
 
 //// Events ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export type TargetedHandler<E extends TargetedEvent>={
+	(this: E["currentTarget"], event: E): void
+}
+
+export type TargetedEvent<T extends EventTarget=EventTarget, E extends Event=Event>=Omit<E, "currentTarget"> & {
+	readonly currentTarget: T;
+};
+
 
 /**
  * Creates a trapping event listener.
@@ -32,53 +42,17 @@ export const Graph=createContext(LinkGraph());
  * @returns a listener delegating to [[handler]] all events whose default action was not prevented by a previous handler;
  * the default action of delegated events is prevented and their propagation stopped
  */
-export function trapping(handler: EventListener | EventListenerObject): EventListener {
+export function trapping<E extends TargetedEvent>(handler: TargetedHandler<E>): TargetedHandler<E> {
+	return function (this: E["currentTarget"], event: E) {
+		if ( !event.defaultPrevented ) {
 
-	const delegate=listener(handler);
+			event.preventDefault();
+			event.stopPropagation();
 
-	return function (this: any, e: Event) {
-		if ( !e.defaultPrevented ) {
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			delegate(e);
+			handler.call(this, event);
 
 		}
 	};
-}
-
-/**
- * Creates a leading event listener.
- *
- * @param period the length of the observation period in ms; ignored if equal to `0`
- * @param handler the delegate event handler
- *
- * @returns a handler delegating to [[`handler`]] only those events that were not preceded by other events
- * within [[`period`]]
-
- * @throws [[`RangeError`]] if [[`period`]] is less than 0
- */
-export function leading(period: number, handler: EventListener | EventListenerObject): EventListener {
-
-	if ( period < 0 ) {
-		throw new RangeError(`negative period {${period}}`);
-	}
-
-	if ( period === 0 ) { return listener(handler); } else {
-
-		let last: number;
-
-		const delegate=listener(handler);
-
-		return (function (this: any, e: Event) {
-
-			if ( !last || last+period <= e.timeStamp ) { delegate(e); }
-
-			last=e.timeStamp;
-
-		});
-	}
 }
 
 /**
@@ -92,19 +66,17 @@ export function leading(period: number, handler: EventListener | EventListenerOb
  *
  * @throws [[`RangeError`]] if [[`period`]] is less than 0
  */
-export function trailing(period: number, handler: EventListener | EventListenerObject): EventListener {
+export function trailing<E extends TargetedEvent>(period: number, handler: TargetedHandler<E>): TargetedHandler<E> {
 
 	if ( period < 0 ) {
 		throw new RangeError(`negative period {${period}}`);
 	}
 
-	if ( period === 0 ) { return listener(handler); } else {
+	if ( period === 0 ) { return handler; } else {
 
 		let last: number;
 
-		const delegate=listener(handler);
-
-		return function (this: any, e: Event) {
+		return function (this: any, e: E) {
 
 			const memo: any={};
 
@@ -112,9 +84,9 @@ export function trailing(period: number, handler: EventListener | EventListenerO
 
 			last=e.timeStamp;
 
-			setTimeout((function (this: any, e: Event) {
+			setTimeout((function (this: E["currentTarget"], event: E) {
 
-				if ( last === memo.timeStamp ) { delegate(e); }
+				if ( last === memo.timeStamp ) { handler.call(this, event); }
 
 			}).bind(this), period, memo);
 
@@ -132,49 +104,28 @@ export function trailing(period: number, handler: EventListener | EventListenerO
  *
  * @throws [[`RangeError`]] if [[`period`]] is less than 0
  */
-export function throttling(period: number, handler: EventListener | EventListenerObject): EventListener {
+export function throttling<E extends TargetedEvent>(period: number, handler: TargetedHandler<E>): TargetedHandler<E> {
 
 	if ( period < 0 ) {
 		throw new RangeError(`negative period {${period}}`);
 	}
 
-	if ( period === 0 ) { return listener(handler); } else {
+	if ( period === 0 ) { return (handler); } else {
 
 		let last: number;
 
-		const delegate=listener(handler);
 
-		return function (this: any, e: Event) {
+		return function (this: E["currentTarget"], event: E) {
 
-			if ( !last || last+period <= e.timeStamp ) {
+			if ( !last || last+period <= event.timeStamp ) {
 
-				delegate(e);
+				handler.call(this, event);
 
-				last=e.timeStamp;
+				last=event.timeStamp;
 
 			}
 
 		};
 
 	}
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function listener(handler: EventListener | EventListenerObject) {
-	return (e: Event) => {
-
-		if ( object(handler) ) {
-			handler.handleEvent(e);
-		} else {
-			handler(e);
-
-		}
-
-	};
-}
-
-function object(listener: EventListener | EventListenerObject): listener is EventListenerObject {
-	return listener.hasOwnProperty("handleEvent");
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { createElement } from "preact";
 import { useCallback } from "preact/hooks";
 import { trailing } from "../index";
-import { Custom } from "./custom";
 import { Search, XCircle } from "./icon";
 import "./search.css";
 
@@ -74,20 +74,18 @@ export function ToolSearch({
 	// useEffect(() => input.current?.focus());
 	// <input ref={input}/>
 
-	return (
-		<Custom tag="tool-search">
+	return createElement("tool-search", {}, <>
 
-			<button disabled><Search/></button>
+		<button disabled><Search/></button>
 
-			<input autofocus type="text" placeholder={placeholder} value={keywords} onInput={useCallback(trailing(
-				delay, e => setKeywords((e.target as HTMLInputElement).value)
-			), [])}/>
+		<input autofocus type="text" placeholder={placeholder} value={keywords} onInput={useCallback(trailing(
+			delay, e => setKeywords((e.target as HTMLInputElement).value)
+		), [])}/>
 
-			{keywords
-				? <button title="Clear" onClick={() => setKeywords("")}><XCircle/></button>
-				: <span/>
-			}
+		{keywords
+			? <button title="Clear" onClick={() => setKeywords("")}><XCircle/></button>
+			: <span/>
+		}
 
-		</Custom>
-	);
+	</>);
 }

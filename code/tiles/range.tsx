@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
+import { createElement } from "preact";
 import { useCallback } from "preact/hooks";
 import { useStats } from "../hooks/entry";
 import { trailing } from "../index";
-import { Custom } from "./custom";
 import "./range.css";
-import { ToolSpinner } from "./spinner";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,11 +67,11 @@ export function ToolRange({
 
 	}), []);
 
-	return <Custom tag="tool-range">{stats.data(stats => <>
+	return createElement("tool-range", {}, stats.data(stats => <>
 
 		<input type="search" pattern="\d+(\.\d+)?" placeholder={format(stats.min)} value={state[`>=${path}`]} onInput={lower}/>
 		<input type="search" pattern="\d+(\.\d+)?" placeholder={format(stats.max)} value={state[`<=${path}`]} onInput={upper}/>
 
-	</>) || <ToolSpinner/>}</Custom>;
+	</>));
 
 }

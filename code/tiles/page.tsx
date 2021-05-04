@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { ComponentChildren } from "preact";
+import { ComponentChildren, createElement } from "preact";
 import { label } from "../graphs";
-import { Custom } from "./custom";
 import "./page.css";
 
 const title=document.title;
@@ -50,29 +49,26 @@ export function TilePage({
 
 }: Props) {
 
-	return (
-		<Custom tag="tile-page">
+	return createElement("tile-page", {}, <>
 
-			<aside>
+		<aside>
 
-				<header>{home}</header>
-				<section>{side}</section>
+			<header>{home}</header>
+			<section>{side}</section>
 
-			</aside>
+		</aside>
 
-			<main>
+		<main>
 
-				<header>
-					<h1>{name}</h1>
-					<nav>{menu}</nav>
-				</header>
+			<header>
+				<h1>{name}</h1>
+				<nav>{menu}</nav>
+			</header>
 
-				<section>{children}</section>
+			<section>{children}</section>
 
-			</main>
+		</main>
 
-		</Custom>
-	);
-
+	</>);
 }
 

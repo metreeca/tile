@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import { ComponentChildren, createElement } from "preact";
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { useEffect, useState } from "preact/hooks";
 
-export function Custom({ tag, children=[] }: { tag: string, children?: ComponentChildren }) {
-	return createElement(tag, {}, children);
+export function useValue<V>(value: V): [V, (value: V) => void] {
+
+	const [state, setState]=useState<V>(value);
+
+	useEffect(() => setState(value), [value]);
+
+	return [state, setState];
+
 }

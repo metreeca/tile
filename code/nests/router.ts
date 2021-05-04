@@ -252,21 +252,15 @@ export function Router({
 		function click(e: MouseEvent) {
 			if ( !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) ) { // only plain events
 
-				for (let node: Node=e.target as Node; node.parentNode; node=node.parentNode) {
-					if ( node.nodeName === "A" ) {
+				const href=(e.target as Element).closest("a")?.href;
 
-						const href=(node as HTMLAnchorElement).href || "";
+				if ( href?.startsWith(Base.href) ) { // only internal links
 
-						if ( href.startsWith(Base.href) ) { // only internal links
+					e.preventDefault();
 
-							e.preventDefault();
-							push(href);
+					push(href);
 
-						}
-
-					}
 				}
-
 			}
 		}
 

@@ -15,27 +15,30 @@
  */
 
 import { render } from "preact";
+import "../code/fonts/roboto.css";
 import "../code/index.css";
 import { Router } from "../code/nests/router";
 import { X } from "../code/tiles/icon";
-import { ToolOptions } from "../code/tiles/options";
 import { TilePage } from "../code/tiles/page";
+import "./index.css";
 
 render(<TilePage side={<>
 
-	<ToolOptions label="Product Line" path={""} state={[{}, () => {}]}/>
-	<ToolOptions label="Scale" path={""} state={[{}, () => {}]}/>
-
-	<a href={"/uno"}>uno</a>
-	<a href={"/due"}>due</a>
+	<a href={"/lucide"}>lucide</a>
 
 </>}>
 
 	<Router routes={{
 
 		"/": () => <div>!</div>,
-		"/uno": () => <div>uno!</div>,
-		"/due": () => <div><X/></div>
+		"/due": () => <div><X/></div>,
+
+		"/lucide": () => <input autofocus style={{ border: "solid 1px #CCC" }}
+
+			onInput={e => console.log(e.type)}
+			onChange={e => console.log(e.type)}
+
+		/>
 
 	}}/>
 

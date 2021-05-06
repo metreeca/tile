@@ -17,23 +17,34 @@
 import { render } from "preact";
 import "../code/fonts/roboto.css";
 import "../code/index.css";
-import { Router } from "../code/nests/router";
-import { X } from "../code/tiles/icon";
+import { active, hash, Router } from "../code/nests/router";
 import { TilePage } from "../code/tiles/page";
 import "./index.css";
 
+
+const store=hash();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function link(route: string) {
+	return store(route);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 render(<TilePage side={<>
 
-	<a href={"/lucide"}>lucide</a>
+	<a {...active(link("/"))}>home</a>
+	<a {...active(link("/lucide/*"))}>lucide</a>
 
 </>}>
 
-	<Router routes={{
+	<Router store={store} routes={{
 
 		"/": () => <div>!</div>,
-		"/due": () => <div><X/></div>,
 
-		"/lucide": () => <input autofocus style={{ border: "solid 1px #CCC" }}
+		"/lucide/": () => <input autofocus style={{ border: "solid 1px #CCC" }}
 
 			onInput={e => console.log(e.type)}
 			onChange={e => console.log(e.type)}

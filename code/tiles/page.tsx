@@ -39,7 +39,7 @@ export interface Props {
 
 export function TilePage({
 
-	home=<a href={"/"}>{title}</a>,
+	home,
 	side,
 
 	name=<a href={""}>{label("")}</a>,

@@ -22,6 +22,7 @@ import postcssNesting from "postcss-nesting";
 export default defineConfig({ // https://vitejs.dev/config/
 
 	root: "demo",
+	base: "",
 
 	plugins: [preact()],
 
@@ -35,6 +36,7 @@ export default defineConfig({ // https://vitejs.dev/config/
 
 		outDir: "../dist/demo",
 		assetsDir: ".",
+
 		emptyOutDir: true,
 
 		rollupOptions: {

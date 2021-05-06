@@ -18,43 +18,30 @@ import { createElement, FunctionComponent, VNode } from "preact";
 import { useEffect, useMemo, useReducer } from "preact/hooks";
 import { label } from "../graphs";
 
-const Base=new URL(
-	((document.querySelector("base") as HTMLBaseElement)?.href || "/")
-		.replace(/(^.*?)\/?$/, "$1/"), // make sure base has a trailing slash
-	location.href
-);
+const base=new URL((
 
-const Root=Base.pathname;
-const Title=document.title;
+	(document.querySelector("base") as HTMLBaseElement)?.href || ""
+
+), location.href).href.replace(/(^.*?)\/?$/, "$1"); // remove trailing slash
 
 
-window.addEventListener("error", (e: ErrorEvent) => {
+const root=`^${base}([/#].*)?`;
+const name=document.title;
+
+
+window.addEventListener("error", e => {
 	window.alert(`;-( Internal error… please let us know about the issue. Thanks!\n\n${e.message}`);
 });
 
-window.addEventListener("unhandledrejection", (e: PromiseRejectionEvent) => {
+window.addEventListener("unhandledrejection", e => {
 	window.alert(`;-( Internal error… please let us know about the issue. Thanks!\n\n${e.reason}`);
 });
 
 
-/**
- * Converts a route to the root-relative form.
- */
-function root(route: string): string {
-	return route.startsWith(location.origin) ? root(route.substring(location.origin.length))
-		: route.startsWith(Root) ? route
-			: route.startsWith("/") ? Root+route.substring(1)
-				: Root+route;
-}
-
-/**
- * Converts a route to the base-relative form.
- */
-function base(route: string): string {
-	return route.startsWith(location.origin) ? base(route.substring(location.origin.length))
-		: route.startsWith(Root) ? route.substring(Root.length-1)
-			: route.startsWith("/") ? route
-				: "/"+route;
+interface PushStateDetail {
+	route: string;
+	replace: boolean;
+	state: any
 }
 
 
@@ -134,10 +121,12 @@ export interface Store {
 /**
  * Creates a path {@link Store route store}
  *
- * @return a function managing routes as root-relative paths including search and hash
+ * @return a function managing routes as relative-relative paths including search and hash
  */
 export function path(): Store {
-	return (route?: string) => route ? root(route) : location.href.substring(location.origin.length);
+	return (route?: string) => route === undefined
+		? location.href.match(root) ? location.href.substring(base.length)
+			: location.href : route.startsWith("/") ? `${base}${route}` : `${base}/${route}`;
 }
 
 /**
@@ -146,27 +135,32 @@ export function path(): Store {
  * @return a function managing routes as hashes
  */
 export function hash(): Store {
-	return (route?: string) => route ? `#${route}` : location.hash.substring(1);
+	return (route?: string) => route === undefined
+		? location.hash.substring(1)
+		: route ? `#${route}` : "";
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function title(title: string): void {
-
-	document.title=`${title}${title && Title ? " | " : ""}${Title}`;
-
+	document.title=`${title}${title && name ? " | " : ""}${name}`;
 }
 
-export function href(href: string, active: string, inactive?: string): {} {
+export function active(link: string) {
+
+	const hash=link.startsWith("#");
+	const tail=link.endsWith("/*");
+
+	const href=tail ? link.substr(0, link.length-1) : link;
 
 	function matches(target: string, current: string) {
-		return target.endsWith("/") ? current.startsWith(target) : current === target;
+		return tail ? current.startsWith(target) : current === target;
 	}
 
 	return {
 		href: href,
-		className: matches(root(href), location.pathname) ? active : inactive
+		active: matches(href, hash ? location.hash : location.href)
 	};
 }
 
@@ -174,51 +168,27 @@ export function href(href: string, active: string, inactive?: string): {} {
 //// History ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function push(route: string, state?: any): void {
+	window.dispatchEvent(new CustomEvent<PushStateDetail>("pushstate", {
 
-	const { origin, href }=new URL(root(route), location.href);
+		detail: { route: route, state: state, replace: false }
 
-	if ( origin !== location.origin ) {
-
-		window.open(href, "_blank");
-
-	} else if ( href !== location.href || state !== history.state ) {
-
-		history.pushState(state, document.title, href);
-
-		window.dispatchEvent(new CustomEvent("update")); // listened to by Router()
-
-	}
-
+	}));
 }
 
 export function swap(route: string, state?: any): void {
+	window.dispatchEvent(new CustomEvent<PushStateDetail>("pushstate", {
 
-	const { origin, href }=new URL(root(route), location.href);
+		detail: { route: route, state: state, replace: true }
 
-	if ( origin !== location.origin ) {
-
-		window.open(href, "_blank");
-
-	} else if ( href !== location.href || state !== history.state ) {
-
-		history.replaceState(state, document.title, href);
-
-		window.dispatchEvent(new CustomEvent("update")); // listened to by Router()
-
-	}
-
+	}));
 }
 
 export function open(url: string, target: string=""): void {
-
 	window.open(url, target);
-
 }
 
 export function back(): void {
-
-	history.back(); // no update: will fire popstate event
-
+	history.back(); // will fire popstate event
 }
 
 
@@ -247,37 +217,47 @@ export function Router({
 
 	const selector=useMemo(() => routes instanceof Function ? routes : compile(routes), []);
 
+
 	useEffect(() => {
 
-		function click(e: MouseEvent) {
-			if ( !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) ) { // only plain events
-
-				const href=(e.target as Element).closest("a")?.href;
-
-				if ( href?.startsWith(Base.href) ) { // only internal links
-
-					e.preventDefault();
-
-					push(href);
-
-				}
-			}
-		}
-
-		window.addEventListener("popstate", update);
-		window.addEventListener("update", update);
-		window.addEventListener("click", click);
+		window.addEventListener("popstate", popstate as EventListener);
+		window.addEventListener("pushstate", pushstate as EventListener);
+		window.addEventListener("click", click as EventListener);
 
 		return () => {
-			window.removeEventListener("popstate", update);
-			window.removeEventListener("update", update);
-			window.removeEventListener("click", click);
+			window.removeEventListener("popstate", popstate as EventListener);
+			window.removeEventListener("pushstate", pushstate as EventListener);
+			window.removeEventListener("click", click as EventListener);
 		};
 
 	}, []);
 
 
-	let route=base(store()).replace(/\/index.x?html$/, "/");
+	function click(e: MouseEvent) {
+		if ( !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) ) { // only plain events
+
+			const href=(e.target as Element).closest("a")?.href;
+
+			if ( href?.match(root) ) { // only internal links
+
+				e.preventDefault();
+
+				update(history.pushState(history.state, document.title, href));
+
+			}
+		}
+	}
+
+	function popstate(e: PopStateEvent) {
+		update(e);
+	}
+
+	function pushstate({ detail: { route, state, replace } }: CustomEvent<PushStateDetail>) {
+		update((replace ? history.replaceState : pushstate)(state, document.title, store(route)));
+	}
+
+
+	let route=store();
 
 	const redirects=new Set([route]);
 
@@ -293,9 +273,9 @@ export function Router({
 
 			redirects.add(route=selection);
 
-		} else { // ;( no useEffect() / history must be effectively updated before component is rendered
+		} else { // ;( no useEffect() / history must be updated before component is rendered
 
-			history.replaceState(history.state, document.title, root(route)); // possibly altered by redirections
+			history.replaceState(history.state, document.title, store(route)); // possibly altered by redirections
 
 			title(label(location.pathname));
 

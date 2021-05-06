@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { render } from "preact";
+import { ComponentChildren, render } from "preact";
 import "../code/fonts/roboto.css";
 import "../code/index.css";
-import { active, hash, Router } from "../code/nests/router";
+import { active, hash, Router, useRouter } from "../code/nests/router";
 import { TilePage } from "../code/tiles/page";
 import "./index.css";
 
@@ -33,24 +33,45 @@ export function link(route: string) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-render(<TilePage side={<>
+function DemoPage({
 
-	<a {...active(link("/"))}>home</a>
-	<a {...active(link("/lucide/*"))}>lucide</a>
+	children
 
-</>}>
+}: {
 
-	<Router store={store} routes={{
+	children?: ComponentChildren
 
-		"/": () => <div>!</div>,
+}) {
+	return <TilePage side={<>
 
-		"/lucide/": () => <input autofocus style={{ border: "solid 1px #CCC" }}
+		<a {...active(link("/"))}>home</a>
+		<a {...active(link("/lucide/*"))}>lucide</a>
+
+	</>}>{
+
+		children
+
+	}</TilePage>;
+}
+
+render(<Router store={store} routes={{
+
+	"/": () => {
+
+		const { push }=useRouter();
+
+		return <DemoPage>
+			<button onClick={() => push("/lucide")}>x</button>
+		</DemoPage>;
+	},
+
+	"/lucide": () => <DemoPage>
+		<input autofocus style={{ border: "solid 1px #CCC" }}
 
 			onInput={e => console.log(e.type)}
 			onChange={e => console.log(e.type)}
 
 		/>
+	</DemoPage>
 
-	}}/>
-
-</TilePage>, document.body);
+}}/>, document.body);

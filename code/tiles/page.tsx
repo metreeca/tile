@@ -49,7 +49,7 @@ export function TilePage({
 
 }: Props) {
 
-	return createElement("tile-page", {}, <>
+	return createElement("tool-page", {}, <>
 
 		<aside>
 

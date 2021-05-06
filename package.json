@@ -23,10 +23,10 @@
 	"types": "index.d.ts",
 	"scripts": {
 		"start": "vite --open",
-		"clean": "rm -rf dist docs node_modules",
 		"build": "rm -rf dist && tsc && copyfiles package.json LICENSE README.md dist && copyup 'code/**/*.css' dist",
 		"issue": "npm run build && npm publish --access public ./dist",
-		"share": "npm run build && cd dist && npm link"
+		"share": "npm run build && cd dist && npm link",
+		"clean": "rm -rf dist docs node_modules"
 	},
 	"peerDependencies": {
 		"lucide-preact": "^0.15.10-beta.3",

@@ -14,19 +14,41 @@
  * limitations under the License.
  */
 
-import { createElement, FunctionComponent, VNode } from "preact";
-import { useEffect, useMemo, useReducer } from "preact/hooks";
+import { createContext, createElement, FunctionalComponent, FunctionComponent, VNode } from "preact";
+import { useContext, useEffect, useMemo, useReducer } from "preact/hooks";
 import { label } from "../graphs";
 
-const base=new URL((
-
-	(document.querySelector("base") as HTMLBaseElement)?.href || ""
-
-), location.href).href.replace(/(^.*?)\/?$/, "$1"); // remove trailing slash
+const base=new URL((document.querySelector("base") as HTMLBaseElement)?.href || "", location.href).href.replace(/(^.*?)\/?$/, "$1"); // remove trailing slash
 
 
 const root=`^${base}([/#].*)?`;
 const name=document.title;
+
+const context=createContext<Router>({
+
+	link(route: string): string {
+		return route;
+	},
+
+
+	push(route: string, state?: any): void {
+		history.pushState(state, document.title, route);
+	},
+
+	swap(route: string, state?: any): void {
+		history.replaceState(state, document.title, route);
+	},
+
+
+	open(url: string, target: string=""): void {
+		window.open(url, target);
+	},
+
+	back(): void {
+		history.back();
+	}
+
+});
 
 
 window.addEventListener("error", e => {
@@ -36,13 +58,6 @@ window.addEventListener("error", e => {
 window.addEventListener("unhandledrejection", e => {
 	window.alert(`;-( Internal error… please let us know about the issue. Thanks!\n\n${e.reason}`);
 });
-
-
-interface PushStateDetail {
-	route: string;
-	replace: boolean;
-	state: any
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,9 +72,9 @@ export interface Switch {
 	 *
 	 * @param route the route to be rendered
 	 *
-	 * @returns a a `route` rendering or a new route if a redirection is required
+	 * @returns a a rendering of `route` or a new route if a redirection is required
 	 */
-	(route: string): VNode<any> | string
+	(route: string): VNode | string
 
 }
 
@@ -116,6 +131,23 @@ export interface Store {
 }
 
 
+export interface Router {
+
+	link(route: string): string
+
+
+	push(route: string, state?: any): void
+
+	swap(route: string, state?: any): void
+
+
+	open(url: string, target?: string): void
+
+	back(): void
+
+}
+
+
 //// Stores ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -165,40 +197,17 @@ export function active(link: string) {
 }
 
 
-//// History ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export function push(route: string, state?: any): void {
-	window.dispatchEvent(new CustomEvent<PushStateDetail>("pushstate", {
-
-		detail: { route: route, state: state, replace: false }
-
-	}));
-}
-
-export function swap(route: string, state?: any): void {
-	window.dispatchEvent(new CustomEvent<PushStateDetail>("pushstate", {
-
-		detail: { route: route, state: state, replace: true }
-
-	}));
-}
-
-export function open(url: string, target: string=""): void {
-	window.open(url, target);
-}
-
-export function back(): void {
-	history.back(); // will fire popstate event
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function useRouter() {
+	return useContext(context);
+}
 
 export function Router({
 
-	routes,
+	store=path(),
 
-	store=path()
+	routes
 
 }: {
 
@@ -220,14 +229,12 @@ export function Router({
 
 	useEffect(() => {
 
-		window.addEventListener("popstate", popstate as EventListener);
-		window.addEventListener("pushstate", pushstate as EventListener);
-		window.addEventListener("click", click as EventListener);
+		window.addEventListener("popstate", update);
+		window.addEventListener("click", click);
 
 		return () => {
-			window.removeEventListener("popstate", popstate as EventListener);
-			window.removeEventListener("pushstate", pushstate as EventListener);
-			window.removeEventListener("click", click as EventListener);
+			window.removeEventListener("popstate", update);
+			window.removeEventListener("click", click);
 		};
 
 	}, []);
@@ -246,14 +253,6 @@ export function Router({
 
 			}
 		}
-	}
-
-	function popstate(e: PopStateEvent) {
-		update(e);
-	}
-
-	function pushstate({ detail: { route, state, replace } }: CustomEvent<PushStateDetail>) {
-		update((replace ? history.replaceState : pushstate)(state, document.title, store(route)));
 	}
 
 
@@ -279,7 +278,36 @@ export function Router({
 
 			title(label(location.pathname));
 
-			return selection;
+			return createElement(context.Provider, {
+
+				value: {
+
+					link(route: string): string {
+						return store(route);
+					},
+
+					push(route: string, state?: any): void {
+						update(history.pushState(state, document.title, store(route)));
+					},
+
+					swap(route: string, state?: any): void {
+						update(history.replaceState(state, document.title, store(route)));
+					},
+
+
+					open(url: string, target: string=""): void {
+						window.open(url, target);
+					},
+
+					back(): void {
+						history.back();
+					}
+
+				},
+
+				children: selection
+
+			});
 
 		}
 
@@ -309,13 +337,13 @@ function compile(table: Table): Switch {
 
 	return route => {
 
-		const entries: [string, FunctionComponent<any> | string][]=Object
+		const entries: [string, FunctionalComponent | string][]=Object
 			.entries(patterns);
 
-		const matches: [RegExpExecArray | null, FunctionComponent<any> | string][]=entries
+		const matches: [RegExpExecArray | null, FunctionalComponent | string][]=entries
 			.map(([pattern, component]) => [new RegExp(pattern).exec(route), component]);
 
-		const [match, delegate]: [RegExpExecArray | null, FunctionComponent<any> | string]=matches
+		const [match, delegate]: [RegExpExecArray | null, FunctionalComponent | string]=matches
 			.find(([match]) => match !== null) || [null, () => null];
 
 		if ( typeof delegate === "string" ) {

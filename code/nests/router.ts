@@ -157,8 +157,8 @@ export interface Router {
  */
 export function path(): Store {
 	return (route?: string) => route === undefined
-		? location.href.match(root) ? location.href.substring(base.length)
-			: location.href : route.startsWith("/") ? `${base}${route}` : `${base}/${route}`;
+		? location.href.match(root) ? location.href.substring(base.length) : location.href
+		: route ? route.startsWith("/") ? `${base}${route}` : `${base}/${route}` : location.pathname;
 }
 
 /**
@@ -169,7 +169,7 @@ export function path(): Store {
 export function hash(): Store {
 	return (route?: string) => route === undefined
 		? location.hash.substring(1)
-		: route ? `#${route}` : "";
+		: route ? `#${route}` : location.hash;
 }
 
 

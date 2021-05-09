@@ -36,8 +36,8 @@
 
 			:root {
 
-				--tool-loader-color-one: #345;
-				--tool-loader-color-two: #D60;
+				--tool--color-accent-dark: #345;
+				--tool--color-accent-lite: #D60;
 
 			}
 
@@ -75,12 +75,12 @@
 
 			body > tool-page:empty::before {
 				top: 0;
-				background-color: var(--tool-loader-color-one);
+				background-color: var(--tool--color-accent-dark);
 			}
 
 			body > tool-page:empty::after {
 				bottom: 0;
-				background-color: var(--tool-loader-color-two);
+				background-color: var(--tool--color-accent-lite);
 				animation-delay: -1s;
 			}
 

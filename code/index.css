@@ -20,12 +20,19 @@
 	--tool--border-color: #CCC;
 	--tool--border-width: 1px;
 
+	--tool--color: #000;
+
+	--tool--color-accent-dark: #345;
+	--tool--color-accent-lite: #D60;
+
 	--tool--color-enabled: #567;
 	--tool--color-disabled: #CCC;
 	--tool--color-invalid: #D60;
 
 	--tool--color-hover: #B50;
 	--tool--color-focus: #789;
+
+	--tool--background-color: #FFF;
 
 	--tool--box-shadow-focus: 0 0 3px 1px var(--tool--color-focus);
 
@@ -57,8 +64,8 @@ html, body {
 }
 
 body {
-	color: #000;
-	background-color: #FFF;
+	color: var(--tool--color);
+	background-color: var(--tool--background-color);
 }
 
 ul, ol {

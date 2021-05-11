@@ -24,17 +24,6 @@ import "./options.css";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface Props {
-
-	label: string | ComponentChildren,
-
-	id?: string
-	path: string
-
-	state: [{ [key: string]: any }, (delta: Partial<{ [key: string]: any }>) => void]
-
-}
-
 export function ToolOptions({
 
 	label,
@@ -44,7 +33,16 @@ export function ToolOptions({
 
 	state: [query, putQuery]
 
-}: Props) {
+}: {
+
+	label: string | ComponentChildren,
+
+	id?: string
+	path: string
+
+	state: [{ [key: string]: any }, (delta: Partial<{ [key: string]: any }>) => void]
+
+}) {
 
 	const [collapsed, setCollapsed]=useState(false);
 

@@ -18,7 +18,8 @@ import { ComponentChildren, render } from "preact";
 import "../code/fonts/roboto.css";
 import "../code/index.css";
 import { active, hash, Router, useRouter } from "../code/nests/router";
-import { TilePage } from "../code/tiles/page";
+import { ToolPage } from "../code/tiles/page";
+import { ToolPane } from "../code/tiles/pane";
 import "./index.css";
 
 
@@ -42,16 +43,20 @@ function DemoPage({
 	children?: ComponentChildren
 
 }) {
-	return <TilePage side={<>
+	return <ToolPage
 
-		<a {...active(link("/"))}>home</a>
-		<a {...active(link("/lucide/*"))}>lucide</a>
+		pane={<ToolPane header={"Metreeca/Tile Demo"}>
 
-	</>}>{
+			<a {...active(link("/"))}>home</a>
+			<a {...active(link("/lucide/*"))}>lucide</a>
+
+		</ToolPane>}
+
+	>{
 
 		children
 
-	}</TilePage>;
+	}</ToolPage>;
 }
 
 render(<Router store={store} routes={{

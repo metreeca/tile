@@ -14,75 +14,141 @@
  * limitations under the License.
  */
 
+:root {
+
+	--tool-page--color: #000;
+	--tool-page--background-color: #FFF;
+	--tool-page--header-box-shadow: 0 0 var(--tool-page--header-box-shadow-size) var(--tool-page--header-box-shadow-size);
+	--tool-page--header-box-shadow-size: 0.75rem;
+
+	--tool-page-tabs-color: #999;
+	--tool-page-tabs-background-color: #FFF;
+
+	--tool-page-pane-width: 20rem;
+	--tool-page-pane-border-color: #DDD;
+	--tool-page-pane-background-color: #F1F2F4;
+
+}
+
 tool-page {
+
+	display: block;
+
+	position: relative;
 
 	width: 100%;
 	height: 100%;
 
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
+	flex-shrink: 1;
+	flex-grow: 1;
 
-	& > * {
+	overflow: hidden;
 
-		position: relative; /* support page-relative content positioning display: flex; flex-direction: column; */
+	color: var(--tool-page--color);
+	background-color: var(--tool-page--background-color);
+
+	& > aside, & > main {
+
+		display: flex;
+		flex-direction: row;
 		align-items: stretch;
 
-		overflow-x: hidden;
-		overflow-y: auto;
+		position: absolute;
 
-		& > header {
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
 
-			flex-shrink: 0;
+		overflow: hidden;
 
-			position: sticky;
-			top: 0;
+		& > * {
 
 			display: flex;
-			flex-direction: row;
-			align-items: center;
+			flex-direction: column;
+			align-items: stretch;
 
-			z-index: 1;
+			overflow-x: hidden;
+			overflow-y: auto;
 
-			height: 4rem;
+			transform: scale(1); /* z-context */
 
-			box-shadow: 0 0 0.5rem 0.5rem #FFF; /* !!! factor */
-			white-space: nowrap;
-			font-size: 125%;
+			& > * {
 
-			& > h1 {
+				flex-shrink: 0;
 
-				flex-grow: 1;
-
-				& > * + a::before {
-
-					content: "›";
-					padding: 0 0.25em;
-
-				}
-
-				& > a::before {
-					text-decoration: none !important;
-				}
-
+				padding-left: 1rem;
+				padding-right: 1rem;
 			}
 
-			& > nav {
+			& > header {
+
+				z-index: 1;
+
+				position: sticky;
+				top: 0;
 
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 
+				height: 4rem;
+
+				white-space: nowrap;
+
+				font-size: 1.5rem;
+
+				& > button:empty {
+
+					flex-shrink: 0;
+
+					display: block;
+
+					width: 1em;
+					height: 1em;
+
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: 50%;
+
+				}
+
 			}
 
-		}
+			& > section {
 
-		& > section {
+				flex-grow: 1;
 
-			flex-grow: 1;
+				position: relative; /* support absolute content positioning  */
 
-			padding-top: 1rem;
-			padding-bottom: 1rem;
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+
+				padding-top: calc(2 * var(--tool-page--header-box-shadow-size));
+				padding-bottom: 1rem;
+
+				overflow-x: auto;
+
+			}
+
+			& > footer {
+
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+
+				height: 4rem;
+
+				& a {
+					color: inherit;
+				}
+
+				& > * + * {
+					margin-left: 0.25em;
+				}
+
+			}
 
 		}
 
@@ -90,51 +156,82 @@ tool-page {
 
 	& > aside {
 
-		flex-shrink: 0;
+		white-space: nowrap;
 
-		width: 17.5rem;
+		background-color: rgba(0, 0, 0, 0.33); /* shadow main area */
 
-		border-right-style: solid;
-		border-color: #EEE;
-		background-color: #F4F5F6;
-
-		& > * {
-
-			padding-left: 1.5rem;
-			padding-right: 1.5rem;
-
+		&.show {
+			z-index: 1;
 		}
 
-		& > header {
+		& > nav {
 
-			box-shadow: 0 0 0.5rem 0.5rem #F4F5F6; /* !!! factor */
+			flex-shrink: 0;
 
-			& > a {
+			border-right: solid 1px var(--tool-page-pane-border-color);
 
-				width: 1em;
-				height: 1em;
+			color: var(--tool-page-tabs-color);
+			background-color: var(--tool-page-tabs-background-color);
 
-				margin-right: auto;
+			& > * {
+				font-size: 2.5rem; /* here to override generic header */
+			}
 
-				background-size: contain;
-				background-repeat: no-repeat;
-				background-position: center;
+			& > header {
 
-				transform: translateX(-10%) scale(2);
+				justify-content: center;
+
+				box-shadow: var(--tool-page--header-box-shadow) var(--tool-page-tabs-background-color);
+
+				& > * {
+					flex-grow: 1;
+				}
 
 			}
 
-			& > h1 {
-				padding-left: 0.75em;
+			& > section {
+
+				align-items: center;
+
+				& > hr {
+
+					align-self: stretch;
+
+					margin-top: 1.5rem;
+					margin-bottom: 1.5rem;
+
+					&:last-child {
+						display: none;
+					}
+
+				}
+
+				& > *:not(hr) + *:not(hr) {
+					margin-top: 0.5rem;
+				}
+
+			}
+
+			& > footer {
+				justify-content: center;
 			}
 
 		}
 
-		& > section {
+		& > div {
 
-			& > a {
-				display: block;
-				width: 100%;
+			background-color: var(--tool-page-pane-background-color);
+
+			& > header {
+				box-shadow: var(--tool-page--header-box-shadow) var(--tool-page-pane-background-color);
+			}
+
+			& > section {
+				font-size: 90%;
+			}
+
+			& > footer {
+				color: #999;
 			}
 
 		}
@@ -143,14 +240,222 @@ tool-page {
 
 	& > main {
 
-		flex-grow: 1;
+		& > div {
 
-		& > * {
+			flex-grow: 1;
 
-			max-width: 75rem;
+			& > header {
 
-			padding-left: 1.5rem;
-			padding-right: 1.5rem;
+				box-shadow: var(--tool-page--header-box-shadow) var(--tool-page--background-color);
+
+				& > * {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+				}
+
+				& > button {
+					margin-right: 0.5em;
+				}
+
+				& > h1 {
+
+					flex-grow: 1;
+
+					overflow: hidden;
+					text-overflow: ellipsis;
+
+					& > * {
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+
+					& > *:not(:last-child) {
+						font-weight: 700;
+					}
+
+					& > *:not(:first-child) {
+
+						font-weight: 500;
+
+						&::before {
+							content: "›";
+							padding: 0 0.25em;
+						}
+
+					}
+
+					& > *:not(a):not(span) {
+						flex-grow: 1;
+					}
+
+				}
+
+				& > nav {
+
+					flex-direction: row-reverse;
+
+					& > * {
+
+						margin-left: 0.25em;
+
+						font-size: 110%;
+
+					}
+
+					& > *:not(hr) {
+
+						width: 1.5em;
+						height: 1.5em;
+
+						border-radius: 1em;
+						border: solid 1px var(--tool-page-pane-border-color);
+
+						background-color: var(--tool-page-pane-background-color);
+
+					}
+
+					& > hr {
+						display: none;
+					}
+
+					& > :not(:first-child):not(:last-child) {
+						display: none;
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+	@media only screen and (min-width: 640px) {
+
+		& > aside {
+
+			& > div {
+
+				flex-shrink: 0;
+				flex-grow: 0;
+
+				width: var(--tool-page-pane-width);
+				border-right: solid 1px var(--tool-page-pane-border-color);
+			}
+
+		}
+
+	}
+
+	@media only screen and (min-width: 960px), print {
+
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+
+		&.main > aside > div {
+			display: none;
+		}
+
+		& > aside, & > main {
+
+			position: relative;
+
+			& > * {
+
+				& > header {
+					padding-top: 1rem;
+				}
+
+			}
+
+		}
+
+
+		& > aside {
+
+			flex-shrink: 0;
+
+			&.hide > div {
+				display: none;
+			}
+
+			& > nav {
+
+				& > * {
+					padding-left: 2rem;
+					padding-right: 2rem;
+				}
+
+				& > header {
+
+					& > button:empty {
+						transform: scale(1.1);
+					}
+
+				}
+
+			}
+
+			& > div {
+
+				& > * {
+					padding-left: 1.5rem;
+					padding-right: 1.5rem;
+				}
+
+			}
+
+		}
+
+		& > main {
+
+			flex-grow: 1;
+
+			& > div {
+
+				& > * {
+					padding-left: 2rem;
+					padding-right: 1.5rem;
+				}
+
+				& > header {
+
+					& > button:empty {
+						display: none;
+					}
+
+					& > nav {
+
+						& > hr {
+
+							border: none;
+
+							margin-left: 0.5em;
+							margin-right: 0.25em;
+
+							&::after {
+								content: '';
+								border-left: solid 1px var(--tool-page-pane-border-color);
+							}
+
+						}
+
+						& > :not(:first-child):not(:last-child) {
+							display: block;
+						}
+
+						& > :last-child {
+							display: none;
+						}
+
+					}
+
+				}
+
+			}
 
 		}
 

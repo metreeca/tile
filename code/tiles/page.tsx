@@ -15,60 +15,105 @@
  */
 
 import { ComponentChildren, createElement } from "preact";
-import { label } from "../graphs";
+import { classes } from "..";
+import { useValue } from "../hooks/value";
+import { MoreHorizontal } from "./icon";
 import "./page.css";
 
-const title=document.title;
-const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement).href; // !!! handle nulls
-const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement).content; // !!! handle nulls
+var expanded: boolean | undefined;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface Props {
+export const title=document.title;
+export const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement).href; // !!! handle nulls
+export const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement).content; // !!! handle nulls
 
-	home?: ComponentChildren
-	side?: ComponentChildren
 
-	name?: ComponentChildren
-	menu?: ComponentChildren
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	children?: ComponentChildren
+export function ToolPage({
 
-}
+	logo,
+	tabs,
+	user,
 
-export function TilePage({
+	pane,
 
-	home,
-	side,
-
-	name=<a href={""}>{label("")}</a>,
+	item,
 	menu,
 
 	children
 
-}: Props) {
+}: {
+
+	logo?: string
+	tabs?: ComponentChildren
+	user?: ComponentChildren
+
+	pane?: ComponentChildren
+
+	item?: ComponentChildren
+	menu?: ComponentChildren
+
+	children?: ComponentChildren
+
+}) {
+
+	const [tray, setTray]=useValue(expanded);
+
+	const image={ style: { backgroundImage: `url(${logo || icon})` } }; // !!! fallback
 
 	return createElement("tool-page", {}, <>
 
-		<aside>
+		<aside class={classes({ "show": tray === true, "hide": tray === false })} onClick={e =>
+			(e.target === e.currentTarget || (e.target as Element).closest("a")) && setTray(expanded)
+		}>
 
-			<header>{home}</header>
-			<section>{side}</section>
+			<nav>
+
+				<header>
+					<button onClick={() => setTray(expanded=tray === false ? undefined : false)} {...image}/>
+				</header>
+
+				<section onClick={e => (e.target as Element).closest("button") && setTray(true)}>
+					{tabs}
+				</section>
+
+				<footer>{user}</footer>
+
+			</nav>
+
+			{pane}
 
 		</aside>
 
 		<main>
 
-			<header>
-				<h1>{name}</h1>
-				<nav>{menu}</nav>
-			</header>
+			<div>
 
-			<section>{children}</section>
+				<header>
+
+					<button onClick={() => setTray(true)} {...image}/>
+
+					<h1>{item}</h1>
+
+					<nav>
+						{menu}
+						<button><MoreHorizontal/></button>
+						{/* !!! handle on mobile view */}
+					</nav>
+
+				</header>
+
+				<section>
+					{children}
+				</section>
+
+			</div>
 
 		</main>
 
 	</>);
-}
 
+}

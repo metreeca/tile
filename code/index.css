@@ -20,6 +20,8 @@
 	--tool--border-color: #CCC;
 	--tool--border-width: 1px;
 
+	--tool--font-size: 18pt;
+
 	--tool--color: #000;
 
 	--tool--color-accent-dark: #345;
@@ -68,6 +70,7 @@ html, body {
 }
 
 body {
+	font-size: var(--tool--font-size);
 	color: var(--tool--color);
 	background-color: var(--tool--background-color);
 }

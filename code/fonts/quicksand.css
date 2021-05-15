@@ -14,34 +14,33 @@
  * limitations under the License.
  */
 
-@import url(https://fonts.googleapis.com/css?family=Roboto:300|Roboto+Mono:300|Roboto+Condensed:300,400,500);
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap");
 
 body {
-	font-family: Roboto, "Helvetica", Arial, sans-serif;
-	font-size: 18pt;
+	font-family: Quicksand, Helvetica, Arial, sans-serif;
 	font-weight: 300;
 	line-height: 1.2;
 }
 
-header, footer, h1, h2, h3, dt, th, a, strong {
-	font-family: "Roboto Condensed", "Helvetica", Arial, sans-serif
-}
-
-code {
-	font-family: "Roboto Mono", "Helvetica", Arial, sans-serif
+h1, h2, h3 {
+	font-weight: 700;
 }
 
 dt, th {
 	font-size: 90%;
-	font-weight: 500;
+	font-weight: 700;
 }
+
+/*code {
+	font-family: "Roboto Mono", "Helvetica", Arial, sans-serif
+}*/
 
 strong {
 	font-weight: 500;
 }
 
 a {
-	font-weight: 400;
+	font-weight: 500;
 }
 
 button {

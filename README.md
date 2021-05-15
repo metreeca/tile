@@ -7,8 +7,7 @@ APIs published with the [Metreeca/Link](https://github.com/metreeca/link) framew
 
 # Getting Started
 
-> :warning:  
-> **Work in progress / Watch this repo or follow [@metreeeca](https://twitter.com/metreeca) to stay updated…**
+> :warning: **Work in progress / Watch this repo or follow [@metreeeca](https://twitter.com/metreeca) to stay updated…**
 
 # Support
 

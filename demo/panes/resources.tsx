@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { render } from "preact";
-import "../code/fonts/quicksand.css";
-import "../code/index.css";
-import { Router } from "../code/nests/router";
-import "./index.css";
-import { DemoPage } from "./tiles/page";
+import { active } from "../../code";
+import { useRouter } from "../../code/nests/router";
+import { ToolPane } from "../../code/tiles/pane";
 
+export function ToolResources() {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	const { link }=useRouter();
 
-render(<Router routes={{
+	return <ToolPane header={<a href={"https://github.com/metreeca/tile"} target={"_blank"}>Metreeca/Tile</a>}>
 
-	"/*": () => <DemoPage/>
+		<a {...active(link("/"))}>home</a>
+		<a {...active(link("/lucide/*"))}>lucide</a>
 
-}}/>, document.body);
+	</ToolPane>;
+}

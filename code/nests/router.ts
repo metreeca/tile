@@ -18,13 +18,12 @@ import { createContext, createElement, FunctionalComponent, FunctionComponent, V
 import { useContext, useEffect, useMemo, useReducer } from "preact/hooks";
 import { label } from "../graphs";
 
-const base=new URL((document.querySelector("base") as HTMLBaseElement)?.href || "", location.href).href.replace(/(^.*?)\/?$/, "$1"); // remove trailing slash
-
-
-const root=`^${base}([/#].*)?`;
-const name=document.title;
-
 const context=createContext<Router>({
+
+	name(label?: string): string {
+		return label === undefined ? name : (document.title=join(label, name));
+	},
+
 
 	link(route: string): string {
 		return route;
@@ -58,6 +57,25 @@ window.addEventListener("error", e => {
 window.addEventListener("unhandledrejection", e => {
 	window.alert(`;-( Internal error… please let us know about the issue. Thanks!\n\n${e.reason}`);
 });
+
+
+function join(label: string, title: string) {
+	return `${label}${label && title ? " | " : ""}${title}`;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const base=new URL(document.querySelector("base")?.href || "", location.href).href.replace(
+	/(^.*?)\/?$/, "$1" // remove trailing slash
+);
+
+export const root=`^${base}([/#].*)?`;
+
+
+export const name=document.title;
+export const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement).href; // !!! handle nulls
+export const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement).content; // !!! handle nulls
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +151,9 @@ export interface Store {
 
 export interface Router {
 
+	name(label?: string): string
+
+
 	link(route: string): string
 
 
@@ -170,30 +191,6 @@ export function hash(): Store {
 	return (route?: string) => route === undefined
 		? location.hash.substring(1)
 		: route ? `#${route}` : location.hash;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export function title(title: string): void {
-	document.title=`${title}${title && name ? " | " : ""}${name}`;
-}
-
-export function active(link: string) {
-
-	const hash=link.startsWith("#");
-	const tail=link.endsWith("/*");
-
-	const href=tail ? link.substr(0, link.length-1) : link;
-
-	function matches(target: string, current: string) {
-		return tail ? current.startsWith(target) : current === target;
-	}
-
-	return {
-		href: href,
-		active: matches(href, hash ? location.hash : location.href)
-	};
 }
 
 
@@ -276,15 +273,21 @@ export function Router({
 
 			history.replaceState(history.state, document.title, store(route)); // possibly altered by redirections
 
-			title(label(location.pathname));
+			document.title=join(label(location.pathname), name); // !!! update history
 
 			return createElement(context.Provider, {
 
 				value: {
 
+					name(label?: string): string {
+						return label === undefined ? name : (document.title=join(label, name)); // !!! update history
+					},
+
+
 					link(route: string): string {
 						return store(route);
 					},
+
 
 					push(route: string, state?: any): void {
 						update(history.pushState(state, document.title, store(route)));

@@ -14,18 +14,28 @@
  * limitations under the License.
  */
 
-import { render } from "preact";
-import "../code/fonts/quicksand.css";
-import "../code/index.css";
-import { Router } from "../code/nests/router";
-import "./index.css";
-import { DemoPage } from "./tiles/page";
+import { ComponentChildren } from "preact";
+import { ToolPage } from "../../code/tiles/page";
+import { ToolResources } from "../panes/resources";
 
+export function DemoPage({
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	children
 
-render(<Router routes={{
+}: {
 
-	"/*": () => <DemoPage/>
+	children?: ComponentChildren
 
-}}/>, document.body);
+}) {
+
+	return <ToolPage
+
+		pane={<ToolResources/>}
+
+	>{
+
+		children
+
+	}</ToolPage>;
+
+}

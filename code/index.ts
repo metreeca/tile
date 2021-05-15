@@ -32,6 +32,23 @@ export function classes(classes: { [name: string]: boolean }) {
 		.join(" ");
 }
 
+export function active(link: string) {
+
+	const hash=link.startsWith("#");
+	const tail=link.endsWith("/*");
+
+	const href=tail ? link.substr(0, link.length-1) : link;
+
+	function matches(target: string, current: string) {
+		return tail ? current.startsWith(target) : current === target;
+	}
+
+	return {
+		href: href,
+		active: matches(href, hash ? location.hash : location.href)
+	};
+}
+
 
 export function normalize(text: string) {
 	return text.trim().replace(/\s+/g, " ");

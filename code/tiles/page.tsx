@@ -17,17 +17,11 @@
 import { ComponentChildren, createElement } from "preact";
 import { classes } from "..";
 import { useValue } from "../hooks/value";
+import { icon } from "../nests/router";
 import { MoreHorizontal } from "./icon";
 import "./page.css";
 
-var expanded: boolean | undefined;
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const title=document.title;
-export const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement).href; // !!! handle nulls
-export const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement).content; // !!! handle nulls
+let expanded: boolean | undefined;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -19,9 +19,11 @@ import { useEffect, useState } from "preact/hooks";
 
 export function useValue<V>(value: V): [V, (value: V) => void] {
 
-	const [state, setState]=useState<V>(value);
+	const init=value instanceof Function ? () => value : value;
 
-	useEffect(() => setState(value), [value]);
+	const [state, setState]=useState<V>(init);
+
+	useEffect(() => setState(init), [value]);
 
 	return [state, setState];
 

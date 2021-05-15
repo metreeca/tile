@@ -15,14 +15,22 @@
  */
 
 :root {
-	--tile-icon-size: 1em;
+	--tool-icon-size: 1.5ex;
 }
 
 svg[viewBox="0 0 24 24"] { /* ;-( match lucide icons */
 
-	width: var(--tile-icon-size);
-	height: var(--tile-icon-size);
+	display: inline-block;
 
-	vertical-align: middle;
+	width: var(--tool-icon-size);
+	height: var(--tool-icon-size);
+
+	@nest a > &, button > & {
+
+		&:not(:only-child) {
+			margin-right: 0.5em;
+		}
+
+	}
 
 }

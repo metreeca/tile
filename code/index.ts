@@ -23,6 +23,21 @@ import { LinkGraph } from "./graphs/link";
 export const Graph=createContext(LinkGraph());
 
 
+//// Helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function classes(classes: { [name: string]: boolean }) {
+	return Object.entries(classes)
+		.filter(entry => entry[1])
+		.map(entry => entry[0])
+		.join(" ");
+}
+
+
+export function normalize(text: string) {
+	return text.trim().replace(/\s+/g, " ");
+}
+
+
 //// Events ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export type TargetedHandler<E extends TargetedEvent>={

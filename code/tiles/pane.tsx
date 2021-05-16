@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-import { copy, useRouter } from "../../code/nests/router";
-import { ToolPane } from "../../code/tiles/pane";
+import { ComponentChildren } from "preact";
 
-export function ToolResources() {
+export function ToolPane({
 
-	const { active }=useRouter();
+	header,
+	footer,
 
-	return <ToolPane
+	children
 
-		header={<a href={"/"}>Metreeca/Tile</a>}
-		footer={<small>{copy}</small>}
+}: {
 
-	>
+	header?: ComponentChildren
+	footer?: ComponentChildren
 
-		<a {...active("/loaders")}>Loaders</a>
+	children?: ComponentChildren
 
-		<a {...active("/uno/*")}>uno</a>
-		<a {...active("/due/*")}>due</a>
-		<a {...active("/tre/*")}>tre</a>
+}) {
+	return <>
 
-	</ToolPane>;
+		<header>{header}</header>
+
+		<section>{children}</section>
+
+		<footer>{footer}</footer>
+
+	</>;
 }

@@ -110,28 +110,3 @@ export function ToolPage({
 	</>);
 }
 
-export function ToolPane({
-
-	header,
-	footer,
-
-	children
-
-}: {
-
-	header?: ComponentChildren
-	footer?: ComponentChildren
-
-	children?: ComponentChildren
-
-}) {
-	return <>
-
-		<header>{header}</header>
-
-		<section>{children}</section>
-
-		<footer>{footer}</footer>
-
-	</>;
-}

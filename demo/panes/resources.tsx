@@ -15,7 +15,7 @@
  */
 
 import { copy, useRouter } from "../../code/nests/router";
-import { ToolPane } from "../../code/tiles/pane";
+import { ToolPane } from "../../code/tiles/page";
 
 export function ToolResources() {
 

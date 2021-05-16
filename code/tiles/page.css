@@ -220,6 +220,8 @@ tool-page {
 
 		& > div {
 
+			width: var(--tool-page-pane-width);
+
 			background-color: var(--tool-page-pane-background-color);
 
 			& > header {
@@ -341,7 +343,6 @@ tool-page {
 				flex-shrink: 0;
 				flex-grow: 0;
 
-				width: var(--tool-page-pane-width);
 				border-right: solid 1px var(--tool-page-pane-border-color);
 			}
 

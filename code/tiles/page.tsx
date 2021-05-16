@@ -15,13 +15,14 @@
  */
 
 import { ComponentChildren, createElement } from "preact";
-import { classes } from "..";
 import { useValue } from "../hooks/value";
 import { icon } from "../nests/router";
 import { MoreHorizontal } from "./icon";
 import "./page.css";
 
-let expanded: boolean | undefined;
+let expansion: Tray;
+
+const enum Tray { Show="show", Hide="hide", Flip="flip" }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,23 +55,23 @@ export function ToolPage({
 
 }) {
 
-	const [tray, setTray]=useValue(expanded);
+	const [tray, setTray]=useValue(expansion);
 
-	const image={ style: { backgroundImage: `url(${logo || icon})` } }; // !!! fallback
+	const image={ style: { backgroundImage: `url(${logo || icon})` } };
 
 	return createElement("tool-page", {}, <>
 
-		<aside class={classes({ "show": tray === true, "hide": tray === false })} onClick={e =>
-			(e.target === e.currentTarget || (e.target as Element).closest("a")) && setTray(expanded)
+		<aside class={tray === Tray.Flip ? undefined : tray} onClick={e =>
+			(e.target === e.currentTarget || (e.target as Element).closest("a")) && setTray(expansion)
 		}>
 
 			<nav>
 
 				<header>
-					<button onClick={() => setTray(expanded=tray === false ? undefined : false)} {...image}/>
+					<button onClick={() => setTray(expansion=(tray === Tray.Hide) ? Tray.Flip : Tray.Hide)} {...image}/>
 				</header>
 
-				<section onClick={e => (e.target as Element).closest("button") && setTray(true)}>
+				<section onClick={e => (e.target as Element).closest("button") && setTray(Tray.Show)}>
 					{tabs}
 				</section>
 
@@ -78,7 +79,7 @@ export function ToolPage({
 
 			</nav>
 
-			{pane}
+			<div>{pane}</div>
 
 		</aside>
 
@@ -88,7 +89,7 @@ export function ToolPage({
 
 				<header>
 
-					<button onClick={() => setTray(true)} {...image}/>
+					<button onClick={() => setTray(Tray.Show)} {...image}/>
 
 					<h1>{item}</h1>
 
@@ -100,14 +101,37 @@ export function ToolPage({
 
 				</header>
 
-				<section>
-					{children}
-				</section>
+				<section>{children}</section>
 
 			</div>
 
 		</main>
 
 	</>);
+}
 
+export function ToolPane({
+
+	header,
+	footer,
+
+	children
+
+}: {
+
+	header?: ComponentChildren
+	footer?: ComponentChildren
+
+	children?: ComponentChildren
+
+}) {
+	return <>
+
+		<header>{header}</header>
+
+		<section>{children}</section>
+
+		<footer>{footer}</footer>
+
+	</>;
 }

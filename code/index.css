@@ -24,8 +24,8 @@
 
 	--tool--color: #000;
 
-	--tool--color-accent-dark: #345;
 	--tool--color-accent-lite: #D60;
+	--tool--color-accent-dark: #345;
 
 	--tool--color-enabled: #567;
 	--tool--color-disabled: #CCC;
@@ -37,8 +37,6 @@
 	--tool--background-color: #FFF;
 
 	--tool--box-shadow-focus: 0 0 3px 1px var(--tool--color-focus);
-
-	--tool--spinning-period: 1s;
 
 }
 
@@ -184,16 +182,4 @@ button {
 
 *::placeholder {
 	color: #999;
-}
-
-
-.spinning {
-	animation: tool-spinner var(--tool--spinning-period) infinite linear;
-}
-
-
-@keyframes spinning {
-	100% {
-		transform: rotate(360deg);
-	}
 }

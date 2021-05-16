@@ -59,7 +59,7 @@ export function ToolPanel({
 
 	return createElement("tool-panel", { class: classes({ "tree": nest, "ease": ease }) }, <>
 
-		<ToolEntry line={rule}
+		<ToolEntry rule={rule}
 
 			name={typeof name === "string" ? <button onClick={toggle}>{name}</button> : name}
 

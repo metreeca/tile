@@ -21,15 +21,21 @@ import { ToolResources } from "../panes/resources";
 
 export function DemoPage({
 
+	item,
+	menu,
+
 	children
 
 }: {
+
+	item?: ComponentChildren
+	menu?: ComponentChildren
 
 	children?: ComponentChildren
 
 }) {
 
-	return <ToolPage
+	return <ToolPage item={item} menu={menu}
 
 		pane={<ToolResources/>}
 

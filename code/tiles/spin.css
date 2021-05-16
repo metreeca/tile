@@ -16,45 +16,59 @@
 
 :root {
 
-	--tool-spinner-size: 1em;
-	--tool-spinner-thickness: 0.2em;
-	--tool-spinner-color: #DDD;
-	--tool-spinner-period: 1s;
+	--tool-spin-size: inherit;
+	--tool-spin-thickness: inherit;
+	--tool-spin-color: inherit;
+	--tool-spin-period: inherit;
 
 }
 
-tool-spinner {
+tool-spin {
 
 	display: grid;
 
 	width: 100%;
 	height: 100%;
 
-	&::before {
+	&:empty::before {
 
 		content: "";
 
 		display: block;
 		box-sizing: border-box;
 
-		width: var(--tool-spinner-size);
-		height: var(--tool-spinner-size);
+		width: var(--tool-spin-size);
+		height: var(--tool-spin-size);
 
 		margin: auto;
 
 		border-radius: 50%;
-		border-width: var(--tool-spinner-thickness);
+		border-width: var(--tool-spin-thickness);
 		border-style: solid;
 
-		border-color: transparent var(--tool-spinner-color) var(--tool-spinner-color);
+		border-color: transparent var(--tool-spin-color) var(--tool-spin-color);
 
-		animation: tool-spinner var(--tool-spinner-period) infinite linear;
+		animation: tool-spin var(--tool-spin-period) infinite linear;
+
+	}
+
+	& > svg[viewBox="0 0 24 24"] {
+
+		width: var(--tool-spin-size);
+		height: var(--tool-spin-size);
+
+		margin: auto;
+
+		color: var(--tool-spin-color);
+		stroke-width: var(--tool-spin-thickness);
+
+		animation: tool-spin var(--tool-spin-period) infinite linear;
 
 	}
 
 }
 
-@keyframes tool-spinner {
+@keyframes tool-spin {
 	100% {
 		transform: rotate(360deg);
 	}

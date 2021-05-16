@@ -28,6 +28,8 @@ export function ToolResources() {
 
 	>
 
+		<a {...active("/loaders")}>Loaders</a>
+
 		<a {...active("/uno/*")}>uno</a>
 		<a {...active("/due/*")}>due</a>
 		<a {...active("/tre/*")}>tre</a>

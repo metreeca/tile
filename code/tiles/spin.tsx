@@ -14,20 +14,41 @@
  * limitations under the License.
  */
 
-import { render } from "preact";
-import "../code/fonts/quicksand.css";
-import "../code/index.css";
-import { hash, Router } from "../code/nests/router";
-import "./index.css";
-import { DemoLoaders } from "./pages/loaders";
-import { DemoWork } from "./pages/work";
+import { createElement } from "preact";
 
-render(<Router store={hash()} routes={{
+import { RefreshCw } from "./icon";
+import "./spin.css";
 
-	"": "/",
 
-	"/loaders": () => <DemoLoaders/>,
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	"/*": () => <DemoWork/>
+export function ToolSpin({
 
-}}/>, document.body);
+	size="1em",
+	thickness="5%",
+	color="#999",
+	period="1.5s"
+
+}: {
+
+	size?: string
+	thickness?: string
+	color?: string
+	period?: string,
+
+}) {
+
+	return createElement("tool-spin", {
+
+		style: {
+
+			"--tool-spin-size": size,
+			"--tool-spin-color": color,
+			"--tool-spin-period": period,
+			"--tool-spin-thickness": thickness
+
+		}
+
+	}, <RefreshCw/>);
+
+}

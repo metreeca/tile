@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-import "./spinner.css";
 
+import { createElement } from "preact";
+import "./dots.css";
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export function ToolDots({
 
-export interface Props {
+	size="0.5em",
+	color="#999",
+	period="1.5s"
+
+}: {
 
 	size?: string
 	color?: string
-	period?: string,
-	thickness?: string
+	period?: string
 
-}
+}) {
 
-export function ToolSpinner({
+	return createElement("tool-dots", {
 
-	size="1em",
-	color="#DDD",
-	period="1s",
-	thickness="0.2em"
+		style: {
 
-}: Props) {
+			"--tool-dots-size": size,
+			"--tool-dots-color": color,
+			"--tool-dots-period": period
 
-	return (// @ts-ignore
-		<tool-spinner style={{
+		}
 
-			"--tool-spinner-size": size,
-			"--tool-spinner-color": color,
-			"--tool-spinner-period": period,
-			"--tool-spinner-thickness": thickness
-
-		}}/>
-	);
+	}, <div/>);
 
 }

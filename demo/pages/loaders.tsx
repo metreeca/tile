@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import { render } from "preact";
-import "../code/fonts/quicksand.css";
-import "../code/index.css";
-import { hash, Router } from "../code/nests/router";
-import "./index.css";
-import { DemoLoaders } from "./pages/loaders";
-import { DemoWork } from "./pages/work";
+import { useRouter } from "../../code/nests/router";
+import { ToolDots } from "../../code/tiles/dots";
+import { ToolSpin } from "../../code/tiles/spin";
+import { DemoPage } from "../tiles/page";
 
-render(<Router store={hash()} routes={{
+export function DemoLoaders() {
 
-	"": "/",
+	const { native }=useRouter();
 
-	"/loaders": () => <DemoLoaders/>,
+	return <DemoPage item={"Loaders"}>
 
-	"/*": () => <DemoWork/>
+		<ToolSpin/>
+		<ToolDots/>
 
-}}/>, document.body);
+	</DemoPage>;
+}

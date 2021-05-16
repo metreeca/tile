@@ -17,6 +17,8 @@
 import { createContext } from "preact";
 import { LinkGraph } from "./graphs/link";
 
+export type Primitive=undefined | null | boolean | number | string
+
 
 //// Contexts //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +32,53 @@ export function classes(classes: { [name: string]: boolean }) {
 		.filter(entry => entry[1])
 		.map(entry => entry[0])
 		.join(" ");
+}
+
+/**
+ * Creates a query string.
+ *
+ * @param query the query parameters; null values and array items are ignored
+ *
+ * @returns a query string including a leading question mark, if `query` is not empty; an empty string, otherwise
+ */
+export function query(query: { [key: string]: Primitive | Primitive[] }) {
+
+	const parameters=new URLSearchParams();
+
+	Object.entries(query).forEach(([key, value]) => {
+
+		function append(key: string, value: any) {
+			value ?? parameters.append(key, value.toString());
+		}
+
+		if ( Array.isArray(value) ) {
+
+			value.forEach(value => append(key, value));
+
+		} else if ( value ) {
+
+			append(key, value);
+
+		}
+
+	});
+
+	const string=parameters.toString();
+
+	return string ? "?"+string : string;
+}
+
+
+/**
+ * Creates a regular expression matching a set of stemmed keywords.
+ *
+ * @param keywords the keywords to be matched
+ *
+ * @returns a regular expression matching the word stems in `keywords` ignoring case and non-word characters
+ */
+export function like(keywords: string) {
+	return new RegExp((keywords.match(/\w+/g) || [])
+		.reduce((pattern, stem) => `${pattern}\\b${stem}.*`, ".*"), "i");
 }
 
 

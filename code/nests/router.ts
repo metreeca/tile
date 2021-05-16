@@ -15,39 +15,14 @@
  */
 
 import { createContext, createElement, FunctionalComponent, FunctionComponent, VNode } from "preact";
-import { useContext, useEffect, useMemo, useReducer } from "preact/hooks";
+import { useContext, useEffect, useMemo } from "preact/hooks";
 import { label } from "../graphs";
+import { useUpdate } from "../hooks/update";
 
-const context=createContext<Router>({
+const active="active";
+const native="native";
 
-	name(label?: string): string {
-		return label === undefined ? name : (document.title=join(label, name));
-	},
-
-
-	link(route: string): string {
-		return route;
-	},
-
-
-	push(route: string, state?: any): void {
-		history.pushState(state, document.title, route);
-	},
-
-	swap(route: string, state?: any): void {
-		history.replaceState(state, document.title, route);
-	},
-
-
-	open(url: string, target: string=""): void {
-		window.open(url, target);
-	},
-
-	back(): void {
-		history.back();
-	}
-
-});
+const context=createContext<Router>(router({ store: path(), update: () => {} }));
 
 
 window.addEventListener("error", e => {
@@ -59,23 +34,15 @@ window.addEventListener("unhandledrejection", e => {
 });
 
 
-function join(label: string, title: string) {
-	return `${label}${label && title ? " | " : ""}${title}`;
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const base=new URL(document.querySelector("base")?.href || "", location.href).href.replace(
 	/(^.*?)\/?$/, "$1" // remove trailing slash
 );
 
-export const root=`^${base}([/#].*)?`;
-
-
 export const name=document.title;
-export const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement).href; // !!! handle nulls
-export const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement).content; // !!! handle nulls
+export const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement)?.href || ""; // !!! fallback
+export const copy=(document.querySelector("meta[name=copyright]") as HTMLMetaElement)?.content || "";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +121,9 @@ export interface Router {
 	name(label?: string): string
 
 
-	link(route: string): string
+	active(route: string): { href: string, [active]?: "" }
+
+	native(route: string): { href: string, [native]?: "" }
 
 
 	push(route: string, state?: any): void
@@ -178,7 +147,7 @@ export interface Router {
  */
 export function path(): Store {
 	return (route?: string) => route === undefined
-		? location.href.match(root) ? location.href.substring(base.length) : location.href
+		? relative(location.href) || location.href
 		: route ? route.startsWith("/") ? `${base}${route}` : `${base}/${route}` : location.pathname;
 }
 
@@ -219,7 +188,7 @@ export function Router({
 
 }) {
 
-	const [, update]=useReducer(v => v+1, 0);
+	const update=useUpdate();
 
 	const selector=useMemo(() => routes instanceof Function ? routes : compile(routes), []);
 
@@ -240,14 +209,22 @@ export function Router({
 	function click(e: MouseEvent) {
 		if ( !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) ) { // only plain events
 
-			const href=(e.target as Element).closest("a")?.href;
+			const anchor=(e.target as Element).closest("a");
 
-			if ( href?.match(root) ) { // only internal links
+			if ( anchor && anchor.getAttribute(native) === null ) { // only non-native anchors
 
-				e.preventDefault();
+				const route=relative(anchor.href);
 
-				update(history.pushState(history.state, document.title, href));
+				if ( route ) { // only internal routes
 
+					try { history.pushState(history.state, document.title, store(route)); } finally {
+
+						e.preventDefault();
+						update();
+
+					}
+
+				}
 			}
 		}
 	}
@@ -277,36 +254,7 @@ export function Router({
 
 			return createElement(context.Provider, {
 
-				value: {
-
-					name(label?: string): string {
-						return label === undefined ? name : (document.title=join(label, name)); // !!! update history
-					},
-
-
-					link(route: string): string {
-						return store(route);
-					},
-
-
-					push(route: string, state?: any): void {
-						update(history.pushState(state, document.title, store(route)));
-					},
-
-					swap(route: string, state?: any): void {
-						update(history.replaceState(state, document.title, store(route)));
-					},
-
-
-					open(url: string, target: string=""): void {
-						window.open(url, target);
-					},
-
-					back(): void {
-						history.back();
-					}
-
-				},
+				value: router({ store, update }),
 
 				children: selection
 
@@ -321,15 +269,26 @@ export function Router({
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function relative(href: string): string | undefined {
+	return href.match(`^${base}([/#].*)?`)?.[1];
+}
+
+function join(label: string, title: string, separator: string=" | "): string {
+	return `${label}${label && title ? separator : ""}${title}`;
+}
+
+
 function compile(table: Table): Switch {
 
 	function pattern(glob: string): string { // convert a glob pattern to a regular expression
 		return glob === "*" ? "^.*$" : `^${glob
+
 			.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") // escape special regex characters
 			.replace(/\\{(\w+)\\}/g, "(?<$1>[^/]+)") // convert glob named parameters
 			.replace(/\\{\\}/g, "(?:[^/]+)") // convert glob anonymous parameters
 			.replace(/\/\\\*$/, "(?<$>/.*)") // convert glob trailing path
-		}([/#?].*)?$`; // ignore trailing slash/query/hash
+
+		}([?#].*)?$`; // ignore trailing query/hash
 	}
 
 	const patterns: { [pattern: string]: FunctionComponent | string }={};
@@ -352,7 +311,9 @@ function compile(table: Table): Switch {
 		if ( typeof delegate === "string" ) {
 
 			return delegate.replace(/{(\w*)}|\/\*$/g, ($0, $1) => // replace wildcard references
-				$0 === "/*" ? match?.groups?.$ || "" : $1 ? match?.groups?.[$1] || "" : route
+				$0 === "/*" ? match?.groups?.$ || ""
+					: $1 ? match?.groups?.[$1] || ""
+					: route
 			);
 
 		} else {
@@ -363,4 +324,52 @@ function compile(table: Table): Switch {
 
 	};
 
+}
+
+
+function router({ store, update }: { store: Store, update: () => void }): Router {
+	return {
+
+		name(label?: string): string {
+			return label === undefined ? name : (document.title=join(label, name)); // !!! update history
+		},
+
+
+		active(route: string): { href: string, [active]?: "" } {
+
+			const wild=route.endsWith("*");
+
+			const href=wild ? route.substr(0, route.length-1) : route;
+
+			function matches(target: string, current: string) {
+				return wild ? current.startsWith(target) : current === target;
+			}
+
+			return { href: href, [active]: matches(href, store()) ? "" : undefined };
+
+		},
+
+		native(route: string): { href: string, [native]?: "" } {
+			return { href: route, [native]: "" };
+		},
+
+
+		push(route: string, state?: any): void {
+			try { history.pushState(state, document.title, store(route)); } finally { update(); }
+		},
+
+		swap(route: string, state?: any): void {
+			try { history.replaceState(state, document.title, store(route)); } finally { update(); }
+		},
+
+
+		open(url: string, target: string=""): void {
+			window.open(url, target);
+		},
+
+		back(): void {
+			history.back();
+		}
+
+	};
 }

@@ -17,15 +17,14 @@
 import { render } from "preact";
 import "../code/fonts/quicksand.css";
 import "../code/index.css";
-import { Router } from "../code/nests/router";
+import { hash, Router } from "../code/nests/router";
 import "./index.css";
-import { DemoPage } from "./tiles/page";
+import { DemoWork } from "./pages/work";
 
+render(<Router store={hash()} routes={{
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	"": "/",
 
-render(<Router routes={{
-
-	"/*": () => <DemoPage/>
+	"/*": () => <DemoWork/>
 
 }}/>, document.body);

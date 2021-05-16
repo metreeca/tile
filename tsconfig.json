@@ -14,7 +14,7 @@
 		"isolatedModules": true,
 		"declaration": true,
 		"removeComments": false,
-		"rootDir": "code",
+		"rootDirs": [ "code", "demo" ],
 		"outDir": "dist"
 	},
 	"include": [

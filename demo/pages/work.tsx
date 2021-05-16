@@ -14,31 +14,15 @@
  * limitations under the License.
  */
 
-import { ComponentChildren } from "preact";
-import { Github } from "../../code/tiles/icon";
-import { ToolPage } from "../../code/tiles/page";
-import { ToolResources } from "../panes/resources";
+import { useRouter } from "../../code/nests/router";
+import { DemoPage } from "../tiles/page";
 
-export function DemoPage({
+export function DemoWork() {
 
-	children
+	const { native }=useRouter();
+	return <DemoPage>
 
-}: {
+		<a {...native("/mao")}>mao</a>
 
-	children?: ComponentChildren
-
-}) {
-
-	return <ToolPage
-
-		pane={<ToolResources/>}
-
-		user={<a href={"https://github.com/metreeca/tile"} target={"_blank"}><Github/></a>}
-
-	>{
-
-		children
-
-	}</ToolPage>;
-
+	</DemoPage>;
 }

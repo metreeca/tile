@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-import { active } from "../../code";
-import { useRouter } from "../../code/nests/router";
+import { copy, useRouter } from "../../code/nests/router";
 import { ToolPane } from "../../code/tiles/pane";
 
 export function ToolResources() {
 
-	const { link }=useRouter();
+	const { active }=useRouter();
 
-	return <ToolPane header={<a href={"https://github.com/metreeca/tile"} target={"_blank"}>Metreeca/Tile</a>}>
+	return <ToolPane
 
-		<a {...active(link("/"))}>home</a>
-		<a {...active(link("/lucide/*"))}>lucide</a>
+		header={<a href={"/"}>Metreeca/Tile</a>}
+		footer={<small>{copy}</small>}
+
+	>
+
+		<a {...active("/uno/*")}>uno</a>
+		<a {...active("/due/*")}>due</a>
+		<a {...active("/tre/*")}>tre</a>
 
 	</ToolPane>;
 }

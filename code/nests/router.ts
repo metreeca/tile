@@ -34,6 +34,15 @@ window.addEventListener("unhandledrejection", e => {
 });
 
 
+function relative(href: string): string | undefined {
+	return href.match(`^${base}([/#].*)?`)?.[1];
+}
+
+function join(label: string, title: string, separator: string=" | "): string {
+	return `${label}${label && title ? separator : ""}${title}`;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const base=new URL(document.querySelector("base")?.href || "", location.href).href.replace(
@@ -267,16 +276,7 @@ export function Router({
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function relative(href: string): string | undefined {
-	return href.match(`^${base}([/#].*)?`)?.[1];
-}
-
-function join(label: string, title: string, separator: string=" | "): string {
-	return `${label}${label && title ? separator : ""}${title}`;
-}
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function compile(table: Table): Switch {
 
@@ -325,7 +325,6 @@ function compile(table: Table): Switch {
 	};
 
 }
-
 
 function router({ store, update }: { store: Store, update: () => void }): Router {
 	return {

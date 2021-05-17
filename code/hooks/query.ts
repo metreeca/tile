@@ -42,7 +42,23 @@ export function useQuery<Q extends Query>(initial: Q): [typeof initial, (delta: 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function query(query?: Query, defaults?: Query): Query {
-	if ( query ) {
+	if ( query === undefined ) {
+
+		const query: Query={};
+
+		new URLSearchParams(location.search.substring(1)).forEach((value, key) => {
+
+			const current=(query as any)[key];
+
+			(query as any)[key]=current === undefined ? value
+				: Array.isArray(current) ? [...current, value]
+					: [current, value];
+
+		});
+
+		return query;
+
+	} else {
 
 		const params=new URLSearchParams();
 
@@ -65,22 +81,6 @@ export function query(query?: Query, defaults?: Query): Query {
 		history.replaceState(history.state, document.title,
 			search ? `${location.pathname}?${search}` : location.pathname
 		);
-
-		return query;
-
-	} else {
-
-		const query: Query={};
-
-		new URLSearchParams(location.search.substring(1)).forEach((value, key) => {
-
-			const current=(query as any)[key];
-
-			(query as any)[key]=current === undefined ? value
-				: Array.isArray(current) ? [...current, value]
-					: [current, value];
-
-		});
 
 		return query;
 

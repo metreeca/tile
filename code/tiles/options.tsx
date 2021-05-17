@@ -16,7 +16,7 @@
 
 import { ComponentChildren, createElement } from "preact";
 import { useState } from "preact/hooks";
-import { label, model, Value } from "../graphs";
+import { frame, label, Value } from "../graphs";
 import { useTerms } from "../hooks/entry";
 import { X } from "./icon";
 import "./options.css";
@@ -137,14 +137,14 @@ export function ToolOptions({
 
 function option(value: any, count: number, selected: boolean, available: boolean, action: () => void) {
 
-	const key: Value=model(value) ? value.id : value; // !!! handle structured literals
+	const key: Value=frame(value) ? value.id : value; // !!! handle structured literals
 	const name=available ? "available" : "unavailable";
 
 	return <>
 
 		<input type="checkbox" checked={selected} onChange={action}/>
 
-		{model(value)
+		{frame(value)
 			? <a key={key} className={name} href={value.id}>{label(value)}</a>
 			: <span key={key} className={name}>{value}</span>
 		}
@@ -158,5 +158,5 @@ function option(value: any, count: number, selected: boolean, available: boolean
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function value(value: any): Value {  // !!! handle structured literals
-	return model(value) ? value.id : value;
+	return frame(value) ? value.id : value;
 }

@@ -80,11 +80,11 @@ export type Value=boolean | number | string | Readonly<{ [key: string]: string }
 
 export interface Graph {
 
-	entry<V extends Model, E extends Model>(id: string, model: V, query?: Query): Readonly<Entry<typeof model, E>>;
+	entry<V extends Frame, E extends Frame>(id: string, model: V, query?: Query): Readonly<Entry<typeof model, E>>;
 
 }
 
-export interface Probe<V extends Model, E extends Model, R> {
+export interface Probe<V extends Frame, E extends Frame, R> {
 
 	readonly value?: R | ((value: V, model: V) => R | undefined);
 	readonly error?: R | ((error: E, model: V) => R | undefined);
@@ -94,7 +94,7 @@ export interface Probe<V extends Model, E extends Model, R> {
 
 }
 
-export interface Model { // !!! exclusive id/@id
+export interface Frame { // !!! exclusive id/@id
 
 	readonly id?: string
 	readonly "@id"?: string
@@ -103,7 +103,7 @@ export interface Model { // !!! exclusive id/@id
 	readonly image?: string
 	readonly comment?: string
 
-	readonly [label: string]: undefined | Value | Model | ReadonlyArray<Value | Model>
+	readonly [field: string]: undefined | Value | Frame | ReadonlyArray<Value | Frame>
 
 }
 
@@ -111,7 +111,7 @@ export interface Model { // !!! exclusive id/@id
 /**
  * Graph entry point.
  */
-export abstract class Entry<V extends Model, E extends Model> {
+export abstract class Entry<V extends Frame, E extends Frame> {
 
 	private readonly observers=new Set<(entry: Entry<V, E>) => void>();
 
@@ -150,19 +150,10 @@ export abstract class Entry<V extends Model, E extends Model> {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function model(object: any): object is Model {
+export function frame(object: any): object is Frame {
 	return object && object.hasOwnProperty("id");
 }
 
-
-/**
- * Retrieves a resource label.
- *
- * @param model the resource whose label is to be retrieved
- *
- * @returns the resource label, if present and not falsy; a label {@link label guessed} from the resource id, otherwise
- */
-export function label(model: Model): string;
 
 /**
  * Guesses a resource label from its id.
@@ -173,8 +164,17 @@ export function label(model: Model): string;
  */
 export function label(id: string): string;
 
-export function label(resource: string | Model): string {
-	return model(resource) ? resource.label || label(resource.id || resource["@id"] || "") : resource
+/**
+ * Retrieves a resource label.
+ *
+ * @param frame the resource whose label is to be retrieved
+ *
+ * @returns the resource label, if present and not falsy; a label {@link label guessed} from the resource id, otherwise
+ */
+export function label(frame: Frame): string;
+
+export function label(resource: string | Frame): string {
+	return frame(resource) ? resource.label || label(resource.id || resource["@id"] || "") : resource
 		.replace(/^.*?(?:[/#:]([^/#:]+))?(?:\/|#|#_|#id|#this)?$/, "$1") // extract label
 		.replace(/([a-z-0-9])([A-Z])/g, "$1 $2") // split camel-case words
 		.replace(/[-_]+/g, " ") // split kebab-case words

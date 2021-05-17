@@ -15,13 +15,13 @@
  */
 
 import { useContext, useEffect, useReducer } from "preact/hooks";
-import { Entry, Model, Query, Slice, Stats, Terms } from "../graphs/index";
+import { Entry, Frame, Query, Slice, Stats, Terms } from "../graphs/index";
 import { Graph } from "../index";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function useTerms<E extends Model=any>(
+export function useTerms<E extends Frame=any>(
 	id: string, path: string, query?: Query, slice?: Slice
 ): Readonly<Entry<typeof Terms, E>> {
 
@@ -31,7 +31,7 @@ export function useTerms<E extends Model=any>(
 
 }
 
-export function useStats<E extends Model=any>(
+export function useStats<E extends Frame=any>(
 	id: string, path: string, query?: Query, slice?: Slice
 ): Readonly<Entry<typeof Stats, E>> {
 
@@ -41,7 +41,7 @@ export function useStats<E extends Model=any>(
 
 }
 
-export function useEntry<V extends Model, E extends Model=any>(
+export function useEntry<V extends Frame, E extends Frame=any>(
 	id: string, model: V, query?: Query
 ): Readonly<Entry<typeof model, E>> {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { clean, Entry, freeze, Graph, Model, Probe, Query } from "./index";
+import { clean, Entry, Frame, freeze, Graph, Probe, Query } from "./index";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ export function LinkGraph(): Graph {
 
 	return {
 
-		entry<V extends Model, E extends Model>(id: string, model: V, query?: Query): Entry<typeof model, E> {
+		entry<V extends Frame, E extends Frame>(id: string, model: V, query?: Query): Entry<typeof model, E> {
 
 			const key=url(id, query || {});
 
@@ -59,7 +59,7 @@ function url(id: string, query: Query) {
 	return Object.getOwnPropertyNames(search).length ? `${id}?${encodeURIComponent(JSON.stringify(search))}` : id;
 }
 
-function entry<V extends Model, E extends Model>(url: string, model: V): Readonly<Entry<V, E>> {
+function entry<V extends Frame, E extends Frame>(url: string, model: V): Readonly<Entry<V, E>> {
 
 	let value: V | undefined;
 	let error: E | undefined;

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@375;500;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@375&display=swap');
 
 body {
 	font-family: Quicksand, Helvetica, Arial, sans-serif;
-	font-weight: 300;
+	font-weight: 375;
 	line-height: 1.2;
 }
 
@@ -31,9 +32,9 @@ dt, th {
 	font-weight: 700;
 }
 
-/*code {
-	font-family: "Roboto Mono", "Helvetica", Arial, sans-serif
-}*/
+code {
+	font-family: Inconsolata, Courier, monospace;
+}
 
 strong {
 	font-weight: 700;

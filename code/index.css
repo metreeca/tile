@@ -20,7 +20,7 @@
 	--tool--border-color: #CCC;
 	--tool--border-width: 1px;
 
-	--tool--font-size: 18pt;
+	--tool--font-size: 16pt;
 
 	--tool--color: #000;
 
@@ -85,9 +85,7 @@ ul, ol {
 
 p {
 
-	&:not(:first-child) {
-		margin-top: 1em;
-	}
+	margin-bottom: 1em;
 
 }
 

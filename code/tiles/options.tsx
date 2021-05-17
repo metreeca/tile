@@ -66,6 +66,7 @@ export function ToolOptions({
 			<button title="Toggle" onClick={() => setCollapsed(!collapsed)}>{label}</button>
 			<button title="Clear" disabled={!query[path]?.length} onClick={() => putQuery({ [path]: [] })}><X/></button>
 		</header>
+		{/* !!! spinner */}
 
 		{!collapsed && baseline.then(baseline => matching.data(matching => {
 

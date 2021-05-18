@@ -15,14 +15,15 @@
  */
 
 import { ComponentChildren } from "preact";
-import { Github } from "../../code/tiles/icon";
+import { Folder, Github, LayoutGrid } from "../../code/tiles/icon";
 import { ToolPage } from "../../code/tiles/page";
-import { ToolResources } from "../panes/resources";
 
 export function DemoPage({
 
 	item,
 	menu,
+
+	pane,
 
 	children
 
@@ -31,13 +32,22 @@ export function DemoPage({
 	item?: ComponentChildren
 	menu?: ComponentChildren
 
+	pane?: ComponentChildren
+
 	children?: ComponentChildren
 
 }) {
 
 	return <ToolPage item={item} menu={menu}
 
-		pane={<ToolResources/>}
+		tabs={<>
+
+			<a href={"/items/"}><Folder/></a>
+			<a href={"/tiles/"}><LayoutGrid/></a>
+
+		</>}
+
+		pane={pane}
 
 		user={<a href={"https://github.com/metreeca/tile"} target={"_blank"}><Github/></a>}
 

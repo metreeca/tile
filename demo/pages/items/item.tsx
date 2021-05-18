@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import { copy, useRouter } from "../../code/nests/router";
-import { ToolPane } from "../../code/tiles/pane";
+import { DemoPage } from "../../tiles/page";
 
-export function ToolResources() {
+export function DemoItem({ id }: { id: string }) {
 
-	const { active }=useRouter();
+	return <DemoPage item={<><a href={".."}>Items</a><span>{id}</span></>}>
 
-	return <ToolPane
+	</DemoPage>;
 
-		header={<a href={"/"}>Metreeca/Tile</a>}
-		footer={<small>{copy}</small>}
-
-	>
-
-		<a {...active("/loaders")}>Loaders</a>
-
-		<a {...active("/uno/*")}>uno</a>
-		<a {...active("/due/*")}>due</a>
-		<a {...active("/tre/*")}>tre</a>
-
-	</ToolPane>;
 }

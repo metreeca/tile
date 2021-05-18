@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import { useRouter } from "../../code/nests/router";
-import { ToolDots } from "../../code/tiles/dots";
-import { ToolSpin } from "../../code/tiles/spin";
-import { DemoPage } from "../tiles/page";
+import { ToolDots } from "../../../code/tiles/dots";
+import { ToolSpin } from "../../../code/tiles/spin";
+import { DemoPage } from "../../tiles/page";
+import { DemoTiles } from "./tiles";
 
 export function DemoLoaders() {
 
-	const { native }=useRouter();
-
-	return <DemoPage item={"Loaders"}>
+	return <DemoPage item={"Loaders"} pane={<DemoTiles/>}>
 
 		<ToolSpin/>
 		<ToolDots/>

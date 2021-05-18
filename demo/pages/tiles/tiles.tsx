@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import { useRouter } from "../../code/nests/router";
-import { DemoPage } from "../tiles/page";
+import { copy, useRouter } from "../../../code/nests/router";
+import { ToolPane } from "../../../code/tiles/pane";
 
-export function DemoWork() {
+export function DemoTiles() {
 
-	const { native }=useRouter();
-	return <DemoPage>
+	const { active }=useRouter();
 
-		<a {...native("/mao")}>mao</a>
+	return <ToolPane
 
-	</DemoPage>;
+		header={<a href={"/"}>Metreeca/Tile</a>}
+		footer={<small>{copy}</small>}
+
+	>
+
+		<a {...active("/tiles/loaders")}>Loaders</a>
+
+	</ToolPane>;
 }

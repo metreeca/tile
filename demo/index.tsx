@@ -19,15 +19,22 @@ import "../code/fonts/quicksand.css";
 import "../code/index.css";
 import { hash, Router } from "../code/nests/router";
 import "./index.css";
-import { DemoLoaders } from "./pages/loaders";
-import { DemoWork } from "./pages/work";
+import { DemoItem } from "./pages/items/item";
+import { DemoItems } from "./pages/items/items";
+import { DemoLoaders } from "./pages/tiles/loaders";
 
 render(<Router store={hash()} routes={{
 
 	"": "/",
 
-	"/loaders": () => <DemoLoaders/>,
+	"/items/": DemoItems,
+	"/items/{id}": DemoItem,
 
-	"/*": () => <DemoWork/>
+	"/toys/products/{id}": "/items/{id}",
+
+	"/tiles/": "/tiles/loaders",
+	"/tiles/loaders": () => <DemoLoaders/>,
+
+	"/*": "/items/"
 
 }}/>, document.body);

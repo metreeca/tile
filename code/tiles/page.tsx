@@ -22,7 +22,7 @@ import "./page.css";
 
 let expansion: Tray;
 
-const enum Tray { Show="show", Hide="hide", Flip="flip" }
+const enum Tray { Show="show", Hide="hide", Auto="auto" }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,14 +61,14 @@ export function ToolPage({
 
 	return createElement("tool-page", {}, <>
 
-		<aside class={tray === Tray.Flip ? undefined : tray} onClick={e =>
+		<aside class={tray === Tray.Auto ? undefined : tray} onClick={e =>
 			(e.target === e.currentTarget || (e.target as Element).closest("a")) && setTray(expansion)
 		}>
 
 			<nav>
 
 				<header>
-					<button onClick={() => setTray(expansion=(tray === Tray.Hide) ? Tray.Flip : Tray.Hide)} {...image}/>
+					<button onClick={() => setTray(expansion=(tray === Tray.Hide) ? Tray.Auto : Tray.Hide)} {...image}/>
 				</header>
 
 				<section onClick={e => (e.target as Element).closest("button") && setTray(Tray.Show)}>

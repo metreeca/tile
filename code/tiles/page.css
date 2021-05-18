@@ -305,13 +305,15 @@ tool-page {
 
 					}
 
-					& > *:not(hr) {
+					& > a, & > button {
 
 						width: 1.5em;
 						height: 1.5em;
 
 						border-radius: 1em;
 						border: solid 1px var(--tool-page-pane-border-color);
+
+						overflow: hidden;
 
 						background-color: var(--tool-page-pane-background-color);
 

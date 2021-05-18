@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createElement } from "preact";
+import { ComponentChild, createElement } from "preact";
 
 import { RefreshCw } from "./icon";
 import "./spin.css";
@@ -24,12 +24,16 @@ import "./spin.css";
 
 export function ToolSpin({
 
+	icon=<RefreshCw/>,
+
 	size="100%",
 	thickness="2.5%",
 	color="#999",
 	period="1.5s"
 
 }: {
+
+	icon?: ComponentChild
 
 	size?: string
 	thickness?: string
@@ -49,6 +53,6 @@ export function ToolSpin({
 
 		}
 
-	}, <RefreshCw/>);
+	}, icon);
 
 }

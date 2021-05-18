@@ -15,6 +15,7 @@
  */
 
 import { createContext } from "preact";
+import { useCallback } from "preact/hooks";
 import { LinkGraph } from "./graphs/link";
 
 export type Primitive=undefined | null | boolean | number | string
@@ -113,7 +114,7 @@ export function trapping<E extends TargetedEvent>(handler: TargetedHandler<E>): 
 			event.preventDefault();
 			event.stopPropagation();
 
-			handler.call(this, event);
+			handler.call(event.currentTarget, event);
 
 		}
 	};
@@ -140,7 +141,7 @@ export function trailing<E extends TargetedEvent>(period: number, handler: Targe
 
 		let last: number;
 
-		return function (this: any, e: E) {
+		return useCallback(e => {
 
 			const memo: any={};
 
@@ -152,9 +153,9 @@ export function trailing<E extends TargetedEvent>(period: number, handler: Targe
 
 				if ( last === memo.timeStamp ) { handler.call(this, event); }
 
-			}).bind(this), period, memo);
+			}).bind(memo.currentTarget), period, memo);
 
-		};
+		}, [period]);
 	}
 }
 
@@ -177,7 +178,6 @@ export function throttling<E extends TargetedEvent>(period: number, handler: Tar
 	if ( period === 0 ) { return (handler); } else {
 
 		let last: number;
-
 
 		return function (this: E["currentTarget"], event: E) {
 

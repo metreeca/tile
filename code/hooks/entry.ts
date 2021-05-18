@@ -14,36 +14,13 @@
  * limitations under the License.
  */
 
-import { useContext, useEffect, useReducer } from "preact/hooks";
-import { Entry, Frame, Query, Slice, Stats, Terms } from "../graphs/index";
-import { Graph } from "../index";
-
+import { StateUpdater, useContext, useEffect, useReducer } from "preact/hooks";
+import { Entry, focus, Frame, Query, Slice, Stats, string, Terms, Value, value } from "../graphs";
+import { Graph, normalize } from "../index";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function useTerms<E extends Frame=any>(
-	id: string, path: string, query?: Query, slice?: Slice
-): Readonly<Entry<typeof Terms, E>> {
-
-	return useEntry<typeof Terms, E>(id, Terms, {
-		...query, ".terms": path, ".order": undefined, ".offset": undefined, ".limit": undefined, ...slice
-	});
-
-}
-
-export function useStats<E extends Frame=any>(
-	id: string, path: string, query?: Query, slice?: Slice
-): Readonly<Entry<typeof Stats, E>> {
-
-	return useEntry<typeof Stats, E>(id, Stats, {
-		...query, ".stats": path, ".order": undefined, ".offset": undefined, ".limit": undefined, ...slice
-	});
-
-}
-
-export function useEntry<V extends Frame, E extends Frame=any>(
-	id: string, model: V, query?: Query
-): Readonly<Entry<typeof model, E>> {
+export function useEntry<V extends Frame, E extends Frame>(id: string, model: V, query?: Query): Entry<typeof model, E> {
 
 	const entry=useContext(Graph).entry<V, E>(id || location.pathname, model, query);
 
@@ -54,3 +31,174 @@ export function useEntry<V extends Frame, E extends Frame=any>(
 	return entry;
 
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function useTerms<E extends Frame>(id: string, path: string, query?: Query, slice?: Slice): Entry<typeof Terms, E> {
+
+	return useEntry<typeof Terms, E>(id, Terms, {
+		...query, ".terms": path, ".order": undefined, ".offset": undefined, ".limit": undefined, ...slice
+	});
+
+}
+
+export function useStats<E extends Frame>(id: string, path: string, query?: Query, slice?: Slice): Entry<typeof Stats, E> {
+
+	return useEntry<typeof Stats, E>(id, Stats, {
+		...query, ".stats": path, ".order": undefined, ".offset": undefined, ".limit": undefined, ...slice
+	});
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function useKeywords(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [string, (keywords: string) => void] {
+
+	const like=`~${path}`;
+
+	const keywords=string(query[like]);
+
+	return [normalize(keywords), (keywords: string) =>
+		setQuery({ ...query, [like]: normalize(keywords) })
+	];
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export interface Range {
+
+	readonly type?: string
+
+	readonly min?: Value
+	readonly max?: Value
+
+	readonly lower?: Value
+	readonly upper?: Value
+
+}
+
+export interface RangeUpdater {
+
+	set(lower: undefined | Value, upper: undefined | Value): void
+
+	clear(): void
+
+}
+
+
+export function useRange(id: string, path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Range, RangeUpdater] {
+
+	const gte=`>=${path}`;
+	const lte=`<=${path}`;
+
+	const lower=value(query[gte]);
+	const upper=value(query[lte]);
+
+	const stats=useStats(id, path, query);
+
+	const range=stats.data(({ stats: [{ id, min, max }] }) => ({
+		type: id, min, max, lower, upper
+	}));
+
+	return [range, {
+
+		set(lower, upper) {
+			setQuery({ ...query, [lte]: lower, [gte]: upper, ".offset": 0 });
+		},
+
+		clear() {
+			setQuery({ ...query, [lte]: undefined, [gte]: undefined, ".offset": 0 });
+		}
+
+	}];
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export interface Options extends ReadonlyArray<{
+
+	selected: boolean
+	value: Value
+	count: number
+
+}> {}
+
+export interface OptionsUpdater {
+
+	set(value: Value, selected: boolean): void
+
+	clear(): void
+
+}
+
+
+export function useOptions(id: string, path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Options, OptionsUpdater] {
+
+	const any=`?${path}`;
+
+	const selection=new Set(Object
+		.getOwnPropertyNames(query)
+		.filter(key => key === path || key === any)
+		.map(key => query[key])
+		.flatMap(value => Array.isArray(value) ? value : [value])
+		.map(focus)
+	);
+
+
+	const baseline=useTerms(id, path); // computed ignoring all facets
+
+	const matching=useTerms(id, path, Object // computed ignoring this facet
+		.getOwnPropertyNames(query)
+		.filter(key => key !== path && key !== any)
+		.reduce((object, key, index, keys) => {
+
+			(object as any)[key]=query[key];
+
+			return object;
+
+		}, {})
+	);
+
+
+	const options=baseline.data(({ terms: baseline }) => matching.data(({ terms: matching }) => [
+
+		...(matching
+			.map(term => ({ ...term, selected: selection.has(focus(term.value)) }))),
+
+		...(baseline
+			.filter(term => !matching.some(match => focus(term.value) === focus(match.value)))
+			.map(term => ({ ...term, selected: selection.has(focus(term.value)) })))
+
+	]));
+
+	return [options, {
+
+		set(value, selected) {
+
+			const update: Set<Value>=new Set(selection);
+
+			if ( selected ) {
+				update.add(focus(value));
+			} else {
+				update.delete(focus(value));
+			}
+
+			setQuery({ ...query, [path]: [...update], [any]: undefined, ".offset": 0 });
+
+		},
+
+		clear() {
+			setQuery({ ...query, [path]: undefined, [any]: undefined, ".offset": 0 });
+		}
+
+	}];
+
+}
+
+

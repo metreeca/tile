@@ -15,13 +15,11 @@
  */
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const Terms: { id: string, terms: ReadonlyArray<Term> }=freeze({
 
-export const Terms=freeze({
+	id: "",
 
-	id: "", "@id": "",
-
-	terms: [{
+	terms: [<Term>{
 
 		value: {},
 
@@ -31,9 +29,9 @@ export const Terms=freeze({
 
 });
 
-export const Stats=freeze({
+export const Stats: { id: string, stats: ReadonlyArray<Stat> }=freeze({
 
-	id: "", "@id": "",
+	id: "",
 
 	count: 0,
 
@@ -42,7 +40,7 @@ export const Stats=freeze({
 
 	stats: [{
 
-		id: "", "@id": "",
+		id: "",
 
 		count: 0,
 
@@ -54,6 +52,52 @@ export const Stats=freeze({
 });
 
 
+export function local(value: undefined | Value): value is Local {
+	return typeof value === "object" && Object.keys(value).every(key => key.match(/[a-z]+(-[a-z]+)*/i));
+}
+
+export function frame(value: undefined | Value): value is Frame {
+	return typeof value === "object" && value?.hasOwnProperty("id") === true;
+}
+
+export function blank(value: undefined | Value): value is Blank {
+	return typeof value === "object" && !local(value) && !frame(value);
+}
+
+
+export function focus(value: Value): Value {
+	return (blank(value) || frame(value)) && value.id || value;
+}
+
+export function value(value: undefined | Value | ReadonlyArray<Value>): undefined | Value {
+	return value instanceof Array ? undefined : value;
+}
+
+export function string(value: undefined | Value | ReadonlyArray<Value>): string {
+	return value === undefined ? ""
+		: value instanceof Array ? "[]" // !!! review
+			: blank(value) || frame(value) ? value.label || label(value.id || "{}") // !!! review
+				: local(value) ? value["en"] || "" // !!! preferred language
+					: typeof value === "number" ? value.toLocaleString()
+						: value.toString();
+}
+
+/**
+ * Guesses a resource label from its id.
+ *
+ * @param id the resource id
+ *
+ * @returns a label guessed from `id` or an empty string, if unable to guess
+ */
+export function label(id: string) {
+	return id
+		.replace(/^.*?(?:[/#:]([^/#:]+))?(?:\/|#|#_|#id|#this)?$/, "$1") // extract label
+		.replace(/([a-z-0-9])([A-Z])/g, "$1 $2") // split camel-case words
+		.replace(/[-_]+/g, " ") // split kebab-case words
+		.replace(/\b[a-z]/g, $0 => $0.toUpperCase()); // capitalize words
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export type Query=Readonly<Partial<{
@@ -61,26 +105,72 @@ export type Query=Readonly<Partial<{
 	".terms": string
 	".stats": string
 
-	[path: string]: Value | Value[]
+	[path: string]: Value | ReadonlyArray<Value>
 
 }>> & Slice
 
 export type Slice=Readonly<Partial<{
 
-	".order": string | string[]
+	".order": string | ReadonlyArray<string>
 	".offset": number
 	".limit": number
 
 }>>
 
-export type Value=boolean | number | string | Readonly<{ [key: string]: string }>
+
+export type Value=boolean | number | string | Local | Blank | Frame
+
+
+export interface Local {
+
+	readonly [field: string]: string
+
+}
+
+export interface Blank {
+
+	readonly id?: string
+
+	readonly label?: string
+	readonly image?: string
+	readonly comment?: string
+
+	readonly [field: string]: undefined | Value | ReadonlyArray<Value>
+
+}
+
+export interface Frame extends Blank {
+
+	readonly id: string
+
+}
+
+
+export interface Term extends Frame {
+
+	value: Value
+
+	count: number
+
+}
+
+export interface Stat extends Frame {
+
+	id: string
+
+	count: number
+
+	min: Value
+	max: Value
+
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface Graph {
 
-	entry<V extends Frame, E extends Frame>(id: string, model: V, query?: Query): Readonly<Entry<typeof model, E>>;
+	entry<V extends Frame, E extends Frame>(id: string, model: V, query?: Query): Entry<typeof model, E>;
 
 }
 
@@ -91,19 +181,6 @@ export interface Probe<V extends Frame, E extends Frame, R> {
 
 	readonly blank?: R | ((abort: () => void, model: V) => R | undefined);
 	readonly other?: R | ((abort: () => void, model: V) => R | undefined);
-
-}
-
-export interface Frame { // !!! exclusive id/@id
-
-	readonly id?: string
-	readonly "@id"?: string
-
-	readonly label?: string
-	readonly image?: string
-	readonly comment?: string
-
-	readonly [field: string]: undefined | Value | Frame | ReadonlyArray<Value | Frame>
 
 }
 
@@ -125,11 +202,11 @@ export abstract class Entry<V extends Frame, E extends Frame> {
 
 
 	public then<R>(value: (value: V) => R): R | undefined {
-		return this.get().probe({ value: value });
+		return this.get().probe({ value });
 	}
 
 	public data<R>(value: (value: V) => R): R {
-		return <R>this.get().probe({ value: value, other: (abort, model) => value(model) });
+		return <R>this.get().probe({ value, other: (abort, model) => value(model) });
 	}
 
 
@@ -145,40 +222,6 @@ export abstract class Entry<V extends Frame, E extends Frame> {
 		this.observers.forEach(observer => observer(this));
 	}
 
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export function frame(object: any): object is Frame {
-	return object && object.hasOwnProperty("id");
-}
-
-
-/**
- * Guesses a resource label from its id.
- *
- * @param id the resource id
- *
- * @returns a label guessed from `id` or an empty string, if unable to guess
- */
-export function label(id: string): string;
-
-/**
- * Retrieves a resource label.
- *
- * @param frame the resource whose label is to be retrieved
- *
- * @returns the resource label, if present and not falsy; a label {@link label guessed} from the resource id, otherwise
- */
-export function label(frame: Frame): string;
-
-export function label(resource: string | Frame): string {
-	return frame(resource) ? resource.label || label(resource.id || resource["@id"] || "") : resource
-		.replace(/^.*?(?:[/#:]([^/#:]+))?(?:\/|#|#_|#id|#this)?$/, "$1") // extract label
-		.replace(/([a-z-0-9])([A-Z])/g, "$1 $2") // split camel-case words
-		.replace(/[-_]+/g, " ") // split kebab-case words
-		.replace(/\b[a-z]/g, $0 => $0.toUpperCase()); // capitalize words
 }
 
 

@@ -16,8 +16,8 @@
 
 import { ComponentChildren, createElement } from "preact";
 import { useState } from "preact/hooks";
-import { frame, label, Value } from "../graphs";
-import { useTerms } from "../hooks/entry";
+import { focus, frame, string } from "../graphs";
+import { Options, OptionsUpdater } from "../hooks/entry";
 import { X } from "./icon";
 import "./options.css";
 
@@ -28,106 +28,33 @@ export function ToolOptions({
 
 	label,
 
-	id="",
-	path,
-
-	state: [query, putQuery]
+	options: [options, { set, clear }]
 
 }: {
 
 	label: string | ComponentChildren,
 
-	id?: string
-	path: string
-
-	state: [{ [key: string]: any }, (delta: Partial<{ [key: string]: any }>) => void]
+	options: [Options, OptionsUpdater]
 
 }) {
 
 	const [collapsed, setCollapsed]=useState(false);
 
-	const baseline=useTerms(id, path); // computed ignoring all facets
-
-	const matching=useTerms(id, path, Object // computed ignoring this facet
-		.getOwnPropertyNames(query)
-		.filter(key => key !== path && key !== `?${path}`)
-		.reduce((object, key, index, keys) => {
-
-			(object as any)[key]=query[key];
-
-			return object;
-
-		}, {})
-	);
-
 	return createElement("tool-options", { className: collapsed ? "collapsed" : "expanded" }, <>
 
 		<header>
 			<button title="Toggle" onClick={() => setCollapsed(!collapsed)}>{label}</button>
-			<button title="Clear" disabled={!query[path]?.length} onClick={() => putQuery({ [path]: [] })}><X/></button>
+			<button title="Clear" disabled={!options.some(({ selected }) => selected)} onClick={clear}><X/></button>
+			{/* !!! spinner */}
 		</header>
-		{/* !!! spinner */}
-
-		{!collapsed && baseline.then(baseline => matching.data(matching => {
-
-			const selected=Object
-				.getOwnPropertyNames(query)
-				.filter(key => key === path || key === `?${path}`)
-				.map(key => query[key])
-				.flatMap(value => Array.isArray(value) ? value : [value])
-				.map(value);
-
-			const available=matching.terms
-				.map(term => term.value)
-				.map(value);
-
-			return <>
-
-				{matching.terms // selected/available
-					.filter(term => selected.includes(value(term.value)))
-					.map(term => option(term.value, term.count, true, true, () => {
-
-						putQuery({ [path]: selected.filter(v => v !== value(term.value)), ".offset": 0 });
-
-					}))
-				}
 
 
-				{baseline.terms // selected/unavailable
-					.filter(term => selected.includes(value(term.value)))
-					.filter(term => !available.includes(value(term.value)))
-					.map(term => option(term.value, 0, true, false, () => {
+		{!collapsed && <>
 
-						putQuery({ [path]: selected.filter(v => v !== value(term.value)), ".offset": 0 });
+			{options.filter(({ selected }) => selected).map(entry => option(entry, set))}
+			{options.filter(({ selected }) => !selected).map(entry => option(entry, set))}
 
-					}))
-				}
-
-
-				{matching.terms  // unselected/available
-					.filter(term => !selected.includes(value(term.value)))
-					.map(term => option(term.value, term.count, false, true, () => {
-
-						putQuery({ [path]: [...selected, value(term.value)], ".offset": 0 });
-
-					}))
-				}
-
-
-				{baseline.terms  // unselected unavailable options
-					.filter(term => !selected.includes(value(term.value)))
-					.filter(term => !available.includes(value(term.value)))
-					.map(term => option(term.value, 0, false, false, () => {
-
-						putQuery({ [path]: [...selected, value(term.value)], ".offset": 0 });
-
-					}))
-				}
-
-
-			</>;
-
-		}))}
+		</>}
 
 	</>);
 }
@@ -135,28 +62,21 @@ export function ToolOptions({
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function option(value: any, count: number, selected: boolean, available: boolean, action: () => void) {
+function option({ selected, value, count }: Options[number], set: (value: {}, selected: boolean) => void) {
 
-	const key: Value=frame(value) ? value.id : value; // !!! handle structured literals
-	const name=available ? "available" : "unavailable";
+	const key=focus(value);
+	const name=count ? "available" : "unavailable";
 
 	return <>
 
-		<input type="checkbox" checked={selected} onChange={action}/>
+		<input type="checkbox" checked={selected} onChange={e => set(value, e.currentTarget.checked)}/>
 
 		{frame(value)
-			? <a key={key} className={name} href={value.id}>{label(value)}</a>
+			? <a key={key} className={name} href={value.id}>{string(value)}</a>
 			: <span key={key} className={name}>{value}</span>
 		}
 
 		<var className={name}>{count}</var>
 
 	</>;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function value(value: any): Value {  // !!! handle structured literals
-	return frame(value) ? value.id : value;
 }

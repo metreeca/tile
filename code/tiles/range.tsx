@@ -15,63 +15,42 @@
  */
 
 import { createElement } from "preact";
-import { useCallback } from "preact/hooks";
-import { useStats } from "../hooks/entry";
+import { Value } from "../graphs";
+import { Range, RangeUpdater } from "../hooks/entry";
 import { trailing } from "../index";
 import "./range.css";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface Props {
-
-	id?: string
-	path: string
-
-	state: [{ [key: string]: any }, (delta: Partial<{ [key: string]: any }>) => void]
-
-	format?: (value: any) => string
-
-}
-
 export function ToolRange({
 
-	id="",
-	path,
+	pattern="\d+(\.\d+)?",
+	format=value => value === undefined ? "" : String(value),
 
-	state: [state, putState],
+	range: [{ type, min, max, lower, upper }, { set }] // !!! switch representation according to type (dates, times, …)
 
-	format=value => value === undefined ? "" : String(value)
+}: {
 
-}: Props) {
+	pattern?: string
+	format?: (value: Value) => string
 
-	const stats=useStats(id, path, state); // !!! switch representation according to datatypes (dates, times, …)
+	range: [Range, RangeUpdater]
 
-	const lower=useCallback(trailing(500, e => {
+}) {
 
-		const target=e.target as HTMLInputElement;
+	function string(value?: Value) { return value ? format(value) : ""; }
 
-		if ( target.checkValidity() ) {
-			putState({ [`>=${path}`]: target.value, ".offset": 0 });
-		}
+	return createElement("tool-range", {}, <>
 
-	}), []);
+		<input type="search" pattern={pattern} placeholder={string(min)} value={string(lower)} onInput={trailing(500, e => {
+			if ( e.currentTarget.checkValidity() ) { set(lower, e.currentTarget.value); }
+		})}/>
 
-	const upper=useCallback(trailing(500, e => {
+		<input type="search" pattern={pattern} placeholder={string(max)} value={string(upper)} onInput={trailing(500, e => {
+			if ( e.currentTarget.checkValidity() ) { set(e.currentTarget.value, upper); }
+		})}/>
 
-		const target=e.target as HTMLInputElement;
-
-		if ( target.checkValidity() ) {
-			putState({ [`<=${path}`]: target.value, ".offset": 0 });
-		}
-
-	}), []);
-
-	return createElement("tool-range", {}, stats.data(stats => <>
-
-		<input type="search" pattern="\d+(\.\d+)?" placeholder={format(stats.min)} value={state[`>=${path}`]} onInput={lower}/>
-		<input type="search" pattern="\d+(\.\d+)?" placeholder={format(stats.max)} value={state[`<=${path}`]} onInput={upper}/>
-
-	</>));
+	</>);
 
 }

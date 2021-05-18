@@ -16,7 +16,7 @@
 
 import { createContext, createElement, FunctionalComponent, FunctionComponent, VNode } from "preact";
 import { useContext, useEffect, useMemo } from "preact/hooks";
-import { label } from "../graphs";
+import { string } from "../graphs";
 import { useUpdate } from "../hooks/update";
 
 const active="active";
@@ -259,7 +259,7 @@ export function Router({
 
 			history.replaceState(history.state, document.title, store(route)); // possibly altered by redirections
 
-			document.title=join(label(location.pathname), name); // !!! update history
+			document.title=join(string(location.pathname), name); // !!! update history
 
 			return createElement(context.Provider, {
 

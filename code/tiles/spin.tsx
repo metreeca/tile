@@ -24,8 +24,8 @@ import "./spin.css";
 
 export function ToolSpin({
 
-	size="1em",
-	thickness="5%",
+	size="100%",
+	thickness="2.5%",
 	color="#999",
 	period="1.5s"
 

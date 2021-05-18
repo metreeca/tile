@@ -25,39 +25,23 @@
 
 tool-spin {
 
-	display: grid;
+	position: relative;
 
-	width: 100%;
-	height: 100%;
+	/*  aspect-ratio friendly box */
 
-	&:empty::before {
-
-		content: "";
-
-		display: block;
-		box-sizing: border-box;
-
-		width: var(--tool-spin-size);
-		height: var(--tool-spin-size);
-
-		margin: auto;
-
-		border-radius: 50%;
-		border-width: var(--tool-spin-thickness);
-		border-style: solid;
-
-		border-color: transparent var(--tool-spin-color) var(--tool-spin-color);
-
-		animation: tool-spin var(--tool-spin-period) infinite linear;
-
-	}
+	width: 0;
+	height: 0;
+	padding: calc(max(1.5ex, min(var(--tool-spin-size), 3em)) / 2);
+	margin: auto;
 
 	& > svg[viewBox="0 0 24 24"] {
 
-		width: var(--tool-spin-size);
-		height: var(--tool-spin-size);
+		position: absolute;
 
-		margin: auto;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
 
 		color: var(--tool-spin-color);
 		stroke-width: var(--tool-spin-thickness);

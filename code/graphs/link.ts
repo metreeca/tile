@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { clean, Entry, Frame, freeze, Graph, Probe, Query } from "./index";
+import { clean, Entry, Frame, freeze, Graph, Probe, Query } from ".";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ export function LinkGraph(): Graph {
 
 			const key=url(id, query || {});
 
-			return (cache[key] || (cache[key]=entry(key, freeze(clean(model || {}))))) as Entry<typeof model, E>;
+			return (cache[key] || (cache[key]=entry(key, <Frame>freeze(clean(model))))) as Entry<typeof model, E>;
 
 		}
 

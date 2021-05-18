@@ -201,6 +201,10 @@ export abstract class Entry<V extends Frame, E extends Frame> {
 	public abstract probe<R>(probe: Probe<V, E, R>): R | undefined;
 
 
+	public wait<R>(blank: R | ((abort: () => void, model: V) => R | undefined)): R | undefined {
+		return this.get().probe({ blank });
+	}
+
 	public then<R>(value: (value: V) => R): R | undefined {
 		return this.get().probe({ value });
 	}

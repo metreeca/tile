@@ -62,24 +62,16 @@ export function query(query?: Query, defaults?: Query): Query {
 
 		const params=new URLSearchParams();
 
-		Object.entries(query)
-
-			.filter(([key, value]) => // not a default value
-				!(defaults && value === defaults[key])
-			)
-
-			.filter(([, value]) => // not a blank value
-				!(value === undefined || value === null || value === "" || Array.isArray(value) && value.length === 0)
-			)
-
-			.forEach(([key, value]) =>
-				(Array.isArray(value) ? value : [value]).forEach(value => { params.append(key, String(value)); })
-			);
+		Object.entries(query).forEach(([key, value]) => (Array.isArray(value) ? value : [value])
+			.filter(value => !(defaults && value === defaults[key])) // not a default value
+			.filter((value) => value)// not a blank value
+			.forEach(value => { params.append(key, String(value)); })
+		);
 
 		const search=params.toString();
 
 		history.replaceState(history.state, document.title,
-			search ? `${location.pathname}?${search}` : location.pathname
+			search ? `${location.pathname}?${search}${location.hash}` : `${location.pathname}${location.hash}`
 		);
 
 		return query;

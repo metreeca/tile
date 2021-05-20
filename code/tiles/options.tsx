@@ -24,11 +24,11 @@ import "./options.css";
 
 export function ToolOptions({
 
-	options: [options, { set, clear }]
+	value: [options, { set, clear }]
 
 }: {
 
-	options: [Options, OptionsUpdater]
+	value: [Options, OptionsUpdater]
 
 }) {
 

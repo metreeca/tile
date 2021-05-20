@@ -34,18 +34,27 @@ export function DemoItems() {
 	const id="https://demo.metreeca.com/toys/products/";
 
 	const [query, putQuery]=useQuery({});
+
 	const items=useEntry(id, Items, query);
 
 	return <DemoPage item={"Items"} menu={items.wait(<ToolSpin/>)}
 
-		pane={<ToolPane header={<ToolInput icon placeholder={"Search"} value={["", () => {}]}/>}>
+		pane={<ToolPane
+
+			header={<ToolInput icon placeholder={"Search"} value={["", () => {}]}/>}
+
+			footer={items.then(({ contains: { length: matches } }) =>
+				matches === 0 ? "no matches" : matches === 1 ? "1 match" : `${matches} matches`
+			)}
+
+		>
 
 			<ToolField name={"Product Line"} searchable
-				selector={<ToolOptions options={useOptions(id, "line", [query, putQuery])}/>}
+				selector={<ToolOptions value={useOptions(id, "line", [query, putQuery])}/>}
 			/>
 
 			<ToolField name={"Price"}
-				selector={<ToolRange range={useRange(id, "price", [query, putQuery])}/>}
+				selector={<ToolRange value={useRange(id, "price", [query, putQuery])}/>}
 			/>
 
 		</ToolPane>}

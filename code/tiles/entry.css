@@ -16,6 +16,7 @@
 
 :root {
 
+	--tool-entry-border-radius-editable: 0.25em;
 	--tool-entry-padding-editable: 0.25em;
 
 }
@@ -28,9 +29,17 @@ tool-entry {
 
 	box-sizing: content-box;
 
-	&.editable {
+	&.rule {
 
-		border-radius: 0.1em;
+		padding-bottom: 0.25em;
+		margin-bottom: 0.25em;
+
+		border-bottom: solid 1px #CCC;
+	}
+
+	&.edit {
+
+		border-radius: var(--tool-entry-border-radius-editable);
 
 		background-color: var(--tool--background-color-edit);
 

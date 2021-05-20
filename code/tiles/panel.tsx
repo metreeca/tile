@@ -23,28 +23,32 @@ import "./panel.css";
 
 export function ToolPanel({
 
+	rule=false,
+	edit=false,
+
 	nest=false,
 	ease=false,
-	edit=false,
 
 	open=false,
 
+	icon,
 	name,
-
 	menu,
 
 	children
 
 }: {
 
+	rule?: boolean
+	edit?: boolean
+
 	nest?: boolean
 	ease?: boolean
-	edit?: boolean
 
 	open?: boolean | [boolean, (expanded: boolean) => void]
 
+	icon?: ComponentChild
 	name: ComponentChild | string
-
 	menu?: ComponentChild,
 
 	children?: ComponentChildren
@@ -59,13 +63,13 @@ export function ToolPanel({
 
 	return createElement("tool-panel", { class: classes({ "tree": nest, "ease": ease }) }, <>
 
-		<ToolEntry edit={edit}
+		<ToolEntry rule={rule && expanded} edit={edit}
 
 			name={typeof name === "string" ? <button onClick={toggle}>{name}</button> : name}
 
 			icon={<button disabled={!children} onClick={toggle}>{
 
-				children && expanded ? <ChevronDown/> : <ChevronRight/>
+				icon || (children && expanded ? <ChevronDown/> : <ChevronRight/>)
 
 			}</button>}
 

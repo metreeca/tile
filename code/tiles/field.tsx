@@ -40,7 +40,7 @@ export function ToolField({
 
 	name: string
 
-	selector: ComponentChildren
+	selector?: ComponentChildren
 	settings?: ComponentChildren
 
 }) {
@@ -79,6 +79,9 @@ export function ToolField({
 
 		menu={filter ? <button><XCircle/></button> : <button>{<X/>}</button>}
 
-	>{mode === Mode.Selecting ? selector : mode === Mode.Configuring ? settings : <div/>}</ToolPanel>;
+	>{mode === Mode.Selecting ? selector || settings
+		: mode === Mode.Configuring ? settings || selector
+			: selector || settings
+	}</ToolPanel>;
 
 }

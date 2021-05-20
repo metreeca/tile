@@ -35,7 +35,7 @@ window.addEventListener("unhandledrejection", e => {
 
 
 function relative(href: string): string | undefined {
-	return href.match(`^${base}([/#].*)?`)?.[1];
+	return href.match(`^${base}([/#].*)?`)?.[1] || href;
 }
 
 function join(label: string, title: string, separator: string=" | "): string {
@@ -46,7 +46,7 @@ function join(label: string, title: string, separator: string=" | "): string {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const base=new URL(document.querySelector("base")?.href || "", location.href).href.replace(
-	/(^.*?)\/?$/, "$1" // remove trailing slash
+	/(^.*?)\/?([?#].*)?$/, "$1" // remove trailing slash / query / hash
 );
 
 export const name=document.title;

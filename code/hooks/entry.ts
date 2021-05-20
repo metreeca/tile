@@ -100,8 +100,8 @@ export function useRange(id: string, path: string, [query, setQuery]: [Query, St
 
 	const stats=useStats(id, path, query);
 
-	const range=stats.data(({ stats: [{ id, min, max }] }) => ({
-		type: id, min, max, lower, upper
+	const range=stats.data(({ stats: [stat] }) => ({
+		type: stat?.id, min: stat?.min, max: stat?.max, lower, upper
 	}));
 
 	return [range, {

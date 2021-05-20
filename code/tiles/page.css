@@ -16,8 +16,9 @@
 
 :root {
 
-	--tool-page--color: #000;
-	--tool-page--background-color: #FFF;
+	--tool-page--color: var(--tool--color);
+	--tool-page--background-color: var(--tool--background-color);
+
 	--tool-page--header-box-shadow: 0 0 var(--tool-page--header-box-shadow-size) var(--tool-page--header-box-shadow-size);
 	--tool-page--header-box-shadow-size: 0.75rem;
 
@@ -140,10 +141,6 @@ tool-page {
 
 				height: 4rem;
 
-				& a {
-					color: inherit;
-				}
-
 				& > * + * {
 					margin-left: 0.25em;
 				}
@@ -172,6 +169,10 @@ tool-page {
 
 			color: var(--tool-page-tabs-color);
 			background-color: var(--tool-page-tabs-background-color);
+
+			& a {
+				color: inherit;
+			}
 
 			& > * {
 				font-size: 2.5rem; /* here to override generic header */
@@ -226,10 +227,6 @@ tool-page {
 
 			& > header {
 				box-shadow: var(--tool-page--header-box-shadow) var(--tool-page-pane-background-color);
-			}
-
-			& > section {
-				font-size: 90%;
 			}
 
 			& > footer {

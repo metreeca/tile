@@ -21,7 +21,7 @@ import "./entry.css";
 
 export function ToolEntry({
 
-	rule=false,
+	edit=false,
 
 	name,
 
@@ -30,7 +30,7 @@ export function ToolEntry({
 
 }: {
 
-	rule?: boolean
+	edit?: boolean
 
 	name: ComponentChild | string
 
@@ -41,7 +41,7 @@ export function ToolEntry({
 
 	const [focused, setFocused]=useState(false);
 
-	return createElement("tool-entry", { class: classes({ "line": rule, "focused": focused }) }, <>
+	return createElement("tool-entry", { class: classes({ "editable": edit, "focused": focused }) }, <>
 
 		<nav>{icon}</nav>
 

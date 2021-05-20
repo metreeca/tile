@@ -25,7 +25,7 @@ import "./range.css";
 
 export function ToolRange({
 
-	pattern="\d+(\.\d+)?",
+	pattern="\\d+(\\.\\d+)?",
 	format=value => value === undefined ? "" : String(value),
 
 	range: [{ type, min, max, lower, upper }, { set }] // !!! switch representation according to type (dates, times, …)

@@ -21,10 +21,6 @@ tool-options {
 	align-items: center;
 	justify-items: stretch;
 
-	&.expanded {
-		margin-bottom: 1em;
-	}
-
 	& * {
 		overflow: hidden;
 		text-overflow: ellipsis;

@@ -22,13 +22,17 @@ import { Search, XCircle } from "../tiles/icon";
 import { ToolEntry } from "./entry";
 
 
+const search=<Search style={{ color: "#999", transform: "translateY(5%)" }}/>;
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function ToolInput({
 
+	icon,
+
 	placeholder,
 
-	icon,
 	menu,
 
 	delay=0,
@@ -37,12 +41,13 @@ export function ToolInput({
 
 }: {
 
+	icon?: boolean | ComponentChild
+
 	/**
 	 * The input placeholder string.
 	 */
 	placeholder?: string
 
-	icon?: boolean | ComponentChild
 	menu?: ComponentChild
 
 	/**
@@ -58,7 +63,7 @@ export function ToolInput({
 
 	const input=useRef<HTMLInputElement>();
 
-	// const xxx=delay? useCallback(trailing(delay, e => setValue(normalize(e.currentTarget.value))), []) : () => {};
+	// !!! delay? useCallback(trailing(delay, e => setValue(normalize(e.currentTarget.value))), []) : () => {};
 
 
 	function focus() {
@@ -67,15 +72,19 @@ export function ToolInput({
 
 	function clear() {
 
+		setState("");
 		setValue("");
 
 		input.current.focus();
 
 	}
 
-	return <ToolEntry rule
+	return <ToolEntry edit
 
-		icon={icon === true ? <button title={"Search"} onClick={() => focus()}><Search/></button> : icon}
+		icon={icon === true
+			? <button title={"Search"} onClick={() => focus()}>{search}</button>
+			: icon
+		}
 
 		name={<input ref={input} type="text" placeholder={placeholder} value={state}
 

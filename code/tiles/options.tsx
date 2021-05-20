@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentChildren, createElement } from "preact";
-import { useState } from "preact/hooks";
+import { createElement } from "preact";
 import { focus, frame, string } from "../graphs";
 import { Options, OptionsUpdater } from "../hooks/entry";
-import { X } from "./icon";
 import "./options.css";
 
 
@@ -26,35 +24,18 @@ import "./options.css";
 
 export function ToolOptions({
 
-	label,
-
 	options: [options, { set, clear }]
 
 }: {
-
-	label: string | ComponentChildren,
 
 	options: [Options, OptionsUpdater]
 
 }) {
 
-	const [collapsed, setCollapsed]=useState(false);
+	return createElement("tool-options", {}, <>
 
-	return createElement("tool-options", { className: collapsed ? "collapsed" : "expanded" }, <>
-
-		<header>
-			<button title="Toggle" onClick={() => setCollapsed(!collapsed)}>{label}</button>
-			<button title="Clear" disabled={!options.some(({ selected }) => selected)} onClick={clear}><X/></button>
-			{/* !!! spinner */}
-		</header>
-
-
-		{!collapsed && <>
-
-			{options.filter(({ selected }) => selected).map(entry => option(entry, set))}
-			{options.filter(({ selected }) => !selected).map(entry => option(entry, set))}
-
-		</>}
+		{options.filter(({ selected }) => selected).map(entry => option(entry, set))}
+		{options.filter(({ selected }) => !selected).map(entry => option(entry, set))}
 
 	</>);
 }

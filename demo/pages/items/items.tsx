@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import { useEntry } from "../../../code/hooks/entry";
+import { useEntry, useOptions, useRange } from "../../../code/hooks/entry";
+import { useQuery } from "../../../code/hooks/query";
+import { ToolField } from "../../../code/tiles/field";
 import { ToolInput } from "../../../code/tiles/input";
+import { ToolOptions } from "../../../code/tiles/options";
 import { ToolPane } from "../../../code/tiles/pane";
+import { ToolRange } from "../../../code/tiles/range";
 import { ToolSpin } from "../../../code/tiles/spin";
 import { DemoPage } from "../../tiles/page";
 
@@ -27,15 +31,22 @@ const Items={ id: "", contains: [{ id: "", label: "" }] };
 
 export function DemoItems() {
 
-	const items=useEntry("https://demo.metreeca.com/toys/products/", Items);
+	const id="https://demo.metreeca.com/toys/products/";
+
+	const [query, putQuery]=useQuery({});
+	const items=useEntry(id, Items, query);
 
 	return <DemoPage item={"Items"} menu={items.wait(<ToolSpin/>)}
 
-		pane={<ToolPane
+		pane={<ToolPane header={<ToolInput icon placeholder={"Search"} value={["", () => {}]}/>}>
 
-			header={<ToolInput icon placeholder={"Search"} value={["", () => {}]}/>}
+			<ToolField name={"Product Line"} searchable
+				selector={<ToolOptions options={useOptions(id, "line", [query, putQuery])}/>}
+			/>
 
-		>
+			<ToolField name={"Price"}
+				selector={<ToolRange range={useRange(id, "price", [query, putQuery])}/>}
+			/>
 
 		</ToolPane>}
 

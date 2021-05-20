@@ -22,11 +22,17 @@
 
 	--tool--font-size: 16pt;
 
+
+}
+
+:root {
+
 	--tool--color: #000;
 
 	--tool--color-accent-lite: #D60;
 	--tool--color-accent-dark: #345;
 
+	--tool--color-placeholder: #BBB;
 	--tool--color-enabled: #567;
 	--tool--color-disabled: #CCC;
 	--tool--color-invalid: #D60;
@@ -34,9 +40,13 @@
 	--tool--color-hover: #B50;
 	--tool--color-focus: #789;
 
+}
+
+:root {
+
 	--tool--background-color: #FFF;
 
-	--tool--box-shadow-focus: 0 0 3px 1px var(--tool--color-focus);
+	--tool--background-color-edit: #FAFAFA;
 
 }
 
@@ -179,5 +189,5 @@ button {
 }
 
 *::placeholder {
-	color: #999;
+	color: var(--tool--color-placeholder);
 }

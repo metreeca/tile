@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-
 :root {
-	--tool-entry-box-shadow-size: 4px;
+
+	--tool-entry-padding-editable: 0.25em;
+
 }
 
 tool-entry {
@@ -27,18 +28,20 @@ tool-entry {
 
 	box-sizing: content-box;
 
-	&.line {
+	&.editable {
 
-		padding-bottom: 0.2em;
-		border-bottom: solid 1px #CCC;
-		margin-bottom: -0.2em;
+		border-radius: 0.1em;
 
-		&:not(:last-child) {
-			margin-bottom: 0.75em;
-		}
+		background-color: var(--tool--background-color-edit);
+
+		box-shadow: 0 0 0 var(--tool-entry-padding-editable) var(--tool--background-color-edit), 0 0 0 calc(var(--tool-entry-padding-editable) + 1px) var(--tool--border-color);
 
 		&.focused {
-			box-shadow: inset 0 calc(-1 * var(--tool-entry-box-shadow-size)) var(--tool-entry-box-shadow-size) calc(-1 * var(--tool-entry-box-shadow-size)) var(--tool--color-focus);
+			box-shadow: 0 0 0 var(--tool-entry-padding-editable) var(--tool--background-color-edit), 0 0 0 calc(var(--tool-entry-padding-editable) + 1.5px) var(--tool--color-focus);
+		}
+
+		&:not(:last-child) {
+			margin-bottom: calc(2 * var(--tool-entry-padding-editable));
 		}
 
 	}
@@ -57,8 +60,6 @@ tool-entry {
 		& > input {
 
 			width: 100%;
-
-			margin: -1px 0; /* ;( chrome */
 
 			&, &:focus {
 				outline: none;

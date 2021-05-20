@@ -25,7 +25,7 @@ export function ToolPanel({
 
 	nest=false,
 	ease=false,
-	rule=false,
+	edit=false,
 
 	open=false,
 
@@ -39,7 +39,7 @@ export function ToolPanel({
 
 	nest?: boolean
 	ease?: boolean
-	rule?: boolean
+	edit?: boolean
 
 	open?: boolean | [boolean, (expanded: boolean) => void]
 
@@ -59,7 +59,7 @@ export function ToolPanel({
 
 	return createElement("tool-panel", { class: classes({ "tree": nest, "ease": ease }) }, <>
 
-		<ToolEntry rule={rule}
+		<ToolEntry edit={edit}
 
 			name={typeof name === "string" ? <button onClick={toggle}>{name}</button> : name}
 

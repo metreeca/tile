@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useEntry, useOptions, useRange } from "../../../code/hooks/entry";
+import { useEntry, useKeywords, useOptions, useRange } from "../../../code/hooks/entry";
 import { useQuery } from "../../../code/hooks/query";
 import { ToolField } from "../../../code/tiles/field";
 import { ToolInput } from "../../../code/tiles/input";
@@ -41,7 +41,7 @@ export function DemoItems() {
 
 		pane={<ToolPane
 
-			header={<ToolInput icon placeholder={"Search"} value={["", () => {}]}/>}
+			header={<ToolInput icon placeholder={"Search"} value={useKeywords("label", [query, putQuery])}/>}
 
 			footer={items.then(({ contains: { length: matches } }) =>
 				matches === 0 ? "no matches" : matches === 1 ? "1 match" : `${matches} matches`

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { clean, Entry, Frame, freeze, Graph, Probe, Query } from ".";
+import { clean, Entry, Frame, freeze, Graph, Probe, prune, Query } from ".";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ export function LinkGraph(): Graph {
 
 			const key=url(id, query || {});
 
-			return (cache[key] || (cache[key]=entry(key, <Frame>freeze(clean(model))))) as Entry<typeof model, E>;
+			return (cache[key] || (cache[key]=entry(key, <Frame>freeze(prune(model))))) as Entry<typeof model, E>;
 
 		}
 
@@ -42,19 +42,7 @@ export function LinkGraph(): Graph {
 
 function url(id: string, query: Query) {
 
-	const search: any={};
-
-	Object.getOwnPropertyNames(query).forEach(key => {
-
-		const value=query[key];
-
-		const empty=value === undefined || value === null || value === "" || Array.isArray(value) && value.length === 0;
-
-		if ( key.startsWith(".") || !empty ) {
-			search[key]=value;
-		}
-
-	});
+	const search=clean(query);
 
 	return Object.getOwnPropertyNames(search).length ? `${id}?${encodeURIComponent(JSON.stringify(search))}` : id;
 }

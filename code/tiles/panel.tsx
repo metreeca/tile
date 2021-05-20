@@ -63,9 +63,9 @@ export function ToolPanel({
 
 	return createElement("tool-panel", { class: classes({ "tree": nest, "ease": ease }) }, <>
 
-		<ToolEntry rule={rule && expanded} edit={edit}
+		<ToolEntry rule={rule && expanded && children !== undefined} edit={edit}
 
-			name={typeof name === "string" ? <button onClick={toggle}>{name}</button> : name}
+			name={typeof name === "string" ? <button disabled={!children} onClick={toggle}>{name}</button> : name}
 
 			icon={<button disabled={!children} onClick={toggle}>{
 

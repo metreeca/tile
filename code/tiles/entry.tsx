@@ -54,7 +54,7 @@ export function ToolEntry({
 
 		<nav>{icon}</nav>
 
-		<span draggable={true}
+		<span
 
 			onFocusCapture={e => setFocused((e.target as any)?.tagName === "INPUT")}
 			onBlurCapture={e => setFocused(false)}

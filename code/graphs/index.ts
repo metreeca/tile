@@ -249,7 +249,7 @@ export function freeze<T>(value: T): Readonly<T> { // !!! deep readonly
 	}
 }
 
-export function clean<T>(model: any): any { // !!! generic type
+export function prune<T>(model: any): any { // !!! generic type
 	if ( Array.isArray(model) ) {
 
 		return [];
@@ -258,7 +258,7 @@ export function clean<T>(model: any): any { // !!! generic type
 
 		return Object.getOwnPropertyNames(model).reduce((object: any, key) => {
 
-			object[key]=clean(model[key]);
+			object[key]=prune(model[key]);
 
 			return object;
 
@@ -269,4 +269,26 @@ export function clean<T>(model: any): any { // !!! generic type
 		return model;
 
 	}
+}
+
+export function clean(query: Query): Query {
+
+	const clean: any={};
+
+	function scan(value: undefined | Value | ReadonlyArray<Value>): undefined | Value | ReadonlyArray<Value> {
+		return Array.isArray(value) ? value.length && value.map(scan).filter(v => v !== undefined) as ReadonlyArray<Value>
+			: value ? value : undefined;
+	}
+
+	Object.getOwnPropertyNames(query).forEach(key => {
+
+		const value=scan(query[key]);
+
+		if ( key.startsWith(".") ? value : value !== undefined ) {
+			clean[key]=value;
+		}
+
+	});
+
+	return clean;
 }

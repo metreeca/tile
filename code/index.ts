@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-import { createContext } from "preact";
 import { useCallback } from "preact/hooks";
-import { LinkGraph } from "./graphs/link";
 
 export type Primitive=undefined | null | boolean | number | string
-
-
-//// Contexts //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const Graph=createContext(LinkGraph());
 
 
 //// Helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////

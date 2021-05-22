@@ -16,10 +16,10 @@
 
 import { ComponentChild } from "preact";
 import { useRef } from "preact/hooks";
-import { normalize } from "..";
-import { useValue } from "../hooks/value";
-import { Search, XCircle } from "../tiles/icon";
-import { ToolEntry } from "./entry";
+import { useValue } from "../../hooks/value";
+import { normalize } from "../../index";
+import { ToolEntry } from "../combos/entry";
+import { Search, XCircle } from "../icon";
 
 
 const search=<Search style={{ color: "#999", transform: "translateY(5%)" }}/>;

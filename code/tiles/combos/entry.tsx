@@ -16,7 +16,7 @@
 
 import { ComponentChild, createElement } from "preact";
 import { useState } from "preact/hooks";
-import { classes } from "../index";
+import { classes } from "../../index";
 import "./entry.css";
 
 export function ToolEntry({

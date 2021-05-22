@@ -15,8 +15,8 @@
  */
 
 import { createElement } from "preact";
-import { focus, frame, string } from "../graphs";
-import { Options, OptionsUpdater } from "../hooks/entry";
+import { focus, frame, string } from "../../graphs";
+import { Options, OptionsUpdater } from "../../nests/connector";
 import "./options.css";
 
 

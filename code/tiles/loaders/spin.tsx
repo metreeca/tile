@@ -16,7 +16,7 @@
 
 import { ComponentChild, createElement } from "preact";
 
-import { RefreshCw } from "./icon";
+import { RefreshCw } from "../icon";
 import "./spin.css";
 
 

@@ -14,15 +14,40 @@
  * limitations under the License.
  */
 
+
+import { ComponentChildren, createContext, createElement } from "preact";
 import { StateUpdater, useContext, useEffect, useReducer } from "preact/hooks";
-import { Entry, focus, Frame, Query, Slice, Stats, string, Terms, Value, value } from "../graphs";
-import { Graph, normalize } from "../index";
+import { Entry, focus, Frame, Graph, Query, Slice, Stats, string, Terms, value, Value } from "../graphs";
+import { LinkGraph } from "../graphs/link";
+import { normalize } from "../index";
+
+const context=createContext(LinkGraph());
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function useConnector() {
+	return useContext(context);
+}
+
+export function Connector(props: {
+
+	value: Graph
+
+	children: ComponentChildren
+
+}) {
+
+	return createElement(context.Provider, props);
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function useEntry<V extends Frame, E extends Frame>(id: string, model: V, query?: Query): Entry<typeof model, E> {
 
-	const entry=useContext(Graph).entry<V, E>(id || location.pathname, model, query);
+	const entry=useConnector().entry<V, E>(id || location.pathname, model, query);
 
 	const [, update]=useReducer(v => v+1, 0);
 
@@ -31,9 +56,6 @@ export function useEntry<V extends Frame, E extends Frame>(id: string, model: V,
 	return entry;
 
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function useTerms<E extends Frame>(id: string, path: string, query?: Query, slice?: Slice): Entry<typeof Terms, E> {
 

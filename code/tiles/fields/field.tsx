@@ -16,9 +16,9 @@
 
 import { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
-import { normalize } from "..";
-import { X, XCircle } from "./icon";
-import { ToolPanel } from "./panel";
+import { normalize } from "../../index";
+import { ToolPanel } from "../combos/panel";
+import { X, XCircle } from "../icon";
 
 enum Mode { Collapsed, Selecting, Configuring}
 

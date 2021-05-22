@@ -15,10 +15,11 @@
  */
 
 import { ComponentChild, ComponentChildren, createElement } from "preact";
-import { classes } from "..";
-import { useValue } from "../hooks/value";
+import { useValue } from "../../hooks/value";
+import { classes } from "../../index";
+
+import { ChevronDown, ChevronRight } from "../icon";
 import { ToolEntry } from "./entry";
-import { ChevronDown, ChevronRight } from "./icon";
 import "./panel.css";
 
 export function ToolPanel({

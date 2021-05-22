@@ -15,9 +15,9 @@
  */
 
 import { createElement } from "preact";
-import { Value } from "../graphs";
-import { Range, RangeUpdater } from "../hooks/entry";
-import { trailing } from "../index";
+import { trailing } from "../..";
+import { Value } from "../../graphs";
+import { Range, RangeUpdater } from "../../nests/connector";
 import "./range.css";
 
 

@@ -15,7 +15,7 @@
  */
 
 import { createElement } from "preact";
-import { focus, frame, string } from "../../graphs";
+import { focus, frame, string, Value } from "../../graphs";
 import { Options, OptionsUpdater } from "../../nests/connector";
 import "./options.css";
 
@@ -24,7 +24,7 @@ import "./options.css";
 
 export function ToolOptions({
 
-	value: [options, { set, clear }]
+	value: [options, { set }]
 
 }: {
 
@@ -43,7 +43,7 @@ export function ToolOptions({
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function option({ selected, value, count }: Options[number], set: (value: {}, selected: boolean) => void) {
+function option({ selected, value, count }: Options[number], set: (value: Value, selected: boolean) => void) {
 
 	const key=focus(value);
 	const name=count ? "available" : "unavailable";
@@ -54,7 +54,7 @@ function option({ selected, value, count }: Options[number], set: (value: {}, se
 
 		{frame(value)
 			? <a key={key} className={name} href={value.id}>{string(value)}</a>
-			: <span key={key} className={name}>{value}</span>
+			: <span key={key} className={name}>{string(value)}</span>
 		}
 
 		<var className={name}>{count}</var>

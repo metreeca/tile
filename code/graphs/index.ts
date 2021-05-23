@@ -19,14 +19,16 @@ export const Terms=freeze({
 
 	id: "",
 
-	terms: [<Term>{
+	terms: freeze([{
 
-		value: {},
+			id: "", // !!! review
 
-		count: 0
+			value: {} as Value,
 
-	}]
+			count: 0
 
+		}]
+	)
 });
 
 export const Stats=freeze({
@@ -35,43 +37,49 @@ export const Stats=freeze({
 
 	count: 0,
 
-	min: {},
-	max: {},
+	min: {} as Value,
+	max: {} as Value,
 
-	stats: [{
+	stats: freeze([{
 
-		id: "",
+			id: "",
 
-		count: 0,
+			count: 0,
 
-		min: {},
-		max: {}
+			min: {} as Value,
+			max: {} as Value
 
-	}]
-
+		}]
+	)
 });
 
 
-export function local(value: undefined | Value): value is Local {
-	return typeof value === "object" && Object.keys(value).every(key => key.match(/[a-z]+(-[a-z]+)*/i));
+export function frame(value: Value): value is Frame {
+	return typeof value === "object" && value.id !== undefined;
 }
 
-export function frame(value: undefined | Value): value is Frame {
-	return typeof value === "object" && !local(value);
+export function langs(value: Value): value is Langs {
+	return typeof value === "object" && value.id === undefined;
 }
 
 
 export function focus(value: Value): Plain {
-	return frame(value) ? (value.id || "") // !!! review
-		: local(value) ? value["en"] || "" // !!! preferred language
+	return frame(value) ? value.id
+		: langs(value) ? local(value)
 			: value;
 }
 
 export function string(value: Value): string {
-	return frame(value) ? value.label || label(value.id || "{}") // !!! review
-		: local(value) ? value["en"] || "" // !!! preferred language
-			: typeof value === "number" ? value.toLocaleString()
-				: value.toString();
+	return typeof value === "boolean" ? value.toString()
+		: typeof value === "number" ? value.toLocaleString()
+			: typeof value === "string" ? value
+				: frame(value) ? string(value.label || "") || label(value.id)
+					: "";
+}
+
+
+export function local(value: Langs): string {
+	return value["en"] || Object.values(value)[0] || ""; // !!! preferred language // !!! deterministic choice
 }
 
 /**
@@ -93,7 +101,7 @@ export function label(id: string) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export type Plain=boolean | number | string
-export type Value=Plain | Local | Frame
+export type Value=Plain | Langs | Frame
 
 
 export type Query=Readonly<Partial<{
@@ -114,7 +122,7 @@ export type Slice=Readonly<Partial<{
 }>>
 
 
-export interface Local {
+export interface Langs {
 
 	readonly [lang: string]: string
 
@@ -122,33 +130,14 @@ export interface Local {
 
 export interface Frame {
 
-	readonly id?: string
+	readonly id: string
 
-	readonly label?: string
 	readonly image?: string
-	readonly comment?: string
+
+	readonly label?: string | Langs
+	readonly comment?: string | Langs
 
 	readonly [field: string]: undefined | Value | ReadonlyArray<Value>
-
-}
-
-
-export interface Term extends Frame {
-
-	value: Value
-
-	count: number
-
-}
-
-export interface Stat extends Frame {
-
-	id: string
-
-	count: number
-
-	min: Value
-	max: Value
 
 }
 

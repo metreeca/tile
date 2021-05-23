@@ -15,7 +15,7 @@
  */
 
 
-export const Terms: { id: string, terms: ReadonlyArray<Term> }=freeze({
+export const Terms=freeze({
 
 	id: "",
 
@@ -29,7 +29,7 @@ export const Terms: { id: string, terms: ReadonlyArray<Term> }=freeze({
 
 });
 
-export const Stats: { id: string, stats: ReadonlyArray<Stat> }=freeze({
+export const Stats=freeze({
 
 	id: "",
 
@@ -57,29 +57,21 @@ export function local(value: undefined | Value): value is Local {
 }
 
 export function frame(value: undefined | Value): value is Frame {
-	return typeof value === "object" && value?.hasOwnProperty("id") === true;
-}
-
-export function blank(value: undefined | Value): value is Blank {
-	return typeof value === "object" && !local(value) && !frame(value);
+	return typeof value === "object" && !local(value);
 }
 
 
-export function focus(value: Value): Value {
-	return (blank(value) || frame(value)) && value.id || value;
+export function focus(value: Value): Plain {
+	return frame(value) ? (value.id || "") // !!! review
+		: local(value) ? value["en"] || "" // !!! preferred language
+			: value;
 }
 
-export function value(value: undefined | Value | ReadonlyArray<Value>): undefined | Value {
-	return value instanceof Array ? undefined : value;
-}
-
-export function string(value: undefined | Value | ReadonlyArray<Value>): string {
-	return value === undefined ? ""
-		: value instanceof Array ? "[]" // !!! review
-			: blank(value) || frame(value) ? value.label || label(value.id || "{}") // !!! review
-				: local(value) ? value["en"] || "" // !!! preferred language
-					: typeof value === "number" ? value.toLocaleString()
-						: value.toString();
+export function string(value: Value): string {
+	return frame(value) ? value.label || label(value.id || "{}") // !!! review
+		: local(value) ? value["en"] || "" // !!! preferred language
+			: typeof value === "number" ? value.toLocaleString()
+				: value.toString();
 }
 
 /**
@@ -100,12 +92,16 @@ export function label(id: string) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+export type Plain=boolean | number | string
+export type Value=Plain | Local | Frame
+
+
 export type Query=Readonly<Partial<{
 
 	".terms": string
 	".stats": string
 
-	[path: string]: Value | ReadonlyArray<Value>
+	[path: string]: Plain | ReadonlyArray<Plain>
 
 }>> & Slice
 
@@ -118,16 +114,13 @@ export type Slice=Readonly<Partial<{
 }>>
 
 
-export type Value=boolean | number | string | Local | Blank | Frame
-
-
 export interface Local {
 
-	readonly [field: string]: string
+	readonly [lang: string]: string
 
 }
 
-export interface Blank {
+export interface Frame {
 
 	readonly id?: string
 
@@ -136,12 +129,6 @@ export interface Blank {
 	readonly comment?: string
 
 	readonly [field: string]: undefined | Value | ReadonlyArray<Value>
-
-}
-
-export interface Frame extends Blank {
-
-	readonly id: string
 
 }
 

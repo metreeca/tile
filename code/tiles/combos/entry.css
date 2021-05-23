@@ -16,8 +16,8 @@
 
 :root {
 
-	--tool-entry-border-radius-editable: 0.25em;
-	--tool-entry-padding-editable: 0.25em;
+	--tool-entry-border-radius-edit: 0.25em;
+	--tool-entry-padding-edit: 0.25em;
 
 }
 
@@ -31,26 +31,29 @@ tool-entry {
 
 	&.rule {
 
-		padding-bottom: 0.25em;
-		margin-bottom: 0.25em;
-
+		padding: 0.25em 0;
 		border-bottom: solid 1px #CCC;
+
+		&:not(:last-child) {
+			margin-bottom: 0.25em;
+		}
+
 	}
 
 	&.edit {
 
-		border-radius: var(--tool-entry-border-radius-editable);
+		border-radius: var(--tool-entry-border-radius-edit);
 
 		background-color: var(--tool--background-color-edit);
 
-		box-shadow: 0 0 0 var(--tool-entry-padding-editable) var(--tool--background-color-edit), 0 0 0 calc(var(--tool-entry-padding-editable) + 1px) var(--tool--border-color);
+		box-shadow: 0 0 0 var(--tool-entry-padding-edit) var(--tool--background-color-edit), 0 0 0 calc(var(--tool-entry-padding-edit) + 1px) var(--tool--border-color);
 
-		&.focused {
-			box-shadow: 0 0 0 var(--tool-entry-padding-editable) var(--tool--background-color-edit), 0 0 0 calc(var(--tool-entry-padding-editable) + 1.5px) var(--tool--color-focus);
+		&.focus {
+			box-shadow: 0 0 0 var(--tool-entry-padding-edit) var(--tool--background-color-edit), 0 0 0 calc(var(--tool-entry-padding-edit) + 1.5px) var(--tool--color-focus);
 		}
 
 		&:not(:last-child) {
-			margin-bottom: calc(2 * var(--tool-entry-padding-editable));
+			margin-bottom: calc(2 * var(--tool-entry-padding-edit));
 		}
 
 	}

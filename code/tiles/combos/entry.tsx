@@ -39,7 +39,7 @@ export function ToolEntry({
 
 }) {
 
-	const [focused, setFocused]=useState(false);
+	const [focus, setFocus]=useState(false);
 
 	return createElement("tool-entry", {
 		class: classes({
@@ -47,7 +47,7 @@ export function ToolEntry({
 			"rule": rule,
 			"edit": edit,
 
-			"focused": focused
+			"focus": focus
 
 		})
 	}, <>
@@ -56,8 +56,8 @@ export function ToolEntry({
 
 		<span
 
-			onFocusCapture={e => setFocused((e.target as any)?.tagName === "INPUT")}
-			onBlurCapture={e => setFocused(false)}
+			onFocusCapture={e => setFocus((e.target as any)?.tagName === "INPUT")}
+			onBlurCapture={e => setFocus(false)}
 
 		>{name}</span>
 

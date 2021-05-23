@@ -29,11 +29,11 @@ const search=<Search style={{ color: "#999", transform: "translateY(5%)" }}/>;
 
 export function ToolInput({
 
-	icon=false,
 	rule=false,
+	edit=false,
 
+	icon=false,
 	placeholder,
-
 	menu,
 
 	delay=0,
@@ -42,8 +42,10 @@ export function ToolInput({
 
 }: {
 
+	rule?: boolean
+	edit?: boolean
+
 	icon?: boolean | ComponentChild
-	rule: boolean
 
 	/**
 	 * The input placeholder string.
@@ -81,7 +83,7 @@ export function ToolInput({
 
 	}
 
-	return <ToolEntry edit rule={rule}
+	return <ToolEntry rule={rule} edit={edit}
 
 		icon={icon === true
 			? <button title={"Search"} onClick={() => focus()}>{search}</button>

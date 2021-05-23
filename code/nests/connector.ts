@@ -195,8 +195,9 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 
 	const options=baseline.data(({ terms: baseline }) => matching.data(({ terms: matching }) => [
 
-		...matching,
-		...baseline.filter(term => !matching.some(match => focus(term.value) === focus(match.value)))
+		...matching, ...baseline
+			.filter(term => !matching.some(match => focus(term.value) === focus(match.value)))
+			.map(term => ({ ...term, count: 0 }))
 
 	])).map(term => ({ ...term, selected: selection.has(focus(term.value)) }));
 

@@ -32,12 +32,16 @@ export function ToolOptions({
 
 }) {
 
-	return createElement("tool-options", {}, <>
+	function sort(x: Options[number], y: Options[number]): number {
+		return x.selected && !y.selected ? -1 : !x.selected && y.selected ? +1
+			: x.count > y.count ? -1 : x.count < y.count ? +1
+				: string(x.value).toUpperCase().localeCompare(string(y.value).toUpperCase());
 
-		{options.filter(({ selected }) => selected).map(entry => option(entry, set))}
-		{options.filter(({ selected }) => !selected).map(entry => option(entry, set))}
+	}
 
-	</>);
+	return createElement("tool-options", {},
+		(options as Options[number][]).sort(sort).map(entry => option(entry, set))
+	);
 }
 
 
@@ -50,7 +54,9 @@ function option({ selected, value, count }: Options[number], set: (value: Value,
 
 	return <>
 
-		<input type="checkbox" checked={selected} onChange={e => set(value, e.currentTarget.checked)}/>
+		<input type="checkbox" checked={selected} disabled={!count}
+			onChange={e => set(value, e.currentTarget.checked)}
+		/>
 
 		{frame(value)
 			? <a key={key} className={name} href={value.id}>{string(value)}</a>

@@ -195,14 +195,10 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 
 	const options=baseline.data(({ terms: baseline }) => matching.data(({ terms: matching }) => [
 
-		...(matching
-			.map(term => ({ ...term, selected: selection.has(focus(term.value)) }))),
+		...matching,
+		...baseline.filter(term => !matching.some(match => focus(term.value) === focus(match.value)))
 
-		...(baseline
-			.filter(term => !matching.some(match => focus(term.value) === focus(match.value)))
-			.map(term => ({ ...term, selected: selection.has(focus(term.value)) })))
-
-	]));
+	])).map(term => ({ ...term, selected: selection.has(focus(term.value)) }));
 
 	return [options, {
 

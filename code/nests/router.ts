@@ -38,13 +38,18 @@ window.addEventListener("unhandledrejection", e => {
 (function (route, index) { // ;( dev server fallback
 
 	if ( route.endsWith(index) ) {
-		history.replaceState(history.state, document.title, route.substr(0, route.length-index.length));
+		history.replaceState(history.state, document.title, route.substr(0, route.length-index.length+1));
 	}
 
 })(location.pathname, "/index.html");
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Absolute root URL with trailing slash.
+ */
+export const root=new URL("/", location.href).href;
 
 /**
  * Absolute base URL with trailing slash.
@@ -224,9 +229,13 @@ export function Router({
 
 			if ( anchor && anchor.getAttribute(native) === null ) { // only non-native anchors
 
-				if ( anchor.href.startsWith(base) ) { // only internal routes
+				const href=anchor.href;
 
-					const route=anchor.href.substr(base.length-1);
+				const route=href.startsWith(base) ? href.substr(base.length-1)
+					: href.startsWith(root) ? href.substr(root.length-1)
+						: "";
+
+				if ( route ) { // only internal routes
 
 					history.pushState(history.state, document.title, store(route));
 

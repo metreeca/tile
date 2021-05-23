@@ -15,9 +15,9 @@
  */
 
 
-import { useEffect, useState } from "preact/hooks";
+import { StateUpdater, useEffect, useState } from "preact/hooks";
 
-export function useValue<V>(value: V): [V, (value: V) => void] {
+export function useValue<V>(value: V): [V, StateUpdater<V>] {
 
 	const init=value instanceof Function ? () => value : value;
 

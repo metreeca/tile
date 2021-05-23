@@ -17,11 +17,16 @@
 
 import { ComponentChildren, createContext, createElement } from "preact";
 import { StateUpdater, useContext, useEffect, useReducer } from "preact/hooks";
-import { Entry, focus, Frame, Graph, Query, Slice, Stats, string, Terms, value, Value } from "../graphs";
+import { Entry, focus, Frame, Graph, Plain, Query, Slice, Stats, string, Terms, Value } from "../graphs";
 import { LinkGraph } from "../graphs/link";
 import { normalize } from "../index";
 
 const context=createContext(LinkGraph());
+
+
+function single(value: undefined | Value | ReadonlyArray<Value>): undefined | Plain {
+	return value === undefined || value instanceof Array ? undefined : focus(value);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +85,7 @@ export function useKeywords(path: string, [query, setQuery]: [Query, StateUpdate
 
 	const like=`~${path}`;
 
-	const keywords=string(query[like]);
+	const keywords=string(single(query[like]) || "");
 
 	return [normalize(keywords), (keywords: string) =>
 		setQuery({ ...query, [like]: normalize(keywords) })
@@ -117,8 +122,8 @@ export function useRange(id: string, path: string, [query, setQuery]: [Query, St
 	const gte=`>=${path}`;
 	const lte=`<=${path}`;
 
-	const lower=value(query[gte]);
-	const upper=value(query[lte]);
+	const lower=single(query[gte]);
+	const upper=single(query[lte]);
 
 	const stats=useStats(id, path, query);
 
@@ -129,7 +134,7 @@ export function useRange(id: string, path: string, [query, setQuery]: [Query, St
 	return [range, {
 
 		set(lower, upper) {
-			setQuery({ ...query, [lte]: lower, [gte]: upper, ".offset": 0 });
+			setQuery({ ...query, [lte]: single(lower), [gte]: single(upper), ".offset": 0 });
 		},
 
 		clear() {
@@ -203,7 +208,7 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 
 		set(value, selected) {
 
-			const update: Set<Value>=new Set(selection);
+			const update: Set<Plain>=new Set(selection);
 
 			if ( selected ) {
 				update.add(focus(value));

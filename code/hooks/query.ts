@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-import { useEffect } from "preact/hooks";
-import { clean } from "../graphs";
-import { useDelta } from "./delta";
+import { StateUpdater, useEffect, useState } from "preact/hooks";
+import { Query } from "../graphs";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface Query {
+export function useQuery(initial: Query): [Query, StateUpdater<Query>] {
 
-	readonly [parameter: string]: boolean | number | string | ReadonlyArray<boolean | number | string>
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export function useQuery<Q extends Query>(initial: Q): [typeof initial, (delta: Partial<typeof initial>) => void] {
-
-	const [state, putState]=useDelta({ ...initial, ...query() });
+	const [state, setState]=useState({ ...initial, ...query() });
 
 	useEffect(() => { query(state, initial); });
 
-	return [state, putState];
+	return [state, setState];
 }
 
 
@@ -63,10 +53,11 @@ export function query(query?: Query, defaults?: Query): Query {
 
 		const params=new URLSearchParams();
 
-		Object.entries(clean(query)).forEach(([key, value]) => (Array.isArray(value) ? value : [value])
-			.filter(value => !(defaults && value === defaults[key])) // not a default value
-			.forEach(value => { params.append(key, String(value)); })
-		);
+		Object.entries(query)
+			.flatMap(([key, value]) => (Array.isArray(value) ? value : [value]))
+			.filter(([key, value]) => !(defaults && value === defaults[key]))
+			.filter(([key, value]) => !(key.startsWith(".") && !value))
+			.forEach(([key, value]) => params.append(key, String(value)));
 
 		const search=params.toString();
 

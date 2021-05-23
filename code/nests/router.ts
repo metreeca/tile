@@ -16,7 +16,7 @@
 
 import { createContext, createElement, FunctionalComponent, FunctionComponent, VNode } from "preact";
 import { useContext, useEffect, useMemo } from "preact/hooks";
-import { string } from "../graphs";
+import { label, string } from "../graphs";
 import { useUpdate } from "../hooks/update";
 
 const active="active";
@@ -29,14 +29,19 @@ window.addEventListener("error", e => {
 	window.alert(`;-( Internal error… please let us know about the issue. Thanks!\n\n${e.message}`);
 });
 
+
 window.addEventListener("unhandledrejection", e => {
 	window.alert(`;-( Internal error… please let us know about the issue. Thanks!\n\n${e.reason}`);
 });
 
 
-function join(label: string, title: string, separator: string=" | "): string {
-	return `${label}${label && title ? separator : ""}${title}`;
-}
+(function (route, index) { // ;( dev server fallback
+
+	if ( route.endsWith(index) ) {
+		history.replaceState(history.state, document.title, route.substr(0, route.length-index.length));
+	}
+
+})(location.pathname, "/index.html");
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,7 +260,7 @@ export function Router({
 
 			history.replaceState(history.state, document.title, store(route)); // possibly altered by redirections
 
-			document.title=join(string(location.pathname), name); // !!! update history
+			document.title=join(label(route), name); // !!! update history
 
 			return createElement(RouterContext.Provider, {
 
@@ -273,6 +278,10 @@ export function Router({
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function join(label: string, title: string, separator: string=" | "): string {
+	return `${label}${label && title ? separator : ""}${title}`;
+}
 
 function compile(table: Table): Switch {
 

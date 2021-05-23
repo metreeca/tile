@@ -32,7 +32,7 @@ export function useQuery(initial: Query): [Query, StateUpdater<Query>] {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function query(query?: Query, defaults?: Query): Query {
+function query(query?: Query, defaults?: Query): Query {
 	if ( query === undefined ) {
 
 		const query: Query={};
@@ -53,11 +53,11 @@ export function query(query?: Query, defaults?: Query): Query {
 
 		const params=new URLSearchParams();
 
-		Object.entries(query)
-			.flatMap(([key, value]) => (Array.isArray(value) ? value : [value]))
-			.filter(([key, value]) => !(defaults && value === defaults[key]))
-			.filter(([key, value]) => !(key.startsWith(".") && !value))
-			.forEach(([key, value]) => params.append(key, String(value)));
+		Object.entries(query).forEach(([key, values]) => (Array.isArray(values) ? values : [values])
+			.filter(value => !(defaults && value === defaults[key]))
+			.filter(value => !(key.startsWith(".") && !value))
+			.forEach(value => params.append(key, String(value)))
+		);
 
 		const search=params.toString();
 
@@ -65,7 +65,7 @@ export function query(query?: Query, defaults?: Query): Query {
 			search ? `${location.pathname}?${search}${location.hash}` : `${location.pathname}${location.hash}`
 		);
 
-		return query;
+		return {};
 
 	}
 }

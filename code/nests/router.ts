@@ -22,7 +22,7 @@ import { useUpdate } from "../hooks/update";
 const active="active";
 const native="native";
 
-const context=createContext<Router>(router({ store: path(), update: () => {} }));
+const RouterContext=createContext<Router>(router({ store: path(), update: () => {} }));
 
 
 window.addEventListener("error", e => {
@@ -171,8 +171,8 @@ export function hash(): Store {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function useRouter() {
-	return useContext(context);
+export function useRouter(): Router {
+	return useContext(RouterContext);
 }
 
 export function Router({
@@ -257,7 +257,7 @@ export function Router({
 
 			document.title=join(string(location.pathname), name); // !!! update history
 
-			return createElement(context.Provider, {
+			return createElement(RouterContext.Provider, {
 
 				value: router({ store, update }),
 

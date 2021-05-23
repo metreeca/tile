@@ -21,7 +21,7 @@ import { Entry, focus, Frame, Graph, Plain, Query, Slice, Stats, string, Terms, 
 import { LinkGraph } from "../graphs/link";
 import { normalize } from "../index";
 
-const context=createContext(LinkGraph());
+const ConnectorContext=createContext<Graph>(LinkGraph());
 
 
 function single(value: undefined | Value | ReadonlyArray<Value>): undefined | Plain {
@@ -31,8 +31,8 @@ function single(value: undefined | Value | ReadonlyArray<Value>): undefined | Pl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function useConnector() {
-	return useContext(context);
+export function useConnector(): Graph {
+	return useContext(ConnectorContext);
 }
 
 export function Connector(props: {
@@ -43,7 +43,7 @@ export function Connector(props: {
 
 }) {
 
-	return createElement(context.Provider, props);
+	return createElement(ConnectorContext.Provider, props);
 
 }
 

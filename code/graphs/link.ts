@@ -64,7 +64,13 @@ function entry<V extends Frame, E extends Frame>(url: string, model: V): Readonl
 
 				abort=controller.abort;
 
-				fetch(url, { signal: controller.signal })
+				fetch(url, {
+
+					headers: { Accept: "application/json" }, // !!! interceptor for session management
+
+					signal: controller.signal
+
+				})
 
 					.then(response => response.json())
 

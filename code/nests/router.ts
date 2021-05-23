@@ -34,10 +34,6 @@ window.addEventListener("unhandledrejection", e => {
 });
 
 
-function relative(href: string): string | undefined {
-	return href.match(`^${base}([/#].*)?`)?.[1] || href;
-}
-
 function join(label: string, title: string, separator: string=" | "): string {
 	return `${label}${label && title ? separator : ""}${title}`;
 }
@@ -45,9 +41,10 @@ function join(label: string, title: string, separator: string=" | "): string {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const base=new URL(document.querySelector("base")?.href || "", location.href).href.replace(
-	/(^.*?)\/?([?#].*)?$/, "$1" // remove trailing slash / query / hash
-);
+/**
+ * Absolute base URL with trailing slash.
+ */
+export const base=new URL(".", new URL(document.querySelector("base")?.href || "", location.href)).href;
 
 export const name=document.title;
 export const icon=(document.querySelector("link[rel=icon]") as HTMLLinkElement)?.href || ""; // !!! fallback
@@ -156,8 +153,8 @@ export interface Router {
  */
 export function path(): Store {
 	return (route?: string) => route === undefined
-		? relative(location.href) || location.href
-		: route ? route.startsWith("/") ? `${base}${route}` : `${base}/${route}` : location.pathname;
+		? location.href.startsWith(base) ? location.href.substr(base.length-1) : location.href
+		: route ? `${base}${route.startsWith("/") ? route.substr(1) : route}` : location.href;
 }
 
 /**
@@ -168,7 +165,7 @@ export function path(): Store {
 export function hash(): Store {
 	return (route?: string) => route === undefined
 		? location.hash.substring(1)
-		: route ? `#${route}` : location.hash;
+		: route ? route.startsWith("#") ? route : `#${route}` : location.hash;
 }
 
 
@@ -222,16 +219,15 @@ export function Router({
 
 			if ( anchor && anchor.getAttribute(native) === null ) { // only non-native anchors
 
-				const route=relative(anchor.href);
+				if ( anchor.href.startsWith(base) ) { // only internal routes
 
-				if ( route ) { // only internal routes
+					const route=anchor.href.substr(base.length-1);
 
-					try { history.pushState(history.state, document.title, store(route)); } finally {
+					history.pushState(history.state, document.title, store(route));
 
-						e.preventDefault();
-						update();
+					update();
 
-					}
+					e.preventDefault();
 
 				}
 			}

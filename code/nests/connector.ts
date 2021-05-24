@@ -228,14 +228,14 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const enum Order {
+export const enum Sort {
 	Ascending="ascending",
 	Descending="descending"
 }
 
-export interface OrderUpdater {
+export interface SortUpdater {
 
-	set(order: Order): void
+	set(order: Sort): void
 
 	toggle(): void
 
@@ -243,7 +243,8 @@ export interface OrderUpdater {
 
 }
 
-export function useOrder(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [undefined | Order, OrderUpdater] {
+
+export function useSort(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [undefined | Sort, SortUpdater] {
 
 	const ascending=`+${path}`;
 	const descending=`-${path}`;
@@ -251,25 +252,25 @@ export function useOrder(path: string, [query, setQuery]: [Query, StateUpdater<Q
 	const criterion=(query[".order"]);
 	const criteria=Array.isArray(criterion) ? criterion : [criterion];
 
-	const order=criteria.some(criterion => criterion === path || criterion === ascending) ? Order.Ascending
-		: criteria.some(criterion => criterion === descending) ? Order.Descending
+	const order=criteria.some(criterion => criterion === path || criterion === ascending) ? Sort.Ascending
+		: criteria.some(criterion => criterion === descending) ? Sort.Descending
 			: undefined;
 
-	function set(order: undefined | Order) {
+	function set(order: undefined | Sort) {
 		setQuery({
 			...query, ".offset": 0,
-			".order": order === Order.Ascending ? ascending : order === Order.Descending ? descending : undefined
+			".order": order === Sort.Ascending ? ascending : order === Sort.Descending ? descending : undefined
 		});
 	}
 
 	return [order, {
 
-		set(order: Order) {
+		set(order: Sort) {
 			set(order);
 		},
 
 		toggle() {
-			set(order === Order.Ascending ? Order.Descending : Order.Ascending);
+			set(order === Sort.Ascending ? Sort.Descending : Sort.Ascending);
 		},
 
 		clear() {
@@ -280,4 +281,52 @@ export function useOrder(path: string, [query, setQuery]: [Query, StateUpdater<Q
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export interface Page {
+
+	offset: number
+	limit: number
+
+	count: number
+
+	prev?: number
+	next?: number
+
+}
+
+export interface PageUpdater {
+
+	(offset: number): void
+
+}
+
+
+export function usePage([query, setQuery]: [Query, StateUpdater<Query>]): [Page, PageUpdater] {
+
+	const count=useStats("", "", query).data(stats => stats.count);
+
+	const offset=Math.max(0, query[".offset"] || 0);
+	const limit=Math.max(1, query[".limit"] || 0);
+
+	const prev=offset-limit;
+	const next=offset+limit;
+
+	const slice={
+
+		offset,
+		limit,
+
+		count,
+
+		prev: prev >= 0 ? prev : undefined,
+		next: next <= count ? next : undefined
+
+	};
+
+	return [slice, offset =>
+		setQuery({ ...query, ".offset": Math.max(0, Math.min(offset-offset%limit, count)) })
+	];
+
+}
 

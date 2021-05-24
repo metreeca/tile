@@ -226,3 +226,58 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const enum Order {
+	Ascending="ascending",
+	Descending="descending"
+}
+
+export interface OrderUpdater {
+
+	set(order: Order): void
+
+	toggle(): void
+
+	clear(): void
+
+}
+
+export function useOrder(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [undefined | Order, OrderUpdater] {
+
+	const ascending=`+${path}`;
+	const descending=`-${path}`;
+
+	const criterion=(query[".order"]);
+	const criteria=Array.isArray(criterion) ? criterion : [criterion];
+
+	const order=criteria.some(criterion => criterion === path || criterion === ascending) ? Order.Ascending
+		: criteria.some(criterion => criterion === descending) ? Order.Descending
+			: undefined;
+
+	function set(order: undefined | Order) {
+		setQuery({
+			...query, ".offset": 0,
+			".order": order === Order.Ascending ? ascending : order === Order.Descending ? descending : undefined
+		});
+	}
+
+	return [order, {
+
+		set(order: Order) {
+			set(order);
+		},
+
+		toggle() {
+			set(order === Order.Ascending ? Order.Descending : Order.Ascending);
+		},
+
+		clear() {
+			set(undefined);
+		}
+
+	}];
+}
+
+
+

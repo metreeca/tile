@@ -15,7 +15,7 @@
  */
 
 import { createElement } from "preact";
-import { focus, frame, string, Value } from "../../graphs";
+import { focus, frame, string } from "../../graphs";
 import { Options, OptionsUpdater } from "../../nests/connector";
 import "./options.css";
 
@@ -24,7 +24,7 @@ import "./options.css";
 
 export function ToolOptions({
 
-	value: [options, { set }]
+	value: [options, setOptions]
 
 }: {
 
@@ -40,14 +40,14 @@ export function ToolOptions({
 	}
 
 	return createElement("tool-options", {},
-		(options as Options[number][]).sort(sort).map(entry => option(entry, set))
+		(options as Options[number][]).sort(sort).map(entry => option(entry, setOptions))
 	);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function option({ selected, value, count }: Options[number], set: (value: Value, selected: boolean) => void) {
+function option({ selected, value, count }: Options[number], set: OptionsUpdater) {
 
 	const key=focus(value);
 	const name=count ? "available" : "unavailable";
@@ -55,7 +55,7 @@ function option({ selected, value, count }: Options[number], set: (value: Value,
 	return <>
 
 		<input type="checkbox" checked={selected} disabled={!count}
-			onChange={e => set(value, e.currentTarget.checked)}
+			onChange={e => set({ value, selected: e.currentTarget.checked })}
 		/>
 
 		{frame(value)

@@ -81,7 +81,12 @@ export function useStats<E extends Frame>(id: string, path: string, query?: Quer
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function useKeywords(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [string, (keywords: string) => void] {
+export type Keywords=string;
+
+export type KeywordsUpdater=(keywords: string) => void;
+
+
+export function useKeywords(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Keywords, KeywordsUpdater] {
 
 	const like=`~${path}`;
 
@@ -96,73 +101,15 @@ export function useKeywords(path: string, [query, setQuery]: [Query, StateUpdate
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface Range {
+export type Options=ReadonlyArray<{
 
-	readonly type?: string
+	readonly selected: boolean
+	readonly value: Value
+	readonly count: number
 
-	readonly min?: Value
-	readonly max?: Value
+}>
 
-	readonly lower?: Value
-	readonly upper?: Value
-
-}
-
-export interface RangeUpdater {
-
-	set(lower: undefined | Value, upper: undefined | Value): void
-
-	clear(): void
-
-}
-
-
-export function useRange(id: string, path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Range, RangeUpdater] {
-
-	const gte=`>=${path}`;
-	const lte=`<=${path}`;
-
-	const lower=single(query[gte]);
-	const upper=single(query[lte]);
-
-	const stats=useStats(id, path, query);
-
-	const range=stats.data(({ stats: [stat] }) => ({
-		type: stat?.id, min: stat?.min, max: stat?.max, lower, upper
-	}));
-
-	return [range, {
-
-		set(lower, upper) {
-			setQuery({ ...query, [lte]: single(lower), [gte]: single(upper), ".offset": 0 });
-		},
-
-		clear() {
-			setQuery({ ...query, [lte]: undefined, [gte]: undefined, ".offset": 0 });
-		}
-
-	}];
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export interface Options extends ReadonlyArray<{
-
-	selected: boolean
-	value: Value
-	count: number
-
-}> {}
-
-export interface OptionsUpdater {
-
-	set(value: Value, selected: boolean): void
-
-	clear(): void
-
-}
+export type OptionsUpdater=(option?: { value: Value, selected: boolean }) => void
 
 
 export function useOptions(id: string, path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Options, OptionsUpdater] {
@@ -193,7 +140,7 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 	);
 
 
-	const options=baseline.data(({ terms: baseline }) => matching.data(({ terms: matching }) => [
+	const options=matching.data(({ terms: matching }) => baseline.data(({ terms: baseline }) => [
 
 		...matching, ...baseline
 			.filter(term => !matching.some(match => focus(term.value) === focus(match.value)))
@@ -201,24 +148,24 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 
 	])).map(term => ({ ...term, selected: selection.has(focus(term.value)) }));
 
-	return [options, {
+	return [options, option => {
 
-		set(value, selected) {
+		if ( option === undefined ) { // clear
+
+			setQuery({ ...query, [path]: undefined, [any]: undefined, ".offset": 0 });
+
+		} else { // set
 
 			const update: Set<Plain>=new Set(selection);
 
-			if ( selected ) {
-				update.add(focus(value));
+			if ( option.selected ) {
+				update.add(focus(option.value));
 			} else {
-				update.delete(focus(value));
+				update.delete(focus(option.value));
 			}
 
 			setQuery({ ...query, [path]: [...update], [any]: undefined, ".offset": 0 });
 
-		},
-
-		clear() {
-			setQuery({ ...query, [path]: undefined, [any]: undefined, ".offset": 0 });
 		}
 
 	}];
@@ -228,23 +175,72 @@ export function useOptions(id: string, path: string, [query, setQuery]: [Query, 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const enum Sort {
-	Ascending="ascending",
-	Descending="descending"
-}
+export type Range={
 
-export interface SortUpdater {
+	readonly type?: string
 
-	set(order: Sort): void
+	readonly min?: Value
+	readonly max?: Value
 
-	toggle(): void
-
-	clear(): void
+	readonly lower?: Value
+	readonly upper?: Value
 
 }
 
+export type RangeUpdater=(range?: { lower?: Value, upper?: Value }) => void
 
-export function useSort(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [undefined | Sort, SortUpdater] {
+
+export function useRange(id: string, path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Range, RangeUpdater] {
+
+	const gte=`>=${path}`;
+	const lte=`<=${path}`;
+
+	const lower=single(query[gte]);
+	const upper=single(query[lte]);
+
+	const stats=useStats(id, path, query);
+
+	const range=stats.data(({ stats: [stat] }) => ({
+
+		type: stat?.id,
+
+		min: stat?.min,
+		max: stat?.max,
+
+		lower,
+		upper
+
+	}));
+
+	return [range, range => {
+
+		if ( range === undefined ) { // clear
+
+			setQuery({ ...query, [lte]: undefined, [gte]: undefined, ".offset": 0 });
+
+		} else { // set
+
+			console.log(query);
+
+			const xxx={ ...query, [lte]: single(range.lower), [gte]: single(range.upper), ".offset": 0 };
+			console.log(xxx);
+			setQuery(xxx);
+
+		}
+
+	}];
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export type Order=undefined | boolean
+
+export type OrderUpdater=(order?: Order) => void
+
+
+export function useOrder(path: string, [query, setQuery]: [Query, StateUpdater<Query>]): [Order, OrderUpdater] {
 
 	const ascending=`+${path}`;
 	const descending=`-${path}`;
@@ -252,32 +248,24 @@ export function useSort(path: string, [query, setQuery]: [Query, StateUpdater<Qu
 	const criterion=(query[".order"]);
 	const criteria=Array.isArray(criterion) ? criterion : [criterion];
 
-	const order=criteria.some(criterion => criterion === path || criterion === ascending) ? Sort.Ascending
-		: criteria.some(criterion => criterion === descending) ? Sort.Descending
+	const order=criteria.some(criterion => criterion === path || criterion === ascending) ? true
+		: criteria.some(criterion => criterion === descending) ? false
 			: undefined;
 
-	function set(order: undefined | Sort) {
-		setQuery({
-			...query, ".offset": 0,
-			".order": order === Sort.Ascending ? ascending : order === Sort.Descending ? descending : undefined
-		});
-	}
+	return [order, order => {
+		if ( order === undefined ) { // clear
 
-	return [order, {
+			setQuery({ ...query, ".order": undefined, ".offset": 0 });
 
-		set(order: Sort) {
-			set(order);
-		},
+		} else { // set
 
-		toggle() {
-			set(order === Sort.Ascending ? Sort.Descending : Sort.Ascending);
-		},
+			setQuery({
+				...query, ".order": order ? ascending : descending, ".offset": 0
+			});
 
-		clear() {
-			set(undefined);
 		}
-
 	}];
+
 }
 
 
@@ -297,7 +285,7 @@ export interface Page {
 
 export interface PageUpdater {
 
-	(offset: number): void
+	(offset?: number): void
 
 }
 
@@ -324,7 +312,7 @@ export function usePage([query, setQuery]: [Query, StateUpdater<Query>]): [Page,
 
 	};
 
-	return [slice, offset =>
+	return [slice, (offset=0) =>
 		setQuery({ ...query, ".offset": Math.max(0, Math.min(offset-offset%limit, count)) })
 	];
 

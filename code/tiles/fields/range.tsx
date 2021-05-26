@@ -28,7 +28,7 @@ export function ToolRange({
 	pattern="\\d+(\\.\\d+)?",
 	format=String,
 
-	value: [{ type, min, max, lower, upper }, { set }] // !!! switch representation according to type (dates, times, …)
+	value: [{ type, min, max, lower, upper }, setRange] // !!! switch representation according to type (dates, times, …)
 
 }: {
 
@@ -44,11 +44,11 @@ export function ToolRange({
 	return createElement("tool-range", {}, <>
 
 		<input type="search" pattern={pattern} placeholder={string(min)} value={string(lower)} onInput={trailing(500, e => {
-			if ( e.currentTarget.checkValidity() ) { set(lower, e.currentTarget.value); }
+			if ( e.currentTarget.checkValidity() ) { setRange({ lower, upper: e.currentTarget.value }); }
 		})}/>
 
 		<input type="search" pattern={pattern} placeholder={string(max)} value={string(upper)} onInput={trailing(500, e => {
-			if ( e.currentTarget.checkValidity() ) { set(e.currentTarget.value, upper); }
+			if ( e.currentTarget.checkValidity() ) { setRange({ lower: e.currentTarget.value, upper }); }
 		})}/>
 
 	</>);

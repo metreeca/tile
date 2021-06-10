@@ -230,10 +230,12 @@ export function Router({
 			if ( anchor && anchor.getAttribute(native) === null ) { // only non-native anchors
 
 				const href=anchor.href;
+				const file="file:///";
 
 				const route=href.startsWith(base) ? href.substr(base.length-1)
 					: href.startsWith(root) ? href.substr(root.length-1)
-						: "";
+						: href.startsWith(file) ? href.substr(file.length-1)
+							: "";
 
 				if ( route ) { // only internal routes
 

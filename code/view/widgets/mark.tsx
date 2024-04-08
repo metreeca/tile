@@ -183,8 +183,9 @@ function ToolMarkText(content: string) {
 		rehypePlugins={[rehypeSlug, rehypeHighlight]}
 
 		urlTransform={href => [defaultUrlTransform(href)]
-			.map(value => value.endsWith("/index.md") ? value.substring(0, value.length - "/index.md".length) : value)
-			.map(value => value.endsWith(".md") ? value.substring(0, value.length - ".md".length) : value)
+			.map(value => value.replace(/(?<=^|\/)([-\w]+)\.md(?=#|$)/, (_match, filename) =>
+				filename === "index" ? "" : filename
+			))
 			[0]
 		}
 

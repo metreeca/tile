@@ -84,11 +84,11 @@ body {
 /**** Headers *********************************************************************************************************/
 
 h1 {
-    font-size: 1.25em;
+    font-size: 1.5em;
 }
 
 h2 {
-    font-size: 1.1em;
+    font-size: 1.125em;
 }
 
 h3 {
@@ -116,15 +116,32 @@ nav {
     }
 
     & > h1 {
-        font-weight: bolder;
+
+        font-weight: bold;
+
+        & + h1 {
+            margin-top: 0.1em;
+        }
+
+        & + h2 {
+            margin-top: 0.25em;
+        }
+
     }
 
-    & > :not(h1) + h1 {
-        margin-top: 0.5em;
+    & > h2 {
+
+        margin-left: 0.5em;
+        font-size: 0.9em;
+
+        & + h1 {
+            margin-top: 0.5em;
+        }
+
     }
 
-    & > :not(h2) + h2 {
-        margin-top: 0.25em;
+    & > h3 {
+        display: none;
     }
 
 }
@@ -189,7 +206,7 @@ table {
     font-size: 90%;
 }
 
-tbody > tr:nth-child(even) > td {
+tbody > tr:nth-child(odd) > td {
 
     --tool--background-color: var(--tool--background-color-stripe);
 

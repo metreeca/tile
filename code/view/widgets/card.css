@@ -75,7 +75,7 @@ tool-card {
 
     & > span,
     & > div {
-        justify-self: start;
+        justify-self: stretch;
     }
 
     & > span,

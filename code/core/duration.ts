@@ -154,19 +154,7 @@ export function asDuration(value: unknown): undefined | Duration {
 }
 
 
-export function toDurationString({
-
-	minus,
-
-	years,
-	months,
-	days,
-
-	hours,
-	minutes,
-	seconds
-
-}: Duration, {
+export function toDurationString(value: string | Duration, {
 
 	locales
 
@@ -178,6 +166,20 @@ export function toDurationString({
 
 	const opts={ locales };
 
+	const {
+
+		minus,
+
+		years,
+		months,
+		days,
+
+		hours,
+		minutes,
+		seconds
+
+	}=isString(value) ? duration.decode(value) : value;
+	
 	return [
 
 		minus ? toLocalString(Labels.minus, opts) : undefined,

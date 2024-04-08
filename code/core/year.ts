@@ -75,7 +75,7 @@ export function asYear(value: unknown): undefined | string {
 }
 
 
-export function toYearString(value: Date, {
+export function toYearString(value: string | Date, {
 
 	locales,
 
@@ -87,6 +87,6 @@ export function toYearString(value: Date, {
 
 }={}): string {
 
-	return value.getFullYear().toFixed(0); // !!! selected locale
+	return (isString(value) ? year.decode(value) : value).getFullYear().toFixed(0); // !!! selected locale
 
 }

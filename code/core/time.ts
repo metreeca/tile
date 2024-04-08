@@ -75,7 +75,7 @@ export function asTime(value: unknown): undefined | string {
 }
 
 
-export function toTimeString(value: Date, {
+export function toTimeString(value: string | Date, {
 
 	locales,
 
@@ -87,7 +87,7 @@ export function toTimeString(value: Date, {
 
 }={}): string {
 
-	return value.toLocaleTimeString(locales, {
+	return (isString(value) ? time.decode(value) : value).toLocaleTimeString(locales, {
 
 		hour: "numeric",
 		minute: "numeric",

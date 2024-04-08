@@ -98,7 +98,7 @@ export function asDate(value: unknown): undefined | string {
 }
 
 
-export function toDateString(value: Date, {
+export function toDateString(value: string | Date, {
 
 	locales,
 
@@ -110,7 +110,7 @@ export function toDateString(value: Date, {
 
 }={}): string {
 
-	return value.toLocaleDateString(locales, {
+	return (isString(value) ? date.decode(value) : value).toLocaleDateString(locales, {
 
 		year: "numeric",
 		month: "numeric",

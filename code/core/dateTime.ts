@@ -75,7 +75,7 @@ export function asDateTime(value: unknown): undefined | string {
 }
 
 
-export function toDateTimeString(value: Date, {
+export function toDateTimeString(value: string | Date, {
 
 	locales,
 
@@ -87,7 +87,7 @@ export function toDateTimeString(value: Date, {
 
 }={}): string {
 
-	return value.toLocaleString(locales, {
+	return (isString(value) ? dateTime.decode(value) : value).toLocaleString(locales, {
 
 		year: "numeric",
 		month: "2-digit",

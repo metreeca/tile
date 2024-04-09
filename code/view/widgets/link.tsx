@@ -17,6 +17,7 @@
 import { isArray } from "@metreeca/core";
 import { Entry, isEntry } from "@metreeca/core/entry";
 import { Frame, isFrame, toQuery } from "@metreeca/core/frame";
+import { isId, toIdString } from "@metreeca/core/id";
 import { isString } from "@metreeca/core/string";
 import { isValue, toValueString, Value } from "@metreeca/core/value";
 import { useRouter } from "@metreeca/data/contexts/router";
@@ -43,9 +44,9 @@ export function ToolLink({
 }) {
 
 	const handler=(filter === undefined) ? undefined : action(filter);
-	const label=toValueString(value);
+	const label=isId(value) ? toIdString(value, { compact: true }) : toValueString(value);
 
-	return <a href={isEntry(value) ? value.id : undefined} title={label}
+	return <a href={isEntry(value) ? value.id : isId(value) ? value : undefined} title={label}
 
 		onClick={e => {
 

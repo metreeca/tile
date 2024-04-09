@@ -443,6 +443,10 @@ img {
 
     overflow: hidden;
 
+    &:first-child {
+        margin-top: 0;
+    }
+
     &.left,
     &.right {
         max-width: 33%;

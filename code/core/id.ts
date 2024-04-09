@@ -88,7 +88,7 @@ export function toIdString(value: string, {
 		const host=url.host;
 		const lang=url.pathname.match(/\b[a-z]{2}\b(?!-)/i); // ignore things like '/wp-document/
 
-		return lang ? `${host} (${lang[0].toLowerCase()})` : host;
+		return lang ? `${host} (${lang[0].toLowerCase()})` : host;
 
 	} else {
 

@@ -157,7 +157,9 @@ tool-page {
             & > h2,
             & > h3 {
 
+                padding: 0;
                 margin: 0;
+                border-style: none;
                 font: inherit;
 
                 & > a {

@@ -61,7 +61,7 @@ export const id: Type<string>=immutable({
  * Checks if a value is an absolute or root-relative IRI.
  */
 export function isId(value: unknown): value is string {
-	return isString(value) && /^(?:\w+:|\/)[^\W]*/.test(value);
+	return isString(value) && /^(?:[a-zA-Z]\w*:)?\/[^\W]*/.test(value);
 }
 
 export function asId(value: unknown): undefined | string {

@@ -66,7 +66,7 @@ export function useRange<
 >(
 	collection: Collection<T>,
 	expression: string,
-	opts: RangeOpts & Readonly<{ type: Type<V,X > }>
+	opts: RangeOpts & Readonly<{ type: Type<V, X> }>
 ): Range<V>;
 
 /*
@@ -93,7 +93,7 @@ export function useRange<V extends Value>(collection: Collection<V>, expression:
 	const [{ model, query, items }, setCollection]=collection;
 
 	const effective=type ?? toType(evaluate(model, expression)
-		?? error(new RangeError(`unknown model for <${model}>[${expression}]`))
+		?? error(new RangeError(`unknown model for <${expression}>`))
 	);
 
 	const lower=`>=${expression}`;

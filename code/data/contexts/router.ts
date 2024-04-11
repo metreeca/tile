@@ -466,7 +466,12 @@ function lookup(route: string, table: Switch) {
 
 
 function normalizeTitle(title: undefined | string) {
-	return normalize((title === undefined) ? document.title : title && app.name ? `${title} | ${(app.name)}` : title || app.name);
+	return normalize((title === undefined) ? document.title
+		: title === app.name ? app.name
+			: title && app.name ? `${title} | ${(app.name)}`
+				: title ? title
+					: app.name
+	);
 }
 
 function normalizeRoute(route: string | undefined, store: Store) {

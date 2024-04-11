@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 
 import { isBoolean } from "@metreeca/link";
-import * as React from "react";
-import { createElement } from "react";
 import { id, isFocus, Simple, string } from "@metreeca/link/index_";
 import { ToolFlag } from "@metreeca/tile/widgets/flag";
 import { AtSign, ChevronRight, File } from "@metreeca/tile/widgets/icon";
+import * as React from "react";
+import { createElement } from "react";
 import "./#term.css";
 
 

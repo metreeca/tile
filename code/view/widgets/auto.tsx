@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 
 
-import { toValueString, Value }                      from "@metreeca/core/value";
-import { useTrailing }                               from "@metreeca/data/hooks/events";
-import { Matches }                                   from "@metreeca/data/models/matches";
-import { AutoDelay, AutoLength, AutoSize, keys }     from "@metreeca/view";
-import { focus, input }                              from "@metreeca/view/widgets/form";
-import { ClearIcon }                                 from "@metreeca/view/widgets/icon";
-import { ToolSpin }                                  from "@metreeca/view/widgets/spin";
+import { toValueString, Value } from "@metreeca/core/value";
+import { useTrailing } from "@metreeca/data/hooks/events";
+import { Matches } from "@metreeca/data/models/matches";
+import { AutoDelay, AutoLength, AutoSize, keys } from "@metreeca/view";
+import { focus, input } from "@metreeca/view/widgets/form";
+import { ClearIcon } from "@metreeca/view/widgets/icon";
+import { ToolSpin } from "@metreeca/view/widgets/spin";
 import React, { createElement, ReactNode, useState } from "react";
 import "./auto.css";
 

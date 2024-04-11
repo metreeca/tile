@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import * as React from "react";
 import { Check, X } from "@metreeca/tile/widgets/icon";
+import * as React from "react";
 
 
 export function ToolFlag({ children }: { children: boolean }) {

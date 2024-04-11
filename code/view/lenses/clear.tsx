@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Value }      from "@metreeca/core/value";
+import { Value } from "@metreeca/core/value";
 import { Collection } from "@metreeca/data/models/collection";
-import { ClearIcon }  from "@metreeca/view/widgets/icon";
-import React          from "react";
+import { ClearIcon } from "@metreeca/view/widgets/icon";
+import React from "react";
 
 export function ToolClear<
 

@@ -1,6 +1,6 @@
 {
     "name": "@metreeca/tool",
-    "version": "0.0.12",
+    "version": "0.1.0",
     "description": "A model‑driven TypeScript/React framework for rapid REST/JSON‑LD frontend development.",
     "homepage": "https://github.com/metreeca/tool",
     "repository": "github:metreeca/tool",
@@ -19,7 +19,7 @@
     ],
     "scripts": {
         "clean": "del dist docs/types docs/demo node_modules code/*/node_modules",
-        "setup": "npm install --workspaces",
+        "setup": "npm install --workspaces --include-workspace-root",
         "check": "jest",
         "build": "del dist && tsc && node package.js",
         "write": "typedoc && del docs/demo && npm run build --prefix demo",

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Graph } from "@metreeca/link";
 import { Fetcher, useFetcher } from "@metreeca/data/contexts/fetcher";
-import { createContext, createElement, ReactNode, useContext, useMemo } from "react";
+import { Graph } from "@metreeca/link";
 import { RESTGraph } from "@metreeca/link/rest";
+import { createContext, createElement, ReactNode, useContext, useMemo } from "react";
 
 
 const Context=createContext<Graph>(RESTGraph(fetch));

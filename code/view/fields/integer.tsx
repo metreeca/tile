@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 
 import { asInteger, isInteger, toIntegerString } from "@metreeca/core/integer";
-import { Setter }                                from "@metreeca/data/hooks";
+import { Setter } from "@metreeca/data/hooks";
 import { createField, createPlaceholder, Field } from "@metreeca/view/fields/index";
-import { focus, input }                          from "@metreeca/view/widgets/form";
-import { ClearIcon }                             from "@metreeca/view/widgets/icon";
-import * as React                                from "react";
-import { createElement, useState }               from "react";
+import { focus, input } from "@metreeca/view/widgets/form";
+import { ClearIcon } from "@metreeca/view/widgets/icon";
+import * as React from "react";
+import { createElement, useState } from "react";
 import "./index.css";
 
 

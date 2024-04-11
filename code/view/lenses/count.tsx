@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Value }                from "@metreeca/core/value";
-import { useCache }             from "@metreeca/data/hooks/cache";
-import { Stats }                from "@metreeca/data/models/stats";
+import { Value } from "@metreeca/core/value";
+import { useCache } from "@metreeca/data/hooks/cache";
+import { Stats } from "@metreeca/data/models/stats";
 import React, { createElement } from "react";
 import "./count.css";
 

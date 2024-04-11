@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Setter }                             from "@metreeca/data/hooks";
+import { Setter } from "@metreeca/data/hooks";
 import { createField, Field, ToolFieldClear } from "@metreeca/view/fields/index";
-import { input }                              from "@metreeca/view/widgets/form";
-import * as React                             from "react";
-import { createElement }                      from "react";
+import { input } from "@metreeca/view/widgets/form";
+import * as React from "react";
+import { createElement } from "react";
 import "./index.css";
 
 

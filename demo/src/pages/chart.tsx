@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import { useD3 } from "@metreeca/#info/_d3";
 import * as d3 from "_d3";
 import * as React from "react";
 import { createElement, useEffect, useState } from "react";
-import { useD3 } from "@metreeca/#info/_d3";
 import "./chart.css";
 
 

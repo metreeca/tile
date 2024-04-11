@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2023 Metreeca srl
+ * Copyright © 2020-2024 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Setter }                        from "@metreeca/data/hooks";
-import { focus, input }                  from "@metreeca/view/widgets/form";
-import { ClearIcon, RemoveIcon }         from "@metreeca/view/widgets/icon";
-import * as React                        from "react";
+import { Setter } from "@metreeca/data/hooks";
+import { focus, input } from "@metreeca/view/widgets/form";
+import { ClearIcon, RemoveIcon } from "@metreeca/view/widgets/icon";
+import * as React from "react";
 import { Fragment, ReactNode, useState } from "react";
 
 

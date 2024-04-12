@@ -40,7 +40,7 @@ tool-page {
 
     &.active {
         pointer-events: none;
-        filter: opacity(0.9);
+        filter: opacity(0.75);
     }
 
     &.locked > aside {
@@ -198,6 +198,7 @@ tool-page {
             }
 
         }
+
         & > footer {
             bottom: 0; /* vertical scrolling */
         }

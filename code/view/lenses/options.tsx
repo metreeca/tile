@@ -26,7 +26,7 @@ import { ToolLink } from "@metreeca/view/widgets/link";
 import { ToolMore } from "@metreeca/view/widgets/more";
 import { ToolSpin } from "@metreeca/view/widgets/spin";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import React, { createElement, ReactNode, useEffect, useRef, useState } from "react";
+import React, { createElement, ReactNode, useState } from "react";
 import "./options.css";
 
 
@@ -57,8 +57,6 @@ export function ToolOptions<
 
 	const [{ ready, type, size, more, keywords, limit, items }]=useCache(options);
 
-	const element=useRef<Element>(null);
-
 	const [active, setActive]=useState(false);
 	const [input, setInput]=useCache(keywords);
 
@@ -67,25 +65,6 @@ export function ToolOptions<
 
 	const matching=items && items.length > 0;
 	const overflow=expanded && matching && more;
-
-
-	useEffect(() => {
-
-		function focus(e: FocusEvent) {
-
-			if ( element.current && e.target instanceof Node ) {
-				activate(element.current.contains(e.target));
-			}
-
-		}
-
-		window.addEventListener("focus", focus, true);
-
-		return () => {
-			window.removeEventListener("focus", focus, true);
-		};
-
-	});
 
 
 	function activate(active: boolean) {
@@ -124,16 +103,34 @@ export function ToolOptions<
 
 	return createElement("tool-options", {
 
-		ref: element,
 		class: classes({ focused: active, overflow }),
 
-		onMouseLeave: e => {
+		ref: instance => {
 
-			e.currentTarget.querySelector("section")?.scrollTo(0, 0);
+			if ( active ) { (instance?.querySelector("header > input") as HTMLInputElement)?.focus(); }
+
+		},
+
+		onFocus: e => {
+
+			activate(true);
+
+		},
+
+		onBlur: e => {
+
+			if ( !e.currentTarget.contains(e.relatedTarget) ) {
+
+				e.currentTarget.querySelector("section")?.scrollTo(0, 0);
+
+				activate(false);
+
+			}
 
 		},
 
 		onKeyDown: e => {
+
 			if ( e.key === "Escape" || e.key === "Enter" ) {
 
 				e.preventDefault();
@@ -141,8 +138,6 @@ export function ToolOptions<
 				if ( document.activeElement instanceof HTMLElement ) {
 					document.activeElement.blur();
 				}
-
-				activate(false);
 
 			}
 		}
@@ -192,7 +187,13 @@ export function ToolOptions<
 
         </section>}
 
-		<section>{expanded && matching && <> {/* retain section to preserve computed height */}
+		<section onScroll={e => {
+
+			if ( e.currentTarget.scrollTop > 0 ) { // ;( ignore scroll to top requests
+				activate(true);
+			}
+
+		}}>{expanded && matching && <> {/* retain section to preserve computed height */}
 
             <ul ref={ul => {
 

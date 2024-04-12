@@ -18,7 +18,6 @@ import { isDefined } from "@metreeca/core";
 import { isEntry } from "@metreeca/core/entry";
 import { Frame, isFrame, Order, toFrameString } from "@metreeca/core/frame";
 import { isString } from "@metreeca/core/string";
-import { useCache } from "@metreeca/data/hooks/cache";
 import { Collection } from "@metreeca/data/models/collection";
 import { Selection } from "@metreeca/data/models/selection";
 import { ToolHint } from "@metreeca/view/widgets/hint";
@@ -28,7 +27,7 @@ import "./sheet.css";
 
 
 const LimitInit=25;
-const LimitNext=10;
+const LimitNext=25;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +64,7 @@ export function ToolSheet<V extends Frame>({
 				: isFrame(collection.model) ? { label: "increasing" }
 					: {};
 
-	const [items]=useCache(collection.items({
+	const items=collection.items({
 
 		...collection.model,
 		...collection.query,
@@ -79,14 +78,22 @@ export function ToolSheet<V extends Frame>({
 		"@": offset,
 		"#": limit + 1
 
-	}));
+	});
 
-	const more=items && items.length > limit;
+	const [cache, setCache]=useState(items);
+
+
+	const loading=items === cache;
+	const pending=loading || items && items.length > limit;
 
 
 	function load() {
-		setLimit(limit + LimitNext);
+		if ( !loading ) {
+			setCache(items);
+			setLimit(limit + LimitNext);
+		}
 	}
+
 
 	return items?.length ? createElement("tool-sheet", {}, <>
 
@@ -96,7 +103,7 @@ export function ToolSheet<V extends Frame>({
 
 			}</Fragment>)}
 
-			{more && <ToolMore onLoad={load}/>}
+			{pending && <ToolMore onLoad={load}/>}
 
 		</>)
 

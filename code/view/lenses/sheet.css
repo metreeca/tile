@@ -18,4 +18,9 @@
 
 tool-sheet {
 
+    & > tool-more {
+        margin-top: 1em;
+        font-size: 2.5em;
+    }
+
 }

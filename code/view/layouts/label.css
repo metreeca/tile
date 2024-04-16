@@ -22,7 +22,7 @@ tool-label {
 
     grid-gap: 0.5em;
 
-    flex: 0 0 0;
+    flex: auto 0 0;
 
     &.rule {
 

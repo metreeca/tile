@@ -62,7 +62,6 @@ tool-label {
         align-items: center;
         justify-content: space-between;
 
-        text-transform: lowercase;
         white-space: nowrap;
 
         & > span {

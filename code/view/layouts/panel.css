@@ -22,7 +22,7 @@ tool-panel {
     align-items: start;
 
     grid-column-gap: 1.5em;
-    grid-row-gap: 1.5em;
+    grid-row-gap: 0.75em;
 
     &.stack {
         flex-direction: column;

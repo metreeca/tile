@@ -101,7 +101,7 @@ export function useCollection<
 			} else {
 
 				if ( delta.query !== undefined ) {
-					setQuery(toQuery({ ...query, ...delta.query }));
+					setQuery({ ...query, ...delta.query });
 				}
 
 			}

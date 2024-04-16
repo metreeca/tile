@@ -100,3 +100,6 @@ export function toEntryString(value: Entry, {
 
 }
 
+export function entryCompare(x: Entry, y: Entry) {
+	return toEntryString(x).localeCompare(toEntryString(y));
+}

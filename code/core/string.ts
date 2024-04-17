@@ -73,3 +73,8 @@ export function asString(value: unknown): undefined | string {
 export function normalize(string: string): string {
 	return string.trim().replace(/\s+/g, " ");
 }
+
+
+export function stringCompare(x: string, y: string, locales?: Intl.LocalesArgument) {
+	return x.localeCompare(y, locales);
+}

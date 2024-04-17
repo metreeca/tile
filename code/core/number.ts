@@ -44,6 +44,11 @@ export function toNumberString(value: number, {
 }
 
 
+export function numberCompare(x: number, y: number) {
+	return x - y;
+}
+
+
 //// !!! ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const k=1.0e3;
@@ -53,8 +58,8 @@ const G=1.0e9;
 
 function format(number: number, locales?: string | string[], options?: Intl.NumberFormatOptions) {
 	return isNaN(number) ? ""
-		: number < 10*k ? number.toLocaleString(locales, options)
-			: number < M ? `${Math.round(number/k).toLocaleString(locales, options)}k`
-				: number < G ? `${Math.round(number/M).toLocaleString(locales, options)}M`
-					: `${Math.round(number/G).toLocaleString(locales, options)}G`;
+		: number < 10 * k ? number.toLocaleString(locales, options)
+			: number < M ? `${Math.round(number / k).toLocaleString(locales, options)}k`
+				: number < G ? `${Math.round(number / M).toLocaleString(locales, options)}M`
+					: `${Math.round(number / G).toLocaleString(locales, options)}G`;
 }

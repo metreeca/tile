@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { toIntegerString } from "@metreeca/core/integer";
 import { Value } from "@metreeca/core/value";
 import { useCache } from "@metreeca/data/hooks/cache";
 import { Stats } from "@metreeca/data/models/stats";
@@ -43,7 +44,7 @@ export function ToolCount<
 		count === undefined ? ""
 			: count === 0 ? `no ${filtered ? "matches" : "items"}`
 				: count === 1 ? `1 ${filtered ? "match" : "item"}`
-					: `${count} ${filtered ? "matches" : "items"}`
+					: `${toIntegerString(count)} ${filtered ? "matches" : "items"}`
 
 	}</>);
 

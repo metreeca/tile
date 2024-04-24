@@ -16,12 +16,11 @@
 
 import { useCache } from "@metreeca/data/hooks/cache";
 import { useTrailing } from "@metreeca/data/hooks/events";
-import { Keywords } from "@metreeca/data/models/keywords";
 import { AutoDelay } from "@metreeca/view";
 import { ClearIcon, SearchIcon } from "@metreeca/view/widgets/icon";
 import * as React from "react";
 import { createElement } from "react";
-import "./keywords.css";
+import "./search.css";
 
 
 /**
@@ -29,7 +28,7 @@ import "./keywords.css";
  *
  * @constructor
  */
-export function ToolKeywords({
+export function ToolSearch({
 
 	disabled,
 
@@ -50,7 +49,7 @@ export function ToolKeywords({
 	 */
 	auto?: number
 
-	children: Keywords
+	children: [string, (keywords: string) => void]
 
 }) {
 
@@ -66,7 +65,7 @@ export function ToolKeywords({
 	}
 
 
-	return createElement("tool-keywords", {
+	return createElement("tool-search", {
 
 		disabled: disabled ? "disabled" : undefined
 

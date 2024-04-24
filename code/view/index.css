@@ -16,7 +16,7 @@
 
 :root {
 
-    --tool--font-size: 16pt;
+    --tool--font-size: 14pt;
 
     --tool--color: #000;
 
@@ -112,8 +112,8 @@ ul, ol {
 
     padding-left: 1.5em;
 
-    &:not(:first-child) {
-        margin-top: 1em;
+    &:not(:last-child) {
+        margin-bottom: 1em;
     }
 
     & > li {

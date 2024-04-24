@@ -20,14 +20,13 @@ import { Value } from "@metreeca/core/value";
 import { Collection } from "@metreeca/data/models/collection";
 
 
-export type Keywords=Readonly<[
+export type Keywords=[
 
 	string,
 
-	(delta?: string) => void
+	(keywords: string) => void
 
-]>
-
+]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

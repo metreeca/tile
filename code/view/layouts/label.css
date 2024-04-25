@@ -66,6 +66,8 @@ tool-label {
 
         & > span {
 
+            flex-grow: 1;
+
             font-size: 90%;
             font-weight: 700;
 

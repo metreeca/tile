@@ -27,8 +27,20 @@ tool-tree {
         margin-top: 0.1em;
     }
 
-    &.expanded:not(:last-child) {
-        margin-bottom: 0.25em;
+    &.expanded {
+
+        &:not(:last-child) {
+            margin-bottom: 0.25em;
+        }
+
+    }
+
+    &:not(.expanded) {
+
+        & > header > button:first-child {
+            transform: translateY(5%);
+        }
+
     }
 
     & > header {
@@ -52,8 +64,6 @@ tool-tree {
         align-items: stretch;
 
         margin-left: 1em;
-
-        font-size: 90%;
 
     }
 

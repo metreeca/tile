@@ -273,6 +273,18 @@ export function multiple<V extends Value, T>(value: V | Type<V, T>): undefined |
 }
 
 
+/**
+ * Defines a model entry that that is not always returned by the server.
+ *
+ * Useful to specify on-demand entries conditionally included in requests or labelled table fields.
+ *
+ * @param value
+ */
+export function virtual<T>(value: T): T {
+	return undefined as any;
+}
+
+
 function model<V extends Value, T>(value: V | Type<V, T>): V {
 	return isType<V, T>(value) ? value.model : value;
 }

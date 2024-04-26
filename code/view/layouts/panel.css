@@ -38,4 +38,8 @@ tool-panel {
         padding-top: 0.75em;
     }
 
+    & > * {
+        max-width: 100%;
+    }
+
 }

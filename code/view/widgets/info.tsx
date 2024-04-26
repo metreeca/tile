@@ -15,6 +15,7 @@
  */
 
 import { isArray } from "@metreeca/core";
+import { classes } from "@metreeca/view";
 import React, { createElement, ReactNode } from "react";
 
 import "./info.css";
@@ -36,9 +37,13 @@ interface ToolInfoEntry {
  */
 export function ToolInfo({
 
+	center=false,
+
 	children
 
 }: {
+
+	center?: boolean
 
 	children: undefined | { [label: string]: ReactNode } | Array<{ label: ReactNode, value: ReactNode }>
 
@@ -50,16 +55,20 @@ export function ToolInfo({
 			? children
 			: Object.entries(children).map(([label, value]) => ({ label, value }));
 
-		return createElement("tool-info", {}, entries
+		return createElement("tool-info", {
 
-			.filter(({ value }) => value)
+				class: classes({ center })
 
-			.map(({ label, value }, index) => <div key={index}>
+			}, entries
 
-				<dt>{label}</dt>
-				<dd>{value}</dd>
+				.filter(({ value }) => value)
 
-			</div>)
+				.map(({ label, value }, index) => <React.Fragment key={index}>
+
+					<dt>{label}</dt>
+					<dd>{value}</dd>
+
+				</React.Fragment>)
 		);
 
 	} else {

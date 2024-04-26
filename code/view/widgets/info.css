@@ -33,53 +33,53 @@ tool-info {
         border-top-style: solid;
     }
 
-    & > div {
+    &.center > dt {
+        text-align: right;
+    }
 
-        display: contents;
+    &:not(.center) > dd {
+        text-align: right;
+    }
 
-        & > * {
+    & > * {
 
-            overflow: hidden;
-            text-overflow: ellipsis;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
-        }
+    }
 
-        & > dt {
+    & > dt {
 
-            white-space: nowrap;
+        white-space: nowrap;
 
-            text-transform: capitalize;
+        text-transform: capitalize;
 
-            color: var(--tool--color-label);
+        color: var(--tool--color-label);
 
-        }
+    }
 
-        & > dd {
+    & > dd {
 
-            text-align: right;
+        & > ul {
 
-            & > ul {
+            margin: 0;
+            padding: 0;
 
-                margin: 0;
-                padding: 0;
+            & > li {
 
-                & > li {
+                list-style: outside "›";
 
-                    list-style: outside "›";
+                margin-left: 0.75em;
 
-                    margin-left: 0.75em;
+                overflow: hidden;
+                text-overflow: ellipsis;
 
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                &::marker {
+                    color: var(--tool--color-light);
+                }
 
-                    &::marker {
-                        color: var(--tool--color-light);
-                    }
-
-                    &:not(:first-child) {
-                        margin-top: 0.1em;
-                    }
-
+                &:not(:first-child) {
+                    margin-top: 0.1em;
                 }
 
             }

@@ -305,7 +305,7 @@ export function encodeQuery(query: Query): string {
 		function encode(value: null | Value): string {
 			return value === null ? ""
 				: isEntry(value) ? value.id
-					: value.toString();
+					: JSON.stringify(value);
 		}
 
 	}
@@ -365,7 +365,7 @@ export function decodeQuery(search: undefined | null | string): undefined | Quer
 						: value === "false" ? false
 							: value.match(/^[-+]?\d+(?:\.\d+)?(?:e[-+]\d+)?$/i) ? parseFloat(value)
 								: value.match(/^\w+:|^\//) ? { id: value } // absolute or root-relative IRI
-									: value;
+									: JSON.parse(value);
 			}
 
 		} else {

@@ -19,7 +19,7 @@ import { Entry, isEntry, toEntryString } from "@metreeca/core/entry";
 import { Frame, isFrame, Order } from "@metreeca/core/frame";
 import { isNumber } from "@metreeca/core/number";
 import { isString } from "@metreeca/core/string";
-import { equals, evaluate } from "@metreeca/core/value";
+import { evaluate, matches } from "@metreeca/core/value";
 import { useRouter } from "@metreeca/data/contexts/router";
 import { useCache } from "@metreeca/data/hooks/cache";
 import { Collection } from "@metreeca/data/models/collection";
@@ -277,7 +277,7 @@ export function ToolTable<V extends Frame>({
 					let n=0;
 
 					for (const k in cols) {
-						if ( equals(x[k], y[k]) ) { ++n; } else { return n; }
+						if ( matches(x[k], y[k]) ) { ++n; } else { return n; }
 					}
 
 					return n;
@@ -291,7 +291,7 @@ export function ToolTable<V extends Frame>({
 
 						{selectable && <input type={"checkbox"}
 
-                            checked={selection.some(selected => equals(selected, item))}
+                            checked={selection.some(selected => matches(selected, item))}
 
                             onChange={e => {
 								select({ value: item, selected: e.currentTarget.checked });

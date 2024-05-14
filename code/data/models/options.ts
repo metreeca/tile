@@ -17,7 +17,7 @@
 import { asArray, error, isArray, toType, Type } from "@metreeca/core";
 import { isEntry } from "@metreeca/core/entry";
 import { isNumber } from "@metreeca/core/number";
-import { evaluate, Value } from "@metreeca/core/value";
+import { evaluate, matches, Value } from "@metreeca/core/value";
 import { useCache } from "@metreeca/data/hooks/cache";
 import { Collection } from "@metreeca/data/models/collection";
 import { useState } from "react";
@@ -158,7 +158,7 @@ export function useOptions<
 
 		...baseline // selected and not matching
 			.filter(({ selected }) => selected)
-			.filter(({ value: x }) => !matching.some(({ value: y }) => equals(x, y)))
+			.filter(({ value: x }) => !matching.some(({ value: y }) => matches(x, y)))
 			.map(({ value }) => ({ value, count: 0, selected: true })),
 
 		...matching // not selected and matching
@@ -166,7 +166,7 @@ export function useOptions<
 
 		...baseline // not selected and not matching
 			.filter(({ selected }) => !selected)
-			.filter(({ value: x }) => !matching.some(({ value: y }) => equals(x, y)))
+			.filter(({ value: x }) => !matching.some(({ value: y }) => matches(x, y)))
 			.map(({ value }) => ({ value, count: 0, selected: false }))
 
 	] : undefined;
@@ -252,7 +252,7 @@ export function useOptions<
 							const selected: boolean=(selection as any).selected;
 
 							return [
-								...(values ?? []).filter(v => !equals(v, value)),
+								...(values ?? []).filter(v => !matches(v, value)),
 								...(selected ? [value] : [])
 							];
 
@@ -274,15 +274,9 @@ export function useOptions<
 			value: value === null ? null : effective.decode(value),
 			count: isNumber(count) && count >= 0 ? count : 0,
 
-			selected: values?.some(v => equals(v, value)) ?? false
+			selected: values?.some(v => matches(v, value)) ?? false
 
 		}));
-	}
-
-	function equals(x: unknown, y: unknown): boolean {
-		return isEntry(x) ? equals(x.id, y)
-			: isEntry(y) ? equals(x, y.id)
-				: x === y;
 	}
 
 }

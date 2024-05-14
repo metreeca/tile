@@ -15,7 +15,7 @@
  */
 
 import { isArray } from "@metreeca/core";
-import { equals, Value } from "@metreeca/core/value";
+import { matches, Value } from "@metreeca/core/value";
 import { Collection } from "@metreeca/data/models/collection";
 import { useState } from "react";
 
@@ -58,7 +58,7 @@ export function useSelection<V extends Value>(value?: Collection<V>): Selection<
 
 				setSelection([
 
-					...selection.filter(v => !equals(v, value)),
+					...selection.filter(v => !matches(v, value)),
 					...(selected ? [value] : [])
 
 				]);

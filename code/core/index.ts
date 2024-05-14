@@ -256,6 +256,22 @@ export function inconvertible<V>(type: Type, cast: Type): V {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Defines a model entry that that is not always returned by the server.
+ *
+ * Useful to specify on-demand entries conditionally included in requests or labelled table fields.
+ *
+ * @param value
+ */
+export function virtual<T>(value: T): T {
+	return undefined as any;
+}
+
+export function union<T extends (Value | Type)[]>(...values: T): T[number] {
+	return values.map(model) as any;
+}
+
+
 export function required<V extends Value, T>(value: V | Type<V, T>): V {
 	return model(value);
 }
@@ -270,18 +286,6 @@ export function repeatable<V extends Value, T>(value: V | Type<V, T>): V[] {
 
 export function multiple<V extends Value, T>(value: V | Type<V, T>): undefined | V[] {
 	return [model(value)];
-}
-
-
-/**
- * Defines a model entry that that is not always returned by the server.
- *
- * Useful to specify on-demand entries conditionally included in requests or labelled table fields.
- *
- * @param value
- */
-export function virtual<T>(value: T): T {
-	return undefined as any;
 }
 
 

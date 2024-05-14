@@ -19,7 +19,7 @@ import { date, isDate, toDateString } from "@metreeca/core/date";
 import { dateTime, isDateTime, toDateTimeString } from "@metreeca/core/dateTime";
 import { isEntry, toEntryString } from "@metreeca/core/entry";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
-import { isArray } from "@metreeca/core/index";
+import { equals, isArray } from "@metreeca/core/index";
 import { isLocal, Local, toLocalString } from "@metreeca/core/local";
 import { isNumber, toNumberString } from "@metreeca/core/number";
 import { isString } from "@metreeca/core/string";
@@ -82,9 +82,10 @@ export function toValueString(value: Value, {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function equals(x: unknown, y: unknown): boolean {
-	return isArray(x) && isArray(y) ? x.length === y.length && x.every((v, i) => equals(v, y[i]))
+export function matches(x: unknown, y: unknown): boolean {
+	return isArray(x) && isArray(y) ? x.length === y.length && x.every((v, i) => matches(v, y[i]))
 		: isEntry(x) && isEntry(y) ? x.id === y.id
+			: isLocal(x) && isLocal(y) ? equals(x, y)
 			: x === y;
 }
 

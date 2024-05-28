@@ -117,7 +117,7 @@ export function ToolTable<V extends Frame>({
 
 			...cols, [expression]: {
 
-				number: isNumber(value),
+				numeric: isNumber(value),
 
 				label: alias ?? expression,
 

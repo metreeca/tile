@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { isArray } from "@metreeca/core";
 import { Entry, isEntry } from "@metreeca/core/entry";
-import { Frame, isFrame, toQuery } from "@metreeca/core/frame";
+import { Frame, toQuery } from "@metreeca/core/frame";
 import { isId, toIdString } from "@metreeca/core/id";
 import { isString } from "@metreeca/core/string";
 import { isValue, toValueString, Value } from "@metreeca/core/value";
@@ -74,7 +73,7 @@ export function ToolLink({
 
 		// query picked up by target page from history state (see for instance useQuery())
 
-		return () => setRoute({ route, state: clean(query) });
+		return () => setRoute({ route, state: query });
 	}
 
 	function local([[collection, setCollection], query]: [Collection<Value>, Frame]) {
@@ -87,19 +86,9 @@ export function ToolLink({
 
 		return () => setCollection({
 
-			query: { ...reset, ...clean(query) } // !!! review reset protocol
+			query: { ...reset, ...query } // !!! review reset protocol
 
 		});
-	}
-
-
-	function clean(query: Frame) {
-		return Object.entries(query).reduce((clean, [label, value]) => ({
-
-			...clean,
-			[label]: isArray(value) ? value.map(v => isFrame(v) ? v.id : v) : isFrame(value) ? value.id : value
-
-		}), {});
 	}
 
 }

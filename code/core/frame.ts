@@ -260,7 +260,6 @@ export function toQuery(frame: Frame, normalize: boolean=false): Query {
 
 
 export function encodeQuery(query: Query): string {
-
 	if ( isEmpty(query) ) {
 
 		return "";
@@ -291,7 +290,7 @@ export function encodeQuery(query: Query): string {
 
 				} else {
 
-					params.append(label.substring(1), "*");
+					params.append(label.substring(1), "*"); // existential query
 
 				}
 
@@ -305,7 +304,8 @@ export function encodeQuery(query: Query): string {
 		function encode(value: null | Value): string {
 			return value === null ? ""
 				: isEntry(value) ? value.id
-					: JSON.stringify(value);
+					: isString(value) ? value
+						: JSON.stringify(value);
 		}
 
 	}
@@ -341,15 +341,13 @@ export function decodeQuery(search: undefined | null | string): undefined | Quer
 
 					query[label]=decode(value);
 
-				} else if ( label.startsWith("?") ) {
+				} else {
 
 					const values=query[label] as [] ?? [];
 
-					query[label]=(value === "*") ? [...values, decode(value)] : values;
-
-				} else {
-
-					query[`?${label}`]=[...(query[label] as [] ?? []), decode(value)];
+					query[`?${label}`]=(value === "*")  // existential query
+						? values
+						: [...values, decode(value)];
 
 				}
 

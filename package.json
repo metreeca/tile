@@ -1,6 +1,6 @@
 {
     "name": "@metreeca/tool",
-    "version": "0.3.0-5",
+    "version": "0.3.0-6",
     "description": "A model‑driven TypeScript/React framework for rapid REST/JSON‑LD frontend development.",
     "homepage": "https://github.com/metreeca/tool",
     "repository": "github:metreeca/tool",

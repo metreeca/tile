@@ -363,7 +363,8 @@ export function decodeQuery(search: undefined | null | string): undefined | Quer
 						: value === "false" ? false
 							: value.match(/^[-+]?\d+(?:\.\d+)?(?:e[-+]\d+)?$/i) ? parseFloat(value)
 								: value.match(/^\w+:|^\//) ? { id: value } // absolute or root-relative IRI
-									: JSON.parse(value);
+									: value.match(/^{/) ? JSON.parse(value) // structured value
+										: value; // string
 			}
 
 		} else {

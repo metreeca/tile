@@ -27,6 +27,8 @@ tool-search {
     border-style: solid;
     border-radius: 2ex;
 
+    background-color: #FFF; /* !!! var(--tool--background-color) not working */
+
     & > * {
         grid-row: 1;
     }

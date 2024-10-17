@@ -24,7 +24,7 @@ tool-range {
 
     font-size: 90%;
 
-    background-color: #FFF;
+    background-color: #FFF; /* !!! var(--tool--background-color) not working */
 
     &.focused {
         box-shadow: var(--tool--box-shadow-focus);

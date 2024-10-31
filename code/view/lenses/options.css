@@ -65,7 +65,7 @@ tool-options {
 
                     color: var(--tool--color-disabled);
 
-                    & > * {
+                    & * {
                         color: inherit;
                     }
 

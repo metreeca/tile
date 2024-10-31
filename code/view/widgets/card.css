@@ -96,12 +96,7 @@ tool-card {
             white-space: nowrap;
         }
 
-        & + div {
-            grid-column: 1 / span 2 !important;
-        }
-
     }
-
 
     & > i {
 
@@ -114,7 +109,11 @@ tool-card {
 
     }
 
-    @media only screen and (min-width: 960px), print {
+    & > div {
+
+        &:last-child {
+            grid-column: 1 / span 2 !important;
+        }
 
     }
 

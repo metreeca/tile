@@ -83,13 +83,13 @@ export function ToolCard({
 		{title && <span>{title}</span>}
 		{tags && <nav style={{ color: "var(--tool--color-label)" }}>{tags}</nav>}
 
+		<div className={classes({ wrap })}>{children}</div>
+
 		{image && <i>{isString(image) ? <img hidden={!loaded} src={image}
 
 			onLoad={() => setLoaded(true)}
 
 		/> : image}</i>}
-
-		<div className={classes({ wrap })}>{children}</div>
 
 	</>);
 

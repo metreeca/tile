@@ -34,7 +34,11 @@ import { remark } from "remark";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGemoji from "remark-gemoji";
 import remarkGfm from "remark-gfm";
+import { remarkAlert } from "remark-github-blockquote-alert";
 import { find } from "unist-util-find";
+import { selectAll } from "unist-util-select";
+
+import "remark-github-blockquote-alert/alert.css";
 
 
 export interface Meta {
@@ -179,8 +183,19 @@ function ToolMarkMeta(text: string, meta: string | ((meta: Meta) => ReactNode)) 
 function ToolMarkText(content: string) {
 	return <ReactMarkdown
 
-		remarkPlugins={[remarkFrontmatter, remarkGfm, remarkGemoji]}
-		rehypePlugins={[rehypeSlug, rehypeHighlight]}
+		remarkPlugins={[
+			remarkFrontmatter,
+			remarkGfm,
+			remarkAlert,
+			remarkGemoji,
+			remarkCodeFormatter
+		]}
+
+
+		rehypePlugins={[
+			rehypeSlug,
+			rehypeHighlight
+		]}
 
 		urlTransform={href => [defaultUrlTransform(href)]
 			.map(value => value.replace(/(?<=^|\/)([-\w]+)\.md(?=#|$)/, (_match, filename) =>
@@ -194,4 +209,21 @@ function ToolMarkText(content: string) {
 		content
 
 	}</ReactMarkdown>;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function remarkCodeFormatter() {
+	return (tree: Nodes) => selectAll("code", tree).forEach(node => {
+
+		if ( node && "value" in node && typeof node.value === "string" ) {
+
+			node.value=node.value
+				.replace(/^\s*|\s*$/g, "") // remove leading and traing space
+				.replace(/^[ \t]+/mg, $0 => $0.replace(/ {4}|\t/g, "  ")); // compact indentation
+
+		}
+
+	});
 }

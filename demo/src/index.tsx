@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ToolContext } from "@metreeca/data/contexts/context";
-import { ToolRouter } from "@metreeca/data/contexts/router";
+import { TileContext } from "@metreeca/data/contexts/context";
+import { TileRouter } from "@metreeca/data/contexts/router";
 import { DemoDND, DND } from "@metreeca/demo/pages/dnd";
 import { DemoHome, Home } from "@metreeca/demo/pages/home";
 import { DemoWild, Wild } from "@metreeca/demo/pages/wild";
@@ -28,9 +28,9 @@ createRoot(document.body.firstElementChild!).render((
 
 	<React.StrictMode>
 
-		<ToolContext>
+		<TileContext>
 
-			<ToolRouter>{{
+			<TileRouter>{{
 
 				[Home.id]: DemoHome,
 
@@ -38,9 +38,9 @@ createRoot(document.body.firstElementChild!).render((
 
 				[Wild.id]: DemoWild
 
-			}}</ToolRouter>
+			}}</TileRouter>
 
-		</ToolContext>
+		</TileContext>
 
 	</React.StrictMode>
 

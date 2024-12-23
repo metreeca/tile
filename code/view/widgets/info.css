@@ -15,7 +15,7 @@
  */
 
 
-tool-info {
+tile-info {
 
     display: grid;
     grid-template-columns: min-content 1fr;
@@ -54,7 +54,7 @@ tool-info {
 
         text-transform: capitalize;
 
-        color: var(--tool--color-label);
+        color: var(--tile--color-label);
 
     }
 
@@ -75,7 +75,7 @@ tool-info {
                 text-overflow: ellipsis;
 
                 &::marker {
-                    color: var(--tool--color-light);
+                    color: var(--tile--color-light);
                 }
 
                 &:not(:first-child) {

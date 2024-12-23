@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-tool-keywords,
-tool-options,
-tool-range {
+tile-keywords,
+tile-options,
+tile-range {
 
-    --tool--border-color: #BBB;
+    --tile--border-color: #BBB;
 
     overflow: hidden;
 
     font-size: 90%;
 
-    background-color: #FFF; /* !!! var(--tool--background-color) not working */
+    background-color: #FFF; /* !!! var(--tile--background-color) not working */
 
     &.focused {
-        box-shadow: var(--tool--box-shadow-focus);
+        box-shadow: var(--tile--box-shadow-focus);
     }
 
     &:not(:first-child) {
@@ -36,8 +36,8 @@ tool-range {
 
 }
 
-tool-options,
-tool-range {
+tile-options,
+tile-range {
 
     display: flex;
     flex-direction: column;
@@ -81,7 +81,7 @@ tool-range {
 
         & svg {
 
-            color: var(--tool--color-light);
+            color: var(--tile--color-light);
 
             background-color: transparent;
             transform: scale(0.9);

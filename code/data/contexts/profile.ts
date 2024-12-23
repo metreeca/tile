@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ToolFetcher, useFetcher } from "@metreeca/data/contexts/fetcher";
+import { TileFetcher, useFetcher } from "@metreeca/data/contexts/fetcher";
 import { useStorage } from "@metreeca/data/hooks/storage";
 import { createContext, createElement, ReactNode, useContext } from "react";
 
@@ -45,7 +45,7 @@ const Context=createContext<State<any, any>>([
  *
  * @constructor
  */
-export function ToolProfile<P, C>({
+export function TileProfile<P, C>({
 
 	manager,
 
@@ -64,7 +64,7 @@ export function ToolProfile<P, C>({
 	const [profile, setProfile]=useStorage<null | P>(sessionStorage, "profile", null);
 
 
-	return ToolFetcher({
+	return TileFetcher({
 
 		fetcher: fetcher.intercept(delegate => delegate), // !!! interceptor
 

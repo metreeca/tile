@@ -24,9 +24,9 @@ import "./logo.css";
  *
  * @constructor
  */
-export function ToolLogo() {
+export function TileLogo() {
 
-	return createElement("tool-logo", {
+	return createElement("tile-logo", {
 
 		title: app.name,
 

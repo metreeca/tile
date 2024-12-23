@@ -16,26 +16,26 @@
 
 :root {
 
-    --tool-page-side-width: 20rem;
+    --tile-page-side-width: 20rem;
 
-    --tool-page-header-height: 5rem;
-    --tool-page-header-font-size: 2rem;
+    --tile-page-header-height: 5rem;
+    --tile-page-header-font-size: 2rem;
 
-    --tool-page-footer-height: 3rem;
-    --tool-page-footer-font-size: 1.1rem;
+    --tile-page-footer-height: 3rem;
+    --tile-page-footer-font-size: 1.1rem;
 
-    --tool-page-side-padding: 1.25rem;
+    --tile-page-side-padding: 1.25rem;
 
-    --tool-page-main-max-width: 75rem;
-    --tool-page-main-padding: 1.5rem;
+    --tile-page-main-max-width: 75rem;
+    --tile-page-main-padding: 1.5rem;
 
 }
 
-tool-page {
+tile-page {
 
     display: grid;
 
-    grid-template-columns: var(--tool-page-side-width) 1fr;
+    grid-template-columns: var(--tile-page-side-width) 1fr;
     grid-template-rows: 1fr;
 
     &.active {
@@ -82,11 +82,11 @@ tool-page {
             z-index: 10;
 
             top: 0; /* vertical scrolling */
-            height: var(--tool-page-header-height);
+            height: var(--tile-page-header-height);
 
-            margin-bottom: calc(0.5 * var(--tool-page-header-font-size));
+            margin-bottom: calc(0.5 * var(--tile-page-header-font-size));
 
-            font-size: var(--tool-page-header-font-size);
+            font-size: var(--tile-page-header-font-size);
 
             & > * {
                 display: flex;
@@ -104,18 +104,18 @@ tool-page {
             & > h1,
             & > h2,
             & > h3 {
-                scroll-margin-top: calc(var(--tool-page-header-height) + 0.75 * var(--tool-scroll-shadow-size));
+                scroll-margin-top: calc(var(--tile-page-header-height) + 0.75 * var(--tile-scroll-shadow-size));
             }
 
         }
 
         & > footer {
 
-            height: var(--tool-page-footer-height);
+            height: var(--tile-page-footer-height);
 
-            margin-top: calc(1 * var(--tool-page-footer-font-size));
+            margin-top: calc(1 * var(--tile-page-footer-font-size));
 
-            font-size: var(--tool-page-footer-font-size);
+            font-size: var(--tile-page-footer-font-size);
 
             &:empty {
                 height: 0;
@@ -131,15 +131,15 @@ tool-page {
 
     & > aside {
 
-        --tool--background-color: var(--tool--background-color-edit);
+        --tile--background-color: var(--tile--background-color-edit);
 
         border-right-style: solid;
 
-        background-color: var(--tool--background-color);
+        background-color: var(--tile--background-color);
 
         & > * {
-            padding-left: var(--tool-page-side-padding);
-            padding-right: var(--tool-page-side-padding);
+            padding-left: var(--tile-page-side-padding);
+            padding-right: var(--tile-page-side-padding);
         }
 
         & > section {
@@ -208,9 +208,9 @@ tool-page {
     & > main {
 
         & > * {
-            max-width: var(--tool-page-main-max-width);
-            padding-left: var(--tool-page-main-padding);
-            padding-right: var(--tool-page-main-padding);
+            max-width: var(--tile-page-main-max-width);
+            padding-left: var(--tile-page-main-padding);
+            padding-right: var(--tile-page-main-padding);
         }
 
         & > header {

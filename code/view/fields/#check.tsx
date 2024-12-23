@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Maybe } from "@metreeca/link";
-import { Input, ToolInput, ToolPlaceholder } from "@metreeca/tile/inputs/input";
+import { Input, TileInput, TilePlaceholder } from "@metreeca/tile/inputs/input";
 import "./#check.css";
+import { Maybe } from "mesh";
 import * as React from "react";
 import { createElement } from "react";
 import "./input.css";
 
 
-export function ToolCheck({
+export function TileCheck({
 
 	editable=false,
 	readonly=false,
@@ -42,7 +42,7 @@ export function ToolCheck({
 		return labels === undefined ? checkbox()
 			: value === false ? <span>{labels["false"]}</span>
 				: value === true ? <span>{labels["true"]}</span>
-					: <ToolPlaceholder/>;
+					: <TilePlaceholder/>;
 	}
 
 	function editor() {
@@ -66,6 +66,6 @@ export function ToolCheck({
 		/>;
 	}
 
-	return createElement("tool-check", { class: ToolInput }, editable ? editor() : reader());
+	return createElement("tile-check", { class: TileInput }, editable ? editor() : reader());
 
 }

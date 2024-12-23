@@ -15,7 +15,7 @@
  */
 
 import { Setter } from "@metreeca/data/hooks";
-import { Trace } from "@metreeca/link";
+import { Trace } from "mesh";
 import { createContext, createElement, ReactNode, useContext, useState } from "react";
 
 
@@ -30,7 +30,7 @@ const Context=createContext<[Value, Change]>([undefined, () => {}]);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function ToolTrace({
+export function TileTrace({
 
 	children
 

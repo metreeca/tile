@@ -25,9 +25,9 @@ import { useCache } from "@metreeca/data/hooks/cache";
 import { Collection } from "@metreeca/data/models/collection";
 import { Selection, SelectionDelta } from "@metreeca/data/models/selection";
 import { classes } from "@metreeca/view";
-import { ToolHint } from "@metreeca/view/widgets/hint";
+import { TileHint } from "@metreeca/view/widgets/hint";
 import { DecreasingIcon, IncreasingIcon, OpenIcon, SortIcon } from "@metreeca/view/widgets/icon";
-import { ToolMore } from "@metreeca/view/widgets/more";
+import { TileMore } from "@metreeca/view/widgets/more";
 import { ChevronsUpDown } from "lucide-react";
 import React, { createElement, ReactNode, useEffect, useState } from "react";
 import "./table.css";
@@ -69,7 +69,7 @@ function parse(expression: string): {
 const DummySelector=() => {};
 
 
-export function ToolTable<V extends Frame>({
+export function TileTable<V extends Frame>({
 
 	hierarchy,
 	placeholder,
@@ -198,7 +198,7 @@ export function ToolTable<V extends Frame>({
 	}
 
 
-	return items?.length ? createElement("tool-table", {}, <>
+	return items?.length ? createElement("tile-table", {}, <>
 
 		<table ref={table => { // freeze column widths to avoid accordion effects on resorting
 
@@ -329,9 +329,9 @@ export function ToolTable<V extends Frame>({
 
 		</table>
 
-		{more && <ToolMore onLoad={load}/>}
+		{more && <TileMore onLoad={load}/>}
 
-	</>) : placeholder ? <ToolHint>{placeholder}</ToolHint> : null;
+	</>) : placeholder ? <TileHint>{placeholder}</TileHint> : null;
 
 }
 

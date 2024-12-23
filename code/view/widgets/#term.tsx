@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { isBoolean } from "@metreeca/link";
-import { id, isFocus, Simple, string } from "@metreeca/link/index_";
-import { ToolFlag } from "@metreeca/tile/widgets/flag";
+import { id, isFocus, Simple, string } from "@metreeca/mesh/index_";
+import { TileFlag } from "@metreeca/tile/widgets/flag";
 import { AtSign, ChevronRight, File } from "@metreeca/tile/widgets/icon";
+import { isBoolean } from "mesh";
 import * as React from "react";
 import { createElement } from "react";
 import "./#term.css";
 
 
-export function ToolTerm({
+export function TileTerm({
 
 	children,
 
@@ -41,13 +41,13 @@ export function ToolTerm({
 
 	const label=string(children);
 
-	return createElement("tool-term", {
+	return createElement("tile-term", {
 
 		class: disabled ? "disabled" : undefined
 
 	}, <>{
 
-		isBoolean(children) ? <ToolFlag>{children}</ToolFlag>
+		isBoolean(children) ? <TileFlag>{children}</TileFlag>
 
 			: isFocus(children) ? <a title={label} href={id(children)}>{compact ? <ChevronRight/> : label}</a>
 

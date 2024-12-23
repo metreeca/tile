@@ -15,17 +15,17 @@
  */
 
 import { isEmpty } from "@metreeca/core";
-
-import { Trace } from "@metreeca/link";
 import { classes } from "@metreeca/view";
 import { AlertTriangle, Frown, Ghost, HelpCircle, Info, Lock } from "@metreeca/view/widgets/icon";
+
+import { Trace } from "mesh";
 import * as React from "react";
 import { createElement, ReactNode } from "react";
 import "./note.css";
 
 
 export function unexpected({ status, reason, detail }: Trace, report?: ReactNode) {
-	return <ToolNote warning icon={
+	return <TileNote warning icon={
 
 		status === 403 ? <Lock/>
 			: status === 404 ? <Frown/>
@@ -56,11 +56,11 @@ export function unexpected({ status, reason, detail }: Trace, report?: ReactNode
 
         </>}
 
-	</ToolNote>;
+	</TileNote>;
 }
 
 
-export function ToolNote({
+export function TileNote({
 
 	warning=false,
 
@@ -86,7 +86,7 @@ export function ToolNote({
 
 	const _icon=icon || (warning ? <AlertTriangle/> : onAccept ? <HelpCircle/> : <Info/>);
 
-	return createElement("tool-note", {
+	return createElement("tile-note", {
 
 		class: classes({
 

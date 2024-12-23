@@ -33,7 +33,7 @@ export const AutoSize=10;
 /**
  * Icon symbol.
  */
-export const icon=Symbol("ToolIcon");
+export const icon=Symbol("TileIcon");
 
 /**
  * App metadata.

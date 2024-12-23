@@ -19,7 +19,7 @@ import { Entry, isEntry } from "@metreeca/core/entry";
 import { Frame, toModel } from "@metreeca/core/frame";
 import { useGraph } from "@metreeca/data/contexts/graph";
 import { useTrace } from "@metreeca/data/contexts/trace";
-import { Trace } from "@metreeca/link";
+import { Trace } from "mesh";
 import { useEffect, useState } from "react";
 
 

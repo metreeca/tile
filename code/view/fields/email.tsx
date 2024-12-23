@@ -23,7 +23,7 @@ import { createElement, useState } from "react";
 import "./index.css";
 
 
-export function ToolEmail({
+export function TileEmail({
 
 	disabled,
 	readonly,
@@ -44,7 +44,7 @@ export function ToolEmail({
 
 }>) {
 
-	return createElement("tool-email", {},
+	return createElement("tile-email", {},
 		createField<string>({ field, reader, editor })
 	);
 

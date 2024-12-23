@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Immutable, isArray } from "@metreeca/link";
+import { Immutable, isArray } from "mesh";
 import React, { createElement, Fragment, ReactNode } from "react";
 import "./#grid.css";
 
@@ -27,7 +27,7 @@ export interface Entry {
 }
 
 
-export function ToolGrid({
+export function TileGrid({
 
 	large=false,
 	small=false,
@@ -47,7 +47,7 @@ export function ToolGrid({
 		({ label, value })
 	);
 
-	return createElement("tool-grid", {
+	return createElement("tile-grid", {
 
 		large: large ? "" : undefined,
 		small: small ? "" : undefined

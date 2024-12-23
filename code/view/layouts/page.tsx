@@ -17,12 +17,12 @@
 import { useFetcher } from "@metreeca/data/contexts/fetcher";
 import { useTrace } from "@metreeca/data/contexts/trace";
 import { classes } from "@metreeca/view";
-import { ToolSpin } from "@metreeca/view/widgets/spin";
+import { TileSpin } from "@metreeca/view/widgets/spin";
 import React, { createElement, ReactNode, useEffect, useState } from "react";
 import "./page.css";
 
 
-export function ToolPage({
+export function TilePage({
 
 	locked=false,
 
@@ -96,7 +96,7 @@ export function ToolPage({
 	}, [trace]);
 
 
-	return createElement("tool-page", {
+	return createElement("tile-page", {
 
 		class: classes({
 
@@ -139,7 +139,7 @@ export function ToolPage({
 
 			<header className={"scroll-b"}>
 				{done ? <span>{done}</span> : name ? <span>{name}</span> : undefined}
-				{active ? <ToolSpin/> : back ? <span>{back}</span> : menu ? <span>{menu}</span> : undefined}
+				{active ? <TileSpin/> : back ? <span>{back}</span> : menu ? <span>{menu}</span> : undefined}
 			</header>
 
 			<section>{main}</section>

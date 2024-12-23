@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { ToolFetcher } from "@metreeca/data/contexts/fetcher";
-import { ToolGraph } from "@metreeca/data/contexts/graph";
-import { ToolTrace } from "@metreeca/data/contexts/trace";
+import { TileFetcher } from "@metreeca/data/contexts/fetcher";
+import { TileGraph } from "@metreeca/data/contexts/graph";
+import { TileTrace } from "@metreeca/data/contexts/trace";
 import { createElement, Fragment, FunctionComponent, ReactNode } from "react";
 
 
 const services: FunctionComponent<any>[]=[
-	ToolFetcher,
-	ToolGraph,
-	ToolTrace
+	TileFetcher,
+	TileGraph,
+	TileTrace
 ];
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function ToolContext({
+export function TileContext({
 
 	children
 

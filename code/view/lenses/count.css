@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-tool-count {
+tile-count {
 
-    color: var(--tool--color-label);
+    color: var(--tile--color-label);
 
 }

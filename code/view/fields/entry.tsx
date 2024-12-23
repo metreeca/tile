@@ -19,14 +19,14 @@ import { Entry, toEntryString } from "@metreeca/core/entry";
 import { Setter } from "@metreeca/data/hooks";
 import { Matches } from "@metreeca/data/models/matches";
 import { createField, Field } from "@metreeca/view/fields/index";
-import { ToolAuto } from "@metreeca/view/widgets/auto";
+import { TileAuto } from "@metreeca/view/widgets/auto";
 import { focus, input } from "@metreeca/view/widgets/form";
 import { ClearIcon } from "@metreeca/view/widgets/icon";
 import React, { createElement } from "react";
 import "./index.css";
 
 
-export function ToolEntry({
+export function TileEntry({
 
 	disabled,
 	readonly,
@@ -44,7 +44,7 @@ export function ToolEntry({
 
 }>) {
 
-	return createElement("tool-entry", {},
+	return createElement("tile-entry", {},
 		createField<Entry>({ field, reader, editor })
 	);
 
@@ -98,11 +98,11 @@ export function ToolEntry({
 
 			</>
 
-			: <ToolAuto required={required}
+			: <TileAuto required={required}
 
 				onSelect={value => insert(value)}
 
-			>{source}</ToolAuto>;
+			>{source}</TileAuto>;
 
 	}
 

@@ -22,7 +22,7 @@ import React, { createElement } from "react";
 import "./count.css";
 
 
-export function ToolCount<
+export function TileCount<
 
 	V extends Value
 
@@ -39,7 +39,7 @@ export function ToolCount<
 	const [{ filtered, count }={ filtered: false, count: undefined }]=useCache(stats);
 
 
-	return createElement("tool-count", {}, <>{
+	return createElement("tile-count", {}, <>{
 
 		count === undefined ? ""
 			: count === 0 ? `no ${filtered ? "matches" : "items"}`

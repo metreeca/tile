@@ -29,7 +29,7 @@ import "./tree.css";
  * @param children
  * @constructor
  */
-export function ToolTree({
+export function TileTree({
 
 	expanded=false,
 
@@ -57,7 +57,7 @@ export function ToolTree({
 	}
 
 
-	return createElement("tool-tree", {
+	return createElement("tile-tree", {
 
 		class: classes({ expanded: expanded_ })
 

@@ -70,19 +70,19 @@ fs.readdirSync(code).filter(file => !file.startsWith("#") && fs.existsSync(path.
     
         # ${local.name}
         
-        [Metreeca/Tool](https://github.com/metreeca/tool) ${lower(local.description)}.
+        [Metreeca/Tile](https://github.com/metreeca/tile) ${lower(local.description)}.
                         
         ${fs.readFileSync(path.resolve(source, md))}
         
         # Support
         
-        - open an [issue](https://github.com/metreeca/tool/issues) to report a problem or to suggest a new feature
-        - start a [discussion](https://github.com/metreeca/tool/discussions) to ask a how-to question or to share an idea
+        - open an [issue](https://github.com/metreeca/tile/issues) to report a problem or to suggest a new feature
+        - start a [discussion](https://github.com/metreeca/tile/discussions) to ask a how-to question or to share an idea
         
         # License
         
         This project is licensed under the Apache 2.0 License – see
-        [LICENSE](https://github.com/metreeca/tool/blob/main/LICENSE) file for details.
+        [LICENSE](https://github.com/metreeca/tile/blob/main/LICENSE) file for details.
     
     `);
 
@@ -118,7 +118,7 @@ function publishing(local) {
 
         name: local.name,
         version: shared.version,
-        description: local.name === "@metreeca/tool" ? local.description : `Metreeca/Tool ${lower(local.description)}`,
+        description: local.name === "@metreeca/tile" ? local.description : `Metreeca/Tile ${lower(local.description)}`,
 
         keywords: local.keywords,
         homepage: shared.homepage,

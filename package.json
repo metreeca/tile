@@ -1,11 +1,11 @@
 {
-    "name": "@metreeca/tool",
+    "name": "@metreeca/tile",
     "version": "0.3.0-10",
     "description": "A model‑driven TypeScript/React framework for rapid REST/JSON‑LD frontend development.",
-    "homepage": "https://github.com/metreeca/tool",
-    "repository": "github:metreeca/tool",
+    "homepage": "https://github.com/metreeca/tile",
+    "repository": "github:metreeca/tile",
     "bugs": {
-        "url": "https://github.com/metreeca/tool/issues",
+        "url": "https://github.com/metreeca/tile/issues",
         "email": "info@metreeca.com"
     },
     "license": "Apache-2.0",

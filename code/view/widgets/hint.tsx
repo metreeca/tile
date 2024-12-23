@@ -22,7 +22,7 @@ import "./hint.css";
 /**
  * Content hint.
  */
-export function ToolHint({
+export function TileHint({
 
 	border,
 
@@ -36,7 +36,7 @@ export function ToolHint({
 
 }) {
 
-	return createElement("tool-hint", {
+	return createElement("tile-hint", {
 
 		class: classes({ border })
 

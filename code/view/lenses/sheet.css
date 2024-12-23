@@ -16,9 +16,9 @@
 
 @import "index.css";
 
-tool-sheet {
+tile-sheet {
 
-    & > tool-more {
+    & > tile-more {
         margin-top: 1em;
         font-size: 2.5em;
     }

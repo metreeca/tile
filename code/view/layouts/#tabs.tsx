@@ -19,7 +19,7 @@ import { createElement, ReactNode } from "react";
 import "./#tabs.css";
 
 
-export function ToolTabs({
+export function TileTabs({
 
 	sections
 
@@ -29,7 +29,7 @@ export function ToolTabs({
 
 }) {
 
-	return createElement("tool-tabs", {}, Object.entries(sections).map(([label, content]) =>
+	return createElement("tile-tabs", {}, Object.entries(sections).map(([label, content]) =>
 		<section key={label}>
 
 			<label>{label}</label>

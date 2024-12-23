@@ -34,7 +34,7 @@ import "./card.css";
  * @param children
  * @constructor
  */
-export function ToolCard({
+export function TileCard({
 
 	wrap,
 	size,
@@ -63,13 +63,13 @@ export function ToolCard({
 
 	const [loaded, setLoaded]=useState(false);
 
-	return createElement("tool-card", {
+	return createElement("tile-card", {
 
 		class: classes({ start: side === "start", end: side === "end" }),
 
 		style: {
 
-			"--tool-card-size-width":
+			"--tile-card-size-width":
 
 				isNumber(size) ? `${size}em`
 					: isDefined(size) ? size
@@ -81,7 +81,7 @@ export function ToolCard({
 	}, <>
 
 		{title && <span>{title}</span>}
-		{tags && <nav style={{ color: "var(--tool--color-label)" }}>{tags}</nav>}
+		{tags && <nav style={{ color: "var(--tile--color-label)" }}>{tags}</nav>}
 
 		<div className={classes({ wrap })}>{children}</div>
 

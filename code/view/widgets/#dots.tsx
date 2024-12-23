@@ -20,7 +20,7 @@ import { createElement } from "react";
 import "./#dots.css";
 
 
-export function ToolDots({
+export function TileDots({
 
 	size="0.5em",
 	color="#999",
@@ -34,13 +34,13 @@ export function ToolDots({
 
 }) {
 
-	return createElement("tool-dots", {
+	return createElement("tile-dots", {
 
 		style: {
 
-			"--tool-dots-size": size,
-			"--tool-dots-color": color,
-			"--tool-dots-period": period
+			"--tile-dots-size": size,
+			"--tile-dots-color": color,
+			"--tile-dots-period": period
 
 		}
 

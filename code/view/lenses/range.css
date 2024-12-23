@@ -16,10 +16,10 @@
 
 @import "index.css";
 
-tool-range {
+tile-range {
 
     &:has(input:invalid) {
-        border-color: var(--tool--color-invalid);
+        border-color: var(--tile--color-invalid);
     }
 
     & > section {

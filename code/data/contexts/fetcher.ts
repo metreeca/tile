@@ -102,7 +102,7 @@ export function resolve(path: string, base: string=location.href): string {
  * @return a new fetcher context component
  *
  */
-export function ToolFetcher({
+export function TileFetcher({
 
 	fetcher=std(),
 

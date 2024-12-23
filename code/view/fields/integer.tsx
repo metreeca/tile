@@ -24,7 +24,7 @@ import { createElement, useState } from "react";
 import "./index.css";
 
 
-export function ToolInteger({
+export function TileInteger({
 
 	disabled,
 	readonly,
@@ -47,7 +47,7 @@ export function ToolInteger({
 
 }>) {
 
-	return createElement("tool-integer", {},
+	return createElement("tile-integer", {},
 		createField<number>({ field, reader, editor })
 	);
 

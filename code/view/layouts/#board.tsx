@@ -18,7 +18,7 @@ import { createElement, ReactNode } from "react";
 import "./#board.css";
 
 
-export function ToolBoard({
+export function TileBoard({
 
 	children
 
@@ -28,6 +28,6 @@ export function ToolBoard({
 
 }) {
 
-	return createElement("tool-board", {}, children);
+	return createElement("tile-board", {}, children);
 
 }

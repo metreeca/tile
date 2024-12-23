@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ToolSpin } from "@metreeca/view/widgets/spin";
+import { TileSpin } from "@metreeca/view/widgets/spin";
 import React, { createElement, ReactNode, useEffect, useRef } from "react";
 import "./more.css";
 
@@ -26,7 +26,7 @@ import "./more.css";
  * @param children
  * @constructor
  */
-export function ToolMore({
+export function TileMore({
 
 	onLoad,
 
@@ -74,6 +74,6 @@ export function ToolMore({
 	}, [onLoad]);
 
 
-	return createElement("tool-more", { ref: loader }, children ?? <ToolSpin/>);
+	return createElement("tile-more", { ref: loader }, children ?? <TileSpin/>);
 
 }

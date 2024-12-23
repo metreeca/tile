@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Immutable } from "@metreeca/link";
+import { Immutable } from "mesh";
 
 
 export function insert<T>(array: Immutable<T[]>, target: number, value: Immutable<T>) {

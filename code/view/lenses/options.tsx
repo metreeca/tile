@@ -22,15 +22,15 @@ import { useTrailing } from "@metreeca/data/hooks/events";
 import { Option, Options } from "@metreeca/data/models/options";
 import { AutoDelay, classes } from "@metreeca/view";
 import { Check, CheckSquare, ClearIcon, X } from "@metreeca/view/widgets/icon";
-import { ToolLink } from "@metreeca/view/widgets/link";
-import { ToolMore } from "@metreeca/view/widgets/more";
-import { ToolSpin } from "@metreeca/view/widgets/spin";
+import { TileLink } from "@metreeca/view/widgets/link";
+import { TileMore } from "@metreeca/view/widgets/more";
+import { TileSpin } from "@metreeca/view/widgets/spin";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { createElement, ReactNode, useState } from "react";
 import "./options.css";
 
 
-export function ToolOptions<
+export function TileOptions<
 
 	T extends Value,
 	V extends Value
@@ -101,7 +101,7 @@ export function ToolOptions<
 	}
 
 
-	return createElement("tool-options", {
+	return createElement("tile-options", {
 
 		class: classes({ focused: active, overflow }),
 
@@ -167,7 +167,7 @@ export function ToolOptions<
 			<nav>
 
 				{
-					!ready ? <ToolSpin/>
+					!ready ? <TileSpin/>
 						: keywords ? <button title={"Clear"} onClick={clear}><ClearIcon/></button>
 							: selected ? <button title={"Reset"} onClick={reset}><ClearIcon/></button>
 								: undefined
@@ -203,7 +203,7 @@ export function ToolOptions<
 
 			}}>{items.filter(({ selected }) => expanded || selected).map(Option)}</ul>
 
-			{more && <ToolMore onLoad={load}/>}
+			{more && <TileMore onLoad={load}/>}
 
         </>}</section>
 
@@ -226,7 +226,7 @@ export function ToolOptions<
 				value === null ? Label(null)
 					: as ? <span>{as(value)}</span>
 						: isBoolean(value) ? value ? <Check/> : <X/>
-							: isEntry(value) ? <ToolLink>{value}</ToolLink>
+							: isEntry(value) ? <TileLink>{value}</TileLink>
 								: Label(type.format(value))
 			}
 

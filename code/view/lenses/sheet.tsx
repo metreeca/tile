@@ -20,8 +20,8 @@ import { Frame, isFrame, Order, toFrameString } from "@metreeca/core/frame";
 import { isString } from "@metreeca/core/string";
 import { Collection } from "@metreeca/data/models/collection";
 import { Selection } from "@metreeca/data/models/selection";
-import { ToolHint } from "@metreeca/view/widgets/hint";
-import { ToolMore } from "@metreeca/view/widgets/more";
+import { TileHint } from "@metreeca/view/widgets/hint";
+import { TileMore } from "@metreeca/view/widgets/more";
 import React, { createElement, Fragment, ReactNode, useState } from "react";
 import "./sheet.css";
 
@@ -32,7 +32,7 @@ const LimitNext=25;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function ToolSheet<V extends Frame>({
+export function TileSheet<V extends Frame>({
 
 	placeholder,
 
@@ -95,7 +95,7 @@ export function ToolSheet<V extends Frame>({
 	}
 
 
-	return items?.length ? createElement("tool-sheet", {}, <>
+	return items?.length ? createElement("tile-sheet", {}, <>
 
 			{items?.map((item, index) => <Fragment key={isEntry(item) ? item.id : JSON.stringify(item)}>{
 
@@ -103,11 +103,11 @@ export function ToolSheet<V extends Frame>({
 
 			}</Fragment>)}
 
-			{pending && <ToolMore onLoad={load}/>}
+			{pending && <TileMore onLoad={load}/>}
 
 		</>)
 
-		: placeholder ? <ToolHint>{placeholder} <span>{items ? "No Matches" : "Loading…"}</span></ToolHint>
+		: placeholder ? <TileHint>{placeholder} <span>{items ? "No Matches" : "Loading…"}</span></TileHint>
 
 			: null;
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-tool-term {
+tile-term {
 
     &.disabled,
     &.disabled * {
-        color: var(--tool--color-disabled);
+        color: var(--tile--color-disabled);
     }
 
 }

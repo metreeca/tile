@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Input, ToolInput, ToolPlaceholder } from "@metreeca/tile/inputs/input";
+import { Input, TileInput, TilePlaceholder } from "@metreeca/tile/inputs/input";
 import "./#date.css";
 import * as React from "react";
 import { createElement } from "react";
 import "./input.css";
 
 
-export function ToolDate({
+export function TileDate({
 
 	editable=false,
 	disabled=false,
@@ -45,7 +45,7 @@ export function ToolDate({
 	function reader() {
 		return value
 			? <span>{toLocaleDateString(new Date(value))}</span>
-			: <ToolPlaceholder>{placeholder}</ToolPlaceholder>;
+			: <TilePlaceholder>{placeholder}</TilePlaceholder>;
 	}
 
 	function editor() {
@@ -67,6 +67,6 @@ export function ToolDate({
 		/>;
 	}
 
-	return createElement("tool-date", { class: ToolInput }, editable ? editor() : reader());
+	return createElement("tile-date", { class: TileInput }, editable ? editor() : reader());
 
 }

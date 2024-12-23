@@ -16,19 +16,19 @@
 
 @import "index.css";
 
-tool-options {
+tile-options {
 
-    --tool-options-box-shadow-size: 1em;
+    --tile-options-box-shadow-size: 1em;
 
     &.overflow {
 
         & > section { /* end of content cue */
-            padding-bottom: calc(0.75 * var(--tool-options-box-shadow-size));
+            padding-bottom: calc(0.75 * var(--tile-options-box-shadow-size));
         }
 
         &::after { /* more content cue */
             content: '';
-            box-shadow: 0 0 var(--tool-options-box-shadow-size) var(--tool-options-box-shadow-size) var(--tool--background-color);
+            box-shadow: 0 0 var(--tile-options-box-shadow-size) var(--tile-options-box-shadow-size) var(--tile--background-color);
         }
 
     }
@@ -63,7 +63,7 @@ tool-options {
 
                 &.unavailable {
 
-                    color: var(--tool--color-disabled);
+                    color: var(--tile--color-disabled);
 
                     & * {
                         color: inherit;

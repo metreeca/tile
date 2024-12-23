@@ -15,7 +15,7 @@
  */
 
 // @ts-ignore
-import { Input, ToolInput, ToolPlaceholder } from "@metreeca/tile/inputs/input";
+import { Input, TileInput, TilePlaceholder } from "@metreeca/tile/inputs/input";
 import "./input.css";
 import "./#options.css";
 import * as React from "react";
@@ -23,7 +23,7 @@ import { createElement } from "react";
 import { classes } from "../index";
 
 
-export function ToolOptions({
+export function TileOptions({
 
 	editable=false,
 	readonly=false,
@@ -43,7 +43,7 @@ export function ToolOptions({
 
 	function reader() {
 		return value === undefined
-			? <ToolPlaceholder>{placeholder}</ToolPlaceholder>
+			? <TilePlaceholder>{placeholder}</TilePlaceholder>
 			: <span>{labels[value] || value}</span>;
 	}
 
@@ -65,6 +65,6 @@ export function ToolOptions({
 		</select>;
 	}
 
-	return createElement("tool-options", { class: ToolInput }, editable ? editor() : reader());
+	return createElement("tile-options", { class: TileInput }, editable ? editor() : reader());
 
 }

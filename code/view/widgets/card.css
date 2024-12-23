@@ -16,21 +16,21 @@
 
 :root {
 
-    --tool-card-size-width: 0;
-    --tool-card-column-gap: 1em;
-    --tool-card-row-gap: 0.5em;
+    --tile-card-size-width: 0;
+    --tile-card-column-gap: 1em;
+    --tile-card-row-gap: 0.5em;
 
 }
 
-tool-card {
+tile-card {
 
     display: grid;
     align-items: start;
 
     grid-template-rows: min-content min-content;
 
-    grid-column-gap: var(--tool-card-column-gap);
-    grid-row-gap: var(--tool-card-row-gap);
+    grid-column-gap: var(--tile-card-column-gap);
+    grid-row-gap: var(--tile-card-row-gap);
 
     &:not(:first-child) {
         margin-top: 1em;
@@ -38,7 +38,7 @@ tool-card {
 
     &.start {
 
-        grid-template-columns: var(--tool-card-size-width) 1fr;
+        grid-template-columns: var(--tile-card-size-width) 1fr;
 
         & > nav,
         & > i {
@@ -54,7 +54,7 @@ tool-card {
 
     &.end {
 
-        grid-template-columns: 1fr var(--tool-card-size-width);
+        grid-template-columns: 1fr var(--tile-card-size-width);
 
         & > nav,
         & > i {
@@ -101,7 +101,7 @@ tool-card {
     & > i {
 
         font-weight: 600;
-        color: var(--tool--color-light);
+        color: var(--tile--color-light);
 
         & > img {
             margin-top: 0.25em;

@@ -15,8 +15,8 @@
  */
 
 import { Fetcher, useFetcher } from "@metreeca/data/contexts/fetcher";
-import { Graph } from "@metreeca/link";
-import { RESTGraph } from "@metreeca/link/rest";
+import { RESTGraph } from "@metreeca/mesh/rest";
+import { Graph } from "mesh";
 import { createContext, createElement, ReactNode, useContext, useMemo } from "react";
 
 
@@ -33,7 +33,7 @@ const Context=createContext<Graph>(RESTGraph(fetch));
  *
  * @constructor
  */
-export function ToolGraph({
+export function TileGraph({
 
 	factory=RESTGraph,
 

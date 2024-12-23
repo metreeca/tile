@@ -1,7 +1,7 @@
 ---
 name: "Bug Report"
 about: "Create a report to help us improve"
-title: "What's wrong with @metreeca/tool?"
+title: "What's wrong with @metreeca/tile?"
 labels: "Issue"
 assignees: ""
 ---
@@ -9,7 +9,7 @@ assignees: ""
 
 **environment**
 
-- @metreeca/tool: *version*
+- @metreeca/tile: *version*
 - operating system: *name/version*
 - browser: *vendor/version*
 

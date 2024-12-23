@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-tool-search {
+tile-search {
 
     position: relative;
 
@@ -27,7 +27,7 @@ tool-search {
     border-style: solid;
     border-radius: 2ex;
 
-    background-color: #FFF; /* !!! var(--tool--background-color) not working */
+    background-color: #FFF; /* !!! var(--tile--background-color) not working */
 
     & > * {
         grid-row: 1;
@@ -66,8 +66,8 @@ tool-search {
             margin-right: 0.33em;
         }
 
-        :is(tool-keywords[disabled]) > & {
-            color: var(--tool--color-disabled);
+        :is(tile-keywords[disabled]) > & {
+            color: var(--tile--color-disabled);
         }
 
     }

@@ -19,7 +19,7 @@ import { Collection } from "@metreeca/data/models/collection";
 import { ClearIcon } from "@metreeca/view/widgets/icon";
 import React from "react";
 
-export function ToolClear<
+export function TileClear<
 
 	V extends Value
 

@@ -60,7 +60,7 @@ export function focus(target: undefined | null | ChildNode) {
  *
  * @constructor
  */
-export function ToolForm<F extends Frame>({
+export function TileForm<F extends Frame>({
 
 	onValidate,
 	onSubmit,

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-tool-integer,
-tool-decimal,
-tool-email,
-tool-string,
-tool-entry {
+tile-integer,
+tile-decimal,
+tile-email,
+tile-string,
+tile-entry {
 
     display: inline-flex;
     flex-direction: column;
@@ -99,7 +99,7 @@ tool-entry {
         }
 
         &:not(:disabled):not(:read-only) {
-            background-color: var(--tool--background-color-edit);
+            background-color: var(--tile--background-color-edit);
         }
 
     }
@@ -115,15 +115,15 @@ tool-entry {
         border-radius: 0.25em;
 
         &:not(:disabled) {
-            background-color: var(--tool--background-color-edit);
+            background-color: var(--tile--background-color-edit);
         }
 
         &:focus {
-            box-shadow: var(--tool--box-shadow-focus);
+            box-shadow: var(--tile--box-shadow-focus);
         }
 
         &:invalid {
-            border-color: var(--tool--color-invalid);
+            border-color: var(--tile--color-invalid);
         }
 
         & > option {
@@ -136,12 +136,12 @@ tool-entry {
         display: block;
         margin-top: 0.25em;
         font-size: 0.75em;
-        color: var(--tool--color-placeholder);
+        color: var(--tile--color-placeholder);
     }
 
 }
 
-tool-string {
+tile-string {
 
     & > div {
         white-space: pre-line;

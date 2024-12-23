@@ -16,11 +16,11 @@
 
 :root {
 
-    --tool-hint-icon-size: 20%;
+    --tile-hint-icon-size: 20%;
 
 }
 
-tool-hint {
+tile-hint {
 
     display: flex;
     flex-direction: column;
@@ -32,7 +32,7 @@ tool-hint {
 
     text-align: center;
 
-    color: var(--tool--color-disabled);
+    color: var(--tile--color-disabled);
 
     &.border {
 
@@ -41,7 +41,7 @@ tool-hint {
         border-radius: 0.5em;
         border-style: dotted;
 
-        background-color: var(--tool--background-color-edit);
+        background-color: var(--tile--background-color-edit);
 
     }
 
@@ -52,8 +52,8 @@ tool-hint {
         width: 100%;
         height: 100%;
 
-        max-width: var(--tool-hint-icon-size);
-        max-height: var(--tool-hint-icon-size);
+        max-width: var(--tile-hint-icon-size);
+        max-height: var(--tile-hint-icon-size);
 
         stroke-width: 2.5%;
 
@@ -64,7 +64,7 @@ tool-hint {
 
     }
 
-    & > tool-spin {
+    & > tile-spin {
 
         font-size: 3em;
 

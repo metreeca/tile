@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-tool-board {
+tile-board {
 
     --cols: 2;
     --gap: 1em;

@@ -1,5 +1,5 @@
 {
-    "name": "@metreeca/link",
+  "name": "@metreeca/mesh",
     "description": "Graph connectors",
     "dependencies": {
         "@metreeca/core": "*"

@@ -16,18 +16,18 @@
 
 :root {
 
-    --tool-spin-size: 1em;
-    --tool-spin-thickness: max(0.1rem, calc(var(--tool-spin-size) / 50));
-    --tool-spin-color: #CCC;
-    --tool-spin-period: 1s;
+    --tile-spin-size: 1em;
+    --tile-spin-thickness: max(0.1rem, calc(var(--tile-spin-size) / 50));
+    --tile-spin-color: #CCC;
+    --tile-spin-period: 1s;
 
 }
 
-tool-spin {
+tile-spin {
 
     display: grid;
 
-    font-size: var(--tool-spin-size);
+    font-size: var(--tile-spin-size);
 
     background-color: transparent;
 
@@ -35,10 +35,10 @@ tool-spin {
 
         margin: auto;
 
-        color: var(--tool-spin-color);
-        stroke-width: var(--tool-spin-thickness);
+        color: var(--tile-spin-color);
+        stroke-width: var(--tile-spin-thickness);
 
-        animation: tool-spin var(--tool-spin-period) infinite linear;
+        animation: tile-spin var(--tile-spin-period) infinite linear;
 
     }
 
@@ -48,7 +48,7 @@ tool-spin {
 
 }
 
-@keyframes tool-spin {
+@keyframes tile-spin {
     0% {
         transform: rotate(0deg);
     }

@@ -21,7 +21,7 @@ import React, { createElement, ReactNode } from "react";
 import "./info.css";
 
 
-interface ToolInfoEntry {
+interface TileInfoEntry {
 	label: ReactNode,
 	value: ReactNode
 }
@@ -35,7 +35,7 @@ interface ToolInfoEntry {
  * @param children
  * @constructor
  */
-export function ToolInfo({
+export function TileInfo({
 
 	center=false,
 
@@ -51,11 +51,11 @@ export function ToolInfo({
 
 	if ( children ) {
 
-		const entries: ToolInfoEntry[]=isArray<ToolInfoEntry>(children)
+		const entries: TileInfoEntry[]=isArray<TileInfoEntry>(children)
 			? children
 			: Object.entries(children).map(([label, value]) => ({ label, value }));
 
-		return createElement("tool-info", {
+		return createElement("tile-info", {
 
 				class: classes({ center })
 

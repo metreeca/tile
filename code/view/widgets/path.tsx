@@ -17,7 +17,7 @@
 import { isArray, isDefined } from "@metreeca/core";
 import { isEntry } from "@metreeca/core/entry";
 import { isValue, toValueString, Value } from "@metreeca/core/value";
-import { ToolLink } from "@metreeca/view/widgets/link";
+import { TileLink } from "@metreeca/view/widgets/link";
 import * as React from "react";
 import { createElement, ReactNode } from "react";
 import "./path.css";
@@ -31,7 +31,7 @@ export type Path=undefined | Value | ReactNode | Array<undefined | Value | React
 /**
  * Creates a breadcrumbs path component.
  */
-export function ToolPath({
+export function TilePath({
 
 	children: path
 
@@ -43,8 +43,8 @@ export function ToolPath({
 
 	const steps=isArray<undefined | Value | ReactNode>(path) ? path : [path];
 
-	return createElement("tool-path", {}, steps.map((step, index) =>
-		isEntry(step) && index + 1 < steps.length ? <ToolLink key={step.id}>{step}</ToolLink>
+	return createElement("tile-path", {}, steps.map((step, index) =>
+		isEntry(step) && index + 1 < steps.length ? <TileLink key={step.id}>{step}</TileLink>
 			: isValue(step) ? <span key={toValueString(step)}>{toValueString(step)}</span>
 				: isDefined(step) ? <React.Fragment key={index}>{step}</React.Fragment>
 					: undefined

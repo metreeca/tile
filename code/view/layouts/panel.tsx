@@ -22,7 +22,7 @@ import "./panel.css";
 /**
  * Creates a layout panel.
  */
-export function ToolPanel({
+export function TilePanel({
 
 	name,
 
@@ -40,7 +40,7 @@ export function ToolPanel({
 
 }) {
 
-	return createElement("tool-panel", {
+	return createElement("tile-panel", {
 
 		class: classes({ stack })
 

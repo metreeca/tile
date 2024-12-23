@@ -23,7 +23,7 @@ import "./label.css";
 /**
  * Creates a labelled layout panel entry.
  */
-export function ToolLabel({
+export function TileLabel({
 
 	rule=false,
 	wide=false,
@@ -46,7 +46,7 @@ export function ToolLabel({
 	children?: ReactNode
 
 }) {
-	return createElement("tool-label", {
+	return createElement("tile-label", {
 
 		class: classes({ rule, wide, side })
 

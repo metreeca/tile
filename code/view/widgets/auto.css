@@ -15,7 +15,7 @@
  */
 
 
-tool-auto {
+tile-auto {
 
     --radius: 0.25em;
 
@@ -71,11 +71,11 @@ tool-auto {
 
         overflow: hidden;
 
-        background-color: var(--tool--background-color-edit);
+        background-color: var(--tile--background-color-edit);
 
-        box-shadow: 0 0 0 0.25em var(--tool--background-color);
+        box-shadow: 0 0 0 0.25em var(--tile--background-color);
 
-        & > tool-spin,
+        & > tile-spin,
         & > small {
             margin: 0.25em 0.5em;
         }

@@ -17,10 +17,10 @@
 import { isDefined } from "@metreeca/core";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
 import { Resource } from "@metreeca/data/models/resource";
-import { ToolHint } from "@metreeca/view/widgets/hint";
+import { TileHint } from "@metreeca/view/widgets/hint";
 import React, { ReactNode } from "react";
 
-export function ToolFrame<V extends Frame>({
+export function TileFrame<V extends Frame>({
 
 	placeholder,
 
@@ -43,7 +43,7 @@ export function ToolFrame<V extends Frame>({
 	return <>{
 
 		resource ? as(resource)
-			: placeholder ? <ToolHint>{placeholder}</ToolHint>
+			: placeholder ? <TileHint>{placeholder}</TileHint>
 				: null
 
 	}</>;

@@ -28,7 +28,7 @@ import { useTrailing } from "@metreeca/data/hooks/events";
 import { Range } from "@metreeca/data/models/range";
 import { AutoDelay, classes } from "@metreeca/view";
 import { Calendar, ClearIcon, Clock, Hash, TypeIcon } from "@metreeca/view/widgets/icon";
-import { ToolSpin } from "@metreeca/view/widgets/spin";
+import { TileSpin } from "@metreeca/view/widgets/spin";
 import React, { ChangeEvent, createElement, FocusEvent as FocusingEvent, useEffect, useRef, useState } from "react";
 import "./range.css";
 
@@ -38,7 +38,7 @@ const WideTypes=new Set<Type>([date, dateTime]);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function ToolRange<
+export function TileRange<
 
 	T extends Value,
 	V extends Value
@@ -103,7 +103,7 @@ export function ToolRange<
 	const expanded=!compact || focused || selected;
 
 
-	return createElement("tool-range", {
+	return createElement("tile-range", {
 
 		ref: element,
 		class: classes({ focused }),
@@ -139,7 +139,7 @@ export function ToolRange<
 			<input readOnly placeholder={placeholder}/>
 
 			<nav>{
-				!ready ? <ToolSpin/>
+				!ready ? <TileSpin/>
 					: selected ? <button title={"Reset"} onClick={reset}><ClearIcon/></button>
 						: null
 			}</nav>

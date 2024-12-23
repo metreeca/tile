@@ -25,7 +25,7 @@ import { createElement, useState } from "react";
 import "./index.css";
 
 
-export function ToolDecimal({
+export function TileDecimal({
 
 	disabled,
 	readonly,
@@ -48,7 +48,7 @@ export function ToolDecimal({
 
 }>) {
 
-	return createElement("tool-decimal", {},
+	return createElement("tile-decimal", {},
 		createField<number>({ field, reader, editor })
 	);
 

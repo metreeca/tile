@@ -21,7 +21,7 @@ import { Matches } from "@metreeca/data/models/matches";
 import { AutoDelay, AutoLength, AutoSize, keys } from "@metreeca/view";
 import { focus, input } from "@metreeca/view/widgets/form";
 import { ClearIcon } from "@metreeca/view/widgets/icon";
-import { ToolSpin } from "@metreeca/view/widgets/spin";
+import { TileSpin } from "@metreeca/view/widgets/spin";
 import React, { createElement, ReactNode, useState } from "react";
 import "./auto.css";
 
@@ -36,7 +36,7 @@ import "./auto.css";
  * @param source
  * @constructor
  */
-export function ToolAuto<V extends Value>({
+export function TileAuto<V extends Value>({
 
 	disabled,
 	required,
@@ -91,7 +91,7 @@ export function ToolAuto<V extends Value>({
 
 	}
 
-	return createElement("tool-auto", {
+	return createElement("tile-auto", {
 
 		onKeyDown: keys({
 
@@ -180,7 +180,7 @@ export function ToolAuto<V extends Value>({
 
 		{options !== undefined && <footer>{
 
-			keywords && !options ? <ToolSpin/>
+			keywords && !options ? <TileSpin/>
 				: options?.length ? Select(options)
 					: <small>No Matches</small>
 
@@ -199,7 +199,7 @@ export function ToolAuto<V extends Value>({
 
 				select(options[e.currentTarget.selectedIndex]);
 
-				focus(e.currentTarget.closest("tool-auto")?.querySelector("input"));
+				focus(e.currentTarget.closest("tile-auto")?.querySelector("input"));
 
 			}}
 
@@ -209,7 +209,7 @@ export function ToolAuto<V extends Value>({
 
 					select(options[e.currentTarget.selectedIndex]);
 
-					focus(e.currentTarget.closest("tool-auto")?.querySelector("input"));
+					focus(e.currentTarget.closest("tile-auto")?.querySelector("input"));
 
 				}
 

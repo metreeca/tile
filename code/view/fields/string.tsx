@@ -15,14 +15,14 @@
  */
 
 import { Setter } from "@metreeca/data/hooks";
-import { createField, Field, ToolFieldClear } from "@metreeca/view/fields/index";
+import { createField, Field, TileFieldClear } from "@metreeca/view/fields/index";
 import { input } from "@metreeca/view/widgets/form";
 import * as React from "react";
 import { createElement } from "react";
 import "./index.css";
 
 
-export function ToolString({
+export function TileString({
 
 	disabled,
 	readonly,
@@ -46,7 +46,7 @@ export function ToolString({
 
 }>) {
 
-	return createElement("tool-string", {},
+	return createElement("tile-string", {},
 		createField<string>({ field, reader, editor })
 	);
 
@@ -73,7 +73,7 @@ export function ToolString({
 
 		return <>
 
-			<ToolFieldClear>{[value, setValue]}</ToolFieldClear> {/* before inputs to drive css */}
+			<TileFieldClear>{[value, setValue]}</TileFieldClear> {/* before inputs to drive css */}
 
 			{rows && rows > 1
 

@@ -288,7 +288,7 @@ export function createPlaceholder(label?: string) {
 	return <small>{label || "No Value"}</small>;
 }
 
-export function ToolFieldClear({
+export function TileFieldClear({
 
 	children: [value, setValue]
 

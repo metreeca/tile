@@ -15,9 +15,9 @@
  */
 
 import { Home } from "@metreeca/demo/pages/home";
-import { ToolPage } from "@metreeca/view/layouts/page";
-import { ToolLogo } from "@metreeca/view/widgets/logo";
-import { Path, ToolPath } from "@metreeca/view/widgets/path";
+import { TilePage } from "@metreeca/view/layouts/page";
+import { TileLogo } from "@metreeca/view/widgets/logo";
+import { Path, TilePath } from "@metreeca/view/widgets/path";
 import * as React from "react";
 import { ReactNode } from "react";
 
@@ -42,12 +42,12 @@ export function DemoPage({
 
 }) {
 
-	return <ToolPage
+	return <TilePage
 
-		logo={<a href={Home.id}><ToolLogo/></a>}
+		logo={<a href={Home.id}><TileLogo/></a>}
 		meta={NAME}
 
-		name={<ToolPath>{name}</ToolPath>}
+		name={<TilePath>{name}</TilePath>}
 		menu={menu}
 
 		tray={tray}
@@ -56,6 +56,6 @@ export function DemoPage({
 
 		children
 
-	}</ToolPage>;
+	}</TilePage>;
 
 }

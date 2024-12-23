@@ -19,12 +19,12 @@
 
 :root {
 
-    --tool-table-cell-max-width: 30em;
-    --tool-table-scroll-box-shadow: 0 0 0.5em 0.25em;
+    --tile-table-cell-max-width: 30em;
+    --tile-table-scroll-box-shadow: 0 0 0.5em 0.25em;
 
 }
 
-tool-table {
+tile-table {
 
     z-index: 20; /* above page header (see page.css )*/
     position: relative; /* stack shadows above other content */
@@ -34,7 +34,7 @@ tool-table {
 
     white-space: nowrap;
 
-    background-color: var(--tool--background-color);
+    background-color: var(--tile--background-color);
 
     & > table {
 
@@ -88,7 +88,7 @@ tool-table {
                     }
 
                     &:not(:last-child) {
-                        max-width: var(--tool-table-cell-max-width);
+                        max-width: var(--tile-table-cell-max-width);
                     }
 
                     &:last-child {
@@ -109,7 +109,7 @@ tool-table {
 
         & > thead {
 
-            color: var(--tool--color-label);
+            color: var(--tile--color-label);
 
             & > tr > th {
 

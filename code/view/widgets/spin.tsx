@@ -21,7 +21,7 @@ import { createElement, ReactNode } from "react";
 import "./spin.css";
 
 
-export function ToolSpin({
+export function TileSpin({
 
 	icon=<Loader2/>,
 	title,
@@ -47,7 +47,7 @@ export function ToolSpin({
 
 }) {
 
-	return createElement("tool-spin", {
+	return createElement("tile-spin", {
 
 		title: title || onClick ? "Cancel" : undefined,
 
@@ -55,10 +55,10 @@ export function ToolSpin({
 
 		style: {
 
-			"--tool-spin-size": size,
-			"--tool-spin-thickness": thickness,
-			"--tool-spin-color": color,
-			"--tool-spin-period": period
+			"--tile-spin-size": size,
+			"--tile-spin-thickness": thickness,
+			"--tile-spin-color": color,
+			"--tile-spin-period": period
 
 		}
 

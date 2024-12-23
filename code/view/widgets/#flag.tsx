@@ -18,7 +18,7 @@ import { Check, X } from "@metreeca/tile/widgets/icon";
 import * as React from "react";
 
 
-export function ToolFlag({ children }: { children: boolean }) {
+export function TileFlag({ children }: { children: boolean }) {
 	return <span title={children ? "True" : "False"} style={{ strokeWidth: 5 }}>{children
 
 		? <Check stroke={"green"} strokeWidth={"inherit"}/>

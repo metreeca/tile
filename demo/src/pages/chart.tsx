@@ -31,7 +31,7 @@ function random() {
 }
 
 
-export function WorkTool() {
+export function WorkTile() {
 
 	const [points, setPoint]=useState(random());
 

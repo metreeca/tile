@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-tool-note {
+tile-note {
 
     display: flex;
     flex-direction: column;
@@ -89,7 +89,7 @@ tool-note {
             position: sticky;
             z-index: 1;
 
-            box-shadow: 0 0 0.5em 0.5em var(--tool--background-color);
+            box-shadow: 0 0 0.5em 0.5em var(--tile--background-color);
 
         }
 

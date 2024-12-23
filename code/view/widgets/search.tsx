@@ -28,7 +28,7 @@ import "./search.css";
  *
  * @constructor
  */
-export function ToolSearch({
+export function TileSearch({
 
 	disabled,
 
@@ -65,7 +65,7 @@ export function ToolSearch({
 	}
 
 
-	return createElement("tool-search", {
+	return createElement("tile-search", {
 
 		disabled: disabled ? "disabled" : undefined
 

@@ -25,7 +25,7 @@ import { Check } from "lucide-react";
 import React from "react";
 
 
-export function ToolBooleanCell({ value }: { value: Plain }) {
+export function TileBooleanCell({ value }: { value: Plain }) {
 	return <span>{isBoolean(value)
 
 		? value ? <Check stroke={"green"}/> : <Plain stroke={"red"}/>
@@ -34,18 +34,18 @@ export function ToolBooleanCell({ value }: { value: Plain }) {
 	}</span>;
 }
 
-export function ToolStringCell({ value }: { value: Plain }) {
+export function TileStringCell({ value }: { value: Plain }) {
 	return <span>{isNumber(value) ? value.toString() : string(value)}</span>;
 }
 
-export function ToolIntegerCell({ value }: { value: Plain }) {
+export function TileIntegerCell({ value }: { value: Plain }) {
 	return isNumber(value)
 		? <var className={"right"}>{toLocaleNumberString(value)}</var>
 		: <span>{string(value)}</span>;
 
 }
 
-export function ToolTemporalCell({ value }: { value: Plain }) {
+export function TileTemporalCell({ value }: { value: Plain }) {
 	return isNumber(value)
 
 		? <span className={"right"}>{value}</span>
@@ -53,20 +53,20 @@ export function ToolTemporalCell({ value }: { value: Plain }) {
 
 }
 
-export function ToolDecimalCell({ value, precision=2 }: { value: Plain, precision?: number }) {
+export function TileDecimalCell({ value, precision=2 }: { value: Plain, precision?: number }) {
 	return isNumber(value)
 		? <var className={"right"}>{toLocaleNumberString(value, { precision })}</var>
 		: <span>{string(value)}</span>;
 }
 
-export function ToolDateCell({ value }: { value: Plain }) {
+export function TileDateCell({ value }: { value: Plain }) {
 	return <span>{isTemporal(value) ? date.format(new Date(`${value}T00:00:00`)) : string(value)}</span>;
 }
 
-export function ToolTimeCell({ value }: { value: Plain }) {
+export function TileTimeCell({ value }: { value: Plain }) {
 	return <span>{isTime(value) ? toTimeString(new Date(`1970-01-01T${value}`)) : string(value)}</span>;
 }
 
-export function ToolDateTimeCell({ value }: { value: Plain }) {
+export function TileDateTimeCell({ value }: { value: Plain }) {
 	return <span>{isTemporal(value) ? toDateTimeString(new Date(value)) : string(value)}</span>;
 }

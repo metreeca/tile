@@ -1,7 +1,7 @@
 ---
 name: "Feature Request"
 about: "Suggest an idea for this project"
-title: "What's missing from @metreeca/tool?"
+title: "What's missing from @metreeca/tile?"
 labels: "Story"
 assignees: ""
 ---

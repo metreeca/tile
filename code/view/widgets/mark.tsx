@@ -17,9 +17,9 @@
 import { asObject, isFunction } from "@metreeca/core";
 import { isString } from "@metreeca/core/string";
 import { Asset } from "@metreeca/data/hooks/asset";
-import { ToolHint } from "@metreeca/view/widgets/hint";
+import { TileHint } from "@metreeca/view/widgets/hint";
 import { ErrorIcon, ForbiddenIcon, NotFoundIcon, UnauthorizedIcon } from "@metreeca/view/widgets/icon";
-import { ToolSpin } from "@metreeca/view/widgets/spin";
+import { TileSpin } from "@metreeca/view/widgets/spin";
 import Slugger from "github-slugger";
 import { Root } from "hast";
 import { headingRank } from "hast-util-heading-rank";
@@ -56,7 +56,7 @@ export interface Meta {
  * @param children either markdown content or an absolute or root-relative URL the Markdown content is to be retrieved
  *     from
  */
-export function ToolMark({
+export function TileMark({
 
 	meta,
 
@@ -95,28 +95,28 @@ export function ToolMark({
 	}, []);
 
 
-	return meta === "toc" ? text && ToolMarkTOC(text)
+	return meta === "toc" ? text && TileMarkTOC(text)
 
-		: meta ? text && ToolMarkMeta(text, meta)
+		: meta ? text && TileMarkMeta(text, meta)
 
-			: isString(text) ? text && ToolMarkText(text)
+			: isString(text) ? text && TileMarkText(text)
 
-				: <ToolHint>{{
+				: <TileHint>{{
 
-					0: <ToolSpin/>,
+					0: <TileSpin/>,
 
 					401: <><UnauthorizedIcon/><span>Restricted Document<br/>Log In to Access</span></>,
 					403: <><ForbiddenIcon/><span>Restricted Document</span></>,
 					404: <><NotFoundIcon/><span>Document Not Found</span></>
 
-				}[code ?? 0] ?? <><ErrorIcon/><span>Unable to Download</span></>}</ToolHint>;
+				}[code ?? 0] ?? <><ErrorIcon/><span>Unable to Download</span></>}</TileHint>;
 
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function ToolMarkTOC(text: string) {
+function TileMarkTOC(text: string) {
 	return text && <ReactMarkdown
 
         remarkPlugins={[remarkFrontmatter]}
@@ -151,7 +151,7 @@ function ToolMarkTOC(text: string) {
 	}</ReactMarkdown>;
 }
 
-function ToolMarkMeta(text: string, meta: string | ((meta: Meta) => ReactNode)) {
+function TileMarkMeta(text: string, meta: string | ((meta: Meta) => ReactNode)) {
 
 	const file=remark()
 
@@ -180,7 +180,7 @@ function ToolMarkMeta(text: string, meta: string | ((meta: Meta) => ReactNode)) 
 			: null;
 }
 
-function ToolMarkText(content: string) {
+function TileMarkText(content: string) {
 	return <ReactMarkdown
 
 		remarkPlugins={[

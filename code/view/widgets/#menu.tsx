@@ -18,7 +18,7 @@ import { createElement, ReactNode } from "react";
 import "./#menu.css";
 
 
-export function ToolMenu({
+export function TileMenu({
 
 	children
 
@@ -28,6 +28,6 @@ export function ToolMenu({
 
 }) {
 
-	return createElement("tool-menu", {}, children);
+	return createElement("tile-menu", {}, children);
 
 }

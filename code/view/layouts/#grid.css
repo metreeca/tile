@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-tool-grid {
+tile-grid {
 
     display: grid;
 
@@ -37,7 +37,7 @@ tool-grid {
         text-align: right;
         font-size: 90%;
         font-weight: 700;
-        color: var(--tool--color-label);
+        color: var(--tile--color-label);
     }
 
     & > hr {

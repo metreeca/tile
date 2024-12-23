@@ -24,7 +24,7 @@ import { Collection } from "@metreeca/data/models/collection";
 import React, { ReactNode } from "react";
 
 
-export function ToolLink({
+export function TileLink({
 
 	icon,
 

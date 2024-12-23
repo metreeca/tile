@@ -16,36 +16,36 @@
 
 :root {
 
-    --tool--font-size: 14pt;
+    --tile--font-size: 14pt;
 
-    --tool--color: #000;
+    --tile--color: #000;
 
-    --tool--color-accent-lite: #D60;
-    --tool--color-accent-dark: #345;
+    --tile--color-accent-lite: #D60;
+    --tile--color-accent-dark: #345;
 
-    --tool--color-light: #BBB;
-    --tool--color-label: #AAA;
-    --tool--color-placeholder: #AAA;
-    --tool--color-enabled: #567;
-    --tool--color-disabled: #CCC;
-    --tool--color-invalid: #D60;
+    --tile--color-light: #BBB;
+    --tile--color-label: #AAA;
+    --tile--color-placeholder: #AAA;
+    --tile--color-enabled: #567;
+    --tile--color-disabled: #CCC;
+    --tile--color-invalid: #D60;
 
-    --tool--color-hover: #B50;
-    --tool--color-focus: #789;
+    --tile--color-hover: #B50;
+    --tile--color-focus: #789;
 
-    --tool--background-color: #FFF;
-    --tool--background-color-edit: #FAFAFA;
-    --tool--background-color-stripe: #F4F4F4;
+    --tile--background-color: #FFF;
+    --tile--background-color-edit: #FAFAFA;
+    --tile--background-color-stripe: #F4F4F4;
 
-    --tool--border-style: solid;
-    --tool--border-color: #CCC;
-    --tool--border-width: 1px;
+    --tile--border-style: solid;
+    --tile--border-color: #CCC;
+    --tile--border-width: 1px;
 
-    --tool--box-shadow-focus: 0 0 2px 1px var(--tool--color-focus);
-    --tool--outline-invalid: solid 1px var(--tool--color-invalid);
+    --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
+    --tile--outline-invalid: solid 1px var(--tile--color-invalid);
 
-    --tool-img-padding: 1.5em;
-    --tool-scroll-shadow-size: 0.75em;
+    --tile-img-padding: 1.5em;
+    --tile-scroll-shadow-size: 0.75em;
 
 }
 
@@ -56,8 +56,8 @@
     outline-style: none;
     border-style: none;
     border-radius: 0;
-    border-width: var(--tool--border-width);
-    border-color: var(--tool--border-color);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
     overflow: visible;
     font-family: inherit;
     font-style: inherit;
@@ -75,9 +75,9 @@
 /**** Layout **********************************************************************************************************/
 
 body {
-    font-size: var(--tool--font-size);
-    color: var(--tool--color);
-    background-color: var(--tool--background-color);
+    font-size: var(--tile--font-size);
+    color: var(--tile--color);
+    background-color: var(--tile--background-color);
 }
 
 
@@ -181,9 +181,9 @@ table {
 
 tbody > tr:nth-child(odd) > td {
 
-    --tool--background-color: var(--tool--background-color-stripe);
+    --tile--background-color: var(--tile--background-color-stripe);
 
-    background-color: var(--tool--background-color);
+    background-color: var(--tile--background-color);
 }
 
 th {
@@ -221,18 +221,18 @@ input {
 
     &:focus {
 
-        box-shadow: inset var(--tool--box-shadow-focus);
+        box-shadow: inset var(--tile--box-shadow-focus);
 
         &[type=checkbox],
         &[type=radio] {
-            box-shadow: var(--tool--box-shadow-focus);
+            box-shadow: var(--tile--box-shadow-focus);
         }
 
     }
 
     &:invalid {
-        color: var(--tool--color-invalid);
-        outline: var(--tool--outline-invalid);
+        color: var(--tile--color-invalid);
+        outline: var(--tile--outline-invalid);
         outline-offset: 0;
     }
 
@@ -274,7 +274,7 @@ button {
     white-space: nowrap;
 
     &:disabled {
-        color: var(--tool--color-disabled);
+        color: var(--tile--color-disabled);
         pointer-events: none;
     }
 
@@ -283,16 +283,16 @@ button {
         cursor: pointer;
 
         &:focus-visible {
-            outline: solid 1px var(--tool--color-focus);
+            outline: solid 1px var(--tile--color-focus);
             outline-offset: 0.1em;
         }
 
         &:hover {
-            color: var(--tool--color-hover) !important;
+            color: var(--tile--color-hover) !important;
         }
 
         &:active {
-            color: var(--tool--color-focus) !important;
+            color: var(--tile--color-focus) !important;
         }
 
     }
@@ -300,7 +300,7 @@ button {
 }
 
 *::placeholder {
-    color: var(--tool--color-placeholder);
+    color: var(--tile--color-placeholder);
 }
 
 
@@ -435,12 +435,12 @@ img {
 
     &.left {
         float: left;
-        margin-right: var(--tool-img-padding);
+        margin-right: var(--tile-img-padding);
     }
 
     &.right {
         float: right;
-        margin-left: var(--tool-img-padding);
+        margin-left: var(--tile-img-padding);
     }
 
     &[active] {
@@ -495,7 +495,7 @@ a, a:visited {
     text-decoration: none;
     text-decoration-thickness: 1px;
 
-    color: var(--tool--color-enabled);
+    color: var(--tile--color-enabled);
 
     cursor: pointer;
 
@@ -504,12 +504,12 @@ a, a:visited {
     }
 
     &:hover {
-        color: var(--tool--color-hover) !important;
+        color: var(--tile--color-hover) !important;
     }
 
     &:active {
         text-decoration: underline !important;
-        color: var(--tool--color-focus) !important;
+        color: var(--tile--color-focus) !important;
     }
 
     &:has(.lucide:first-child:not(:only-child)) {
@@ -531,7 +531,7 @@ em {
 
 small {
     font-size: 90%;
-    color: var(--tool--color-label);
+    color: var(--tile--color-label);
 }
 
 
@@ -564,7 +564,7 @@ small {
 
     left: 0;
     right: 0;
-    height: var(--tool-scroll-shadow-size);
+    height: var(--tile-scroll-shadow-size);
 
 }
 
@@ -575,30 +575,30 @@ small {
 
     top: 0;
     bottom: 0;
-    width: var(--tool-scroll-shadow-size);
+    width: var(--tile-scroll-shadow-size);
 
 }
 
 .scroll-y::before,
 .scroll-t::before {
     bottom: 100%;
-    background-image: linear-gradient(0deg, var(--tool--background-color), rgba(0, 0, 0, 0));
+    background-image: linear-gradient(0deg, var(--tile--background-color), rgba(0, 0, 0, 0));
 }
 
 .scroll-y::after,
 .scroll-b::after {
     top: 100%;
-    background-image: linear-gradient(180deg, var(--tool--background-color), rgba(0, 0, 0, 0));
+    background-image: linear-gradient(180deg, var(--tile--background-color), rgba(0, 0, 0, 0));
 }
 
 .scroll-x::after,
 .scroll-r::after {
     left: 100%;
-    background-image: linear-gradient(90deg, var(--tool--background-color), rgba(0, 0, 0, 0));
+    background-image: linear-gradient(90deg, var(--tile--background-color), rgba(0, 0, 0, 0));
 }
 
 .scroll-x::before,
 .scroll-l::before {
     right: 100%;
-    background-image: linear-gradient(270deg, var(--tool--background-color), rgba(0, 0, 0, 0));
+    background-image: linear-gradient(270deg, var(--tile--background-color), rgba(0, 0, 0, 0));
 }

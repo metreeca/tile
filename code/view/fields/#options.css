@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-tool-options {
+tile-options {
 
     overflow: visible !important;
 
     & > select.default {
-        color: var(--tool--color-disabled);
+        color: var(--tile--color-disabled);
     }
 
 }

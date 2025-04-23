@@ -15,6 +15,7 @@
  */
 
 import { isBoolean, toBooleanString } from "@metreeca/core/boolean";
+import { Data, isData, toDataString } from "@metreeca/core/data";
 import { date, isDate, toDateString } from "@metreeca/core/date";
 import { dateTime, isDateTime, toDateTimeString } from "@metreeca/core/dateTime";
 import { isEntry, toEntryString } from "@metreeca/core/entry";
@@ -27,7 +28,7 @@ import { isTime, time, toTimeString } from "@metreeca/core/time";
 import { isYear, toYearString, year } from "@metreeca/core/year";
 
 
-export type Value=null | boolean | number | string | Text | Frame
+export type Value=null | boolean | number | string | Text | Data | Frame
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,7 @@ export function toValueString(value: Value, {
 
 								: isString(value) ? value
 									: isText(value) ? toTextString(value, { locales })
+										: isData(value) ? toDataString(value)
 
 										: isEntry(value) ? toEntryString(value, { locales })
 											: toFrameString(value, { locales });

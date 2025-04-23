@@ -3,7 +3,10 @@
     "version": "0.4.0-0",
     "description": "A model‑driven TypeScript/React framework for rapid REST/JSON‑LD frontend development.",
     "homepage": "https://github.com/metreeca/tile",
-    "repository": "github:metreeca/tile",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/metreeca/tile.git"
+    },
     "bugs": {
         "url": "https://github.com/metreeca/tile/issues",
         "email": "info@metreeca.com"

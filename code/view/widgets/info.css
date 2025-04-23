@@ -67,9 +67,7 @@ tile-info {
 
             & > li {
 
-                list-style: outside "›";
-
-                margin-left: 0.75em;
+                list-style: inside "› ";
 
                 overflow: hidden;
                 text-overflow: ellipsis;

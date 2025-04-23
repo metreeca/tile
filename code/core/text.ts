@@ -26,7 +26,7 @@ import { error, immutable, inconvertible, isArray, isObject, Type } from "@metre
 import { isString } from "@metreeca/core/string";
 
 
-export interface Local {
+export interface Text {
 
 	readonly [lang: string]: string; // !!! string arrays?
 
@@ -35,10 +35,10 @@ export interface Local {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const local: Type<Local> & ((model: Local) => Type<Local>)=Object.freeze(Object.assign(
-	(model: Local) => immutable({ ...local, model }), immutable<Type<Local>>({
+export const text: Type<Text> & ((model: Text) => Type<Text>)=Object.freeze(Object.assign(
+	(model: Text) => immutable({ ...text, model }), immutable<Type<Text>>({
 
-		label: "local",
+		label: "text",
 		model: { "*": "" },
 
 
@@ -47,13 +47,13 @@ export const local: Type<Local> & ((model: Local) => Type<Local>)=Object.freeze(
 		},
 
 		decode(value) {
-			return isLocal(value) ? value
-				: error(new TypeError(`<${typeof value}> value <${value}> is not a <${local.label}>`));
+			return isText(value) ? value
+				: error(new TypeError(`<${typeof value}> value <${value}> is not a <${text.label}>`));
 		},
 
 
 		write(value) {
-			return toLocalString(value);
+			return toTextString(value);
 		},
 
 		parse(value) {
@@ -62,12 +62,12 @@ export const local: Type<Local> & ((model: Local) => Type<Local>)=Object.freeze(
 
 
 		format(value, locales) {
-			return toLocalString(value, { locales });
+			return toTextString(value, { locales });
 		},
 
 
-		cast(type: Type): typeof local {
-			return inconvertible(local, type);
+		cast(type: Type): typeof text {
+			return inconvertible(text, type);
 		}
 
 	})
@@ -76,19 +76,19 @@ export const local: Type<Local> & ((model: Local) => Type<Local>)=Object.freeze(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function isLocal(value: unknown): value is Local {
+export function isText(value: unknown): value is Text {
 	return isObject(value) && !("id" in value) && Object.entries(value).every(([key, value]) =>
 		isString(key) && /^|\*|[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$/.test(key)
 		&& isString(value) // !!! string arrays?
 	);
 }
 
-export function asLocal(value: unknown): undefined | Local {
-	return isLocal(value) ? value : undefined;
+export function asText(value: unknown): undefined | Text {
+	return isText(value) ? value : undefined;
 }
 
 
-export function toLocalString(local: Local, {
+export function toTextString(text: Text, {
 
 	locales
 
@@ -98,9 +98,9 @@ export function toLocalString(local: Local, {
 
 }={}): string {
 
-	return (isArray<any>(locales) ? locales.map(locale => local[locale.toString()]).filter(s => s)[0] : undefined)
-		?? local.en
-		?? Object.values(local)[0]
+	return (isArray<any>(locales) ? locales.map(locale => text[locale.toString()]).filter(s => s)[0] : undefined)
+		?? text.en
+		?? Object.values(text)[0]
 		?? "";
 
 }

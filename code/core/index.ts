@@ -27,8 +27,8 @@ import { decimal, isDecimal } from "@metreeca/core/decimal";
 import { entry, isEntry } from "@metreeca/core/entry";
 import { frame, isFrame } from "@metreeca/core/frame";
 import { integer, isInteger } from "@metreeca/core/integer";
-import { isLocal, local } from "@metreeca/core/local";
 import { isString, string } from "@metreeca/core/string";
+import { isText, text } from "@metreeca/core/text";
 import { isTime, time } from "@metreeca/core/time";
 import { isValue, Value } from "@metreeca/core/value";
 import { isYear, year } from "@metreeca/core/year";
@@ -173,7 +173,7 @@ export function toType(model: unknown): Type {
 							: isDateTime(model) ? dateTime
 
 								: isString(model) ? string
-									: isLocal(model) ? local
+									: isText(model) ? text
 
 										: isEntry(model) ? entry
 											: isFrame(model) ? frame

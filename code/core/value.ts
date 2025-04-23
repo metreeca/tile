@@ -20,14 +20,14 @@ import { dateTime, isDateTime, toDateTimeString } from "@metreeca/core/dateTime"
 import { isEntry, toEntryString } from "@metreeca/core/entry";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
 import { equals, isArray } from "@metreeca/core/index";
-import { isLocal, Local, toLocalString } from "@metreeca/core/local";
 import { isNumber, toNumberString } from "@metreeca/core/number";
 import { isString } from "@metreeca/core/string";
+import { isText, Text, toTextString } from "@metreeca/core/text";
 import { isTime, time, toTimeString } from "@metreeca/core/time";
 import { isYear, toYearString, year } from "@metreeca/core/year";
 
 
-export type Value=null | boolean | number | string | Local | Frame
+export type Value=null | boolean | number | string | Text | Frame
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ export function isValue(value: unknown): value is Value {
 		|| isNumber(value)
 		|| isString(value)
 		|| isFrame(value)
-		|| isLocal(value); // as a last resort to avoid expensive checks
+		|| isText(value); // as a last resort to avoid expensive checks
 }
 
 export function asValue(value: unknown): undefined | Value {
@@ -73,7 +73,7 @@ export function toValueString(value: Value, {
 							: isYear(value) ? toYearString(year.parse(value) ?? new Date(), { locales, ...asDateTime })
 
 								: isString(value) ? value
-									: isLocal(value) ? toLocalString(value, { locales })
+									: isText(value) ? toTextString(value, { locales })
 
 										: isEntry(value) ? toEntryString(value, { locales })
 											: toFrameString(value, { locales });
@@ -85,7 +85,7 @@ export function toValueString(value: Value, {
 export function matches(x: unknown, y: unknown): boolean {
 	return isArray(x) && isArray(y) ? x.length === y.length && x.every((v, i) => matches(v, y[i]))
 		: isEntry(x) && isEntry(y) ? x.id === y.id
-			: isLocal(x) && isLocal(y) ? equals(x, y)
+			: isText(x) && isText(y) ? equals(x, y)
 			: x === y;
 }
 

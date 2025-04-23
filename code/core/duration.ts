@@ -16,8 +16,8 @@
 
 import { error, immutable, inconvertible, isObject, Type } from "@metreeca/core";
 import { toIntegerString } from "@metreeca/core/integer";
-import { toLocalString } from "@metreeca/core/local";
 import { isString } from "@metreeca/core/string";
+import { toTextString } from "@metreeca/core/text";
 
 
 export interface Duration {
@@ -182,15 +182,15 @@ export function toDurationString(value: string | Duration, {
 	
 	return [
 
-		minus ? toLocalString(Labels.minus, opts) : undefined,
+		minus ? toTextString(Labels.minus, opts) : undefined,
 
-		years && `${toIntegerString(years, opts)} ${toLocalString(years > 1 ? Labels.years : Labels.year, opts)}`,
-		months && `${toIntegerString(months, opts)} ${toLocalString(months > 1 ? Labels.months : Labels.month, opts)}`,
-		days && `${toIntegerString(days, opts)} ${toLocalString(days > 1 ? Labels.days : Labels.day, opts)}`,
+		years && `${toIntegerString(years, opts)} ${toTextString(years > 1 ? Labels.years : Labels.year, opts)}`,
+		months && `${toIntegerString(months, opts)} ${toTextString(months > 1 ? Labels.months : Labels.month, opts)}`,
+		days && `${toIntegerString(days, opts)} ${toTextString(days > 1 ? Labels.days : Labels.day, opts)}`,
 
-		hours && `${toIntegerString(hours, opts)} ${toLocalString(hours > 1 ? Labels.hours : Labels.hour, opts)}`,
-		minutes && `${toIntegerString(minutes, opts)} ${toLocalString(minutes > 1 ? Labels.minutes : Labels.minute, opts)}`,
-		seconds && `${toIntegerString(seconds, opts)} ${toLocalString(seconds > 1 ? Labels.seconds : Labels.second, opts)}`
+		hours && `${toIntegerString(hours, opts)} ${toTextString(hours > 1 ? Labels.hours : Labels.hour, opts)}`,
+		minutes && `${toIntegerString(minutes, opts)} ${toTextString(minutes > 1 ? Labels.minutes : Labels.minute, opts)}`,
+		seconds && `${toIntegerString(seconds, opts)} ${toTextString(seconds > 1 ? Labels.seconds : Labels.second, opts)}`
 
 	].filter(v => v).join(" ");
 

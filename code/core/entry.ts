@@ -16,8 +16,8 @@
 
 import { error, immutable, inconvertible, Type } from "@metreeca/core";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
-import { Local } from "@metreeca/core/local";
 import { isString } from "@metreeca/core/string";
+import { Text } from "@metreeca/core/text";
 
 
 /**
@@ -27,8 +27,8 @@ export interface Entry extends Frame {
 
 	readonly id: string;
 
-	readonly label?: string | Local;
-	readonly comment?: string | Local;
+	readonly label?: string | Text;
+	readonly comment?: string | Text;
 	readonly image?: string | Entry;
 
 }

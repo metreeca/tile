@@ -17,8 +17,8 @@
 import { isEntry } from "@metreeca/core/entry";
 import { error, immutable, inconvertible, isArray, isEmpty, isObject, Type } from "@metreeca/core/index";
 import { isInteger } from "@metreeca/core/integer";
-import { isLocal, Local, toLocalString } from "@metreeca/core/local";
 import { isString } from "@metreeca/core/string";
+import { isText, Text, toTextString } from "@metreeca/core/text";
 import { evaluate, isValue, Value } from "@metreeca/core/value";
 
 
@@ -44,13 +44,13 @@ export interface Query extends Frame { // expression-based fields for reference 
 
 	readonly "~{expression}"?: string;
 
-	readonly "?{expression}"?: Value[] | Local;
+	readonly "?{expression}"?: Value[] | Text;
 
 }
 
 export interface Focus extends Frame { // expression-based fields for reference only
 
-	readonly "${expression}"?: Value[] | Local;
+	readonly "${expression}"?: Value[] | Text;
 
 }
 
@@ -134,7 +134,7 @@ export function toFrameString(value: Frame, {
 
 	return isString(value.label) && value.label
 
-		|| isLocal(value.label) && toLocalString(value.label, { locales })
+		|| isText(value.label) && toTextString(value.label, { locales })
 
 		|| isString(value.id) && value.id // guess entry label from its id
 			.replace(/^.*?(?:[/#:]([^/#:]+))?(?:\/|#|#_|#id|#this)?$/, "$1") // extract label

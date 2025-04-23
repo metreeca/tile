@@ -16,7 +16,7 @@
 
 import { immutable, isEmpty } from "@metreeca/core";
 import { Entry } from "@metreeca/core/entry";
-import { errors, Graph, Trace } from "mesh";
+import { errors, Graph, Trace } from "@metreeca/mesh";
 
 
 export function RESTGraph(fetcher: typeof fetch=fetch): Graph {

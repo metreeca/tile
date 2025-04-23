@@ -15,8 +15,8 @@
  */
 
 import { Fetcher, useFetcher } from "@metreeca/data/contexts/fetcher";
+import { Graph } from "@metreeca/mesh";
 import { RESTGraph } from "@metreeca/mesh/rest";
-import { Graph } from "mesh";
 import { createContext, createElement, ReactNode, useContext, useMemo } from "react";
 
 

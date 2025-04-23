@@ -27,7 +27,6 @@ import { toString } from "hast-util-to-string";
 import "highlight.js/styles/github.css";
 import React, { ReactNode, useEffect } from "react";
 import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
-import { Nodes } from "react-markdown/lib";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import { remark } from "remark";
@@ -157,7 +156,7 @@ function TileMarkMeta(text: string, meta: string | ((meta: Meta) => ReactNode)) 
 
 		.use(remarkFrontmatter)
 
-		.use(() => (tree: Nodes, file) => {
+		.use(() => (tree: Root, file) => {
 
 			const node=find(tree, { type: "yaml" });
 
@@ -215,7 +214,7 @@ function TileMarkText(content: string) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function remarkCodeFormatter() {
-	return (tree: Nodes) => selectAll("code", tree).forEach(node => {
+	return (tree: Root) => selectAll("code", tree).forEach(node => {
 
 		if ( node && "value" in node && typeof node.value === "string" ) {
 

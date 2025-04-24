@@ -39,7 +39,7 @@ export function TileTree({
 
 }: {
 
-	expanded?: boolean
+	expanded?: boolean | "force"
 
 	label: ReactNode
 
@@ -49,7 +49,7 @@ export function TileTree({
 
 	const parent=children !== undefined;
 
-	const [expanded_, setExpanded_]=useCache(parent && expanded);
+	const [expanded_, setExpanded_]=useCache(expanded === "force" || parent && expanded);
 
 
 	function toggle() {

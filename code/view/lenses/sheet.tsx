@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDefined } from "@metreeca/core";
+import { isFunction, isObject } from "@metreeca/core";
 import { isEntry } from "@metreeca/core/entry";
 import { Frame, isFrame, Order, toFrameString } from "@metreeca/core/frame";
 import { isString } from "@metreeca/core/string";
@@ -46,7 +46,7 @@ export function TileSheet<V extends Frame>({
 
 	placeholder?: ReactNode
 
-	sorted?: string | Order
+	sorted?: string | Order | ((x: V, y: V) => number)
 
 	as?: (item: V) => ReactNode
 
@@ -60,7 +60,7 @@ export function TileSheet<V extends Frame>({
 
 	const order=
 		isString(sorted) ? { [sorted]: "increasing" }
-			: isDefined(sorted) ? sorted
+			: isObject(sorted) ? sorted
 				: isFrame(collection.model) ? { label: "increasing" }
 					: {};
 
@@ -97,11 +97,13 @@ export function TileSheet<V extends Frame>({
 
 	return items?.length ? createElement("tile-sheet", {}, <>
 
-			{items?.map((item, index) => <Fragment key={isEntry(item) ? item.id : JSON.stringify(item)}>{
+			{(isFunction(sorted) ? [...items].sort(sorted) : items).map((item) =>
+				<Fragment key={isEntry(item) ? item.id : JSON.stringify(item)}>{
 
-				as(item)
+					as(item)
 
-			}</Fragment>)}
+				}</Fragment>
+			)}
 
 			{pending && <TileMore onLoad={load}/>}
 

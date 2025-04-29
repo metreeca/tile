@@ -67,14 +67,14 @@ tile-info {
 
             & > li {
 
-                list-style: inside "› ";
+                &:not(:only-child)::before {
+                    content: "›";
+                    padding-right: 0.5em;
+                    color: var(--tile--color-light);
+                }
 
                 overflow: hidden;
                 text-overflow: ellipsis;
-
-                &::marker {
-                    color: var(--tile--color-light);
-                }
 
                 &:not(:first-child) {
                     margin-top: 0.1em;

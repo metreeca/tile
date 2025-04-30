@@ -83,7 +83,11 @@ export function toIntegerString(value: number, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return value.toLocaleString(locales, {
 

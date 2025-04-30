@@ -94,7 +94,11 @@ export function toEntryString(value: Entry, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return toFrameString(value, { locales });
 

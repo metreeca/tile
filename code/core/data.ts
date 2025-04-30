@@ -102,7 +102,11 @@ export function toDataString(data: Data, {
 
 	base?: URL
 
-}={}): string {
+}={
+
+	base: new URL(window.location.href)
+
+}): string {
 
 	return JSON.stringify(data); // !!! relativize datatype URIs
 

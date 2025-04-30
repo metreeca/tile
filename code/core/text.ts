@@ -96,9 +96,29 @@ export function toTextString(text: Text, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
 
-	return (isArray<any>(locales) ? locales.map(locale => text[locale.toString()]).filter(s => s)[0] : undefined)
+	locales: navigator.languages
+
+}): string {
+
+	return (isArray<any>(locales) ? locales.map(locale => {
+
+			function matches(locale: string, range: string): boolean {
+
+				const r=range.toLowerCase();
+				const l=locale.toLowerCase();
+
+				return l === r || l.startsWith(r + "-");
+			}
+
+			return (Object.entries(text)
+				.filter(([, v]) => v)
+				.filter(([l]) => matches(locale.toString(), l))
+				.map(([, v]) => v))
+				[0];
+
+		})[0] : undefined)
 		?? text.en
 		?? Object.values(text)[0]
 		?? "";

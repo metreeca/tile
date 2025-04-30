@@ -108,7 +108,11 @@ export function toDateString(value: string | Date, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return (isString(value) ? date.decode(value) : value).toLocaleDateString(locales, {
 

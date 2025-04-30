@@ -61,7 +61,11 @@ export function toValueString(value: Value, {
 	asNumber?: Intl.NumberFormatOptions
 	asDateTime?: Intl.DateTimeFormatOptions
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return value === null ? "null"
 

@@ -85,7 +85,11 @@ export function toTimeString(value: string | Date, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return (isString(value) ? time.decode(value) : value).toLocaleTimeString(locales, {
 

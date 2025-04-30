@@ -85,7 +85,11 @@ export function toYearString(value: string | Date, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return (isString(value) ? year.decode(value) : value).getFullYear().toFixed(0); // !!! selected locale
 

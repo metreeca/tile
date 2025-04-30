@@ -162,7 +162,11 @@ export function toDurationString(value: string | Duration, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	const opts={ locales };
 

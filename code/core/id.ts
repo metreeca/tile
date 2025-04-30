@@ -79,7 +79,11 @@ export function toIdString(value: string, {
 
 	compact?: boolean
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	if ( compact ) {
 

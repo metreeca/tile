@@ -94,7 +94,11 @@ export function toDecimalString(value: number, {
 
 	fractionDigits: number
 
-}>>/* ;( */={}): string {
+}>>/* ;( */={
+
+	locales: navigator.languages
+
+}): string {
 
 	return value.toLocaleString(locales, {
 

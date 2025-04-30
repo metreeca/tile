@@ -130,7 +130,11 @@ export function toFrameString(value: Frame, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return isString(value.label) && value.label
 

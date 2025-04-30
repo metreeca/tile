@@ -76,7 +76,11 @@ export function toBooleanString(value: boolean, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return value.toLocaleString(); // !!! selected locale
 

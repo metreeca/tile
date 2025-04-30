@@ -85,7 +85,11 @@ export function toDateTimeString(value: string | Date, {
 
 	locales?: Intl.LocalesArgument
 
-}={}): string {
+}={
+
+	locales: navigator.languages
+
+}): string {
 
 	return (isString(value) ? dateTime.decode(value) : value).toLocaleString(locales, {
 

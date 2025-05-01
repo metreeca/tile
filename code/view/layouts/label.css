@@ -20,8 +20,6 @@ tile-label {
     flex-direction: column;
     align-items: stretch;
 
-    grid-gap: 0.5em;
-
     flex: auto 0 0;
 
     &.rule {
@@ -63,6 +61,10 @@ tile-label {
         justify-content: space-between;
 
         white-space: nowrap;
+
+        &:not(:last-child) {
+            padding-bottom: 0.5em;
+        }
 
         & > span {
 

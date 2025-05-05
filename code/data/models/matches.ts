@@ -45,35 +45,42 @@ export function useMatches<V extends Value>(entry: Entry, field: string): Matche
 	const graph=useGraph();
 	const [, setTrace]=useTrace();
 
-	return ({ keywords, offset=0, limit=0 }) => !keywords.trim() ? Promise.resolve([]) : graph
+	return ({ keywords, offset=0, limit=0 }) => {
+		if ( !keywords.trim() ) {return Promise.resolve([]); } else {
 
-		.retrieve({
+			setTrace(undefined);
 
-			id: entry.id,
+			return graph
 
-			[field]: [{
+				.retrieve({
 
-				id: "",
-				label: "",
+					id: entry.id,
 
-				"~label": keywords,
-				"^label": "increasing",
+					[field]: [{
 
-				"@": offset,
-				"#": limit
+						id: "",
+						label: "",
 
-			}]
+						"~label": keywords,
+						"^label": "increasing",
 
-		})
+						"@": offset,
+						"#": limit
 
-		.then(frame => asArray<V>(frame[field]) ?? [])
+					}]
 
-		.catch(trace => {
+				})
 
-			setTrace(trace);
+				.then(frame => asArray<V>(frame[field]) ?? [])
 
-			return [];
+				.catch(trace => {
 
-		});
+					setTrace(trace);
+
+					return [];
+
+				});
+		}
+	};
 
 }

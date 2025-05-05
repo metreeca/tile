@@ -77,6 +77,8 @@ export function useResource<
 
 	function retrieve() {
 
+		setTrace(undefined);
+
 		return graph.retrieve({ ...entry, id })
 
 			.then(frame => {

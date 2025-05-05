@@ -58,6 +58,8 @@ export const date: Type<string, Date>=immutable({
 
 					...date,
 
+					model: dateTime.model,
+
 					encode(value: Date): string {
 						return dateTime.encode(value);
 					},

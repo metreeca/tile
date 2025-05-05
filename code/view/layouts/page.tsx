@@ -95,7 +95,6 @@ export function TilePage({
 
 	}, [trace]);
 
-
 	return createElement("tile-page", {
 
 		class: classes({

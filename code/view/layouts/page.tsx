@@ -16,10 +16,12 @@
 
 import { useFetcher } from "@metreeca/data/contexts/fetcher";
 import { useTrace } from "@metreeca/data/contexts/trace";
+import { useError } from "@metreeca/data/hooks/error";
 import { classes } from "@metreeca/view";
 import { TileSpin } from "@metreeca/view/widgets/spin";
 import React, { createElement, ReactNode, useEffect, useState } from "react";
 import "./page.css";
+import { ErrorBoundary } from "react-error-boundary";
 
 
 export function TilePage({
@@ -91,9 +93,21 @@ export function TilePage({
 
 	useEffect(() => {
 
-		trace && console.error(trace); // !!! fallback error reporting
+		trace && report(trace);
 
 	}, [trace]);
+
+
+	useError(
+		error => report(error),
+		error => report(error)
+	);
+
+
+	function report(error: any) {
+		window.alert(JSON.stringify(error, null, 2)); // !! UI
+	}
+
 
 	return createElement("tile-page", {
 
@@ -122,29 +136,55 @@ export function TilePage({
 
 	}, <>
 
-		<aside>
+		<ErrorBoundary // https://github.com/bvaughn/react-error-boundary
 
-			<header className={"scroll-b"}>
-				{logo && <span>{logo}</span>}
-				{meta && <span>{meta}</span>}
-			</header>
+			fallbackRender={function ({ error, resetErrorBoundary }: {
+				error: any,
+				resetErrorBoundary: () => void
+			}) {
 
-			<section>{tray}</section>
-			<footer className={"scroll-t"}>{info}</footer>
+				// !!! resetErrorBoundary() to reset the error boundary and retry the render.
 
-		</aside>
+				return (
+					<div role="alert">
+						<p>Something went wrong:</p>
+						<pre style={{ color: "red" }}>{error.message}</pre>
+					</div>
+				);
 
-		<main>
+			}}
 
-			<header className={"scroll-b"}>
-				{done ? <span>{done}</span> : name ? <span>{name}</span> : undefined}
-				{active ? <TileSpin/> : back ? <span>{back}</span> : menu ? <span>{menu}</span> : undefined}
-			</header>
+			onError={error => report(error)}
 
-			<section>{main}</section>
-			<footer>{copy}</footer>
+		>
 
-		</main>
+			<aside>
+
+				<header className={"scroll-b"}>
+					{logo && <span>{logo}</span>}
+					{meta && <span>{meta}</span>}
+				</header>
+
+				<section>{tray}</section>
+				<footer className={"scroll-t"}>{info}</footer>
+
+			</aside>
+
+			<main>
+
+				<header className={"scroll-b"}>
+					{done ? <span>{done}</span> : name ? <span>{name}</span> : undefined}
+					{active ? <TileSpin/> : back ? <span>{back}</span> : menu ? <span>{menu}</span> : undefined}
+				</header>
+
+				<section>{main}</section>
+				<footer>{copy}</footer>
+
+			</main>
+
+		</ErrorBoundary>
 
 	</>);
 }
+
+

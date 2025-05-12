@@ -244,7 +244,7 @@ export function useOptions<
 
 						if ( isArray<V>(selection) ) {
 
-							return selection;
+							return selection.map(v => isEntry(v) ? { id: v.id } : v);
 
 						} else { // !!! type inference
 
@@ -253,7 +253,7 @@ export function useOptions<
 
 							return [
 								...(values ?? []).filter(v => !matches(v, value)),
-								...(selected ? [value] : [])
+								...(selected ? [isEntry(value) ? { id: value.id } : value] : [])
 							];
 
 						}

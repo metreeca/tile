@@ -20,17 +20,13 @@ import { isString } from "@metreeca/core/string";
 import { toTextString } from "@metreeca/core/text";
 
 
-export interface Duration {
+export interface Period {
 
 	minus?: boolean;
 
-	// ;( no years/months for compatibility with Java Duration class on the backend
-
+	years?: number;
+	months?: number;
 	days?: number;
-
-	hours?: number;
-	minutes?: number;
-	seconds?: number;
 
 }
 
@@ -40,36 +36,30 @@ export interface Duration {
 /**
  * https://www.w3.org/TR/xmlschema-2/#duration
  */
-export const duration: Type<string, Duration>=immutable({
+export const period: Type<string, Period>=immutable({
 
-	label: "duration",
-	model: "PT0S",
+	label: "period",
+	model: "P0D",
 
 
 	encode({
 
 		minus,
 
-		days,
-
-		hours,
-		minutes,
-		seconds
+		years,
+		months,
+		days
 
 	}) {
 
 		return `${
 			minus ? "-" : ""
 		}P${
+			years ? `${years}Y` : ""
+		}${
+			months ? `${months}M` : ""
+		}${
 			days ? `${days}D` : ""
-		}${
-			hours || minutes || seconds ? "T" : ""
-		}${
-			hours ? `${hours}H` : ""
-		}${
-			minutes ? `${minutes}M` : ""
-		}${
-			seconds ? `${seconds}S` : ""
 		}`;
 
 	},
@@ -77,7 +67,7 @@ export const duration: Type<string, Duration>=immutable({
 	decode(value) {
 		if ( isString(value) ) {
 
-			const groups=value.match(Duration)?.groups;
+			const groups=value.match(Period)?.groups;
 
 			if ( groups ) {
 
@@ -85,24 +75,22 @@ export const duration: Type<string, Duration>=immutable({
 
 					negative: !!groups.minus,
 
-					days: parse(groups.days),
-
-					hours: parse(groups.hours),
-					minutes: parse(groups.minutes),
-					seconds: parse(groups.seconds)
+					years: parse(groups.years),
+					months: parse(groups.months),
+					days: parse(groups.days)
 
 				};
 
 			} else {
 
-				return error(new TypeError(`malformed <${duration.label}> value <${value}}>`));
+				return error(new TypeError(`malformed <${period.label}> value <${value}}>`));
 
 			}
 
 
 		} else {
 
-			return error(new TypeError(`<${typeof value}> value <${value}> is not a <${duration.label}>`));
+			return error(new TypeError(`<${typeof value}> value <${value}> is not a <${period.label}>`));
 
 		}
 
@@ -124,12 +112,12 @@ export const duration: Type<string, Duration>=immutable({
 
 
 	format(value, locales) {
-		return toDurationString(value, { locales });
+		return toPeriodString(value, { locales });
 	},
 
 
-	cast(type: Type): typeof duration {
-		return inconvertible(duration, type);
+	cast(type: Type): typeof period {
+		return inconvertible(period, type);
 	}
 
 });
@@ -137,16 +125,16 @@ export const duration: Type<string, Duration>=immutable({
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function isDuration(value: unknown): value is Duration {
+export function isPeriod(value: unknown): value is Period {
 	return isObject(value) && Object.keys(value).every(Keys.has);
 }
 
-export function asDuration(value: unknown): undefined | Duration {
-	return isDuration(value) ? value : undefined;
+export function asPeriod(value: unknown): undefined | Period {
+	return isPeriod(value) ? value : undefined;
 }
 
 
-export function toDurationString(value: string | Duration, {
+export function toPeriodString(value: string | Period, {
 
 	locales
 
@@ -166,23 +154,19 @@ export function toDurationString(value: string | Duration, {
 
 		minus,
 
-		days,
+		years,
+		months,
+		days
 
-		hours,
-		minutes,
-		seconds
+	}=isString(value) ? period.decode(value) : value;
 
-	}=isString(value) ? duration.decode(value) : value;
-	
 	return [
 
 		minus ? toTextString(Labels.minus, opts) : undefined,
 
-		days && `${toIntegerString(days, opts)} ${toTextString(days > 1 ? Labels.days : Labels.day, opts)}`,
-
-		hours && `${toIntegerString(hours, opts)} ${toTextString(hours > 1 ? Labels.hours : Labels.hour, opts)}`,
-		minutes && `${toIntegerString(minutes, opts)} ${toTextString(minutes > 1 ? Labels.minutes : Labels.minute, opts)}`,
-		seconds && `${toIntegerString(seconds, opts)} ${toTextString(seconds > 1 ? Labels.seconds : Labels.second, opts)}`
+		years && `${toIntegerString(years, opts)} ${toTextString(years > 1 ? Labels.years : Labels.year, opts)}`,
+		months && `${toIntegerString(months, opts)} ${toTextString(months > 1 ? Labels.months : Labels.month, opts)}`,
+		days && `${toIntegerString(days, opts)} ${toTextString(days > 1 ? Labels.days : Labels.day, opts)}`
 
 	].filter(v => v).join(" ");
 
@@ -193,24 +177,20 @@ export function toDurationString(value: string | Duration, {
 
 const Minus=`(?<minus>-)?`;
 
+const Years=`(?:(?<years>\\d+)Y)?`;
+const Months=`(?:(?<months>\\d+)M)?`;
 const Days=`(?:(?<days>\\d+)D)?`;
 
-const Hours=`(?:(?<hours>\\d+)H)?`;
-const Minutes=`(?:(?<minutes>\\d+)M)?`;
-const Seconds=`(?:(?<seconds>\\d+(?:\\.\\d+))S)?`;
-
-const Duration=RegExp(`^${Minus}P${Days}(?:T${Hours}${Minutes}${Seconds})?$`);
+const Period=RegExp(`^${Minus}P${Years}${Months}${Days}$`);
 
 
-const Keys: Set<string>=new Set(Object.keys(<Duration>{
+const Keys: Set<string>=new Set(Object.keys(<Period>{
 
 	minus: false,
 
-	days: 0,
-
-	hours: 0,
-	minutes: 0,
-	seconds: 0.0
+	years: 0,
+	months: 0,
+	days: 0
 
 }));
 
@@ -221,6 +201,27 @@ const Labels=immutable({
 		it: "meno"
 	},
 
+
+	year: {
+		en: "year",
+		it: "anno"
+	},
+
+	years: {
+		en: "years",
+		it: "anni"
+	},
+
+	month: {
+		en: "month",
+		it: "mese"
+	},
+
+	months: {
+		en: "months",
+		it: "mesi"
+	},
+
 	day: {
 		en: "day",
 		it: "giorno"
@@ -229,37 +230,6 @@ const Labels=immutable({
 	days: {
 		en: "days",
 		it: "giorni"
-	},
-
-
-	hour: {
-		en: "hour",
-		it: "ora"
-	},
-
-	hours: {
-		en: "hours",
-		it: "ore"
-	},
-
-	minute: {
-		en: "minute",
-		it: "minuto"
-	},
-
-	minutes: {
-		en: "minutes",
-		it: "minuti"
-	},
-
-	second: {
-		en: "second",
-		it: "secondo"
-	},
-
-	seconds: {
-		en: "seconds",
-		it: "secondi"
 	}
 
 });

@@ -244,11 +244,11 @@ export function useOptions<
 
 						if ( isArray<V>(selection) ) {
 
-							return selection.map(v => isEntry(v) ? { id: v.id } : v);
+							return selection.map(v => isEntry(v) ? { id: v.id } : type?.encode(v));
 
 						} else { // !!! type inference
 
-							const value: V=(selection as any).value;
+							const value: Value=type?.encode((selection as any).value);
 							const selected: boolean=(selection as any).selected;
 
 							return [

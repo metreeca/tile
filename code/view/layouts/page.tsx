@@ -105,7 +105,7 @@ export function TilePage({
 
 
 	function report(error: any) {
-		window.alert(JSON.stringify(error, null, 2)); // !! UI
+		console.error(error); // !! UI
 	}
 
 
@@ -145,12 +145,15 @@ export function TilePage({
 
 				// !!! resetErrorBoundary() to reset the error boundary and retry the render.
 
-				return (
-					<div role="alert">
-						<p>Something went wrong:</p>
-						<pre style={{ color: "red" }}>{error.message}</pre>
-					</div>
-				);
+				return <>
+
+					<aside/>
+
+					<main>
+						<header>;( Internal Error</header>
+						<section style={{ whiteSpace: "nowrap" }}>{JSON.stringify(error, null, 2)}</section>
+					</main>
+				</>;
 
 			}}
 

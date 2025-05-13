@@ -56,7 +56,7 @@ export const duration: Type<string, Duration>=immutable({
 		minutes,
 		seconds
 
-	}) {
+	}): string {
 
 		return `${
 			minus ? "-" : ""
@@ -74,7 +74,7 @@ export const duration: Type<string, Duration>=immutable({
 
 	},
 
-	decode(value) {
+	decode(value): Duration {
 		if ( isString(value) ) {
 
 			const groups=value.match(Duration)?.groups;
@@ -83,7 +83,7 @@ export const duration: Type<string, Duration>=immutable({
 
 				return {
 
-					negative: !!groups.minus,
+					minus: !!groups.minus,
 
 					days: parse(groups.days),
 
@@ -138,7 +138,7 @@ export const duration: Type<string, Duration>=immutable({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function isDuration(value: unknown): value is Duration {
-	return isObject(value) && Object.keys(value).every(Keys.has);
+	return isObject(value) && Object.keys(value).every(key => Keys.has(key));
 }
 
 export function asDuration(value: unknown): undefined | Duration {

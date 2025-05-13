@@ -50,7 +50,7 @@ export const period: Type<string, Period>=immutable({
 		months,
 		days
 
-	}) {
+	}): string {
 
 		return `${
 			minus ? "-" : ""
@@ -64,7 +64,7 @@ export const period: Type<string, Period>=immutable({
 
 	},
 
-	decode(value) {
+	decode(value): Period {
 		if ( isString(value) ) {
 
 			const groups=value.match(Period)?.groups;
@@ -73,7 +73,7 @@ export const period: Type<string, Period>=immutable({
 
 				return {
 
-					negative: !!groups.minus,
+					minus: !!groups.minus,
 
 					years: parse(groups.years),
 					months: parse(groups.months),
@@ -126,7 +126,7 @@ export const period: Type<string, Period>=immutable({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function isPeriod(value: unknown): value is Period {
-	return isObject(value) && Object.keys(value).every(Keys.has);
+	return isObject(value) && Object.keys(value).every(key => Keys.has(key));
 }
 
 export function asPeriod(value: unknown): undefined | Period {

@@ -18,10 +18,12 @@ import { isBoolean, toBooleanString } from "@metreeca/core/boolean";
 import { Data, isData, toDataString } from "@metreeca/core/data";
 import { date, isDate, toDateString } from "@metreeca/core/date";
 import { dateTime, isDateTime, toDateTimeString } from "@metreeca/core/dateTime";
+import { isDuration, toDurationString } from "@metreeca/core/duration";
 import { isEntry, toEntryString } from "@metreeca/core/entry";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
 import { equals, isArray } from "@metreeca/core/index";
 import { isNumber, toNumberString } from "@metreeca/core/number";
+import { isPeriod, toPeriodString } from "@metreeca/core/period";
 import { isString } from "@metreeca/core/string";
 import { isText, Text, toTextString } from "@metreeca/core/text";
 import { isTime, time, toTimeString } from "@metreeca/core/time";
@@ -77,12 +79,15 @@ export function toValueString(value: Value, {
 						: isTime(value) ? toTimeString(time.parse(value) ?? new Date(), { locales, ...asDateTime })
 							: isYear(value) ? toYearString(year.parse(value) ?? new Date(), { locales, ...asDateTime })
 
+								: isPeriod(value) ? toPeriodString(value, { locales })
+									: isDuration(value) ? toDurationString(value, { locales })
+
 								: isString(value) ? value
 									: isText(value) ? toTextString(value, { locales })
 										: isData(value) ? toDataString(value)
 
-										: isEntry(value) ? toEntryString(value, { locales })
-											: toFrameString(value, { locales });
+													: isEntry(value) ? toEntryString(value, { locales })
+														: toFrameString(value, { locales });
 }
 
 
@@ -92,7 +97,9 @@ export function matches(x: unknown, y: unknown): boolean {
 	return isArray(x) && isArray(y) ? x.length === y.length && x.every((v, i) => matches(v, y[i]))
 		: isEntry(x) && isEntry(y) ? x.id === y.id
 			: isText(x) && isText(y) ? equals(x, y)
-			: x === y;
+				: isPeriod(x) && isPeriod(y) ? equals(x, y)
+					: isDuration(x) && isDuration(y) ? equals(x, y)
+						: x === y;
 }
 
 export function evaluate(value: unknown, expression: string): undefined | Value {

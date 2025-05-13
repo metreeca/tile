@@ -90,7 +90,7 @@ export const period: Type<string, Period>=immutable({
 
 		} else {
 
-			return error(new TypeError(`<${typeof value}> value <${value}> is not a <${period.label}>`));
+			return error(new TypeError(`<${typeof value}> value <${JSON.stringify(value, null, 2)}> is not a <${period.label}>`));
 
 		}
 

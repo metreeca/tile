@@ -102,7 +102,7 @@ export const duration: Type<string, Duration>=immutable({
 
 		} else {
 
-			return error(new TypeError(`<${typeof value}> value <${value}> is not a <${duration.label}>`));
+			return error(new TypeError(`<${typeof value}> value <${JSON.stringify(value, null, 2)}> is not a <${duration.label}>`));
 
 		}
 

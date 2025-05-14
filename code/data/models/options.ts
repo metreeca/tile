@@ -117,11 +117,11 @@ export function useOptions<
 
 	const [{ model, query, items }, setCollection]=collection;
 
-	const effective=type ?? toType(evaluate(model, expression)
+	const inferred=type ?? toType(evaluate(model, expression)
 		?? error(new RangeError(`unknown model for <${model}>[${expression}]`))
 	);
 
-	const label=isEntry(effective.model) ? `${expression}.label` : expression;
+	const label=isEntry(inferred.model) ? `${expression}.label` : expression;
 	const filter=`?${expression}`;
 	const values=asArray<null | Value>(query[filter]); // encoded values
 
@@ -133,7 +133,7 @@ export function useOptions<
 	const specs={
 
 		"count=count:": 0,
-		[`value=${expression}`]: effective.model,
+		[`value=${expression}`]: inferred.model,
 
 		[`~${label}`]: keywords,
 
@@ -178,7 +178,7 @@ export function useOptions<
 
 			ready,
 
-			type: effective,
+			type: inferred,
 			size,
 
 			keywords,
@@ -244,11 +244,11 @@ export function useOptions<
 
 						if ( isArray<V>(selection) ) {
 
-							return selection.map(v => isEntry(v) ? { id: v.id } : type?.encode(v));
+							return selection.map(v => isEntry(v) ? { id: v.id } : inferred?.encode(v));
 
-						} else { // !!! type inference
+						} else {
 
-							const value: Value=type?.encode((selection as any).value);
+							const value: Value=inferred?.encode((selection as any).value);
 							const selected: boolean=(selection as any).selected;
 
 							return [
@@ -271,7 +271,7 @@ export function useOptions<
 	function decode(items: undefined | ReadonlyArray<{ value: null | Value, count: number }>): undefined | Option<V>[] {
 		return items?.map(({ value, count }) => ({
 
-			value: value === null ? null : effective.decode(value),
+			value: value === null ? null : inferred.decode(value),
 			count: isNumber(count) && count >= 0 ? count : 0,
 
 			selected: values?.some(v => matches(v, value)) ?? false

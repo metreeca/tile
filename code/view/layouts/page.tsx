@@ -18,6 +18,7 @@ import { useFetcher } from "@metreeca/data/contexts/fetcher";
 import { useTrace } from "@metreeca/data/contexts/trace";
 import { useError } from "@metreeca/data/hooks/error";
 import { classes } from "@metreeca/view";
+import { CloseIcon } from "@metreeca/view/widgets/icon";
 import { TileSpin } from "@metreeca/view/widgets/spin";
 import React, { createElement, ReactNode, useEffect, useState } from "react";
 import "./page.css";
@@ -73,6 +74,7 @@ export function TilePage({
 
 	const [active, setActive]=useState(false);
 	const [expanded, setExpanded]=useState<boolean>();
+	// const [error, setError]=useState<any>();
 
 
 	useEffect(() => {
@@ -105,7 +107,7 @@ export function TilePage({
 
 
 	function report(error: any) {
-		console.error(error); // !! UI
+		console.log(error);
 	}
 
 
@@ -143,16 +145,18 @@ export function TilePage({
 				resetErrorBoundary: () => void
 			}) {
 
-				// !!! resetErrorBoundary() to reset the error boundary and retry the render.
-
 				return <>
 
 					<aside/>
 
 					<main>
-						<header>;( Internal Error</header>
+						<header>
+							<span>;( Internal Error</span>
+							<button><CloseIcon onClick={resetErrorBoundary}/></button>
+						</header>
 						<section style={{ whiteSpace: "nowrap" }}>{JSON.stringify(error, null, 2)}</section>
 					</main>
+
 				</>;
 
 			}}

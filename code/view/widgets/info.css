@@ -27,10 +27,14 @@ tile-info {
         display: none;
     }
 
-    &:not(:first-child) {
+    & + & {
         padding-top: 1em;
         margin-top: 1em;
         border-top-style: solid;
+    }
+
+    &:not(:has(+ &)) {
+        margin-bottom: 1.5em;
     }
 
     &.center > dt {

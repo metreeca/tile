@@ -29,7 +29,6 @@ export interface Entry extends Frame {
 
 	readonly label?: string | Text;
 	readonly comment?: string | Text;
-	readonly image?: string | Entry;
 
 }
 

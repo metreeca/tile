@@ -1,3 +1,7 @@
+<!--- # Metreeca/Tile --->
+
+# Metreeca/Tile
+
 [![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
 > ⚠️

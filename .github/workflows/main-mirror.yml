@@ -1,10 +1,10 @@
-name: main-mirror
+name: main-sync
 
 on:
 
   push:
     tags:
-      - '0.*'
+      - v4.0.*
 
 jobs:
 
@@ -14,13 +14,29 @@ jobs:
 
     steps:
 
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: Check out tagged version
+        uses: actions/checkout@v4
 
-      # !!! generate docs
+      - name: Mirror to main
+        uses: metreeca/gh-sync-action@v2
+
+  publish:
+
+    runs-on: ubuntu-latest
+    needs: mirror
+
+    steps:
+
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update docs
+        run: |
+          sed -E 's:<!---\s*|\s*--->::g' docs/index.md | sed 's:{{meta.version}}:${{ github.ref_name }}:g' > README.md
 
       - name: Publish docs
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Publish docs
-          branch: main
+          commit_message: Update docs

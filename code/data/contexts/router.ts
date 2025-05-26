@@ -218,9 +218,7 @@ export function title(title: unknown): void {
 
 	const name=asValue(isArray(title) ? title[title.length - 1] : title);
 
-	if ( name !== undefined ) {
-		document.title=normalizeTitle(toValueString(name));
-	}
+	document.title=normalizeTitle(toValueString(name ?? ""));
 
 }
 

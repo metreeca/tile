@@ -137,8 +137,8 @@ export function useOptions<
 
 		[`~${label}`]: keywords,
 
-		"^count:": "decreasing",
-		[`^${expression}`]: "increasing",
+		"^count:": -2,
+		[`^${expression}`]: 1,
 		[`$${expression}`]: values,
 
 		"@": offset,
@@ -280,6 +280,3 @@ export function useOptions<
 	}
 
 }
-
-
-

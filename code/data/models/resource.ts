@@ -32,7 +32,7 @@ export type Resource<T extends Frame, C extends Frame=Frame>=Readonly<[
 		(): Promise<string> // reload
 
 		(frame: { id: never } & C): Promise<string>  // create
-		(frame: { id: string } & Partial<T>): Promise<string> // update
+		(frame: { id: string } & Partial<T>): Promise<string> // update // !!! mutate
 		(empty: { [key in any]: never }): Promise<string> // delete
 
 	}
@@ -131,5 +131,3 @@ export function useResource<
 	];
 
 }
-
-

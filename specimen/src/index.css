@@ -22,15 +22,9 @@ html, body, body > main, body > main > * {
 }
 
 body > main > article {
-
     max-width: 45em;
     padding: var(--tile--spacing-150);
     margin: 0 auto;
-
-    & > section {
-        margin-bottom: var(--tile--spacing-150);
-    }
-
 }
 
 

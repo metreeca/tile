@@ -6,6 +6,12 @@
       ],
       "@metreeca/tile*": [
         "../packages/tile*/src/index.ts"
+      ],
+      "@metreeca/tile-data/*": [
+        "../packages/tile-data/src/*"
+      ],
+      "@metreeca/tile-hive/*": [
+        "../packages/tile-hive/src/*"
       ]
     },
     "noEmit": true,

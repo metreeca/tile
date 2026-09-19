@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, tile, type Token } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
 import { type ComponentChild, render } from "preact";
@@ -87,34 +88,36 @@ const borders: ReadonlyArray<Entry> = [
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function Samples({ entries, sample }: {
+render((
 
-	readonly entries: ReadonlyArray<Entry>;
-	readonly sample: (token: Token) => ComponentChild;
+	<article>
 
-}) {
+		<h1>Metreeca/Tile</h1>
 
-	return <table class="samples">
+		<p>The design system of the Metreeca stack: a layer of tokens naming what an interface is made of, and base
+			rules applying them to plain document markup. This page is both its documentation and its proof, styled by
+			nothing but the stylesheet it describes.</p>
 
-		<tbody>{entries.map(([ token, note ]) => <tr key={token}>
+		<Tabs sections={{
 
-			<td class="sample">{sample(token)}</td>
-			<td><code>{token}</code></td>
-			<td>{note}</td>
+			Colours: <Colours/>,
+			Scales: <Scales/>,
+			Text: <Text/>,
+			Tables: <Tables/>,
+			Forms: <Forms/>,
+			Theming: <Theming/>
 
-		</tr>)}</tbody>
+		}}/>
 
-	</table>;
+	</article>
 
-}
+), document.body.firstElementChild!);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function Colours() {
-	return <section>
-
-		<h2>Colours</h2>
+	return <>
 
 		<p>Four anchors carry the brand and the page. Every other colour is derived from them, so an app that retunes
 			the anchors carries the whole interface along, and the page follows the platform colour scheme without a
@@ -135,13 +138,11 @@ function Colours() {
 			<span class="roundel" style={{ backgroundColor: `var(${ token })` }}/>
 		}/>
 
-	</section>;
+	</>;
 }
 
 function Scales() {
-	return <section>
-
-		<h2>Scales</h2>
+	return <>
 
 		<p>Spacing, type and border tokens are stated in <code>em</code>, so a subtree that changes size takes its
 			rhythm along.</p>
@@ -168,13 +169,11 @@ function Scales() {
 			<span class="box" style={{ borderRadius: `var(${ token })` }}/>
 		}/>
 
-	</section>;
+	</>;
 }
 
 function Text() {
-	return <section>
-
-		<h2>Text</h2>
+	return <>
 
 		<p>Plain document markup is styled as it stands: an app writes ordinary HTML and gets the type scale, the
 			rhythm and the inline treatments without a class on anything.</p>
@@ -214,13 +213,11 @@ function Text() {
 			<dd>And what it stands for.</dd>
 		</dl>
 
-	</section>;
+	</>;
 }
 
 function Tables() {
-	return <section>
-
-		<h2>Tables</h2>
+	return <>
 
 		<p>Rows alternate against the stripe background, cells are padded from the spacing scale, and a trailing empty
 			header takes up the slack.</p>
@@ -255,13 +252,11 @@ function Tables() {
 
 		</table>
 
-	</section>;
+	</>;
 }
 
 function Forms() {
-	return <section>
-
-		<h2>Forms</h2>
+	return <>
 
 		<p>Fields and buttons carry the focus, invalid and disabled roles, so the state of a control is legible before
 			a component adds anything of its own.</p>
@@ -283,13 +278,11 @@ function Forms() {
 			<button type="button" disabled>Disabled</button>
 		</p>
 
-	</section>;
+	</>;
 }
 
 function Theming() {
-	return <section>
-
-		<h2>Theming</h2>
+	return <>
 
 		<p>Assigning the anchors inline restyles a subtree, and everything derived from them follows, with no component
 			change:</p>
@@ -312,29 +305,29 @@ function Theming() {
 
 		</div>
 
-	</section>;
+	</>;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-render((
+function Samples({ entries, sample }: {
 
-	<article>
+	readonly entries: ReadonlyArray<Entry>;
+	readonly sample: (token: Token) => ComponentChild;
 
-		<h1>Metreeca/Tile</h1>
+}) {
 
-		<p>The design system of the Metreeca stack: a layer of tokens naming what an interface is made of, and base
-			rules applying them to plain document markup. This page is both its documentation and its proof, styled by
-			nothing but the stylesheet it describes.</p>
+	return <table class="samples">
 
-		<Colours/>
-		<Scales/>
-		<Text/>
-		<Tables/>
-		<Forms/>
-		<Theming/>
+		<tbody>{entries.map(([ token, note ]) => <tr key={token}>
 
-	</article>
+			<td class="sample">{sample(token)}</td>
+			<td><code>{token}</code></td>
+			<td>{note}</td>
 
-), document.body.firstElementChild!);
+		</tr>)}</tbody>
+
+	</table>;
+
+}

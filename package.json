@@ -1,0 +1,29 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "description": "Model-driven user interfaces for queryable linked data APIs.",
+  "keywords": [
+    "typescript",
+    "react",
+    "json-ld",
+    "model-driven",
+    "ui"
+  ],
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "npm run clean --workspaces && rm -rf dist docs node_modules",
+    "prime": "npm ci",
+    "setup": "npm ci && sh package.sh",
+    "build": "npm run build --workspaces && rm -rf docs && npx typedoc",
+    "check": "npm run check --workspaces",
+    "proof": "npm run build && npx five-server docs --open --watch=false"
+  },
+  "devDependencies": {
+    "five-server": "^0.4.5",
+    "typedoc": "^0.28.18",
+    "vitest": "^4.0.13"
+  }
+}

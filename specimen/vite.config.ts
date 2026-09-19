@@ -25,11 +25,11 @@ export default defineConfig(() => ({ // https://vite.dev/config/
     root: resolve("src"),
     base: "./",
 
-    plugins: [preact()],
-
     define: {
-        NAME: JSON.stringify(pkg.name),
+        VERSION: JSON.stringify(pkg.version)
     },
+
+    plugins: [preact()],
 
     build: {
 
@@ -48,7 +48,7 @@ export default defineConfig(() => ({ // https://vite.dev/config/
         dedupe: ["preact"],
 
         alias: [
-            { find: /^@metreeca\/demo\/(.*)$/, replacement: resolve("src", "$1") },
+            { find: /^@metreeca\/specimen\/(.*)$/, replacement: resolve("src", "$1") },
             { find: /^@metreeca\/(tile[^/]*)$/, replacement: resolve("../packages/$1/src/index.ts") },
             { find: /^@metreeca\/(tile[^/]*)\/(.*)$/, replacement: resolve("../packages/$1/src/$2") }
         ]

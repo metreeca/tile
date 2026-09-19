@@ -34,12 +34,10 @@
 
         <style>
 
-            /* inlined, so the spinner paints while the module bundle is still loading */
-
             :root {
 
-                --demo--color-accent-lite: #3A4654;
-                --demo--color-accent-dark: #DE5100;
+                --specimen--color-accent-lite: #345;
+                --specimen--color-accent-dark: #D60;
 
             }
 
@@ -77,12 +75,12 @@
 
             body > main:empty::before {
                 top: 0;
-                background-color: var(--demo--color-accent-dark);
+                background-color: var(--specimen--color-accent-dark);
             }
 
             body > main:empty::after {
                 bottom: 0;
-                background-color: var(--demo--color-accent-lite);
+                background-color: var(--specimen--color-accent-lite);
                 animation-delay: -1s;
             }
 

@@ -16,5 +16,4 @@
 
 /// <reference types="vite/client"/>
 
-declare const NAME: string;
-declare const DESCRIPTION: string;
+declare const VERSION: string;

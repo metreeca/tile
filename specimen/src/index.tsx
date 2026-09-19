@@ -322,7 +322,7 @@ render((
 
 	<article>
 
-		<h1>{NAME}</h1>
+		<h1>Metreeca/Tile</h1>
 
 		<p>The design system of the Metreeca stack: a layer of tokens naming what an interface is made of, and base
 			rules applying them to plain document markup. This page is both its documentation and its proof, styled by

@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@metreeca/demo",
+  "name": "@metreeca/tile",
   "description": "Model-driven user interfaces for queryable linked data APIs.",
   "keywords": [
     "typescript",
@@ -20,7 +20,7 @@
     "build": "npm run build --workspaces && rm -rf docs && npx typedoc",
     "check": "npm run check --workspaces",
     "proof": "npm run build && npx wds --root-dir docs --open",
-    "serve": "npm --prefix demo run serve"
+    "serve": "npm --prefix specimen run serve"
   },
   "devDependencies": {
     "@web/dev-server": "^1.0.0",

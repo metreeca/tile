@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025-2026 Metreeca srl
+ * Copyright © 2023-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { app } from "@metreeca/tile";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, tile, type Token } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
@@ -92,13 +93,12 @@ render((
 
 	<article>
 
-		<h1>Metreeca/Tile</h1>
+		<h1>{app.icon && <img alt="" src={app.icon}/>}{app.name}</h1>
 
-		<p>The design system of the Metreeca stack: a layer of tokens naming what an interface is made of, and base
-			rules applying them to plain document markup. This page is both its documentation and its proof, styled by
-			nothing but the stylesheet it describes.</p>
+		<p>{app.info} This page is both its documentation and its proof, styled by nothing but the stylesheet it
+			describes.</p>
 
-		<Tabs sections={{
+		<Tabs name={app.name} sections={{
 
 			Colours: <Colours/>,
 			Scales: <Scales/>,
@@ -108,6 +108,8 @@ render((
 			Theming: <Theming/>
 
 		}}/>
+
+		<footer><small>{app.copy}</small></footer>
 
 	</article>
 

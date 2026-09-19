@@ -28,6 +28,24 @@ body > main > article {
 }
 
 
+/* the app icon sits on the heading line, at the height of the text it precedes */
+
+h1 > img {
+    width: auto;
+    height: 1em;
+    margin-right: var(--tile--spacing-050);
+}
+
+
+/* the copyright closes the page, set apart from the section on show */
+
+body > main > article > footer {
+    padding-top: var(--tile--spacing-150);
+    text-align: center;
+    color: var(--tile--color-label);
+}
+
+
 /* a token name is read as one word, in a listing as in a table cell */
 
 code {

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { isArray, isObject, isOptional } from "@metreeca/core";
-import { assert } from "@metreeca/core/error";
+import { some, type Some, unique } from "@metreeca/core/arrays";
 import { createState, type State } from "@metreeca/core/state";
+
 
 export interface Selection<T> extends State {
 
 	readonly items: readonly T[];
 
 
-	toggle(items: T | readonly T[], force?: boolean): this;
+	toggle(items: Some<T>, force?: boolean): this;
 
 	clear(): this;
 
@@ -32,48 +32,44 @@ export interface Selection<T> extends State {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function Selection<T>(options: {
+export function Selection<T>({
 
-	items?: readonly T[]
+	items
+
+}: {
+
+	items?: Some<T>
 
 } = {}) {
 
-	const { items } = assert(options, (v: unknown): v is typeof options => isObject(v, {
-		items: v => isOptional(v, isArray)
-	}));
-
-	function deduplicate(value: T | readonly T[]): T[] {
-		return [...new Set(Array.isArray(value) ? value : [value])];
-	}
-
 	return createState<Selection<T>>({
 
-		items: deduplicate(items ?? []),
+		items: unique(some(items)),
 
-		toggle(items: T | readonly T[], force?: boolean) {
+		toggle(items: Some<T>, force?: boolean) {
 
-			const unique = deduplicate(items);
+			const delta = unique(some(items));
 
-			if ( unique.length === 0 ) {
+			if ( delta.length === 0 ) {
 
 				return {};
 
 			} else if ( force === false ) { // force exclude: ensure items are absent
 
-				const retained = this.items.filter(item => !unique.includes(item));
+				const retained = this.items.filter(item => !delta.includes(item));
 
 				return retained.length === this.items.length ? {} : { items: retained };
 
 			} else if ( force === true ) { // force include: ensure items are present
 
-				const inserted = unique.filter(item => !this.items.includes(item));
+				const inserted = delta.filter(item => !this.items.includes(item));
 
 				return inserted.length > 0 ? { items: [...this.items, ...inserted] } : {};
 
 			} else { // toggle mode: add if absent, remove if present
 
-				const retained = this.items.filter(item => !unique.includes(item));
-				const inserted = unique.filter(item => !this.items.includes(item));
+				const retained = this.items.filter(item => !delta.includes(item));
+				const inserted = delta.filter(item => !this.items.includes(item));
 
 				return { items: [...retained, ...inserted] };
 			}

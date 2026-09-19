@@ -16,120 +16,157 @@
 
 import { css, tile, type Token } from "@metreeca/tile";
 import "@metreeca/tile/index.css";
-import { render } from "preact";
+import { type ComponentChild, render } from "preact";
 import "./index.css";
 
 
-const anchors: ReadonlyArray<Token> = [
+/**
+ * A token and what it is responsible for.
+ */
+type Entry = readonly [Token, string]
 
-	tile.color,
-	tile.backgroundColor,
-	tile.colorAccentLite,
-	tile.colorAccentDark
 
-];
+const anchors: ReadonlyArray<Entry> = [
 
-const roles: ReadonlyArray<Token> = [
-
-	tile.colorLight,
-	tile.colorLabel,
-	tile.colorPlaceholder,
-	tile.colorEnabled,
-	tile.colorDisabled,
-	tile.colorInvalid,
-	tile.colorHover,
-	tile.colorFocus,
-	tile.borderColor,
-	tile.backgroundColorEdit,
-	tile.backgroundColorStripe
+	[ tile.color, "the text the page is written in" ],
+	[ tile.backgroundColor, "the canvas it is written on" ],
+	[ tile.colorAccentLite, "the brand orange, carried by hovered and invalid states" ],
+	[ tile.colorAccentDark, "the brand slate, carried by links and focus rings" ]
 
 ];
 
-const spacings: ReadonlyArray<Token> = [
+const roles: ReadonlyArray<Entry> = [
 
-	tile.spacing025,
-	tile.spacing050,
-	tile.spacing075,
-	tile.spacing100,
-	tile.spacing150
+	[ tile.colorEnabled, "links and enabled controls" ],
+	[ tile.colorHover, "links and buttons under the pointer" ],
+	[ tile.colorFocus, "focus rings and controls being pressed" ],
+	[ tile.colorInvalid, "values a field rejects, and the outline marking them" ],
+	[ tile.colorDisabled, "controls that take no input" ],
+	[ tile.colorLabel, "labels and secondary text" ],
+	[ tile.colorPlaceholder, "the text a field shows while empty" ],
+	[ tile.colorLight, "hairlines and decorative marks" ],
+	[ tile.borderColor, "borders and table rules" ],
+	[ tile.backgroundColorEdit, "fields open to editing" ],
+	[ tile.backgroundColorStripe, "striped rows and quoted blocks" ]
 
 ];
 
-const sizes: ReadonlyArray<Token> = [ tile.fontSizeSmall, tile.fontSize, tile.fontSizeLarge ];
+const spacings: ReadonlyArray<Entry> = [
 
-const weights: ReadonlyArray<Token> = [ tile.fontWeight, tile.fontWeightStrong, tile.fontWeightHeavy ];
+	[ tile.spacing025, "gaps inside a control, and between list items" ],
+	[ tile.spacing050, "cell and field padding" ],
+	[ tile.spacing075, "the space under a description or a second-level heading" ],
+	[ tile.spacing100, "the space between paragraphs" ],
+	[ tile.spacing150, "the space between blocks, and the indent of a list" ]
 
-const radii: ReadonlyArray<Token> = [ tile.borderRadius, tile.borderRadiusRound ];
+];
+
+const sizes: ReadonlyArray<Entry> = [
+
+	[ tile.fontSizeSmall, "small print and table text" ],
+	[ tile.fontSize, "body copy, relative to the reader's own setting" ],
+	[ tile.fontSizeLarge, "the page heading" ]
+
+];
+
+const weights: ReadonlyArray<Entry> = [
+
+	[ tile.fontWeight, "body copy" ],
+	[ tile.fontWeightStrong, "headings, links, terms and strong words" ],
+	[ tile.fontWeightHeavy, "table headers" ]
+
+];
+
+const borders: ReadonlyArray<Entry> = [
+
+	[ tile.borderRadius, "fields and panels" ],
+	[ tile.borderRadiusRound, "buttons" ]
+
+];
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function Swatch({ token }: { readonly token: Token }) {
-	return <li>
-		<span class="swatch" style={{ backgroundColor: `var(${ token })` }}/>
-		<code>{token}</code>
-	</li>;
-}
+function Samples({ entries, sample }: {
 
-function Spacing({ token }: { readonly token: Token }) {
-	return <li>
-		<span class="bar" style={{ width: `var(${ token })` }}/>
-		<code>{token}</code>
-	</li>;
-}
+	readonly entries: ReadonlyArray<Entry>;
+	readonly sample: (token: Token) => ComponentChild;
 
-function Size({ token }: { readonly token: Token }) {
-	return <li>
-		<span style={{ fontSize: `var(${ token })` }}>Aa</span>
-		<code>{token}</code>
-	</li>;
-}
+}) {
 
-function Weight({ token }: { readonly token: Token }) {
-	return <li>
-		<span style={{ fontWeight: `var(${ token })` }}>Aa</span>
-		<code>{token}</code>
-	</li>;
-}
+	return <table class="samples">
 
-function Radius({ token }: { readonly token: Token }) {
-	return <li>
-		<span class="box" style={{ borderRadius: `var(${ token })` }}/>
-		<code>{token}</code>
-	</li>;
+		<tbody>{entries.map(([ token, note ]) => <tr key={token}>
+
+			<td class="sample">{sample(token)}</td>
+			<td><code>{token}</code></td>
+			<td>{note}</td>
+
+		</tr>)}</tbody>
+
+	</table>;
+
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function Tokens() {
+function Colours() {
 	return <section>
 
-		<h2>Tokens</h2>
+		<h2>Colours</h2>
 
-		<p>Four anchors carry the brand and the page; every other colour is mixed from them, in whichever colour scheme
-			the platform asks for.</p>
+		<p>Four anchors carry the brand and the page. Every other colour is derived from them, so an app that retunes
+			the anchors carries the whole interface along, and the page follows the platform colour scheme without a
+			second palette to maintain.</p>
 
 		<h3>Anchors</h3>
 
-		<ul class="swatches">{anchors.map(token => <Swatch key={token} token={token}/>)}</ul>
+		<Samples entries={anchors} sample={token =>
+			<span class="roundel" style={{ backgroundColor: `var(${ token })` }}/>
+		}/>
 
 		<h3>Roles</h3>
 
-		<ul class="swatches">{roles.map(token => <Swatch key={token} token={token}/>)}</ul>
+		<p>A role names what a colour is for, not what it looks like: a component reads the role and inherits whatever
+			the anchors make of it.</p>
+
+		<Samples entries={roles} sample={token =>
+			<span class="roundel" style={{ backgroundColor: `var(${ token })` }}/>
+		}/>
+
+	</section>;
+}
+
+function Scales() {
+	return <section>
+
+		<h2>Scales</h2>
+
+		<p>Spacing, type and border tokens are stated in <code>em</code>, so a subtree that changes size takes its
+			rhythm along.</p>
 
 		<h3>Spacing</h3>
 
-		<ul class="scale">{spacings.map(token => <Spacing key={token} token={token}/>)}</ul>
+		<Samples entries={spacings} sample={token =>
+			<span class="bar" style={{ width: `var(${ token })` }}/>
+		}/>
 
 		<h3>Type</h3>
 
-		<ul class="scale">{sizes.map(token => <Size key={token} token={token}/>)}</ul>
-		<ul class="scale">{weights.map(token => <Weight key={token} token={token}/>)}</ul>
+		<Samples entries={sizes} sample={token =>
+			<span style={{ fontSize: `var(${ token })` }}>Aa</span>
+		}/>
+
+		<Samples entries={weights} sample={token =>
+			<span style={{ fontWeight: `var(${ token })` }}>Aa</span>
+		}/>
 
 		<h3>Borders</h3>
 
-		<ul class="scale">{radii.map(token => <Radius key={token} token={token}/>)}</ul>
+		<Samples entries={borders} sample={token =>
+			<span class="box" style={{ borderRadius: `var(${ token })` }}/>
+		}/>
 
 	</section>;
 }
@@ -139,10 +176,11 @@ function Text() {
 
 		<h2>Text</h2>
 
-		<h3>Headings and prose</h3>
+		<p>Plain document markup is styled as it stands: an app writes ordinary HTML and gets the type scale, the
+			rhythm and the inline treatments without a class on anything.</p>
 
-		<p>Body copy sets the measure: a <a href="#tokens">link</a>, some <strong>strong</strong> words, an <em>emphatic
-			aside</em>, a <code>code span</code> and a trailing <small>note in small print</small>.</p>
+		<p>Body copy sets the measure: a <a href="#colours">link</a>, some <strong>strong</strong> words,
+			an <em>emphatic aside</em>, a <code>code span</code> and a trailing <small>note in small print</small>.</p>
 
 		<blockquote>
 			<p>A quotation sits on the stripe background, so it reads as set apart without a border.</p>
@@ -179,10 +217,13 @@ function Text() {
 	</section>;
 }
 
-function Table() {
+function Tables() {
 	return <section>
 
 		<h2>Tables</h2>
+
+		<p>Rows alternate against the stripe background, cells are padded from the spacing scale, and a trailing empty
+			header takes up the slack.</p>
 
 		<table>
 
@@ -198,17 +239,17 @@ function Table() {
 				<tr>
 					<td><code>{tile.colorAccentLite}</code></td>
 					<td>anchor</td>
-					<td>odd rows take the stripe background</td>
+					<td>carries the brand orange</td>
 				</tr>
 				<tr>
 					<td><code>{tile.colorHover}</code></td>
-					<td>derived</td>
-					<td>even rows take the page background</td>
+					<td>role</td>
+					<td>derived from the anchor above</td>
 				</tr>
 				<tr>
 					<td><code>{tile.spacing050}</code></td>
 					<td>scale</td>
-					<td>cells are padded from the spacing scale</td>
+					<td>pads these cells</td>
 				</tr>
 			</tbody>
 
@@ -217,10 +258,13 @@ function Table() {
 	</section>;
 }
 
-function Form() {
+function Forms() {
 	return <section>
 
 		<h2>Forms</h2>
+
+		<p>Fields and buttons carry the focus, invalid and disabled roles, so the state of a control is legible before
+			a component adds anything of its own.</p>
 
 		<p>
 			<input type="text" value="an editable value"/>{" "}
@@ -247,8 +291,10 @@ function Theming() {
 
 		<h2>Theming</h2>
 
-		<p>Assigning the anchors inline restyles a subtree and everything mixed from them follows, with no component
+		<p>Assigning the anchors inline restyles a subtree, and everything derived from them follows, with no component
 			change:</p>
+
+		<pre><code>{`<section style={css({ [tile.colorAccentLite]: "#06C" })}>`}</code></pre>
 
 		<div class="themed" style={css({
 
@@ -257,7 +303,7 @@ function Theming() {
 
 		})}>
 
-			<p>A <a href="#theming">link</a> takes the slate anchor, an invalid field the other one.</p>
+			<p>The <a href="#theming">link</a> takes the slate anchor, the rejected value the orange one.</p>
 
 			<p>
 				<input type="email" value="still not an address"/>{" "}
@@ -278,10 +324,15 @@ render((
 
 		<h1>{NAME}</h1>
 
-		<Tokens/>
+		<p>The design system of the Metreeca stack: a layer of tokens naming what an interface is made of, and base
+			rules applying them to plain document markup. This page is both its documentation and its proof, styled by
+			nothing but the stylesheet it describes.</p>
+
+		<Colours/>
+		<Scales/>
 		<Text/>
-		<Table/>
-		<Form/>
+		<Tables/>
+		<Forms/>
 		<Theming/>
 
 	</article>

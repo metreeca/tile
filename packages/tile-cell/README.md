@@ -25,11 +25,12 @@ npm install @metreeca/tile-cell  # this package
 
 # Usage
 
-| Module                      | Description                 |
-|-----------------------------|-----------------------------|
-| [@metreeca/tile-cell][cell] | Preact widgets and controls |
+> [!NOTE]
+>
+> This section introduces essential concepts; for complete coverage, see the
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-cell.index.html).
 
-[cell]: https://metreeca.github.io/tile/modules/_metreeca_tile-cell.index.html
+{TBD: usage overview and examples}
 
 # Support
 

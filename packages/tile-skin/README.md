@@ -28,6 +28,11 @@ npm install @metreeca/tile-skin
 
 # Usage
 
+> [!NOTE]
+>
+> This section introduces essential concepts; for complete coverage, see the
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-skin.index.html).
+
 Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
 
 ```typescript
@@ -66,12 +71,6 @@ import { css, tile } from "@metreeca/tile-skin";
 
 <section style={css({ [tile.colorAccentLite]: "#06C" })}>
 ```
-
-| Module                      | Description   |
-|-----------------------------|---------------|
-| [@metreeca/tile-skin][tile] | Design system |
-
-[tile]: https://metreeca.github.io/tile/modules/_metreeca_tile-skin.index.html
 
 # Support
 

@@ -25,11 +25,12 @@ npm install @metreeca/tile-hive  # this package
 
 # Usage
 
-| Module                      | Description                   |
-|-----------------------------|-------------------------------|
-| [@metreeca/tile-hive][hive] | Preact layouts and containers |
+> [!NOTE]
+>
+> This section introduces essential concepts; for complete coverage, see the
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-hive.tabs.html).
 
-[hive]: https://metreeca.github.io/tile/modules/_metreeca_tile-hive.index.html
+{TBD: usage overview and examples}
 
 # Support
 

@@ -25,14 +25,20 @@ npm install @metreeca/tile-data  # this package
 
 # Usage
 
-| Module                             | Description               |
-|------------------------------------|---------------------------|
-| [@metreeca/tile-data][data]        | Preact contexts and hooks |
-| [@metreeca/tile-data/model][model] | Headless component state  |
+> [!NOTE]
+>
+> This section introduces essential concepts; for complete coverage, see the API reference:
+>
+> | Module                             | Description               |
+> |------------------------------------|---------------------------|
+> | [@metreeca/tile-data][data]        | Preact contexts and hooks |
+> | [@metreeca/tile-data/model][model] | Headless component state  |
 
 [data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.index.html
 
 [model]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.model.html
+
+{TBD: usage overview and examples}
 
 # Support
 

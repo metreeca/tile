@@ -26,11 +26,12 @@ npm install @metreeca/tile-less
 
 # Usage
 
-| Module                      | Description              |
-|-----------------------------|--------------------------|
-| [@metreeca/tile-less][less] | Headless lens components |
+> [!NOTE]
+>
+> This section introduces essential concepts; for complete coverage, see the
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-less.index.html).
 
-[less]: https://metreeca.github.io/tile/modules/_metreeca_tile-less.index.html
+{TBD: usage overview and examples}
 
 # Support
 

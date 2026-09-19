@@ -25,11 +25,12 @@ npm install @metreeca/tile-lens  # this package
 
 # Usage
 
-| Module                      | Description              |
-|-----------------------------|--------------------------|
-| [@metreeca/tile-lens][lens] | Preact linked data views |
+> [!NOTE]
+>
+> This section introduces essential concepts; for complete coverage, see the
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-lens.index.html).
 
-[lens]: https://metreeca.github.io/tile/modules/_metreeca_tile-lens.index.html
+{TBD: usage overview and examples}
 
 # Support
 

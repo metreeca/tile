@@ -67,11 +67,24 @@ Every package states its summary in four places, which **MUST** be kept aligned:
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
   project repository
 - `packages/<package>/src/index.ts`, module doc definition line - `<summary>.`, without the family suffix
-- the package `README.md` module table - `<summary>` alone
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
 Revising one **ALWAYS** means revising the other three.
+
+A package `README.md` **Usage** section opens with a note pointing at the API reference, then carries the real thing:
+what a consumer has to know to put the package to work, stubbed as `{TBD: usage overview and examples}` until written.
+A package publishing a single module links the reference inline; one publishing several tabulates them inside the
+note, so the reader sees which entry point carries what. The section **NEVER** stands in for the generated index.
+
+# Skills
+
+Project skills live in `.claude/skills/`, alongside the personal ones:
+
+| Skill                     | When to activate                                                            |
+|---------------------------|-----------------------------------------------------------------------------|
+| `preact-developer`        | Writing or reviewing a widget, a hook, a stylesheet or a custom element      |
+| `accessibility-developer` | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
 
 # Component State
 

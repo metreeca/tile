@@ -9,8 +9,8 @@ is written back.
 
 - **Headless State**: the query patterns an interface is built from (selections, filters, ranges, options, counts,
   collections, resources), each a plain state object with no rendering attached
-- **Framework Bindings**: rendering-layer adapters wiring the headless state into components; the state itself stays
-  framework-agnostic
+- **Preact Bindings**: the contexts and hooks a component is wired to, and the layouts and widgets it is assembled
+  from; the state itself stays framework-agnostic
 - **Model-Driven**: the shape of a resource decides the controls offered for it, so a model change reaches the interface
   without a matching interface change
 - **Live Data**: reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store, sharing the
@@ -21,9 +21,10 @@ is written back.
 # Installation
 
 ```shell
-npm install @metreeca/tile         # design system tokens and base styles
-npm install @metreeca/tile-state   # headless query state components
-npm install @metreeca/tile-react   # React bindings
+npm install @metreeca/tile           # design system tokens and base styles
+npm install @metreeca/tile-state     # headless query state components
+npm install @metreeca/tile-service   # Preact contexts and hooks
+npm install @metreeca/tile-surface   # Preact layouts and widgets
 ```
 
 > [!WARNING]
@@ -31,20 +32,23 @@ npm install @metreeca/tile-react   # React bindings
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Install the state package, then add the binding package for the rendering framework in use; the design system package
-is optional and styles whatever a binding renders.
+Install the state package, then add the binding packages an app actually uses; the design system package is optional
+and styles whatever a binding renders.
 
-| Package                | Description                          |
-|------------------------|--------------------------------------|
-| [@metreeca/tile]       | Design system tokens and base styles |
-| [@metreeca/tile-state] | Headless query state components      |
-| [@metreeca/tile-react] | React bindings for headless state    |
+| Package                  | Description                          |
+|--------------------------|--------------------------------------|
+| [@metreeca/tile]         | Design system tokens and base styles |
+| [@metreeca/tile-state]   | Headless query state components      |
+| [@metreeca/tile-service] | Preact contexts and hooks            |
+| [@metreeca/tile-surface] | Preact layouts and widgets           |
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
 [@metreeca/tile-state]: https://metreeca.github.io/tile/modules/_metreeca_tile-state.html
 
-[@metreeca/tile-react]: https://metreeca.github.io/tile/modules/_metreeca_tile-react.html
+[@metreeca/tile-service]: https://metreeca.github.io/tile/modules/_metreeca_tile-service.html
+
+[@metreeca/tile-surface]: https://metreeca.github.io/tile/modules/_metreeca_tile-surface.html
 
 # Usage
 

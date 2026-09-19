@@ -4,7 +4,7 @@
   "description": "Model-driven user interfaces for queryable linked data APIs.",
   "keywords": [
     "typescript",
-    "react",
+    "preact",
     "json-ld",
     "model-driven",
     "ui"

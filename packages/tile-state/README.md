@@ -9,8 +9,9 @@ a property, a range over a scalar, the options offered for a facet, a count, a c
 pattern is a plain state object exposing the operations that make sense for it, leaving rendering entirely to the
 caller.
 
-The same state drives any rendering layer: [@metreeca/tile-react](https://www.npmjs.com/package/@metreeca/tile-react)
-binds it to React components, and a different binding reaches the same behaviour without restating it.
+The same state drives any rendering layer:
+[@metreeca/tile-service](https://www.npmjs.com/package/@metreeca/tile-service) binds it to Preact components, and a
+different binding reaches the same behaviour without restating it.
 
 # Installation
 

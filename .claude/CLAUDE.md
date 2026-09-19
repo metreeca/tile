@@ -14,7 +14,7 @@
 Metreeca Tile is the user interface layer of the Metreeca model-driven stack: it turns the shapes and queries the rest
 of the stack already speaks into what an interface shows, narrows and writes back. The monorepo collects the headless
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
-`packages/tile-react/`).
+`packages/tile-surface/`).
 
 Resource shapes come from `@metreeca/blue` and queries from `@metreeca/qest`: this repository **NEVER** defines a
 parallel model of its own, and a control offered for a property is decided by the shape describing it rather than by a
@@ -50,12 +50,13 @@ repository **NEVER** reimplements them behind the interface.
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
 immediately under `packages/` (for example `packages/tile-state`).
 
-Headless packages carry **NO** dependency on a rendering framework: React, and any other rendering layer added later,
-appears **ONLY** in its own binding package (`tile-react`). A binding package adds observation and rendering over state
-it never redefines: behaviour lives in `tile-state`, so a second binding reaches the same behaviour without restating
-it.
+Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
+appears **ONLY** in its own binding packages (`tile-service` for the contexts and hooks a component is wired to,
+`tile-surface` for the layouts and widgets it is assembled from). A binding package adds observation and rendering over
+state it never redefines: behaviour lives in `tile-state`, so a second binding reaches the same behaviour without
+restating it.
 
-Packages are named after what they contribute, not after the library they contribute it with: `tile-react`, not
+Packages are named after what they contribute, not after the library they contribute it with: `tile-service`, not
 `tile-hooks`.
 
 # Shared Utilities

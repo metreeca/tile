@@ -11,15 +11,14 @@
     ],
     "module": "NodeNext",
     "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "types": [
-      "react"
-    ],
+    "types": [],
     "customConditions": [
       "@metreeca/source"
     ]

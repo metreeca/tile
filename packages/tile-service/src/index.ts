@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-// React bindings for headless query state
+// Preact contexts and hooks for @metreeca/tile interfaces

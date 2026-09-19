@@ -3,8 +3,8 @@
     "@metreeca/core": {
       "*": "https://metreeca.github.io/core/"
     },
-    "@types/react": {
-      "*": "https://react.dev/reference/react"
+    "preact": {
+      "*": "https://preactjs.com/guide/v10/api-reference/"
     }
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import react from "@vitejs/plugin-react";
+import preact from "@preact/preset-vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import pkg from "./package.json" with { type: "json" };
@@ -25,7 +25,7 @@ export default defineConfig(() => ({ // https://vite.dev/config/
     root: resolve("src"),
     base: "./",
 
-    plugins: [react()],
+    plugins: [preact()],
 
     define: {
         NAME: JSON.stringify(pkg.name),
@@ -45,7 +45,7 @@ export default defineConfig(() => ({ // https://vite.dev/config/
 
     resolve: {
 
-        dedupe: ["react", "react-dom"],
+        dedupe: ["preact"],
 
         alias: [
             { find: /^@metreeca\/demo\/(.*)$/, replacement: resolve("src", "$1") },

@@ -1,0 +1,62 @@
+{
+  "name": "@metreeca/tile-surface",
+  "version": "0.1.0",
+  "description": "Preact layouts and widgets for @metreeca/tile interfaces.",
+  "keywords": [
+    "typescript",
+    "preact",
+    "json-ld",
+    "model-driven",
+    "ui"
+  ],
+  "homepage": "https://metreeca.github.io/tile/",
+  "bugs": {
+    "url": "https://github.com/metreeca/tile/issues",
+    "email": "info@metreeca.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Metreeca",
+    "email": "info@metreeca.com",
+    "url": "https://www.metreeca.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metreeca/tile.git",
+    "directory": "packages/tile-surface"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist docs node_modules",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "check": "npx vitest --typecheck run"
+  },
+  "dependencies": {
+    "@metreeca/core": "^0.10.0",
+    "@metreeca/tile-service": "^0.1.0",
+    "@metreeca/tile-state": "^0.1.0"
+  },
+  "devDependencies": {
+    "preact": "^10.29.8",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.13"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  }
+}

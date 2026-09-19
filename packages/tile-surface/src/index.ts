@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025-2026 Metreeca srl
+ * Copyright © 2023-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,4 @@
  * limitations under the License.
  */
 
-import { render } from "preact";
-import "@metreeca/tile/index.css";
-import "./index.css";
-
-
-render((
-
-	<h1>{NAME}</h1>
-
-), document.body.firstElementChild!);
+// Preact layouts and widgets for @metreeca/tile interfaces

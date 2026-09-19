@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile-data",
   "version": "0.1.0",
-  "description": "Preact providers and hooks for @metreeca/tile interfaces.",
+  "description": "Preact contexts and hooks for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
     "preact",

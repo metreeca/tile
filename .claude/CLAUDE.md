@@ -51,7 +51,7 @@ The root `package.json` `workspaces` glob (`packages/*`) covers the framework pa
 immediately under `packages/` (for example `packages/tile-less`).
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`tile-data` for the providers and hooks a component is wired to,
+appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
 `tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
 the views and editors built over them). A binding package adds observation and rendering over state it never redefines:
 behaviour lives in `tile-less`, so a second binding reaches the same behaviour without restating it.
@@ -67,7 +67,9 @@ Every package states its summary in four places, which **MUST** be kept aligned:
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
   project repository
 - `packages/<package>/src/index.ts`, module doc definition line - `<summary>.`, without the family suffix
-- the root `README.md` package table and the package `README.md` module table - `<summary>` alone
+- the package `README.md` module table - `<summary>` alone
+- the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
+  that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
 Revising one **ALWAYS** means revising the other three.
 

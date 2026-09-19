@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile-data)](https://www.npmjs.com/package/@metreeca/tile-data)
 
-Preact providers and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Preact contexts and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 A consumer reaches the ambient state a subtree inherits and the environment it runs in: the store and the settings an
 app publishes once, and the accessors a component reads them back with. Nothing here renders, so what a component shows
@@ -25,9 +25,9 @@ npm install @metreeca/tile-data  # this package
 
 # Usage
 
-| Module                      | Description                |
-|-----------------------------|----------------------------|
-| [@metreeca/tile-data][data] | Preact providers and hooks |
+| Module                      | Description               |
+|-----------------------------|---------------------------|
+| [@metreeca/tile-data][data] | Preact contexts and hooks |
 
 [data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.index.html
 

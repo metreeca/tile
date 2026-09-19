@@ -15,7 +15,7 @@
  */
 
 /**
- * Preact providers and hooks.
+ * Preact contexts and hooks.
  *
  * Publishes the ambient state a subtree inherits, the store and the settings an app declares once, and the accessors a
  * component reads them back with. Nothing here renders, so what a component shows stays a separate decision from what

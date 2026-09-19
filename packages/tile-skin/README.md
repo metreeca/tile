@@ -1,6 +1,6 @@
-# @metreeca/tile
+# @metreeca/tile-skin
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
+[![npm](https://img.shields.io/npm/v/@metreeca/tile-skin)](https://www.npmjs.com/package/@metreeca/tile-skin)
 
 Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
@@ -18,7 +18,7 @@ naming contract, published here as typed constants.
 # Installation
 
 ```shell
-npm install @metreeca/tile
+npm install @metreeca/tile-skin
 ```
 
 > [!WARNING]
@@ -31,7 +31,7 @@ npm install @metreeca/tile
 Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
 
 ```typescript
-import "@metreeca/tile/index.css";
+import "@metreeca/tile-skin/index.css";
 ```
 
 An app assembling its own HTML links it in the document head instead: the stylesheet has to reach the document before
@@ -62,16 +62,16 @@ Restyle a single subtree instead by assigning the tokens inline, naming them thr
 as literal strings:
 
 ```tsx
-import { css, tile } from "@metreeca/tile";
+import { css, tile } from "@metreeca/tile-skin";
 
 <section style={css({ [tile.colorAccentLite]: "#06C" })}>
 ```
 
-| Module                 | Description   |
-|------------------------|---------------|
-| [@metreeca/tile][tile] | Design system |
+| Module                      | Description   |
+|-----------------------------|---------------|
+| [@metreeca/tile-skin][tile] | Design system |
 
-[tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.index.html
+[tile]: https://metreeca.github.io/tile/modules/_metreeca_tile-skin.index.html
 
 # Support
 

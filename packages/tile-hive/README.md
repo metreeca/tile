@@ -9,7 +9,7 @@ that answer where things sit. A layout places the widgets handed to it without k
 is replaced without touching what the interface does.
 
 Styling is structural only: what an arrangement needs to work, with colour, type and spacing left to
-[@metreeca/tile](https://www.npmjs.com/package/@metreeca/tile) or to whoever styles the app.
+[@metreeca/tile-skin](https://www.npmjs.com/package/@metreeca/tile-skin) or to whoever styles the app.
 
 # Installation
 

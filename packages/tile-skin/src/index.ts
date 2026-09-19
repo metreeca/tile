@@ -31,7 +31,7 @@
  * Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
  *
  * ```typescript
- * import "@metreeca/tile/index.css";
+ * import "@metreeca/tile-skin/index.css";
  * ```
  *
  * Override any token in a later rule to restyle the whole interface:

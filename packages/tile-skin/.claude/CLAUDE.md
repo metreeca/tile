@@ -6,7 +6,7 @@
 
 # Overview
 
-`@metreeca/tile` is the design system: a token layer and the base rules applying it to plain document markup. It
+`@metreeca/tile-skin` is the design system: a token layer and the base rules applying it to plain document markup. It
 carries no components and no behaviour, and nothing in it imports a rendering framework.
 
 # Module Layout

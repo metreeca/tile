@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { css, tile, type Token } from "@metreeca/tile";
-import "@metreeca/tile/index.css";
+import { css, tile, type Token } from "@metreeca/tile-skin";
+import "@metreeca/tile-skin/index.css";
 import { type ComponentChild, render } from "preact";
 import "./index.css";
 

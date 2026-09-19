@@ -48,8 +48,14 @@ strong {
 }
 
 code {
+
     font-family: var(--tile--font-family-mono);
-    font-size: var(--tile--font-size-small);
+
+    /* optical nudges, the mono face reading larger and thinner than the text around it at the same size and weight */
+
+    font-size: 80%;
+    font-weight: var(--tile--font-weight-strong);
+
 }
 
 small {

@@ -16,7 +16,7 @@
 
 /* modules are listed by increasing structural complexity, so a composite takes precedence over its plain elements */
 
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Mono&family=Roboto:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Mono:wght@300;400&family=Roboto:wght@300;400;700&display=swap");
 
 @import "./tokens.css";
 @import "./schemes.css";

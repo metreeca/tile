@@ -15,18 +15,38 @@
  */
 
 /**
- * Design system tokens.
+ * Design system styling.
  *
  * Names the custom properties an app may override to restyle an interface, and the ones a component reads to inherit
- * that styling. The values behind them are supplied by the companion stylesheet:
+ * that styling; the same names assign a token inline, restyling a single subtree through a style declaration any
+ * rendering layer accepts. The values behind them are supplied by the companion stylesheet.
+ *
+ * An app that includes the stylesheet gets the default look; one that redefines the tokens in a later rule gets its
+ * own, with no component change. Components name tokens through this contract rather than through literal strings, so
+ * a renamed token breaks the build instead of silently losing its styling.
+ *
+ * @example
+ *
+ * Include the stylesheet once, at the entry point of the app:
  *
  * ```typescript
  * import "@metreeca/tile/index.css";
  * ```
  *
- * An app that includes the stylesheet gets the default look; one that redefines the tokens in a later rule gets its
- * own, with no component change. Components reference tokens through this contract rather than through literal
- * strings, so a renamed token breaks the build instead of silently losing its styling.
+ * Override any token in a later rule to restyle the whole interface:
+ *
+ * ```css
+ * :root {
+ *     --tile--color-accent-lite: #06C;
+ *     --tile--font-family: Inter, sans-serif;
+ * }
+ * ```
+ *
+ * Assign the tokens inline to restyle a single subtree instead:
+ *
+ * ```tsx
+ * <section style={css({ [tile.colorAccentLite]: "#06C" })}>
+ * ```
  *
  * @module index
  */
@@ -37,7 +57,7 @@
  *
  * Maps each token to the custom property carrying its value, for use in a `var()` reference or a style declaration.
  */
-export const Tokens = {
+export const tile = {
 
 	fontFamily: "--tile--font-family",
 	fontFamilyHeading: "--tile--font-family-heading",
@@ -72,12 +92,57 @@ export const Tokens = {
 	boxShadowFocus: "--tile--box-shadow-focus",
 	outlineInvalid: "--tile--outline-invalid"
 
-} as const; // literal names are the contract: consumed as the Token union
+} as const;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * An inline style declaration.
+ *
+ * Assignable as-is to the `style` prop of a rendering layer that accepts one, with no cast: overriding a token for a
+ * subtree is a style declaration like any other.
+ */
+export type Style = Readonly<Record<string, string>>
+
+/**
  * The custom property name of a design system token.
  */
-export type Token = typeof Tokens[keyof typeof Tokens];
+export type Token = typeof tile[keyof typeof tile]
+
+/**
+ * The value a design system token is assigned.
+ *
+ * A number or a boolean is written as its text form, sparing the caller a conversion where a token takes a scalar;
+ * `undefined` assigns nothing, so a token is left at whatever the cascade already gives it.
+ */
+export type Value = | undefined | boolean | number | string
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Overrides design system tokens for a subtree.
+ *
+ * Assigns each token the value given for it, restyling the elements that read it without touching the ones that don't:
+ *
+ * ```tsx
+ * <section style={css({ [tile.colorAccentLite]: "#06C" })}>
+ * ```
+ *
+ * Numbers and booleans are converted to their CSS text form, so a scalar token is assigned without restating it as a
+ * string; a token mapped to `undefined` is left out, so a conditional override is expressed inline.
+ *
+ * @param tokens The value each token takes, keyed by {@link Token token name}
+ *
+ * @returns An immutable {@link Style style declaration} assigning each token given a defined value in `tokens` its
+ * text form
+ */
+export function css(tokens: Readonly<Partial<Record<Token, Value>>>): Style {
+
+	return Object.fromEntries(Object.entries(tokens)
+		.filter(([, value]) => value !== undefined)
+		.map(([token, value]) => [token, String(value)])
+	);
+
+}

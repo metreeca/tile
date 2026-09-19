@@ -40,9 +40,18 @@ Override any token in a later rule to restyle the interface:
 }
 ```
 
-| Module                  | Description           |
-|-------------------------|-----------------------|
-| [@metreeca/tile][tile]  | Design system tokens  |
+Restyle a single subtree instead by assigning the tokens inline, naming them through the published contract rather than
+as literal strings:
+
+```tsx
+import { css, tile } from "@metreeca/tile";
+
+<section style={css({ [tile.colorAccentLite]: "#06C" })}>
+```
+
+| Module                 | Description           |
+|------------------------|-----------------------|
+| [@metreeca/tile][tile] | Design system styling |
 
 [tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.index.html
 

@@ -50,6 +50,9 @@
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
+  "dependencies": {
+    "@metreeca/core": "^0.10.0"
+  },
   "devDependencies": {
     "preact": "^10.29.8",
     "typescript": "^7.0.2",

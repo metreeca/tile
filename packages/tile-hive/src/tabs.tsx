@@ -16,9 +16,9 @@
 
 import type { Optional } from "@metreeca/core";
 import { some, type Some, unique } from "@metreeca/core/arrays";
-import { createState, manageState, type State } from "@metreeca/core/state";
+import { createState, type State } from "@metreeca/core/state";
+import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
-import { useState } from "preact/hooks";
 import "./tabs.css";
 
 
@@ -28,7 +28,7 @@ import "./tabs.css";
  * Tracks which of a fixed set of labelled sections is on show, exposing the activation a tab strip offers: a direct
  * choice and the step to either neighbour, wrapping at both ends as keyboard navigation expects.
  */
-interface Panel extends State {
+interface Model {
 
 	/**
 	 * The labels identifying the sections, in display order, without duplicates.
@@ -67,13 +67,52 @@ interface Panel extends State {
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
- * Creates a tabbed panel state.
+ * Creates a tabbed layout panel.
  *
- * @param labels The labels identifying the sections, in display order; duplicates are removed
- * @param active The label of the section shown initially; defaults to the first label, and is ignored if unknown
+ * Presents the labels of the sections given, in order, and the content of the one currently chosen.
  */
-function Panel({
+export function Tabs({
+
+	sections
+
+}: {
+
+	sections: { [label: string]: ComponentChildren }
+
+}) {
+
+	const {
+
+		labels,
+		active,
+
+		select
+
+	} = useModel(() => createModel({
+
+		labels: Object.keys(sections)
+
+	}));
+
+	return createElement("tile-tabs", {}, labels.map(label =>
+		<section key={label}>
+
+			<button onClick={() => select(label)}>{label}</button>
+			<div>{label === active ? sections[label] : undefined}</div>
+
+		</section>
+	));
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function createModel({
 
 	labels,
 	active
@@ -83,11 +122,11 @@ function Panel({
 	labels?: Some<string>
 	active?: string
 
-} = {}) {
+} = {}) : Model {
 
 	const sections = unique(some(labels));
 
-	return createState<Panel>({
+	return createState<Model>({
 
 		labels: sections,
 
@@ -114,46 +153,11 @@ function Panel({
 	});
 
 
-	function shift(labels: readonly string[], active: string | undefined, offset: number): string | undefined {
+	function shift(labels: readonly string[], active: Optional<string>, offset: number): string | undefined {
 
 		return active === undefined ? undefined
 			: labels[(labels.indexOf(active) + offset + labels.length) % labels.length];
 
 	}
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Creates a tabbed layout panel.
- *
- * Presents the labels of the sections given, in order, and the content of the one currently chosen.
- */
-export function Tabs({
-
-	sections
-
-}: {
-
-	sections: { [label: string]: ComponentChildren }
-
-}) {
-
-	// the observer hands each new state to the setter, so a transition renders on its own
-
-	const [panel, setPanel] = useState(() => manageState(Panel({ labels: Object.keys(sections) }))
-		.attach(state => setPanel(state))
-	);
-
-	return createElement("tile-tabs", {}, panel.labels.map(label =>
-		<section key={label}>
-
-			<button onClick={() => panel.select(label)}>{label}</button>
-			<div>{label === panel.active ? sections[label] : undefined}</div>
-
-		</section>
-	));
 
 }

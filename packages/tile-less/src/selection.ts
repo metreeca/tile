@@ -15,10 +15,10 @@
  */
 
 import { some, type Some, unique } from "@metreeca/core/arrays";
-import { createState, type State } from "@metreeca/core/state";
+import { createState } from "@metreeca/core/state";
 
 
-export interface Selection<T> extends State {
+export interface Selection<T> {
 
 	readonly items: readonly T[];
 

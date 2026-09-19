@@ -123,7 +123,7 @@ import { useState } from "preact/hooks";
  * @returns The model as it stands for this render, superseded by the next one after every transition that changes
  * something
  */
-export function useModel<T extends State>(model: Lazy<Instance<T>>): Instance<T> {
+export function useModel<T extends State<T>>(model: Lazy<Instance<T>>): Instance<T> {
 
 	const [current, setCurrent] = useState(() => manageState(eager(model)).attach(state => setCurrent(state)));
 

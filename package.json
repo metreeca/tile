@@ -24,8 +24,8 @@
   },
   "devDependencies": {
     "@web/dev-server": "^1.0.0",
-    "typedoc": "^0.28.18",
-    "vitest": "^4.0.13"
+    "typedoc": "^0.28.20",
+    "vitest": "^5.0.1"
   },
   "allowScripts": {
     "fsevents@2.3.3": true

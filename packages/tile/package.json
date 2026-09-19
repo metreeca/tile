@@ -53,8 +53,8 @@
     "check": "npx vitest --typecheck run"
   },
   "devDependencies": {
-    "@types/node": "^22.18.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.13"
+    "@types/node": "^22.20.4",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
   }
 }

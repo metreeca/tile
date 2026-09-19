@@ -1,6 +1,6 @@
 {
     "name": "@metreeca/tile",
-    "version": "4.0.0-2",
+    "version": "4.0.0-3",
     "description": "A model‑driven TypeScript/React framework for rapid REST/JSON‑LD frontend development.",
     "homepage": "https://github.com/metreeca/tile",
     "repository": {
@@ -26,8 +26,8 @@
         "check": "jest",
         "build": "del dist && tsc && node package.js",
         "write": "typedoc && del docs/demo && npm run build --prefix demo",
-        "issue": "npm run build && npm --prefix dist --workspaces publish --include-workspace-root --access public",
-        "alpha": "npm run build && npm --prefix dist --workspaces publish --include-workspace-root --access public --tag alpha"
+        "issue": "npm run build && npm publish ./dist --access public",
+        "alpha": "npm run build && npm publish ./dist --access public --tag alpha"
     },
     "devDependencies": {
         "@types/jest": "^29.5.12",

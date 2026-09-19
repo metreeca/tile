@@ -43,13 +43,7 @@ fs.copyFileSync(path.resolve(license), path.resolve(dist, license));
 
 // create publishing root package
 
-fs.writeFileSync(path.resolve(dist, json), JSON.stringify({
-
-    ...publishing(shared),
-
-    workspaces: ["*"]
-
-}, null, 4));
+fs.writeFileSync(path.resolve(dist, json), JSON.stringify(publishing(shared), null, 4));
 
 
 // create publishing packages

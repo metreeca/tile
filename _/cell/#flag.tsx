@@ -18,6 +18,8 @@ import { Check, X } from "@metreeca/tile/widgets/icon";
 import * as React from "react";
 
 
+// !!! the Tile prefix is dropped on migration, but `Flag` clashes with the lucide-preact icon: rename by role
+
 export function TileFlag({ children }: { children: boolean }) {
 	return <span title={children ? "True" : "False"} style={{ strokeWidth: 5 }}>{children
 

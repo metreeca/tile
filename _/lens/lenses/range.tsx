@@ -38,6 +38,8 @@ const WideTypes=new Set<Type>([date, dateTime]);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// !!! the Tile prefix is dropped on migration, but `Range` shadows the DOM interface: rename by role
+
 export function TileRange<
 
 	T extends Value,

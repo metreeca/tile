@@ -30,6 +30,8 @@ import React, { createElement, ReactNode, useState } from "react";
 import "./options.css";
 
 
+// !!! the Tile prefix is dropped on migration, but `Options` clashes with the preact export: rename by role
+
 export function TileOptions<
 
 	T extends Value,

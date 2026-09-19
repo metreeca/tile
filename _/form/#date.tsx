@@ -21,6 +21,8 @@ import { createElement } from "react";
 import "./input.css";
 
 
+// !!! the Tile prefix is dropped on migration, but `Date` shadows the global constructor: rename by role
+
 export function TileDate({
 
 	editable=false,

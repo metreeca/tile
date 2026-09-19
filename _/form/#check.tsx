@@ -22,6 +22,8 @@ import { createElement } from "react";
 import "./input.css";
 
 
+// !!! the Tile prefix is dropped on migration, but `Check` clashes with the lucide-preact icon: rename by role
+
 export function TileCheck({
 
 	editable=false,

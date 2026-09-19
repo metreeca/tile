@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2025 Metreeca srl
+ * Copyright © 2023-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import * as React from "react";
 import { createElement } from "react";
 import "./index.css";
 
+
+// !!! the Tile prefix is dropped on migration, but `String` shadows the global constructor: rename by role
 
 export function TileString({
 
@@ -114,6 +116,3 @@ export function TileString({
 	}
 
 }
-
-
-

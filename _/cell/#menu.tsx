@@ -18,6 +18,8 @@ import { createElement, ReactNode } from "react";
 import "./#menu.css";
 
 
+// !!! the Tile prefix is dropped on migration, but `Menu` clashes with the lucide-preact icon: rename by role
+
 export function TileMenu({
 
 	children

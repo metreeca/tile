@@ -225,6 +225,8 @@ export function title(title: unknown): void {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// !!! the Tile prefix is dropped on migration, but `Router` clashes with the lucide-preact icon: rename by role
+
 export function TileRouter({
 
 	store=path,

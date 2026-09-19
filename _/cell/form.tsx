@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2025 Metreeca srl
+ * Copyright © 2023-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ export function focus(target: undefined | null | ChildNode) {
  *
  * @constructor
  */
+// !!! the Tile prefix is dropped on migration, but `Form` clashes with the lucide-preact icon: rename by role
+
 export function TileForm<F extends Frame>({
 
 	onValidate,

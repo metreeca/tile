@@ -32,6 +32,8 @@ const LimitNext=25;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// !!! the Tile prefix is dropped on migration, but `Sheet` clashes with the lucide-preact icon: rename by role
+
 export function TileSheet<V extends Frame>({
 
 	placeholder,

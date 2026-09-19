@@ -24,6 +24,8 @@ import { Collection } from "@metreeca/data/models/collection";
 import React, { ReactNode } from "react";
 
 
+// !!! the Tile prefix is dropped on migration, but `Link` clashes with the lucide-preact icon: rename by role
+
 export function TileLink({
 
 	icon,

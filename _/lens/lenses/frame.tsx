@@ -20,6 +20,8 @@ import { Resource } from "@metreeca/data/models/resource";
 import { TileHint } from "@metreeca/view/widgets/hint";
 import React, { ReactNode } from "react";
 
+// !!! the Tile prefix is dropped on migration, but `Frame` clashes with the model type imported here: rename by role
+
 export function TileFrame<V extends Frame>({
 
 	placeholder,

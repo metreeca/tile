@@ -23,6 +23,8 @@ import { createElement } from "react";
 import { classes } from "../cell/index.js";
 
 
+// !!! the Tile prefix is dropped on migration, but `Options` clashes with the preact export: rename by role
+
 export function TileOptions({
 
 	editable=false,

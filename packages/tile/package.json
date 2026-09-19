@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile-hive",
+  "name": "@metreeca/tile",
   "version": "0.1.0",
-  "description": "Preact layouts and containers for @metreeca/tile interfaces.",
+  "description": "Metadata and element wiring for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
     "preact",
@@ -23,23 +23,18 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metreeca/tile.git",
-    "directory": "packages/tile-hive"
+    "directory": "packages/tile"
   },
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "exports": {
-    "./*": {
-      "@metreeca/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
-      "default": "./dist/*.js"
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
     },
-    "./*.css": {
-      "@metreeca/source": "./src/*.css",
-      "default": "./dist/*.css"
+    "./*": {
+      "@metreeca/source": "./src/*.ts",
+      "default": "./dist/*.js"
     }
   },
   "files": [
@@ -52,22 +47,15 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/*.css dist/",
-    "check": "npx vitest --typecheck --passWithNoTests run"
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "check": "npx vitest --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.10.0",
-    "@metreeca/tile": "^0.1.0",
-    "@metreeca/tile-data": "^0.1.0",
-    "@metreeca/tile-skin": "^0.1.0"
+    "@metreeca/core": "^0.10.0"
   },
   "devDependencies": {
-    "preact": "^10.29.8",
+    "happy-dom": "^20.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.0",
     "vitest": "^5.0.1"
-  },
-  "peerDependencies": {
-    "preact": "^10.27.2"
   }
 }

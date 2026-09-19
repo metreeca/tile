@@ -1,14 +1,5 @@
 {
   "private": true,
-  "name": "@metreeca/tile",
-  "description": "Model-driven user interfaces for queryable linked data APIs.",
-  "keywords": [
-    "typescript",
-    "preact",
-    "json-ld",
-    "model-driven",
-    "ui"
-  ],
   "type": "module",
   "workspaces": [
     "packages/*"

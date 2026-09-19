@@ -29,16 +29,20 @@ npm install @metreeca/tile-skin       # design system package, optional
 
 Add a binding package for each component layer an app assembles its screens from. Bindings render with Preact and take
 it as a peer dependency: check the package README for what each one expects. The design system package is optional and
-styles whatever a binding renders.
+styles whatever a binding renders. The bindings bring in `@metreeca/tile` themselves: an app installs it directly only
+where it reaches on its own for what it states about itself or for what its own components are built out of.
 
-| Package               | Description            |
-|-----------------------|------------------------|
-| [@metreeca/tile-data] | Contexts and hooks     |
-| [@metreeca/tile-cell] | Widgets and controls   |
-| [@metreeca/tile-hive] | Layouts and containers |
-| [@metreeca/tile-lens] | Linked data views      |
-| [@metreeca/tile-form] | Linked data editors    |
-| [@metreeca/tile-skin] | Design system          |
+| Package               | Description                 |
+|-----------------------|-----------------------------|
+| [@metreeca/tile]      | Metadata and element wiring |
+| [@metreeca/tile-data] | Contexts and hooks          |
+| [@metreeca/tile-cell] | Widgets and controls        |
+| [@metreeca/tile-hive] | Layouts and containers      |
+| [@metreeca/tile-lens] | Linked data views           |
+| [@metreeca/tile-form] | Linked data editors         |
+| [@metreeca/tile-skin] | Design system               |
+
+[@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
 [@metreeca/tile-data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.html
 

@@ -54,7 +54,7 @@
     "@metreeca/core": "^0.10.0"
   },
   "devDependencies": {
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.3",
     "vitest": "^5.0.1"
   }
 }

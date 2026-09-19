@@ -1,8 +1,8 @@
-# @metreeca/tile-state
+# @metreeca/tile-less
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile-state)](https://www.npmjs.com/package/@metreeca/tile-state)
+[![npm](https://img.shields.io/npm/v/@metreeca/tile-less)](https://www.npmjs.com/package/@metreeca/tile-less)
 
-Headless query state components for model-driven linked data interfaces.
+Headless lens components for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 A consumer composes an interface from the query patterns it actually needs: a selection the user toggles, a filter over
 a property, a range over a scalar, the options offered for a facet, a count, a collection page, a single resource. Each
@@ -10,13 +10,13 @@ pattern is a plain state object exposing the operations that make sense for it, 
 caller.
 
 The same state drives any rendering layer:
-[@metreeca/tile-service](https://www.npmjs.com/package/@metreeca/tile-service) binds it to Preact components, and a
-different binding reaches the same behaviour without restating it.
+[@metreeca/tile-data](https://www.npmjs.com/package/@metreeca/tile-data) binds it to Preact components, and a different
+binding reaches the same behaviour without restating it.
 
 # Installation
 
 ```shell
-npm install @metreeca/tile-state
+npm install @metreeca/tile-less
 ```
 
 > [!WARNING]
@@ -26,11 +26,11 @@ npm install @metreeca/tile-state
 
 # Usage
 
-| Module                        | Description                     |
-|-------------------------------|---------------------------------|
-| [@metreeca/tile-state][state] | Headless query state components |
+| Module                      | Description              |
+|-----------------------------|--------------------------|
+| [@metreeca/tile-less][less] | Headless lens components |
 
-[state]: https://metreeca.github.io/tile/modules/_metreeca_tile-state.index.html
+[less]: https://metreeca.github.io/tile/modules/_metreeca_tile-less.index.html
 
 # Support
 

@@ -2,15 +2,12 @@
 
 Model-driven user interfaces for queryable linked data APIs.
 
-**Metreeca Tile** is the user interface counterpart of the Metreeca model-driven stack: the same shapes that describe a
-resource on the server ([@metreeca/blue](https://github.com/metreeca/blue)) and the same queries a client sends to it
-([@metreeca/qest](https://github.com/metreeca/qest)) drive what the interface shows, what the user can narrow, and what
-is written back.
+**Metreeca Tile** drives interface components from the shapes and queries a
+[@metreeca/qest](https://github.com/metreeca/qest) API already defines. Behaviour lives in state a component only
+observes, so the same screen logic serves any rendering layer.
 
-- **Headless State**: the query patterns an interface is built from (selections, filters, ranges, options, counts,
-  collections, resources), each a plain state object with no rendering attached
-- **Preact Bindings**: the contexts and hooks a component is wired to, and the layouts and widgets it is assembled
-  from; the state itself stays framework-agnostic
+- **Preact Bindings**: the providers and hooks a component is wired to, the widgets, layouts and containers it is
+  assembled from, and the views and editors built over them; the state itself stays framework-agnostic
 - **Model-Driven**: the shape of a resource decides the controls offered for it, so a model change reaches the interface
   without a matching interface change
 - **Live Data**: reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store, sharing the
@@ -21,10 +18,8 @@ is written back.
 # Installation
 
 ```shell
-npm install @metreeca/tile           # design system tokens and base styles
-npm install @metreeca/tile-state     # headless query state components
-npm install @metreeca/tile-service   # Preact contexts and hooks
-npm install @metreeca/tile-surface   # Preact layouts and widgets
+npm install @metreeca/tile          # design system, optional
+npm install @metreeca/tile-<layer>  # Preact binding package, one per component layer
 ```
 
 > [!WARNING]
@@ -32,23 +27,30 @@ npm install @metreeca/tile-surface   # Preact layouts and widgets
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Install the state package, then add the binding packages an app actually uses; the design system package is optional
-and styles whatever a binding renders.
+Add a binding package for each component layer an app assembles its screens from. Binding packages take `preact` as a
+peer dependency: check the package README for what each one expects. The design system package is optional and styles
+whatever a binding renders.
 
-| Package                  | Description                          |
-|--------------------------|--------------------------------------|
-| [@metreeca/tile]         | Design system tokens and base styles |
-| [@metreeca/tile-state]   | Headless query state components      |
-| [@metreeca/tile-service] | Preact contexts and hooks            |
-| [@metreeca/tile-surface] | Preact layouts and widgets           |
+| Package               | Description                   |
+|-----------------------|-------------------------------|
+| [@metreeca/tile]      | Design system                 |
+| [@metreeca/tile-data] | Preact providers and hooks    |
+| [@metreeca/tile-cell] | Preact widgets and controls   |
+| [@metreeca/tile-hive] | Preact layouts and containers |
+| [@metreeca/tile-lens] | Preact linked data views      |
+| [@metreeca/tile-form] | Preact linked data editors    |
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
-[@metreeca/tile-state]: https://metreeca.github.io/tile/modules/_metreeca_tile-state.html
+[@metreeca/tile-data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.html
 
-[@metreeca/tile-service]: https://metreeca.github.io/tile/modules/_metreeca_tile-service.html
+[@metreeca/tile-cell]: https://metreeca.github.io/tile/modules/_metreeca_tile-cell.html
 
-[@metreeca/tile-surface]: https://metreeca.github.io/tile/modules/_metreeca_tile-surface.html
+[@metreeca/tile-hive]: https://metreeca.github.io/tile/modules/_metreeca_tile-hive.html
+
+[@metreeca/tile-lens]: https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html
+
+[@metreeca/tile-form]: https://metreeca.github.io/tile/modules/_metreeca_tile-form.html
 
 # Usage
 

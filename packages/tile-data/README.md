@@ -1,18 +1,21 @@
-# @metreeca/tile-service
+# @metreeca/tile-data
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile-service)](https://www.npmjs.com/package/@metreeca/tile-service)
+[![npm](https://img.shields.io/npm/v/@metreeca/tile-data)](https://www.npmjs.com/package/@metreeca/tile-data)
 
-Preact contexts and hooks for @metreeca/tile interfaces.
+Preact providers and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 A consumer reaches the ambient state a subtree inherits and the environment it runs in: the store and the settings an
 app publishes once, and the accessors a component reads them back with. Nothing here renders, so what a component shows
 stays a separate decision from what it is wired to.
 
+The store a provider publishes comes from [@metreeca/keep](https://github.com/metreeca/keep), so caching, batching and
+validation stay with the storage layer rather than being restated in the interface.
+
 # Installation
 
 ```shell
-npm install preact                  # peer dependency
-npm install @metreeca/tile-service  # this package
+npm install preact               # peer dependency
+npm install @metreeca/tile-data  # this package
 ```
 
 > [!WARNING]
@@ -22,11 +25,11 @@ npm install @metreeca/tile-service  # this package
 
 # Usage
 
-| Module                            | Description                    |
-|-----------------------------------|--------------------------------|
-| [@metreeca/tile-service][service] | Preact contexts and hooks      |
+| Module                      | Description                |
+|-----------------------------|----------------------------|
+| [@metreeca/tile-data][data] | Preact providers and hooks |
 
-[service]: https://metreeca.github.io/tile/modules/_metreeca_tile-service.index.html
+[data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.index.html
 
 # Support
 

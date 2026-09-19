@@ -14,5 +14,12 @@
  * limitations under the License.
  */
 
-// common query patterns
-// can be used as headless components
+/**
+ * Preact widgets and controls.
+ *
+ * Supplies the widgets a value is shown and edited through: labels, icons, buttons, fields and the other
+ * single-purpose elements a screen is populated with. Behaviour comes from the state they observe, and styling is
+ * structural only, so appearance stays with the design system or with whoever styles the app.
+ *
+ * @module index
+ */

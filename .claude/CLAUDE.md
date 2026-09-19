@@ -14,7 +14,7 @@
 Metreeca Tile is the user interface layer of the Metreeca model-driven stack: it turns the shapes and queries the rest
 of the stack already speaks into what an interface shows, narrows and writes back. The monorepo collects the headless
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
-`packages/tile-surface/`).
+`packages/tile-cell/`).
 
 Resource shapes come from `@metreeca/blue` and queries from `@metreeca/qest`: this repository **NEVER** defines a
 parallel model of its own, and a control offered for a property is decided by the shape describing it rather than by a
@@ -48,16 +48,28 @@ repository **NEVER** reimplements them behind the interface.
 # Package Layout
 
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
-immediately under `packages/` (for example `packages/tile-state`).
+immediately under `packages/` (for example `packages/tile-less`).
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`tile-service` for the contexts and hooks a component is wired to,
-`tile-surface` for the layouts and widgets it is assembled from). A binding package adds observation and rendering over
-state it never redefines: behaviour lives in `tile-state`, so a second binding reaches the same behaviour without
-restating it.
+appears **ONLY** in its own binding packages (`tile-data` for the providers and hooks a component is wired to,
+`tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
+the views and editors built over them). A binding package adds observation and rendering over state it never redefines:
+behaviour lives in `tile-less`, so a second binding reaches the same behaviour without restating it.
 
-Packages are named after what they contribute, not after the library they contribute it with: `tile-service`, not
+Packages are named after what they contribute, not after the library they contribute it with: `tile-data`, not
 `tile-hooks`.
+
+# Package Summaries
+
+Every package states its summary in four places, which **MUST** be kept aligned:
+
+- `packages/<package>/package.json` `description` - `<summary> for @metreeca/tile interfaces.`
+- `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
+  project repository
+- `packages/<package>/src/index.ts`, module doc definition line - `<summary>.`, without the family suffix
+- the root `README.md` package table and the package `README.md` module table - `<summary>` alone
+
+Revising one **ALWAYS** means revising the other three.
 
 # Shared Utilities
 

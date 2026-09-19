@@ -1,12 +1,12 @@
 {
-  "name": "@metreeca/tile",
+  "name": "@metreeca/tile-hive",
   "version": "0.1.0",
-  "description": "Design system for @metreeca/tile interfaces.",
+  "description": "Preact layouts and containers for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
-    "css",
-    "design-system",
-    "tokens",
+    "preact",
+    "json-ld",
+    "model-driven",
     "ui"
   ],
   "homepage": "https://metreeca.github.io/tile/",
@@ -23,20 +23,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metreeca/tile.git",
-    "directory": "packages/tile"
+    "directory": "packages/tile-hive"
   },
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
-    },
-    "./index.css": {
-      "@metreeca/source": "./src/index.css",
-      "default": "./dist/index.css"
     }
   },
   "files": [
@@ -49,12 +43,21 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/index.css dist/index.css",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
+  "dependencies": {
+    "@metreeca/core": "^0.10.0",
+    "@metreeca/tile-cell": "^0.1.0",
+    "@metreeca/tile-data": "^0.1.0",
+    "@metreeca/tile-less": "^0.1.0"
+  },
   "devDependencies": {
-    "@types/node": "^22.20.4",
+    "preact": "^10.29.8",
     "typescript": "^7.0.2",
     "vitest": "^5.0.1"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
   }
 }

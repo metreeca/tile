@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile-surface",
+  "name": "@metreeca/tile-data",
   "version": "0.1.0",
-  "description": "Preact layouts and widgets for @metreeca/tile interfaces.",
+  "description": "Preact providers and hooks for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
     "preact",
@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metreeca/tile.git",
-    "directory": "packages/tile-surface"
+    "directory": "packages/tile-data"
   },
   "type": "module",
   "sideEffects": false,
@@ -44,12 +44,11 @@
   "scripts": {
     "clean": "rm -rf dist docs node_modules",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "check": "npx vitest --typecheck run"
+    "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "dependencies": {
     "@metreeca/core": "^0.10.0",
-    "@metreeca/tile-service": "^0.1.0",
-    "@metreeca/tile-state": "^0.1.0"
+    "@metreeca/tile-less": "^0.1.0"
   },
   "devDependencies": {
     "preact": "^10.29.8",

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,11 @@
  * limitations under the License.
  */
 
-// Preact layouts and widgets for @metreeca/tile interfaces
+/**
+ * Preact linked data editors.
+ *
+ * Turns a described resource into an editable form: the shape decides which properties are offered and what each one
+ * accepts, and validated changes are committed through the store the app publishes.
+ *
+ * @module index
+ */

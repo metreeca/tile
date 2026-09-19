@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
-Design system tokens and base styles for model-driven linked data interfaces.
+Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 An app includes the stylesheet and gets a coherent look across every Tile component: a token layer defining colour,
 type, spacing and focus affordances, and base rules applying them to plain document markup. Redefining a token in a
@@ -49,9 +49,9 @@ import { css, tile } from "@metreeca/tile";
 <section style={css({ [tile.colorAccentLite]: "#06C" })}>
 ```
 
-| Module                 | Description           |
-|------------------------|-----------------------|
-| [@metreeca/tile][tile] | Design system styling |
+| Module                 | Description   |
+|------------------------|---------------|
+| [@metreeca/tile][tile] | Design system |
 
 [tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.index.html
 

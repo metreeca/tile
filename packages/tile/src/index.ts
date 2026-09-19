@@ -15,7 +15,7 @@
  */
 
 /**
- * Design system styling.
+ * Design system.
  *
  * Names the custom properties an app may override to restyle an interface, and the ones a component reads to inherit
  * that styling; the same names assign a token inline, restyling a single subtree through a style declaration any

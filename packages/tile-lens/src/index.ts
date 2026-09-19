@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,12 @@
  * limitations under the License.
  */
 
-// Preact contexts and hooks for @metreeca/tile interfaces
+/**
+ * Preact linked data views.
+ *
+ * Renders a resource as the shape describing it prescribes: the control offered for each property is decided by the
+ * model rather than by a hand-written mapping, so a model change reaches the interface without a matching interface
+ * change.
+ *
+ * @module index
+ */

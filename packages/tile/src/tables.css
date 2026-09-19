@@ -14,15 +14,43 @@
  * limitations under the License.
  */
 
-/* modules are listed in cascade order, so a later one wins where both match */
+table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 1.5em;
+    font-size: 90%;
+}
 
-@import "./tokens.css";
-@import "./reset.css";
+tbody > tr:nth-child(odd) > td {
 
-@import "./document.css";
-@import "./headings.css";
-@import "./lists.css";
-@import "./tables.css";
-@import "./forms.css";
-@import "./blocks.css";
-@import "./inlines.css";
+    --tile--background-color: var(--tile--background-color-stripe);
+
+    background-color: var(--tile--background-color);
+}
+
+th {
+
+    white-space: nowrap;
+    font-weight: 700;
+
+    &:empty:last-child {
+        width: 100%;
+    }
+
+}
+
+th,
+td {
+
+    padding: 0.5em 0.5em;
+    text-align: start;
+    vertical-align: top;
+    border-bottom-style: solid;
+
+    & > img {
+        margin: 0;
+    }
+
+}

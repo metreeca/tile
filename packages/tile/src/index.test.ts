@@ -21,7 +21,7 @@ import { css, tile } from "./index.js";
 
 describe("tile", () => {
 
-	const stylesheet = readFileSync(new URL("./index.css", import.meta.url), "utf-8");
+	const stylesheet = readFileSync(new URL("./tokens.css", import.meta.url), "utf-8");
 
 	const declared = [ ...Object.values(tile) ].sort();
 

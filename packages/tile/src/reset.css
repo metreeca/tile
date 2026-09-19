@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-/* modules are listed in cascade order, so a later one wins where both match */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline-style: none;
+    border-style: none;
+    border-radius: 0;
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    overflow: visible;
+    font-family: inherit;
+    font-style: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    background-color: inherit;
+}
 
-@import "./tokens.css";
-@import "./reset.css";
-
-@import "./document.css";
-@import "./headings.css";
-@import "./lists.css";
-@import "./tables.css";
-@import "./forms.css";
-@import "./blocks.css";
-@import "./inlines.css";
+[hidden] {
+    display: none;
+}

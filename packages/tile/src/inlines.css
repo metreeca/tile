@@ -14,15 +14,35 @@
  * limitations under the License.
  */
 
-/* modules are listed in cascade order, so a later one wins where both match */
+a, a:visited {
 
-@import "./tokens.css";
-@import "./reset.css";
+    text-decoration: none;
+    text-decoration-thickness: 1px;
 
-@import "./document.css";
-@import "./headings.css";
-@import "./lists.css";
-@import "./tables.css";
-@import "./forms.css";
-@import "./blocks.css";
-@import "./inlines.css";
+    color: var(--tile--color-enabled);
+
+    cursor: pointer;
+
+    &:focus-visible {
+        text-decoration: underline !important;
+    }
+
+    &:hover {
+        color: var(--tile--color-hover) !important;
+    }
+
+    &:active {
+        text-decoration: underline !important;
+        color: var(--tile--color-focus) !important;
+    }
+
+}
+
+em {
+    font-style: italic;
+}
+
+small {
+    font-size: 90%;
+    color: var(--tile--color-label);
+}

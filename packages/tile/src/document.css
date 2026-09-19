@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-/* modules are listed in cascade order, so a later one wins where both match */
+body {
+    font-family: var(--tile--font-family);
+    font-size: var(--tile--font-size);
+    font-weight: 300;
+    line-height: var(--tile--line-height);
+    color: var(--tile--color);
+    background-color: var(--tile--background-color);
+}
 
-@import "./tokens.css";
-@import "./reset.css";
+dt, a, strong {
+    font-weight: 400;
+}
 
-@import "./document.css";
-@import "./headings.css";
-@import "./lists.css";
-@import "./tables.css";
-@import "./forms.css";
-@import "./blocks.css";
-@import "./inlines.css";
+code {
+    font-size: 90%;
+    font-family: var(--tile--font-family-mono);
+}

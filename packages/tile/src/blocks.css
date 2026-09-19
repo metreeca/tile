@@ -14,15 +14,37 @@
  * limitations under the License.
  */
 
-/* modules are listed in cascade order, so a later one wins where both match */
+p {
 
-@import "./tokens.css";
-@import "./reset.css";
+    margin-bottom: 1em;
 
-@import "./document.css";
-@import "./headings.css";
-@import "./lists.css";
-@import "./tables.css";
-@import "./forms.css";
-@import "./blocks.css";
-@import "./inlines.css";
+    &:has(img:only-child) {
+        margin: 0;
+    }
+
+}
+
+blockquote {
+
+    padding: 0.5em;
+    margin-bottom: 1em;
+    background-color: var(--tile--background-color-stripe);
+
+    & > p {
+        margin-bottom: 0.1em;
+    }
+
+}
+
+hr {
+
+    margin: 1.5em 0;
+    border-bottom-style: var(--tile--border-style);
+    border-bottom-width: var(--tile--border-width);
+    border-bottom-color: var(--tile--border-color);
+
+    &:first-child, &:last-child {
+        display: none;
+    }
+
+}

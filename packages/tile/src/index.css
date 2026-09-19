@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-/* modules are listed by increasing structural complexity, so a composite takes precedence over the plain elements it
-   is built from */
+/* modules are listed by increasing structural complexity, so a composite takes precedence over its plain elements */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Mono&family=Roboto:wght@300;400;700&display=swap");
 
 @import "./tokens.css";
 @import "./schemes.css";
 
 @import "./reset.css";
 
-@import "./typography.css";
 @import "./headings.css";
 @import "./inlines.css";
 @import "./blocks.css";
 @import "./lists.css";
 @import "./tables.css";
 @import "./forms.css";
-
-
-/* the page defaults, stated here rather than in a module, an @import rule having to precede every other rule */
 
 :root {
 
@@ -40,11 +37,16 @@
     color: var(--tile--color);
     background-color: var(--tile--background-color);
 
-    /* generic stacks: an app supplying its own faces overrides these tokens and loads them itself */
+    /* each brand face stands ahead of a generic stack covering it until it loads */
 
-    --tile--font-family: Helvetica, Arial, sans-serif;
-    --tile--font-family-heading: Helvetica, Arial, sans-serif;
-    --tile--font-family-mono: Courier, monospace;
+    --tile--font-family: Roboto, Helvetica, Arial, sans-serif;
+    --tile--font-family-heading: "Roboto Condensed", Helvetica, Arial, sans-serif;
+    --tile--font-family-mono: "Roboto Mono", Courier, monospace;
+
+    font-family: var(--tile--font-family);
+    font-size: var(--tile--font-size);
+    font-weight: var(--tile--font-weight);
+    line-height: var(--tile--line-height);
 
     --tile--font-size: 1.125rem;
     --tile--font-size-small: 90%;

@@ -13,13 +13,13 @@ carries no components and no behaviour, and nothing in it imports a rendering fr
 
 `src/index.css` imports the modules and is the only entry an app includes. They are listed by increasing structural
 complexity, so a composite lands after the plain elements it is built from and takes precedence where the two match
-with equal specificity. It also carries the page defaults itself — `color-scheme`, the page colours and the `:root`
-default of every token — after the imports, an `@import` rule having to precede every other rule.
+with equal specificity. It also loads the brand faces and carries the page defaults itself: `color-scheme`, the page
+colours and typography, and the `:root` default of every token.
 
 - `tokens.css` — the `@property` registration of every token: the type it takes and the default it falls back on
 - `schemes.css` — what the four colour anchors are worth, one block per platform colour scheme
-- `reset.css`, then `typography.css`, `headings.css`, `inlines.css`, `blocks.css`, `lists.css`, `tables.css`,
-  `forms.css` — base rules for one group of elements each
+- `reset.css`, then `headings.css`, `inlines.css`, `blocks.css`, `lists.css`, `tables.css`, `forms.css` — base rules
+  for one group of elements each
 
 # Token Contract
 

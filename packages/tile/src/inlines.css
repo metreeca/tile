@@ -19,6 +19,7 @@ a, a:visited {
     text-decoration: none;
     text-decoration-thickness: 1px;
 
+    font-weight: var(--tile--font-weight-strong);
     color: var(--tile--color-enabled);
 
     cursor: pointer;
@@ -40,6 +41,15 @@ a, a:visited {
 
 em {
     font-style: italic;
+}
+
+strong {
+    font-weight: var(--tile--font-weight-strong);
+}
+
+code {
+    font-family: var(--tile--font-family-mono);
+    font-size: var(--tile--font-size-small);
 }
 
 small {

@@ -1,0 +1,120 @@
+/*
+ * Copyright © 2020-2025 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:root {
+
+    --tile-card-size-width: 0;
+    --tile-card-column-gap: 1em;
+    --tile-card-row-gap: 0.5em;
+
+}
+
+tile-card {
+
+    display: grid;
+    align-items: start;
+
+    grid-template-rows: min-content min-content;
+
+    grid-column-gap: var(--tile-card-column-gap);
+    grid-row-gap: var(--tile-card-row-gap);
+
+    &:not(:first-child) {
+        margin-top: 1em;
+    }
+
+    &.start {
+
+        grid-template-columns: var(--tile-card-size-width) 1fr;
+
+        & > nav,
+        & > i {
+            grid-column: 1;
+        }
+
+        & > span,
+        & > div {
+            grid-column: 2;
+        }
+
+    }
+
+    &.end {
+
+        grid-template-columns: 1fr var(--tile-card-size-width);
+
+        & > nav,
+        & > i {
+            grid-column: 2;
+        }
+
+        & > span,
+        & > div {
+            grid-column: 1;
+        }
+
+    }
+
+    & > nav,
+    & > i {
+        justify-self: end;
+    }
+
+    & > span,
+    & > div {
+        justify-self: stretch;
+    }
+
+    & > span,
+    & > nav {
+        grid-row: 1;
+    }
+
+    & > i,
+    & > div {
+        grid-row: 2;
+    }
+
+    & > nav {
+
+        text-align: end;
+
+        & > * {
+            white-space: nowrap;
+        }
+
+    }
+
+    & > i {
+
+        font-weight: 600;
+        color: var(--tile--color-light);
+
+        & > img {
+            margin-top: 0.25em;
+        }
+
+    }
+
+    & > div {
+
+        &:last-child {
+            grid-column: 1 / span 2 !important;
+        }
+
+    }
+
+}

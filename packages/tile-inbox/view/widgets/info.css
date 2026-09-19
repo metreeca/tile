@@ -1,0 +1,93 @@
+/*
+ * Copyright © 2020-2025 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+tile-info {
+
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: min-content;
+    grid-column-gap: 0.5em;
+    grid-row-gap: 0.25em;
+
+    &:empty {
+        display: none;
+    }
+
+    & + & {
+        padding-top: 1em;
+        margin-top: 1em;
+        border-top-style: solid;
+    }
+
+    &:not(:has(+ &)) {
+        margin-bottom: 1.5em;
+    }
+
+    &.center > dt {
+        text-align: right;
+    }
+
+    &:not(.center) > dd {
+        text-align: right;
+    }
+
+    & > * {
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+    }
+
+    & > dt {
+
+        white-space: nowrap;
+
+        text-transform: capitalize;
+
+        color: var(--tile--color-label);
+
+    }
+
+    & > dd {
+
+        & > ul {
+
+            margin: 0;
+            padding: 0;
+
+            & > li {
+
+                &:not(:only-child)::before {
+                    content: "›";
+                    padding-right: 0.5em;
+                    color: var(--tile--color-light);
+                }
+
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                &:not(:first-child) {
+                    margin-top: 0.1em;
+                }
+
+            }
+
+        }
+
+    }
+
+}

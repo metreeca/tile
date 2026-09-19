@@ -15,10 +15,13 @@ is written back.
   without a matching interface change
 - **Live Data**: reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store, sharing the
   caching, batching and validation the rest of the stack relies on
+- **Design System**: an optional token layer styling whatever a binding renders; components stay usable without it,
+  both sides honouring the same token naming contract
 
 # Installation
 
 ```shell
+npm install @metreeca/tile         # design system tokens and base styles
 npm install @metreeca/tile-state   # headless query state components
 npm install @metreeca/tile-react   # React bindings
 ```
@@ -28,12 +31,16 @@ npm install @metreeca/tile-react   # React bindings
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Install the state package, then add the binding package for the rendering framework in use.
+Install the state package, then add the binding package for the rendering framework in use; the design system package
+is optional and styles whatever a binding renders.
 
-| Package                | Description                      |
-|------------------------|----------------------------------|
-| [@metreeca/tile-state] | Headless query state components  |
-| [@metreeca/tile-react] | React bindings for headless state |
+| Package                | Description                          |
+|------------------------|--------------------------------------|
+| [@metreeca/tile]       | Design system tokens and base styles |
+| [@metreeca/tile-state] | Headless query state components      |
+| [@metreeca/tile-react] | React bindings for headless state    |
+
+[@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
 [@metreeca/tile-state]: https://metreeca.github.io/tile/modules/_metreeca_tile-state.html
 

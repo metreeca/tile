@@ -16,6 +16,7 @@
 
 import * as React from "react";
 import { createRoot } from "react-dom/client";
+import "@metreeca/tile/index.css";
 import "./index.css";
 
 

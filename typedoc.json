@@ -37,7 +37,8 @@
   "highlightLanguages": [
     "shell",
     "typescript",
-    "tsx"
+    "tsx",
+    "css"
   ],
   "packageOptions": {
     "tsconfig": "./tsconfig.build.json",

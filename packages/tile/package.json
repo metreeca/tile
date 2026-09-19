@@ -1,0 +1,60 @@
+{
+  "name": "@metreeca/tile",
+  "version": "0.1.0",
+  "description": "Design system tokens and base styles for model-driven linked data interfaces.",
+  "keywords": [
+    "typescript",
+    "css",
+    "design-system",
+    "tokens",
+    "ui"
+  ],
+  "homepage": "https://metreeca.github.io/tile/",
+  "bugs": {
+    "url": "https://github.com/metreeca/tile/issues",
+    "email": "info@metreeca.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Metreeca",
+    "email": "info@metreeca.com",
+    "url": "https://www.metreeca.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metreeca/tile.git",
+    "directory": "packages/tile"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./index.css": {
+      "@metreeca/source": "./src/index.css",
+      "default": "./dist/index.css"
+    }
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist docs node_modules",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/index.css dist/index.css",
+    "check": "npx vitest --typecheck run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.13"
+  }
+}

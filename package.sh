@@ -15,5 +15,4 @@
 #
 
 npx link \
-  ../Core \
-  ../Skin
+  ../Core

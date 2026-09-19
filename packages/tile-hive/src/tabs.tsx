@@ -16,7 +16,7 @@
 
 import type { Optional } from "@metreeca/core";
 import { some, type Some, unique } from "@metreeca/core/arrays";
-import { createState, type State } from "@metreeca/core/state";
+import { createState } from "@metreeca/core/state";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
 import "./tabs.css";
@@ -98,65 +98,66 @@ export function Tabs({
 
 	}));
 
+	// !!! the tab is a label: it takes no focus, carries no role and no selected state, and labels no control, so a
+	// !!! pointer is the only way to reach it; see metreeca/tile#1 for the semantics and key handling it owes
+
 	return createElement("tile-tabs", {}, labels.map(label =>
 		<section key={label}>
 
-			<button onClick={() => select(label)}>{label}</button>
-			<div>{label === active ? sections[label] : undefined}</div>
+			<label aria-current={label === active || undefined} onClick={() => select(label)}>{label}</label>
+			{label === active && <div>{sections[label]}</div>}
 
 		</section>
 	));
 
-}
+
+	function createModel({
+
+		labels,
+		active
+
+	}: {
+
+		labels?: Some<string>
+		active?: string
+
+	} = {}) : Model {
+
+		const sections = unique(some(labels));
+
+		return createState<Model>({
+
+			labels: sections,
+
+			active: active !== undefined && sections.includes(active) ? active : sections[0],
+
+			select(label: string) {
+
+				return this.labels.includes(label) ? { active: label } : {};
+
+			},
+
+			next() {
+
+				return { active: shift(this.labels, this.active, +1) };
+
+			},
+
+			previous() {
+
+				return { active: shift(this.labels, this.active, -1) };
+
+			}
+
+		});
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		function shift(labels: readonly string[], active: Optional<string>, offset: number): string | undefined {
 
-function createModel({
-
-	labels,
-	active
-
-}: {
-
-	labels?: Some<string>
-	active?: string
-
-} = {}) : Model {
-
-	const sections = unique(some(labels));
-
-	return createState<Model>({
-
-		labels: sections,
-
-		active: active !== undefined && sections.includes(active) ? active : sections[0],
-
-		select(label: string) {
-
-			return this.labels.includes(label) ? { active: label } : {};
-
-		},
-
-		next() {
-
-			return { active: shift(this.labels, this.active, +1) };
-
-		},
-
-		previous() {
-
-			return { active: shift(this.labels, this.active, -1) };
+			return active === undefined ? undefined
+				: labels[(labels.indexOf(active) + offset + labels.length) % labels.length];
 
 		}
-
-	});
-
-
-	function shift(labels: readonly string[], active: Optional<string>, offset: number): string | undefined {
-
-		return active === undefined ? undefined
-			: labels[(labels.indexOf(active) + offset + labels.length) % labels.length];
 
 	}
 

@@ -14,34 +14,24 @@
  * limitations under the License.
  */
 
-/* the sections take part in the strip themselves, so the labels line up as one row and the section on show follows
-   underneath, whichever label it belongs to */
+/* the strip is a row of tabs closed by a rule, with the section on show underneath */
 
 tile-tabs {
 
-    display: flex;
-    flex-wrap: wrap;
-
-    column-gap: var(--tile--spacing-100);
+    display: block;
 
     padding-bottom: var(--tile--spacing-250);
 
-    /* the rule closing the strip is a line of its own, between the labels and the section on show */
+    & > nav {
 
-    &::after {
-        content: "";
-        order: 1;
-        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+
+        column-gap: var(--tile--spacing-100);
+
         border-bottom-style: var(--tile--border-style);
-    }
-
-    & > * {
-
-        display: contents;
 
         & > label {
-
-            order: 1;
 
             padding-bottom: var(--tile--spacing-050);
             margin-bottom: calc(-1 * var(--tile--border-width)); /* the mark sits on the rule, not above it */
@@ -51,6 +41,8 @@ tile-tabs {
             font-weight: var(--tile--font-weight-heavy);
             color: var(--tile--color-label);
 
+            background-color: transparent; /* the reset hands down an opaque page, which would mask the rule */
+
             border-bottom-style: var(--tile--border-style);
             border-bottom-color: transparent;
 
@@ -58,10 +50,14 @@ tile-tabs {
                 color: var(--tile--color-hover);
             }
 
+            &:focus-visible {
+                outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
+                outline-offset: 0.1em;
+            }
+
             /* three times the rule to read as a highlight; weight is left alone, as it would reflow the strip */
 
-            &[aria-current] {
-                position: relative; /* the rule is painted after the labels, so the mark has to rise above it */
+            &[aria-selected="true"] {
                 color: var(--tile--color);
                 border-bottom-width: calc(3 * var(--tile--border-width));
                 border-bottom-color: var(--tile--color-accent-lite);
@@ -70,10 +66,15 @@ tile-tabs {
 
         }
 
-        & > div {
-            order: 2;
-            width: 100%;
-            padding-top: var(--tile--spacing-150);
+    }
+
+    & > div {
+
+        padding-top: var(--tile--spacing-150);
+
+        &:focus-visible {
+            outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
+            outline-offset: 0.1em;
         }
 
     }

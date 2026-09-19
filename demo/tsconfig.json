@@ -4,8 +4,8 @@
       "@metreeca/demo/*": [
         "./src/*"
       ],
-      "@metreeca/skin": [
-        "../src/index.ts"
+      "@metreeca/tile*": [
+        "../packages/tile*/src/index.ts"
       ]
     },
     "noEmit": true,

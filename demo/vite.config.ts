@@ -44,9 +44,13 @@ export default defineConfig(() => ({ // https://vite.dev/config/
     },
 
     resolve: {
+
+        dedupe: ["react", "react-dom"],
+
         alias: [
             { find: /^@metreeca\/demo\/(.*)$/, replacement: resolve("src", "$1") },
-            { find: /^@metreeca\/skin$/, replacement: resolve("../src/index.ts") } // sources, so edits repaint unbuilt
+            { find: /^@metreeca\/(tile[^/]*)$/, replacement: resolve("../packages/$1/src/index.ts") },
+            { find: /^@metreeca\/(tile[^/]*)\/(.*)$/, replacement: resolve("../packages/$1/src/$2") }
         ]
     }
 

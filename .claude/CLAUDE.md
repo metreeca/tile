@@ -48,13 +48,14 @@ repository **NEVER** reimplements them behind the interface.
 # Package Layout
 
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
-immediately under `packages/` (for example `packages/tile-less`).
+immediately under `packages/` (for example `packages/tile-lens`).
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
 `tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
 the views and editors built over them). A binding package adds observation and rendering over state it never redefines:
-behaviour lives in `tile-less`, so a second binding reaches the same behaviour without restating it.
+behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour
+without restating it.
 
 Packages are named after what they contribute, not after the library they contribute it with: `tile-data`, not
 `tile-hooks`.
@@ -101,8 +102,8 @@ const { labels, active, select } = useModel(() => createModel({ labels: Object.k
   one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
   **NEVER** reaches it.
-- Behaviour outgrowing a single widget moves to `tile-less` as a state object of its own, leaving the component only
-  what it renders.
+- Behaviour outgrowing a single widget moves to a sibling module as a state object of its own, leaving the component
+  only what it renders.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

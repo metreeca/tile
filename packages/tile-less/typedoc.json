@@ -1,7 +1,0 @@
-{
-  "externalSymbolLinkMappings": {
-    "@metreeca/core": {
-      "*": "https://metreeca.github.io/core/"
-    }
-  }
-}

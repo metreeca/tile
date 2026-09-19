@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "@metreeca/demo",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules",
+    "setup": "npm ci",
+    "build": "vite build",
+    "serve": "vite --open"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0"
+  }
+}

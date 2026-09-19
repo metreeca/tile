@@ -112,6 +112,18 @@
     initial-value: 1.5em;
 }
 
+@property --tile--spacing-200 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2em;
+}
+
+@property --tile--spacing-250 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2.5em;
+}
+
 @property --tile--border-style {
     syntax: "*";
     inherits: true;

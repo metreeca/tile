@@ -30,8 +30,8 @@ const anchors: ReadonlyArray<Entry> = [
 
 	[ tile.color, "the text the page is written in" ],
 	[ tile.backgroundColor, "the canvas it is written on" ],
-	[ tile.colorAccentLite, "the brand orange, carried by hovered and invalid states" ],
-	[ tile.colorAccentDark, "the brand slate, carried by links and focus rings" ]
+	[ tile.colorAccentLite, "the brand light accent colour" ],
+	[ tile.colorAccentDark, "the brand dark accent colour" ]
 
 ];
 

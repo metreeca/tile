@@ -63,6 +63,8 @@
     --tile--spacing-075: 0.75em;
     --tile--spacing-100: 1em;
     --tile--spacing-150: 1.5em;
+    --tile--spacing-200: 2em;
+    --tile--spacing-250: 2.5em;
 
     --tile--border-style: solid;
     --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));

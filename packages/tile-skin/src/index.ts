@@ -103,6 +103,8 @@ export const tile = {
 	spacing075: "--tile--spacing-075",
 	spacing100: "--tile--spacing-100",
 	spacing150: "--tile--spacing-150",
+	spacing200: "--tile--spacing-200",
+	spacing250: "--tile--spacing-250",
 
 	borderStyle: "--tile--border-style",
 	borderColor: "--tile--border-color",

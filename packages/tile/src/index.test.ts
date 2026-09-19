@@ -14,26 +14,42 @@
  * limitations under the License.
  */
 
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { css, tile } from "./index.js";
 
 
 describe("tile", () => {
 
-	const stylesheet = readFileSync(new URL("./tokens.css", import.meta.url), "utf-8");
+	const declared: ReadonlyArray<string> = Object.values(tile);
 
-	const declared = [ ...Object.values(tile) ].sort();
+	const stylesheets = readdirSync(new URL(".", import.meta.url))
+		.filter(name => name.endsWith(".css"))
+		.map(name => readFileSync(new URL(`./${ name }`, import.meta.url), "utf-8"));
 
-	const defined = Array.from(
-		(stylesheet.match(/:root\s*\{([^}]*)}/)?.[1] ?? "").matchAll(/(--tile--[\w-]+)\s*:/g),
-		([, name]) => name
-	).sort();
+	const referenced = stylesheets
+		.flatMap(text => Array.from(text.matchAll(/var\((--tile--[\w-]+)/g), ([ , token ]) => token));
+
+	const assigned = stylesheets
+		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
+		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:/g), ([ , token ]) => token));
 
 
-	it("names exactly the custom properties the stylesheet defines", () => {
+	it("names every token the stylesheets read", () => {
 
-		expect(declared).toEqual(defined);
+		expect(referenced.filter(token => !declared.includes(token))).toEqual([]);
+
+	});
+
+	it("names every token the stylesheet defines", () => {
+
+		expect(assigned.filter(token => !declared.includes(token))).toEqual([]);
+
+	});
+
+	it("names no token the stylesheet leaves undefined", () => {
+
+		expect(declared.filter(token => !assigned.includes(token))).toEqual([]);
 
 	});
 

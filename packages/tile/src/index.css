@@ -14,15 +14,74 @@
  * limitations under the License.
  */
 
-/* modules are listed in cascade order, so a later one wins where both match */
+/* modules are listed by increasing structural complexity, so a composite takes precedence over the plain elements it
+   is built from */
 
 @import "./tokens.css";
+@import "./schemes.css";
+
 @import "./reset.css";
 
-@import "./document.css";
+@import "./typography.css";
 @import "./headings.css";
+@import "./inlines.css";
+@import "./blocks.css";
 @import "./lists.css";
 @import "./tables.css";
 @import "./forms.css";
-@import "./blocks.css";
-@import "./inlines.css";
+
+
+/* the page defaults, stated here rather than in a module, an @import rule having to precede every other rule */
+
+:root {
+
+    color-scheme: light dark;
+
+    color: var(--tile--color);
+    background-color: var(--tile--background-color);
+
+    /* generic stacks: an app supplying its own faces overrides these tokens and loads them itself */
+
+    --tile--font-family: Helvetica, Arial, sans-serif;
+    --tile--font-family-heading: Helvetica, Arial, sans-serif;
+    --tile--font-family-mono: Courier, monospace;
+
+    --tile--font-size: 1.125rem;
+    --tile--font-size-small: 90%;
+    --tile--font-size-large: 1.25em;
+
+    --tile--line-height: 1.2;
+
+    --tile--font-weight: 300;
+    --tile--font-weight-strong: 400;
+    --tile--font-weight-heavy: 700;
+
+    --tile--spacing-025: 0.25em;
+    --tile--spacing-050: 0.5em;
+    --tile--spacing-075: 0.75em;
+    --tile--spacing-100: 1em;
+    --tile--spacing-150: 1.5em;
+
+    --tile--border-style: solid;
+    --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+    --tile--border-width: 1px;
+    --tile--border-radius: 0.25em;
+    --tile--border-radius-round: 1em;
+
+    --tile--color-light: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
+    --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
+    --tile--color-placeholder: var(--tile--color-label);
+    --tile--color-enabled: var(--tile--color-accent-dark);
+    --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+    --tile--color-invalid: var(--tile--color-accent-lite);
+
+    --tile--color-hover: color-mix(in oklab, var(--tile--color-accent-lite) 85%, var(--tile--color));
+    --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-dark) 70%, var(--tile--background-color));
+
+    --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
+    --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
+
+    --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
+    --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-invalid);
+
+}

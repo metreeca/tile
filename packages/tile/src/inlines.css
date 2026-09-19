@@ -24,16 +24,16 @@ a, a:visited {
     cursor: pointer;
 
     &:focus-visible {
-        text-decoration: underline !important;
+        text-decoration: underline;
     }
 
     &:hover {
-        color: var(--tile--color-hover) !important;
+        color: var(--tile--color-hover);
     }
 
     &:active {
-        text-decoration: underline !important;
-        color: var(--tile--color-focus) !important;
+        text-decoration: underline;
+        color: var(--tile--color-focus);
     }
 
 }
@@ -43,6 +43,6 @@ em {
 }
 
 small {
-    font-size: 90%;
+    font-size: var(--tile--font-size-small);
     color: var(--tile--color-label);
 }

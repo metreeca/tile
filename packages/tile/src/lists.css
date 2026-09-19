@@ -16,10 +16,10 @@
 
 ul, ol {
 
-    padding-left: 1.5em;
+    padding-left: var(--tile--spacing-150);
 
     &:not(:last-child) {
-        margin-bottom: 1em;
+        margin-bottom: var(--tile--spacing-100);
     }
 
     & > li {
@@ -29,14 +29,14 @@ ul, ol {
         }
 
         & > ul {
-            margin-top: 0.25em;
-            margin-bottom: 0.5em;
+            margin-top: var(--tile--spacing-025);
+            margin-bottom: var(--tile--spacing-050);
         }
 
     }
 
     & > li + li {
-        margin-top: 0.25em;
+        margin-top: var(--tile--spacing-025);
     }
 
 }
@@ -51,11 +51,11 @@ ol {
 
 dl {
 
-    margin-bottom: 1em;
+    margin-bottom: var(--tile--spacing-100);
 
     & > dt {
 
-        margin-bottom: 0.5em;
+        margin-bottom: var(--tile--spacing-050);
 
         & > p:only-child {
             margin: 0;
@@ -66,7 +66,7 @@ dl {
     & > dd {
 
         &:not(:last-child) {
-            margin-bottom: 0.75em;
+            margin-bottom: var(--tile--spacing-075);
         }
 
     }

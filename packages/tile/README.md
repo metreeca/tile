@@ -8,6 +8,9 @@ An app includes the stylesheet and gets a coherent look across every Tile compon
 type, spacing and focus affordances, and base rules applying them to plain document markup. Redefining a token in a
 later rule restyles everything that reads it, with no component change.
 
+The palette stands on four colour anchors, every other colour deriving from them, so retuning the anchors carries the
+whole interface along and the default look follows the platform colour scheme, light or dark, on its own.
+
 The dependency runs one way and stays optional: components carry only the structural styling they need to work, so an
 app that leaves this package out still gets a usable, plainly structured interface. What both sides honour is the token
 naming contract, published here as typed constants.
@@ -25,11 +28,14 @@ npm install @metreeca/tile
 
 # Usage
 
-Include the stylesheet once, at the entry point of the app:
+Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
 
 ```typescript
 import "@metreeca/tile/index.css";
 ```
+
+An app assembling its own HTML links it in the document head instead: the stylesheet has to reach the document before
+it is painted, or the first frame shows the unstyled markup.
 
 Override any token in a later rule to restyle the interface:
 
@@ -38,6 +44,18 @@ Override any token in a later rule to restyle the interface:
     --tile--color-accent-lite: #06C;
     --tile--font-family: Inter, sans-serif;
 }
+```
+
+Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-accent-lite` and
+`--tile--color-accent-dark`: labels, borders, stripes, focus rings and hover states derive from them and follow. An
+override the browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning a
+colour scheme sets `color-scheme` on the root element as usual.
+
+A component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
+fallback in the reference:
+
+```css
+color: var(--tile--color-accent-lite, #C30);
 ```
 
 Restyle a single subtree instead by assigning the tokens inline, naming them through the published contract rather than

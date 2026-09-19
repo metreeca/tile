@@ -17,17 +17,15 @@
 body {
     font-family: var(--tile--font-family);
     font-size: var(--tile--font-size);
-    font-weight: 300;
+    font-weight: var(--tile--font-weight);
     line-height: var(--tile--line-height);
-    color: var(--tile--color);
-    background-color: var(--tile--background-color);
 }
 
 dt, a, strong {
-    font-weight: 400;
+    font-weight: var(--tile--font-weight-strong);
 }
 
 code {
-    font-size: 90%;
+    font-size: var(--tile--font-size-small);
     font-family: var(--tile--font-family-mono);
 }

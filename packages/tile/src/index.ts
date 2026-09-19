@@ -21,13 +21,14 @@
  * that styling; the same names assign a token inline, restyling a single subtree through a style declaration any
  * rendering layer accepts. The values behind them are supplied by the companion stylesheet.
  *
- * An app that includes the stylesheet gets the default look; one that redefines the tokens in a later rule gets its
- * own, with no component change. Components name tokens through this contract rather than through literal strings, so
- * a renamed token breaks the build instead of silently losing its styling.
+ * An app that includes the stylesheet gets the default look, light or dark according to the platform colour scheme;
+ * one that redefines the tokens in a later rule gets its own, with no component change. Components name tokens through
+ * this contract rather than through literal strings, so a renamed token breaks the build instead of silently losing
+ * its styling.
  *
  * @example
  *
- * Include the stylesheet once, at the entry point of the app:
+ * Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
  *
  * ```typescript
  * import "@metreeca/tile/index.css";
@@ -48,6 +49,30 @@
  * <section style={css({ [tile.colorAccentLite]: "#06C" })}>
  * ```
  *
+ * @remarks
+ *
+ * **Colour schemes** — the stylesheet retunes itself for a dark platform colour scheme by adjusting four anchors,
+ * `--tile--color`, `--tile--background-color`, `--tile--color-accent-lite` and `--tile--color-accent-dark`: every
+ * other colour is derived from them, so an app retheming the anchors carries the rest of the palette with it, and one
+ * pinning a scheme sets `color-scheme` on the root element as usual.
+ *
+ * **Missing and malformed values** — a token carrying a literal is registered with the type it takes and the value it
+ * falls back to, so an override the browser cannot parse leaves the interface on the default rather than unstyled. A
+ * component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
+ * fallback in the reference: `var(--tile--color-accent-lite, #C30)`.
+ *
+ * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
+ * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
+ * links it in the document head.
+ *
+ * **Values outside the cascade** — a consumer painting where CSS doesn't reach, on a canvas, in an SVG attribute or on
+ * a print target, takes the value a token resolves to for the element it applies to, rather than a copy of the
+ * default, and so keeps whatever the app overrode and whichever colour scheme is in force:
+ *
+ * ```typescript
+ * getComputedStyle(element).getPropertyValue(tile.colorAccentLite)
+ * ```
+ *
  * @module index
  */
 
@@ -64,12 +89,28 @@ export const tile = {
 	fontFamilyMono: "--tile--font-family-mono",
 
 	fontSize: "--tile--font-size",
+	fontSizeSmall: "--tile--font-size-small",
+	fontSizeLarge: "--tile--font-size-large",
+
 	lineHeight: "--tile--line-height",
 
-	color: "--tile--color",
+	fontWeight: "--tile--font-weight",
+	fontWeightStrong: "--tile--font-weight-strong",
+	fontWeightHeavy: "--tile--font-weight-heavy",
 
-	colorAccentLite: "--tile--color-accent-lite",
-	colorAccentDark: "--tile--color-accent-dark",
+	spacing025: "--tile--spacing-025",
+	spacing050: "--tile--spacing-050",
+	spacing075: "--tile--spacing-075",
+	spacing100: "--tile--spacing-100",
+	spacing150: "--tile--spacing-150",
+
+	borderStyle: "--tile--border-style",
+	borderColor: "--tile--border-color",
+	borderWidth: "--tile--border-width",
+	borderRadius: "--tile--border-radius",
+	borderRadiusRound: "--tile--border-radius-round",
+
+	color: "--tile--color",
 
 	colorLight: "--tile--color-light",
 	colorLabel: "--tile--color-label",
@@ -81,13 +122,12 @@ export const tile = {
 	colorHover: "--tile--color-hover",
 	colorFocus: "--tile--color-focus",
 
+	colorAccentLite: "--tile--color-accent-lite",
+	colorAccentDark: "--tile--color-accent-dark",
+
 	backgroundColor: "--tile--background-color",
 	backgroundColorEdit: "--tile--background-color-edit",
 	backgroundColorStripe: "--tile--background-color-stripe",
-
-	borderStyle: "--tile--border-style",
-	borderColor: "--tile--border-color",
-	borderWidth: "--tile--border-width",
 
 	boxShadowFocus: "--tile--box-shadow-focus",
 	outlineInvalid: "--tile--outline-invalid"

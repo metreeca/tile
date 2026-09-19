@@ -14,41 +14,213 @@
  * limitations under the License.
  */
 
-/* the font families name generic stacks: an app supplying its own faces overrides these tokens and loads them itself */
+/* every token is registered here and named by the contract published in index.ts: adding or renaming one means
+   revising both, while the value it takes is given by index.css, alongside the other page defaults */
 
-:root {
+/* an anchored token carries the type it takes and the default it falls back on, so an override the browser cannot
+   parse leaves the interface styled rather than unstyled; a derived token stands on other tokens and carries neither,
+   as does one stated in a relative unit: a registered type requires a default resolved without context, which em,
+   rem and percentage values are not */
 
-    --tile--font-family: Helvetica, Arial, sans-serif;
-    --tile--font-family-heading: Helvetica, Arial, sans-serif;
-    --tile--font-family-mono: Courier, monospace;
+@property --tile--font-family {
+    syntax: "*";
+    inherits: true;
+    initial-value: Helvetica, Arial, sans-serif;
+}
 
-    --tile--font-size: 14pt;
-    --tile--line-height: 1.2;
+@property --tile--font-family-heading {
+    syntax: "*";
+    inherits: true;
+    initial-value: Helvetica, Arial, sans-serif;
+}
 
-    --tile--color: #000;
+@property --tile--font-family-mono {
+    syntax: "*";
+    inherits: true;
+    initial-value: Courier, monospace;
+}
 
-    --tile--color-accent-lite: #D60;
-    --tile--color-accent-dark: #345;
+@property --tile--font-size {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.125rem;
+}
 
-    --tile--color-light: #BBB;
-    --tile--color-label: #AAA;
-    --tile--color-placeholder: #AAA;
-    --tile--color-enabled: #567;
-    --tile--color-disabled: #CCC;
-    --tile--color-invalid: #D60;
+@property --tile--font-size-small {
+    syntax: "*";
+    inherits: true;
+    initial-value: 90%;
+}
 
-    --tile--color-hover: #B50;
-    --tile--color-focus: #789;
+@property --tile--font-size-large {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.25em;
+}
 
-    --tile--background-color: #FFF;
-    --tile--background-color-edit: #FAFAFA;
-    --tile--background-color-stripe: #F4F4F4;
+@property --tile--line-height {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1.2;
+}
 
-    --tile--border-style: solid;
-    --tile--border-color: #CCC;
-    --tile--border-width: 1px;
+@property --tile--font-weight {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 300;
+}
 
-    --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
-    --tile--outline-invalid: solid 1px var(--tile--color-invalid);
+@property --tile--font-weight-strong {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 400;
+}
 
+@property --tile--font-weight-heavy {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 700;
+}
+
+@property --tile--spacing-025 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.25em;
+}
+
+@property --tile--spacing-050 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.5em;
+}
+
+@property --tile--spacing-075 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.75em;
+}
+
+@property --tile--spacing-100 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+@property --tile--spacing-150 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.5em;
+}
+
+@property --tile--border-style {
+    syntax: "*";
+    inherits: true;
+    initial-value: solid;
+}
+
+@property --tile--border-color {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--border-width {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 1px;
+}
+
+@property --tile--border-radius {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.25em;
+}
+
+@property --tile--border-radius-round {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+@property --tile--color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #000;
+}
+
+@property --tile--color-light {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-label {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-placeholder {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-enabled {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-disabled {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-invalid {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-hover {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-focus {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-accent-lite {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #C30;
+}
+
+@property --tile--color-accent-dark {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #567;
+}
+
+@property --tile--background-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #FFF;
+}
+
+@property --tile--background-color-edit {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-stripe {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--box-shadow-focus {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--outline-invalid {
+    syntax: "*";
+    inherits: true;
 }

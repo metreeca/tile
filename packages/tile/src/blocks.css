@@ -16,7 +16,7 @@
 
 p {
 
-    margin-bottom: 1em;
+    margin-bottom: var(--tile--spacing-100);
 
     &:has(img:only-child) {
         margin: 0;
@@ -26,19 +26,19 @@ p {
 
 blockquote {
 
-    padding: 0.5em;
-    margin-bottom: 1em;
+    padding: var(--tile--spacing-050);
+    margin-bottom: var(--tile--spacing-100);
     background-color: var(--tile--background-color-stripe);
 
     & > p {
-        margin-bottom: 0.1em;
+        margin-bottom: 0.1em; /* an optical nudge between quoted paragraphs, below the spacing scale */
     }
 
 }
 
 hr {
 
-    margin: 1.5em 0;
+    margin: var(--tile--spacing-150) 0;
     border-bottom-style: var(--tile--border-style);
     border-bottom-width: var(--tile--border-width);
     border-bottom-color: var(--tile--border-color);

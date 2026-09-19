@@ -18,7 +18,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "types": [],
+    "types": [
+      "vite/client"
+    ],
     "customConditions": [
       "@metreeca/source"
     ]

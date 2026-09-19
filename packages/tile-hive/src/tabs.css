@@ -24,13 +24,11 @@ tile-tabs {
 
     padding-bottom: 5ex;
 
-    &
-    > * {
+    & > * {
 
         display: contents;
 
-        &
-        > :first-child {
+        & > :first-child {
             padding-right: 1em;
             text-align: right;
             font-weight: 700;
@@ -38,8 +36,7 @@ tile-tabs {
             color: #888;
         }
 
-        &
-        > :last-child {
+        & > :last-child {
             padding-left: 1em;
             border-left-style: solid;
         }

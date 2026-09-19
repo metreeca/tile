@@ -26,11 +26,20 @@
     "directory": "packages/tile-hive"
   },
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "exports": {
-    ".": {
-      "@metreeca/source": "./src/index.ts",
-      "default": "./dist/index.js"
+    "./*": {
+      "@metreeca/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
+      "default": "./dist/*.js"
+    },
+    "./*.css": {
+      "@metreeca/source": "./src/*.css",
+      "default": "./dist/*.css"
     }
   },
   "files": [
@@ -43,12 +52,16 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/*.css dist/",
     "check": "npx vitest --typecheck --passWithNoTests run"
+  },
+  "dependencies": {
+    "@metreeca/tile-skin": "^0.1.0"
   },
   "devDependencies": {
     "preact": "^10.29.8",
     "typescript": "^7.0.2",
+    "vite": "^8.3.0",
     "vitest": "^5.0.1"
   },
   "peerDependencies": {

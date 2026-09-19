@@ -31,6 +31,10 @@
     ".": {
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
+    },
+    "./*": {
+      "@metreeca/source": "./src/*.ts",
+      "default": "./dist/*.js"
     }
   },
   "files": [

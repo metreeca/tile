@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-import { createElement, ReactNode } from "react";
+import { type ComponentChildren, createElement } from "preact";
 import "./tabs.css";
 
 
+/**
+ * Creates a tabbed layout panel.
+ *
+ * Presents each section under its own label, in the order the sections are given.
+ */
 export function TileTabs({
 
 	sections
 
 }: {
 
-	sections: { [label: string]: ReactNode }
+	sections: { [label: string]: ComponentChildren }
 
 }) {
 
@@ -36,4 +41,5 @@ export function TileTabs({
 
 		</section>
 	));
+
 }

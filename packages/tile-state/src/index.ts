@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-// Headless query state components
+// common query patterns
+// can be used as headless components

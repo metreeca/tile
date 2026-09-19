@@ -73,6 +73,28 @@ Every package states its summary in four places, which **MUST** be kept aligned:
 
 Revising one **ALWAYS** means revising the other three.
 
+# Component State
+
+A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
+`@metreeca/tile-data/model`, reading data and transitions straight off the model:
+
+```tsx
+const { labels, active, select } = useModel(() => createModel({ labels: Object.keys(sections) }));
+```
+
+- A transition renders the component again on its own, so a handler just calls it; a transition changing nothing
+  renders nothing, and a zero-argument one is passed straight as a handler.
+- A transition starts from the state the render read and notifies asynchronously: two calls in one handler land where
+  one does, and the data read alongside keeps the earlier value until the next render.
+- The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
+  **NEVER** reaches it.
+- Behaviour outgrowing a single widget moves to `tile-less` as a state object of its own, leaving the component only
+  what it renders.
+
+A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
+imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported
+component, which the module path already places: `Tabs` in `tabs.tsx`, rendering `<tile-tabs>` styled by `tabs.css`.
+
 # Shared Utilities
 
 Reach for `@metreeca/core` before writing a helper: its `state`, `strings`, `arrays` and `structures` entry points

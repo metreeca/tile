@@ -14,36 +14,26 @@
  * limitations under the License.
  */
 
-tile-tabs {
+import { createElement, ReactNode } from "react";
+import "./tabs.css";
 
-    display: grid;
 
-    grid-template-columns: min-content minmax(min-content, 1fr);
-    grid-template-rows: min-content;
-    grid-row-gap: 3ex;
+export function TileTabs({
 
-    padding-bottom: 5ex;
+	sections
 
-&
-> * {
+}: {
 
-    display: contents;
+	sections: { [label: string]: ReactNode }
 
-&
-> :first-child {
-    padding-right: 1em;
-    text-align: right;
-    font-weight: 700;
-    font-size: 90%;
-    color: #888;
-}
+}) {
 
-&
-> :last-child {
-    padding-left: 1em;
-    border-left-style: solid;
-}
+	return createElement("tile-tabs", {}, Object.entries(sections).map(([label, content]) =>
+		<section key={label}>
 
-}
+			<label>{label}</label>
+			<div>{content}</div>
 
+		</section>
+	));
 }

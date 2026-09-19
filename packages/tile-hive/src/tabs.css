@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-2025 Metreeca srl
+ * Copyright © 2023-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,36 @@
  * limitations under the License.
  */
 
-import * as React from "react";
-import { createElement, ReactNode } from "react";
-import "./#tabs.css";
+tile-tabs {
 
+    display: grid;
 
-export function TileTabs({
+    grid-template-columns: min-content minmax(min-content, 1fr);
+    grid-template-rows: min-content;
+    grid-row-gap: 3ex;
 
-	sections
+    padding-bottom: 5ex;
 
-}: {
+    &
+    > * {
 
-	sections: { [label: string]: ReactNode }
+        display: contents;
 
-}) {
+        &
+        > :first-child {
+            padding-right: 1em;
+            text-align: right;
+            font-weight: 700;
+            font-size: 90%;
+            color: #888;
+        }
 
-	return createElement("tile-tabs", {}, Object.entries(sections).map(([label, content]) =>
-		<section key={label}>
+        &
+        > :last-child {
+            padding-left: 1em;
+            border-left-style: solid;
+        }
 
-			<label>{label}</label>
-			<div>{content}</div>
+    }
 
-		</section>
-	));
 }

@@ -16,4 +16,5 @@
 
 npx link \
   ../Core \
-  ../HTTP
+  ../HTTP \
+  ../Keep

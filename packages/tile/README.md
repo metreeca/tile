@@ -55,7 +55,7 @@ A component styled against a token it cannot count on, because the stylesheet ma
 fallback in the reference:
 
 ```css
-color: var(--tile--color-accent-lite, #C30);
+color: var(--tile--color-accent-lite, #D60);
 ```
 
 Restyle a single subtree instead by assigning the tokens inline, naming them through the published contract rather than

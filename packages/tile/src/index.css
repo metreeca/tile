@@ -70,14 +70,18 @@
     --tile--border-radius: 0.25em;
     --tile--border-radius-round: 1em;
 
+    /* the anchors are the brand colours, carried at full strength by a mark or a fill; a role painting text takes
+       them down in lightness instead, keeping the chroma that a mix towards the page would wash out, far enough for
+       the pair to hold AA contrast in either scheme */
+
     --tile--color-light: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
     --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
     --tile--color-placeholder: var(--tile--color-label);
-    --tile--color-enabled: var(--tile--color-accent-dark);
+    --tile--color-enabled: color-mix(in oklab, var(--tile--color-accent-dark) 80%, var(--tile--background-color));
     --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
-    --tile--color-invalid: var(--tile--color-accent-lite);
+    --tile--color-invalid: oklch(from var(--tile--color-accent-lite) calc(l - 0.1) calc(c * 1.15) h);
 
-    --tile--color-hover: color-mix(in oklab, var(--tile--color-accent-lite) 85%, var(--tile--color));
+    --tile--color-hover: oklch(from var(--tile--color-accent-lite) calc(l - 0.1) c h);
     --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-dark) 70%, var(--tile--background-color));
 
     --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));

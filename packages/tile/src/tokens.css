@@ -190,13 +190,13 @@
 @property --tile--color-accent-lite {
     syntax: "<color>";
     inherits: true;
-    initial-value: #C30;
+    initial-value: #D60;
 }
 
 @property --tile--color-accent-dark {
     syntax: "<color>";
     inherits: true;
-    initial-value: #567;
+    initial-value: #345;
 }
 
 @property --tile--background-color {

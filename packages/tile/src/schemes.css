@@ -25,8 +25,8 @@
         --tile--color: #000;
         --tile--background-color: #FFF;
 
-        --tile--color-accent-lite: #C30;
-        --tile--color-accent-dark: #567;
+        --tile--color-accent-lite: #D60;
+        --tile--color-accent-dark: #345;
 
     }
 
@@ -39,7 +39,7 @@
         --tile--color: #EEE;
         --tile--background-color: #111;
 
-        --tile--color-accent-lite: #F60;
+        --tile--color-accent-lite: #F80;
         --tile--color-accent-dark: #9AB;
 
     }

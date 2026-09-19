@@ -59,7 +59,7 @@
  * **Missing and malformed values** — a token carrying a literal is registered with the type it takes and the value it
  * falls back to, so an override the browser cannot parse leaves the interface on the default rather than unstyled. A
  * component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
- * fallback in the reference: `var(--tile--color-accent-lite, #C30)`.
+ * fallback in the reference: `var(--tile--color-accent-lite, #D60)`.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML

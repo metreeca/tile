@@ -18,9 +18,9 @@
  * Metadata and element wiring.
  *
  * Supplies what an interface needs wherever it is assembled and no single layer should own: what the app states about
- * itself, the defaults its controls observe, and the attribute values and event handlers a component builds out of
- * state. Nothing here renders or holds state, so reaching for it commits a consumer neither to a rendering layer nor
- * to a store.
+ * itself, the defaults its controls observe, the element a page is rendered into, and the attribute values and event
+ * handlers a component builds out of state. Nothing here renders or holds state, so reaching for it commits a consumer
+ * neither to a rendering layer nor to a store.
  *
  * Importing this module reads the document, so it belongs to a browser: a consumer without one, a test or a server
  * render, has to supply a DOM before the import runs.
@@ -98,6 +98,22 @@ export const app = immutable({
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Supplies the custom element a page is rendered into.
+ *
+ * Hands out a stable root for a rendering call: the same element answers every call naming it, so that repeated
+ * calls, as issued on hot reload, replace the page rather than adding another copy of it.
+ *
+ * @param name The name of the hosting custom element, hyphenated as the DOM requires
+ *
+ * @returns The element named `name`, appended to the document body if the document doesn't already carry one
+ */
+export function host(name: string): Element {
+
+	return document.querySelector(name) ?? document.body.appendChild(document.createElement(name));
+
+}
 
 /**
  * Names the classes in force.

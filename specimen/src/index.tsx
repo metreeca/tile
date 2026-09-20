@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { app } from "@metreeca/tile";
+import { app, host } from "@metreeca/tile";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
@@ -305,9 +305,7 @@ render((
 
 	</main>
 
-), document.body.appendChild(document.createElement(
-	"tile-specimen"
-)));
+), host("tile-specimen"));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

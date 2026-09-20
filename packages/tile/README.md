@@ -4,9 +4,9 @@
 
 Metadata and element wiring for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer reaches what the app states about itself, the defaults its controls observe, and the attribute values and
-event handlers a component builds out of state: everything an interface needs wherever it is assembled and no single
-layer should own.
+A consumer reaches what the app states about itself, the defaults its controls observe, the element a page is rendered
+into, and the attribute values and event handlers a component builds out of state: everything an interface needs
+wherever it is assembled and no single layer should own.
 
 Nothing here decides what an interface shows or how it is wired: layouts and controls come from the binding packages,
 state from the headless ones.

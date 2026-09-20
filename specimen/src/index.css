@@ -33,11 +33,9 @@ main {
 }
 
 
-/* The app icon sits on the heading line, at the height of the text it precedes. */
+/* The app mark sits on the heading line, set off from the name it precedes. */
 
-h1 > img {
-    width: auto;
-    height: 1em;
+h1 > tile-logo {
     margin-right: var(--tile--spacing-050);
 }
 

@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-import { app } from "@metreeca/view";
-import { createElement } from "react";
-import "./logo.css";
-
-
-/**
- * Creates a component displaying the app {@link icon}.
- *
- * @constructor
+/*
+ * A logo rides with the text it sits in, so a heading or a toolbar carrying one needs no measure of its own. The mark
+ * is fitted to a square box, which takes an image of any proportions without cropping it.
  */
-export function TileLogo() {
 
-	return createElement("tile-logo", {
+tile-logo {
 
-		title: app.name,
+    display: inline-block;
 
-		style: { backgroundImage: `url(${(app.icon)})` }
+    width: var(--tile--scaling-100);
+    aspect-ratio: 1;
 
-	});
+    & > img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 
 }

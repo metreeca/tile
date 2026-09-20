@@ -19,6 +19,7 @@ import { app, host } from "@metreeca/tile";
 import { Fault } from "@metreeca/tile-cell/fault";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
+import { Logo } from "@metreeca/tile-cell/logo";
 import { Note } from "@metreeca/tile-cell/note";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
@@ -287,7 +288,7 @@ render((
 
 	<main>
 
-		<h1>{app.icon && <img alt="" src={app.icon}/>}{app.name}</h1>
+		<h1><Logo/>{app.name}</h1>
 
 		<p>{app.info} This page is both its documentation and its proof, styled by nothing but the stylesheet it
 			describes.</p>

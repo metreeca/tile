@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Rank option facets by decreasing count ahead of increasing value in `useOptions()`: the two criteria were submitted
+  as bare directions carrying no relative priority, leaving the order the store applied undefined.
 - Ship the compiled package: publishing packed the repository root, delivering raw TypeScript sources, demo, docs and
   workflow files instead of the build output.
 - Limit publishing to `@metreeca/tile`: the release scripts also emitted `@metreeca/core`, `@metreeca/data`,

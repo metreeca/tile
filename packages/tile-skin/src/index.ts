@@ -17,9 +17,10 @@
 /**
  * Design system.
  *
- * Names the custom properties an app may override to restyle an interface, and the ones a component reads to inherit
- * that styling; the same names assign a token inline, restyling a single subtree through a style declaration any
- * rendering layer accepts. The values behind them are supplied by the companion stylesheet.
+ * Names the tokens an app may override to restyle an interface, and a component reads to inherit that styling, and
+ * gives the custom property each one resolves to, for a `var()` reference or a value taken outside the cascade.
+ * Assigning tokens by name restyles a single subtree instead, through a style declaration any rendering layer accepts.
+ * The values behind them are supplied by the companion stylesheet.
  *
  * An app that includes the stylesheet gets a brand-agnostic default look, light or dark according to the platform
  * colour scheme; one that redefines the tokens gets its own, with no component change. Components name tokens through
@@ -46,7 +47,7 @@
  * Assign the tokens inline to restyle a single subtree instead:
  *
  * ```tsx
- * <section style={css({ [tile.colorAccentStrong]: "#D60" })}>
+ * <section style={css({ colorAccentStrong: "#D60" })}>
  * ```
  *
  * @remarks
@@ -91,9 +92,10 @@
 
 
 /**
- * Token names.
+ * The custom property behind every design system token.
  *
- * Maps each token to the custom property carrying its value, for use in a `var()` reference or a style declaration.
+ * Resolves each {@link Token token name} to the {@link Property custom property} carrying its value, for a `var()`
+ * reference or a value taken outside the cascade; overriding a token for a subtree goes through {@link css} instead.
  */
 export const tile = {
 
@@ -161,9 +163,19 @@ export const tile = {
 export type Style = Readonly<Record<string, string>>
 
 /**
- * The custom property name of a design system token.
+ * The custom property carrying the value of a design system token.
+ *
+ * Addresses a token wherever CSS reads one, in a `var()` reference or a computed-style read, as given by {@link tile}.
  */
-export type Token = typeof tile[keyof typeof tile]
+export type Property = typeof tile[Token]
+
+
+/**
+ * The name of a design system token.
+ *
+ * Addresses a token in a {@link css} call, where a {@link Property custom property} is rejected.
+ */
+export type Token = keyof typeof tile
 
 /**
  * The value a design system token is assigned.
@@ -171,7 +183,7 @@ export type Token = typeof tile[keyof typeof tile]
  * A number or a boolean is written as its text form, sparing the caller a conversion where a token takes a scalar;
  * `undefined` assigns nothing, so a token is left at whatever the cascade already gives it.
  */
-export type Value = | undefined | boolean | number | string
+export type Value = undefined | boolean | number | string
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,10 +191,11 @@ export type Value = | undefined | boolean | number | string
 /**
  * Overrides design system tokens for a subtree.
  *
- * Assigns each token the value given for it, restyling the elements that read it without touching the ones that don't:
+ * Assigns each named token the value given for it, restyling the elements that read it without touching the ones that
+ * don't:
  *
  * ```tsx
- * <section style={css({ [tile.colorAccentStrong]: "#D60" })}>
+ * <section style={css({ colorAccentStrong: "#D60" })}>
  * ```
  *
  * Numbers and booleans are converted to their CSS text form, so a scalar token is assigned without restating it as a
@@ -190,14 +203,16 @@ export type Value = | undefined | boolean | number | string
  *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *
- * @returns An immutable {@link Style style declaration} assigning each token given a defined value in `tokens` its
- * text form
+ * @returns An immutable {@link Style style declaration} assigning the {@link Property custom property} of each token
+ * given a defined value in `tokens` its text form
  */
 export function css(tokens: Readonly<Partial<Record<Token, Value>>>): Style {
 
+	const properties: Readonly<Record<string, Property>> = tile; // keyed by string, matching the entries below
+
 	return Object.fromEntries(Object.entries(tokens)
-		.filter(([, value]) => value !== undefined)
-		.map(([token, value]) => [token, String(value)])
+		.filter(([ , value ]) => value !== undefined)
+		.map(([ token, value ]) => [ properties[token], String(value) ])
 	);
 
 }

@@ -16,16 +16,16 @@
 
 import { app } from "@metreeca/tile";
 import { Tabs } from "@metreeca/tile-hive/tabs";
-import { css, tile, type Token } from "@metreeca/tile-skin";
+import { css, type Property, tile } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
 import { type ComponentChild, render } from "preact";
 import "./index.css";
 
 
 /**
- * A token and what it is responsible for.
+ * The custom property of a token and what the token is responsible for.
  */
-type Entry = readonly [Token, string]
+type Entry = readonly [Property, string]
 
 
 const anchors: ReadonlyArray<Entry> = [
@@ -292,12 +292,12 @@ function Theming() {
 		<p>Assigning the anchors inline restyles a subtree, and everything derived from them follows, with no component
 			change:</p>
 
-		<pre><code>{`<section style={css({ [tile.colorAccentStrong]: "#06C" })}>`}</code></pre>
+		<pre><code>{`<section style={css({ colorAccentStrong: "#06C" })}>`}</code></pre>
 
 		<div class="themed" style={css({
 
-			[tile.colorAccentSubtle]: "#264",
-			[tile.colorAccentStrong]: "#06C"
+			colorAccentSubtle: "#264",
+			colorAccentStrong: "#06C"
 
 		})}>
 
@@ -320,7 +320,7 @@ function Theming() {
 function Samples({ entries, sample }: {
 
 	readonly entries: ReadonlyArray<Entry>;
-	readonly sample: (token: Token) => ComponentChild;
+	readonly sample: (property: Property) => ComponentChild;
 
 }) {
 

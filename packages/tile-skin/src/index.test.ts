@@ -57,12 +57,12 @@ describe("tile", () => {
 
 describe("css", () => {
 
-	it("assigns each token the value given for it", () => {
+	it("assigns the custom property of each token the value given for it", () => {
 
 		expect(css({
 
-			[tile.colorAccentStrong]: "#06C",
-			[tile.fontFamily]: "Inter, sans-serif"
+			colorAccentStrong: "#06C",
+			fontFamily: "Inter, sans-serif"
 
 		})).toEqual({
 
@@ -77,8 +77,8 @@ describe("css", () => {
 
 		expect(css({
 
-			[tile.lineHeight]: 1.2,
-			[tile.borderStyle]: false
+			lineHeight: 1.2,
+			borderStyle: false
 
 		})).toEqual({
 
@@ -93,14 +93,21 @@ describe("css", () => {
 
 		expect(css({
 
-			[tile.colorAccentStrong]: "#06C",
-			[tile.colorAccentSubtle]: undefined
+			colorAccentStrong: "#06C",
+			colorAccentSubtle: undefined
 
 		})).toStrictEqual({
 
 			"--tile--color-accent-strong": "#06C"
 
 		});
+
+	});
+
+	it("assigns every declared token", () => {
+
+		expect(css(Object.fromEntries(Object.keys(tile).map(token => [ token, "value" ]))))
+			.toEqual(Object.fromEntries(Object.values(tile).map(property => [ property, "value" ])));
 
 	});
 

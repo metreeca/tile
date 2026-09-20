@@ -15,28 +15,46 @@
  */
 
 import { describe, expectTypeOf, it } from "vitest";
-import { css, type Style, tile } from "./index.js";
+import { css, type Property, type Style, tile, type Token } from "./index.js";
 
+
+describe("tile", () => {
+
+	it("maps every token name to a custom property", () => {
+
+		expectTypeOf<keyof typeof tile>().toEqualTypeOf<Token>();
+		expectTypeOf(tile.colorAccentStrong).toExtend<Property>();
+
+	});
+
+});
 
 describe("css", () => {
 
 	it("produces a style declaration", () => {
 
-		expectTypeOf(css({ [tile.color]: "#000" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ color: "#000" })).toEqualTypeOf<Style>();
 
 	});
 
 	it("accepts a numeric or boolean value", () => {
 
-		expectTypeOf(css({ [tile.lineHeight]: 1.2 })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ [tile.borderStyle]: false })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ lineHeight: 1.2 })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ borderStyle: false })).toEqualTypeOf<Style>();
 
 	});
 
 	it("rejects a name that is not a token", () => {
 
-		// @ts-expect-error unknown custom property
-		css({ "--tile--unknown": "#000" });
+		// @ts-expect-error unknown token name
+		css({ colorUnknown: "#000" });
+
+	});
+
+	it("rejects a custom property in place of a token name", () => {
+
+		// @ts-expect-error custom property rather than token name
+		css({ [tile.colorAccentStrong]: "#000" });
 
 	});
 

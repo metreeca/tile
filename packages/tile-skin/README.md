@@ -70,12 +70,22 @@ color: var(--tile--color-accent-strong, #06C);
 ```
 
 Restyle a single subtree instead by assigning the tokens inline, naming them through the published contract rather than
-as literal strings:
+as literal strings, so a renamed token breaks the build instead of silently losing its styling:
 
 ```tsx
-import { css, tile } from "@metreeca/tile-skin";
+import { css } from "@metreeca/tile-skin";
 
-<section style={css({ [tile.colorAccentStrong]: "#D60" })}>
+<section style={css({ colorAccentStrong: "#D60" })}>
+```
+
+Where CSS doesn't reach, on a canvas, in an SVG attribute or on a print target, take the value a token resolves to for
+the element it applies to, rather than a copy of the default, and keep whatever the app overrode along with the colour
+scheme in force:
+
+```typescript
+import { tile } from "@metreeca/tile-skin";
+
+getComputedStyle(element).getPropertyValue(tile.colorAccentStrong);
 ```
 
 # Support

@@ -27,7 +27,7 @@ import { keys } from "@metreeca/tile";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import { createModel, type Model } from "./tabs.core.js";
+import { createModel, type Model } from "./tabs.pure.js";
 import "./tabs.css";
 
 

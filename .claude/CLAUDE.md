@@ -105,13 +105,14 @@ const { labels, active, select } = useModel(() => createModel({ labels: Object.k
   one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
   **NEVER** reaches it.
-- Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a state object of its own, leaving the
-  component only what it renders: `Tabs` in `tabs.tsx`, its model in `tabs.core.ts`.
+- Behaviour outgrowing a single widget moves to a sibling `*.pure.ts` module as a headless component of its own, leaving
+  the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.pure.ts`.
 
-A `*.core.ts` module is **internal by name convention**: the widget beside it is its only consumer, and the `exports`
-wildcard that makes it importable is an artefact of the glob, **NEVER** a promise to whoever imports the package. It
-carries no entry in the package `README.md` and none in the reference a consumer is pointed at, and a change to it is
-not a change to the published API.
+A `*.pure.ts` module is a headless component in its own right, **NEVER** an internal appendix of the widget beside it:
+the suffix names what the module does without, which is a rendering layer, and **NEVER** claims anything about side
+effects. It carries **NO** dependency on Preact, is tested without a DOM, and is documented, summarised and versioned
+like any other published module, since a second binding reaches the same behaviour by importing it. Internals stay in
+a `*.core.ts` module, which the published surface never exposes.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

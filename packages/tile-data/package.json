@@ -47,7 +47,8 @@
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.10.0"
+    "@metreeca/core": "^0.10.0",
+    "@metreeca/http": "^0.2.0"
   },
   "devDependencies": {
     "preact": "^10.29.8",

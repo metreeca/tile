@@ -27,6 +27,9 @@
     "@metreeca/core": {
       "*": "https://metreeca.github.io/core/"
     },
+    "@metreeca/http": {
+      "*": "https://metreeca.github.io/http/"
+    },
     "preact": {
       "*": "https://preactjs.com/guide/v10/api-reference/"
     }

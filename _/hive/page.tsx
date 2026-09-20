@@ -74,7 +74,7 @@ export function TilePage({
 
 	const [active, setActive]=useState(false);
 	const [expanded, setExpanded]=useState<boolean>();
-	// const [error, setError]=useState<any>();
+	// !!! const [error, setError]=useState<any>();
 
 
 	useEffect(() => {

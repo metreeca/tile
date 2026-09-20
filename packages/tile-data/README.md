@@ -4,12 +4,13 @@
 
 Preact contexts and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer reaches the ambient state a subtree inherits and the environment it runs in: the store and the settings an
-app publishes once, and the accessors a component reads them back with. Nothing here renders, so what a component shows
-stays a separate decision from what it is wired to.
+A consumer reaches the ambient services a subtree inherits, the accessors a component reads them back with, and the
+adoption of a headless state object as the state of a component. Nothing here renders, so what a component shows stays
+a separate decision from what it is wired to.
 
-The store a provider publishes comes from [@metreeca/keep](https://github.com/metreeca/keep), so caching, batching and
-validation stay with the storage layer rather than being restated in the interface.
+The shared fetch client an app publishes once is a plain `fetch` function, so a deployment hands over one of its own:
+[@metreeca/http](https://github.com/metreeca/http) provides composable middlewares covering authentication, caching and
+uniform failure reporting, keeping those concerns with the transport layer rather than restating them in the interface.
 
 # Installation
 

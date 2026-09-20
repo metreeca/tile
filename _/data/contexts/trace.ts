@@ -15,7 +15,6 @@
  */
 
 import { Setter } from "@metreeca/data/hooks";
-import { Trace } from "mesh";
 import { createContext, createElement, ReactNode, useContext, useState } from "react";
 
 

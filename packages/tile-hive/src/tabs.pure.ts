@@ -15,9 +15,11 @@
  */
 
 /**
- * Tabbed panel state.
+ * Headless tabs.
  *
- * Tracks which of a fixed set of labelled sections is on show, independently of what renders it.
+ * Offers what a tab strip does without drawing one: a fixed set of labelled panels, the one on show, and the
+ * activation a reader performs on it. A rendering layer adopts them and supplies the markup, the styling and the
+ * gestures, so the same behaviour serves any layer.
  *
  * @module
  */
@@ -28,45 +30,48 @@ import { createState } from "@metreeca/core/state";
 
 
 /**
- * Tabbed panel state.
+ * Headless tabs.
  *
- * Tracks which of a fixed set of labelled sections is on show, exposing the activation a tab strip offers: a direct
+ * Holds a fixed set of labelled panels and the one on show, offering the activation a tab strip performs: a direct
  * choice and the step to either neighbour, wrapping at both ends as keyboard navigation expects.
+ *
+ * An activation yields new tabs and leaves these as they stand, so tabs read earlier keep their panels and their
+ * choice. One that changes nothing yields these tabs themselves, which a rendering layer takes as nothing to redraw.
  */
-export interface Model {
+export interface Tabs {
 
 	/**
-	 * The labels identifying the sections, in display order, trimmed, without duplicates and none of them blank.
+	 * The labels identifying the panels, in display order, as given, without duplicates and none of them blank.
 	 */
 	readonly labels: readonly string[];
 
 	/**
-	 * The label of the section on show, or `undefined` if there are no sections.
+	 * The label of the panel on show, or `undefined` if there are no panels.
 	 */
 	readonly active: Optional<string>;
 
 
 	/**
-	 * Activates a section.
+	 * Activates a panel.
 	 *
-	 * @param label The label of the section to show
+	 * @param label The label of the panel to show
 	 *
-	 * @returns A state showing `label`, or this state if `label` is unknown or already active
+	 * @returns Tabs showing `label`, or these tabs if `label` is unknown or already on show
 	 */
 	select(label: string): this;
 
 
 	/**
-	 * Activates the following section, wrapping from the last to the first.
+	 * Activates the following panel, wrapping from the last to the first.
 	 *
-	 * @returns A state showing the following section, or this state if there are fewer than two sections
+	 * @returns Tabs showing the following panel, or these tabs if they hold fewer than two panels
 	 */
 	next(): this;
 
 	/**
-	 * Activates the preceding section, wrapping from the first to the last.
+	 * Activates the preceding panel, wrapping from the first to the last.
 	 *
-	 * @returns A state showing the preceding section, or this state if there are fewer than two sections
+	 * @returns Tabs showing the preceding panel, or these tabs if they hold fewer than two panels
 	 */
 	back(): this;
 
@@ -76,43 +81,48 @@ export interface Model {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates a tabbed panel state.
+ * Creates headless tabs.
  *
- * @param options The state configuration
- * @param options.labels The labels identifying the sections, in display order; surrounding whitespace is removed, as
- * are duplicates, keeping the first occurrence; empty if omitted
- * @param options.active The label of the section on show, likewise trimmed; the first section if omitted
+ * @param options The tabs configuration
  *
- * @returns The tabbed panel state
+ * @returns Immutable {@link Tabs} holding the panels `labels` identifies and showing `active`
  *
  * @throws {@link !TypeError TypeError} If `labels` includes a blank label, or if `active` doesn't identify one of them
  */
-export function createModel({
+export function createTabs({
 
 	labels,
 	active
 
 }: {
 
+	/**
+	 * The labels identifying the panels, in display order, taken as given, duplicates removed, keeping the first
+	 * occurrence; empty if omitted.
+	 */
 	labels?: Some<string>
+
+	/**
+	 * The label of the panel to show; the first panel if omitted.
+	 */
 	active?: string
 
-} = {}): Model {
+} = {}): Tabs {
 
-	const sections = assert(unique(some(labels).map(label => label.trim())),
-		labels => labels.every(label => label.length > 0),
-		"unexpected blank section labels"
+	const panels = assert(unique(some(labels)),
+		labels => labels.every(label => label.trim().length > 0),
+		"unexpected blank panel labels"
 	);
 
-	const section = opt(active,
-		label => assert(label.trim(), label => sections.includes(label), `unknown section label <${label}>`),
-		sections[0]
+	const panel = opt(active,
+		label => assert(label, label => panels.includes(label), `unknown panel label <${label}>`),
+		panels[0]
 	);
 
-	return createState<Model>({
+	return createState<Tabs>({
 
-		labels: sections,
-		active: section,
+		labels: panels,
+		active: panel,
 
 
 		select(label: string) {

@@ -17,7 +17,7 @@
 /**
  * Tabbed panel.
  *
- * Presents a fixed set of labelled sections one at a time, under a strip of tabs the reader chooses from with the
+ * Presents a fixed set of labelled panels one at a time, under a strip of tabs the reader chooses from with the
  * pointer or with the keyboard.
  *
  * @module
@@ -27,37 +27,45 @@ import { keys } from "@metreeca/tile";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import { createModel, type Model } from "./tabs.pure.js";
+import { createTabs, type Tabs } from "./tabs.pure.js";
 import "./tabs.css";
 
 
 /**
  * Creates a tabbed layout panel.
  *
- * Presents the labels of the sections given, in order, and the content of the one currently chosen, starting from the
- * first. A section is chosen with the pointer or with the keyboard, the arrow keys stepping to either neighbour and
+ * Presents the labels of the panels given, in order, and the content of the one currently chosen, starting from the
+ * first. A panel is chosen with the pointer or with the keyboard, the arrow keys stepping to either neighbour and
  * wrapping at both ends, `Home` and `End` jumping to the first and to the last.
  *
- * Every section stays in the document while another is on show, so what it holds keeps its state throughout, at the
- * cost of being rendered whether or not it is visible. The sections are taken as they stand when the panel first
+ * Every panel stays in the document while another is on show, so what it holds keeps its state throughout, at the
+ * cost of being rendered whether or not it is visible. The panels are taken as they stand when the widget first
  * renders: a label added or removed later leaves the strip unchanged.
  *
- * @param options The panel configuration
- * @param options.name The accessible name of the tab strip, telling apart the strips a screen carries more than one
- * of; unnamed if omitted
- * @param options.sections The content of each section, keyed by the label activating it and presented in key order
+ * @param options The widget configuration
  *
  * @returns The tabbed panel
+ *
+ * @throws {@link !TypeError TypeError} If `panels` includes a blank label
+ *
+ * @see {@link https://www.w3.org/WAI/ARIA/apg/patterns/tabs/ ARIA Authoring Practices: Tabs Pattern}
  */
 export function Tabs({
 
 	name,
-	sections
+	panels
 
 }: {
 
+	/**
+	 * The accessible name of the tab strip, telling it apart where a screen carries more than one; unnamed if omitted.
+	 */
 	name?: string
-	sections: { [label: string]: ComponentChildren }
+
+	/**
+	 * The content of each panel, keyed by the label activating it and presented in key order.
+	 */
+	panels: Readonly<Record<string, ComponentChildren>>
 
 }) {
 
@@ -72,9 +80,9 @@ export function Tabs({
 		next,
 		back
 
-	} = useModel(() => createModel({
+	} = useModel(() => createTabs({
 
-		labels: Object.keys(sections)
+		labels: Object.keys(panels)
 
 	}));
 
@@ -113,7 +121,7 @@ export function Tabs({
 			>{label}</label>
 		)}</nav>,
 
-		// every section is rendered, so the tab controlling it always has something to point at
+		// every panel is rendered, so the tab controlling it always has something to point at
 
 		labels.map((label, index) =>
 
@@ -126,16 +134,16 @@ export function Tabs({
 				id={panel(index)}
 				key={label}
 				role="tabpanel"
-				tabIndex={0} /* a stop of its own, so a section carrying no control is still reached by key */
+				tabIndex={0} // a stop of its own, so a panel carrying no control is still reached by key
 
-			>{sections[label]}</div>
+			>{panels[label]}</div>
 		)
 	);
 
 
-	/* every tab is rendered, so the one a key moves to is already in the document and takes the focus at once */
+	// every tab is rendered, so the one a key moves to is already in the document and takes the focus at once
 
-	function moving(transition: () => Model) {
+	function moving(transition: () => Tabs) {
 		return () => {
 
 			const moved = transition().active;
@@ -146,7 +154,7 @@ export function Tabs({
 	}
 
 
-	/* ids are built on the position of a section, a label being free to carry the spaces an id reference cannot */
+	// ids are built on the position of a panel, a label being free to carry the spaces an id reference cannot
 
 	function tab(index: number) {
 		return `${id}-tab-${index}`;

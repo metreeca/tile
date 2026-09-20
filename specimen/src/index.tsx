@@ -98,7 +98,7 @@ render((
 		<p>{app.info} This page is both its documentation and its proof, styled by nothing but the stylesheet it
 			describes.</p>
 
-		<Tabs name={app.name} sections={{
+		<Tabs name={app.name} panels={{
 
 			Colours: <Colours/>,
 			Scales: <Scales/>,

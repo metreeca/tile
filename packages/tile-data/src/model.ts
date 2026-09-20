@@ -54,6 +54,9 @@
  * }
  * ```
  *
+ * A component exported under that same name claims it first, and a module importing both has room for only one: name
+ * the factory `createCounter` wherever a component already answers to `Counter`.
+ *
  * Then read data and transitions off the model: a transition is bound to the state it was read from, so a
  * zero-argument one goes straight to a handler, and any of them may be stored and passed on:
  *

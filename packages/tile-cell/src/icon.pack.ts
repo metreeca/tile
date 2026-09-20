@@ -64,4 +64,5 @@ export { HelpCircle as Help } from "lucide-preact";
 export { Lock as Unauthorized } from "lucide-preact";
 export { Ban as Forbidden } from "lucide-preact";
 export { HeartCrack as NotFound } from "lucide-preact";
+export { Ghost as Gone } from "lucide-preact";
 export { HeartPulse as Error } from "lucide-preact";

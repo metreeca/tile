@@ -109,6 +109,7 @@
  * | `Unauthorized`   | stands where the reader has yet to identify themselves       |
  * | `Forbidden`      | stands where they have, and are still not allowed in         |
  * | `NotFound`       | stands where the resource asked for does not exist           |
+ * | `Gone`           | stands where it existed and has since been withdrawn         |
  * | `Error`          | stands where the server failed to answer at all              |
  *
  * **Styling**

@@ -60,6 +60,8 @@
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "dependencies": {
+    "@metreeca/core": "^0.10.0",
+    "@metreeca/http": "^0.2.0",
     "@metreeca/tile-skin": "^0.1.0",
     "lucide-preact": "^1.47.0"
   },

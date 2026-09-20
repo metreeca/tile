@@ -1,0 +1,163 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A note takes the middle of whatever space it is handed and stacks what it carries down the centre of it: a head
+ * naming what has happened and, beneath it, as much of a body as the occasion calls for. The body is plain markup,
+ * which the design system styles as it styles the same markup anywhere else on the page; what this sheet adds is
+ * what the column asks of it, a paragraph reading as one of a stack, a section scrolling within the note rather than
+ * stretching it, and machine-readable detail set apart from the text above.
+ */
+
+tile-note {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: var(--tile--spacing-100);
+
+    margin: auto;
+
+    & > *:not(p) {
+        white-space: nowrap;
+    }
+
+    /*
+     * The head is the first thing the note renders, so it is reached by position: it is a button where the reader is
+     * asked something and a span otherwise, and a class would state what the order already does.
+     */
+
+    & > :first-child {
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        column-gap: var(--tile--spacing-050);
+
+        /*
+         * The mark is drawn against the text size of the box it sits in, which is the measure every glyph is drawn
+         * against, so a mark of the consumer's own grows with the headline exactly as a standard one does.
+         */
+
+        & > :first-child {
+            font-size: var(--tile--scaling-200);
+        }
+
+    }
+
+    /*
+     * A note asking something boxes its head, so that it reads as a control at rest: the colour the design system
+     * gives an enabled button arrives only once the pointer is on it. The box is the one thing saying that the head
+     * answers to a click, so it is drawn in the colour of an enabled control, which holds the 3:1 a boundary carrying
+     * that on its own owes, rather than in the border colour, which is mixed for a rule between things and holds 1.6:1.
+     */
+
+    &:has(> button) > :first-child {
+
+        padding: 0.75ex 0.75em;
+
+        border-style: var(--tile--border-style);
+        border-color: var(--tile--color-enabled);
+        border-radius: 0.5em;
+
+    }
+
+    /*
+     * A failure is told by the weight of the headline and by the colour of the mark together, neither standing on
+     * its own, with the mark itself naming the kind of notice besides.
+     */
+
+    &[warning] > :first-child {
+
+        font-weight: var(--tile--font-weight-heavy);
+
+        & > :first-child {
+            color: var(--tile--color-invalid);
+        }
+
+    }
+
+    /* A block of text is centred under the mark, broken where the wording breaks it. */
+
+    & > div {
+        text-align: center;
+        white-space: pre;
+    }
+
+    /*
+     * A body with more to it than the note has room for scrolls within the note rather than pushing the page down.
+     * The two edges are masked by sticky bars carrying a shadow the colour of the page, which ride at the top and the
+     * bottom of the scroll box and fade whatever is about to leave it.
+     */
+
+    & > section {
+
+        max-height: 7.5em;
+
+        padding: var(--tile--spacing-050) 0;
+
+        border-style: var(--tile--border-style) none;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        &::before,
+        &::after {
+
+            display: block;
+            content: '';
+
+            position: sticky;
+            z-index: 1;
+
+            box-shadow: 0 0 var(--tile--spacing-050) var(--tile--spacing-050) var(--tile--background-color);
+
+        }
+
+        &::before {
+            top: 0;
+            transform: translateY(calc(-1 * var(--tile--spacing-050)));
+        }
+
+        &::after {
+            bottom: 0;
+            transform: translateY(var(--tile--spacing-050));
+        }
+
+    }
+
+    /* Machine-readable detail is set apart from the text above and wrapped on its own lines. */
+
+    & > code {
+
+        max-width: 50em;
+
+        padding: var(--tile--spacing-100) 0;
+
+        border-style: var(--tile--border-style) none;
+        overflow: auto;
+
+        white-space: pre-wrap;
+        font-size: 0.75em;
+
+    }
+
+    /* A detail rendered on a condition leaves an empty box behind, which the column would otherwise space as a line. */
+
+    & > :empty {
+        display: none;
+    }
+
+}

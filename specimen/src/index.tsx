@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import { InternalServerError, NotFound } from "@metreeca/http";
 import { app, host } from "@metreeca/tile";
+import { Fault } from "@metreeca/tile-cell/fault";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
+import { Note } from "@metreeca/tile-cell/note";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
@@ -623,6 +626,39 @@ function Widgets() {
 		<p>A button showing a label is named by it; one standing on a glyph alone states its name itself, which the
 			type asks for. Whatever it carries, a button holds the smallest target a pointer is asked to hit, so a
 			glyph standing alone is reached as comfortably as a label.</p>
+
+		<h3>Notes</h3>
+
+		<p>A note fills an area a screen has nothing else to put in, marked with the glyph matching what it has to
+			say: an aside, a failure, or a question the reader answers by activating the head.</p>
+
+		<div class="notes">
+			<Note><div>Nothing to show here</div></Note>
+			<Note warning><div>{"The resource you're\nlooking for is missing"}</div></Note>
+			<Note text="Discard the changes?" onAccept={() => {}}/>
+		</div>
+
+		<p>A note given a headline sets the mark beside it; one given none sets the mark above what the body carries.
+			A failure is told by the weight of the head and the colour of the mark together.</p>
+
+		<h3>Faults</h3>
+
+		<p>A fault shows problem details as a note: a failure the reader can act on is told in their own terms and
+			left at that, while an unexpected one carries the explanation, what to do about it, and the data the
+			source sent along.</p>
+
+		<div class="notes">
+
+			<Fault status={NotFound}/>
+
+			<Fault detail="The request could not be completed." report={{
+
+				instance: "/products/42",
+				trace: "java.lang.IllegalStateException"
+
+			}} status={InternalServerError} title="Internal Server Error"/>
+
+		</div>
 
 	</>;
 }

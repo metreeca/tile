@@ -15,14 +15,169 @@
  */
 
 /*
+ * The colours a chart, a coding or a map reads: four ten-step scales, nine series slots and four area classes. A step,
+ * a slot or a class says where a value sits or which thing it belongs to, and is never a substitute for a role token,
+ * which says what a colour means in the interface.
+ */
+
+/*
  * A scale addresses a colour by position on a ten-step ladder, where the number is the share of the anchor it carries:
  * 010 is the faintest step and 100 the anchor at full strength. A consumer mapping a measure onto a scale reads the
  * step by name, so the values behind the ladder stay revisable.
  *
  * The greyscale and the two accent scales are derived, so an app retuning the anchors carries them along and a step
- * mixes towards the page in either colour scheme. The heat scale carries literals instead: a magnitude coding taking
- * the hue an app brands with would stop reading as a temperature.
+ * mixes towards the page in either colour scheme.
  */
+
+@property --tile--color-gray-010 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-020 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-030 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-040 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-050 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-060 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-070 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-080 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-090 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-gray-100 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-010 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-020 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-030 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-040 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-050 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-060 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-070 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-080 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-090 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-subtle-100 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-010 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-020 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-030 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-040 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-050 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-060 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-070 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-080 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-090 {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-strong-100 {
+    syntax: "*";
+    inherits: true;
+}
 
 :root {
 
@@ -67,44 +222,79 @@
  * ends, so a step means a band a legend names and never a position on a continuous gradient. A consumer states the
  * band in text beside the colour.
  *
- * Text over a step takes the page colour up to 070 and the page background from 080 on, where the scale turns dark
- * enough to carry it. The dark scheme restates the last two steps, which at their light values sit below 3:1 against
- * the page and lose the top of the range where it matters most; the cool half holds in both schemes and is stated
- * once. The steps are registered on their light values, so a browser answering neither query still gets the light
- * scale.
+ * The scale carries literals rather than derivations of an anchor: a magnitude coding taking the hue an app brands
+ * with would stop reading as a temperature. Text over a step takes the page colour up to 070 and the page background
+ * from 080 on, where the scale turns dark enough to carry it.
+ *
+ * The light scheme is the registered value, as it is for the anchors, so only the dark scheme is restated below, and
+ * only for the last two steps: at their light values they sit below 3:1 against the dark page and lose the top of the
+ * range where it matters most. The cool half holds in both schemes and is stated once.
  */
 
-@media (prefers-color-scheme: light) {
+@property --tile--color-heat-010 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #1B95F9;
+}
 
-    :root {
+@property --tile--color-heat-020 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #28CBF3;
+}
 
-        --tile--color-heat-010: #1B95F9;
-        --tile--color-heat-020: #28CBF3;
-        --tile--color-heat-030: #2DE2BF;
-        --tile--color-heat-040: #76F17E;
-        --tile--color-heat-050: #C9F14C;
-        --tile--color-heat-060: #FDDC59;
-        --tile--color-heat-070: #FA9522;
-        --tile--color-heat-080: #DF2212;
-        --tile--color-heat-090: #8F0D35;
-        --tile--color-heat-100: #9813B1;
+@property --tile--color-heat-030 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #2DE2BF;
+}
 
-    }
+@property --tile--color-heat-040 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #76F17E;
+}
 
+@property --tile--color-heat-050 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #C9F14C;
+}
+
+@property --tile--color-heat-060 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #FDDC59;
+}
+
+@property --tile--color-heat-070 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #FA9522;
+}
+
+@property --tile--color-heat-080 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #DF2212;
+}
+
+@property --tile--color-heat-090 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #8F0D35;
+}
+
+@property --tile--color-heat-100 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #9813B1;
 }
 
 @media (prefers-color-scheme: dark) {
 
     :root {
 
-        --tile--color-heat-010: #1B95F9;
-        --tile--color-heat-020: #28CBF3;
-        --tile--color-heat-030: #2DE2BF;
-        --tile--color-heat-040: #76F17E;
-        --tile--color-heat-050: #C9F14C;
-        --tile--color-heat-060: #FDDC59;
-        --tile--color-heat-070: #FA9522;
-        --tile--color-heat-080: #DF2212;
         --tile--color-heat-090: #B13550;
         --tile--color-heat-100: #B940D2;
 
@@ -137,18 +327,58 @@
  * dark page each one clears 4.1:1.
  */
 
-:root {
+@property --tile--color-series-1 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #4E79A7;
+}
 
-    --tile--color-series-1: #4E79A7;
-    --tile--color-series-2: #59A14F;
-    --tile--color-series-3: #EDC948;
-    --tile--color-series-4: #9C755F;
-    --tile--color-series-5: #76B7B2;
-    --tile--color-series-6: #F28E2B;
-    --tile--color-series-7: #B07AA1;
-    --tile--color-series-8: #FF9DA7;
-    --tile--color-series-9: #E15759;
+@property --tile--color-series-2 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #59A14F;
+}
 
+@property --tile--color-series-3 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #EDC948;
+}
+
+@property --tile--color-series-4 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #9C755F;
+}
+
+@property --tile--color-series-5 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #76B7B2;
+}
+
+@property --tile--color-series-6 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #F28E2B;
+}
+
+@property --tile--color-series-7 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #B07AA1;
+}
+
+@property --tile--color-series-8 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #FF9DA7;
+}
+
+@property --tile--color-series-9 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #E15759;
 }
 
 /*
@@ -165,11 +395,26 @@
  * boundaries drawn and names its classes in the legend; on the dark page each class clears 3.9:1.
  */
 
-:root {
+@property --tile--color-area-1 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #A6CEE3;
+}
 
-    --tile--color-area-1: #A6CEE3;
-    --tile--color-area-2: #1F78B4;
-    --tile--color-area-3: #B2DF8A;
-    --tile--color-area-4: #33A02C;
+@property --tile--color-area-2 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #1F78B4;
+}
 
+@property --tile--color-area-3 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #B2DF8A;
+}
+
+@property --tile--color-area-4 {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #33A02C;
 }

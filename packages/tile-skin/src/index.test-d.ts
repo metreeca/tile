@@ -27,6 +27,12 @@ describe("tile", () => {
 
 	});
 
+	it("rejects a custom property no token resolves to", () => {
+
+		expectTypeOf<"--tile--nope">().not.toExtend<Property>();
+
+	});
+
 });
 
 describe("css", () => {

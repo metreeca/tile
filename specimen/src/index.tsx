@@ -57,7 +57,6 @@ const roles: ReadonlyArray<Entry> = [
 	[ tile.colorDisabled, "controls that take no input" ],
 	[ tile.colorLabel, "labels and secondary text" ],
 	[ tile.colorPlaceholder, "the text a field shows while empty" ],
-	[ tile.colorFaint, "hairlines and decorative marks" ],
 	[ tile.borderColor, "borders and table rules" ],
 	[ tile.backgroundColorEdit, "fields open to editing" ],
 	[ tile.backgroundColorStripe, "striped rows and quoted blocks" ]

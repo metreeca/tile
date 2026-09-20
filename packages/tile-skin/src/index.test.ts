@@ -23,16 +23,25 @@ describe("tile", () => {
 
 	const declared: ReadonlyArray<string> = Object.values(tile);
 
-	const stylesheets = readdirSync(new URL(".", import.meta.url))
+	const stylesheets = readdirSync(new URL(".", import.meta.url), { recursive: true, encoding: "utf-8" })
 		.filter(name => name.endsWith(".css"))
 		.map(name => readFileSync(new URL(`./${ name }`, import.meta.url), "utf-8"));
 
+	/* A media query and the rules nested in it, so a scheme variant is told apart from an unconditional definition. */
+
+	const query = /@media[^{]*\{(?:[^{}]*\{[^{}]*})*[^{}]*}/g;
+
+	const unconditional = stylesheets.map(text => text.replace(query, ""));
+	const conditional = stylesheets.flatMap(text => text.match(query) ?? []);
+
+	const assignments = (texts: ReadonlyArray<string>): ReadonlyArray<readonly [string, string]> => texts
+		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
+		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:([^;]*);/g),
+			([ , token, value ]) => [ token, value ] as const
+		));
+
 	const referenced = stylesheets
 		.flatMap(text => Array.from(text.matchAll(/var\((--tile--[\w-]+)/g), ([ , token ]) => token));
-
-	const assigned = stylesheets
-		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
-		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:/g), ([ , token ]) => token));
 
 	const registrations: ReadonlyArray<readonly [string, string]> = stylesheets
 		.flatMap(text => Array.from(text.matchAll(/@property\s+(--tile--[\w-]+)\s*\{([^}]*)}/g),
@@ -41,11 +50,19 @@ describe("tile", () => {
 
 	const registered = registrations.map(([ token ]) => token);
 
-	const derived = stylesheets
-		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
-		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:([^;]*);/g), ([ , token, value ]) => [ token, value ] as const))
+	const anchored = registrations.filter(([ , body ]) => /initial-value/.test(body)).map(([ token ]) => token);
+
+	const defaults = assignments(unconditional).map(([ token ]) => token);
+	const variants = assignments(conditional).map(([ token ]) => token);
+
+	const assigned = [ ...defaults, ...variants ];
+
+	const derived = assignments(stylesheets)
 		.filter(([ , value ]) => /var\(|color-mix\(|oklch\(/.test(value))
 		.map(([ token ]) => token);
+
+	const defined = (token: string): number => (anchored.includes(token) ? 1 : 0)
+		+ defaults.filter(assignment => assignment === token).length;
 
 
 	it("names every token the stylesheets read", () => {
@@ -60,9 +77,15 @@ describe("tile", () => {
 
 	});
 
-	it("names no token the stylesheet leaves undefined", () => {
+	it("defines every token in exactly one place", () => {
 
-		expect(declared.filter(token => !assigned.includes(token))).toEqual([]);
+		expect(declared.filter(token => defined(token) !== 1)).toEqual([]);
+
+	});
+
+	it("defines unconditionally every token a colour scheme restates", () => {
+
+		expect(variants.filter(token => defined(token) !== 1)).toEqual([]);
 
 	});
 

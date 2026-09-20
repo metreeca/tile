@@ -13,26 +13,40 @@ carries no components and no behaviour, and nothing in it imports a rendering fr
 
 # Module Layout
 
-`src/index.css` imports the modules and is the only entry an app includes. They are listed by increasing structural
-complexity, so a composite lands after the plain elements it is built from and takes precedence where the two match
-with equal specificity. It also loads the brand faces and carries the page defaults itself: `color-scheme`, the page
-colours and typography, and the `:root` default of every token.
+`src/index.css` imports the modules and is the only entry an app includes. The token modules come first, the anchors
+ahead of what derives from them, then the base rules by increasing structural complexity, so a composite lands after
+the plain elements it is built from and takes precedence where the two match with equal specificity. It also loads the
+brand faces, and carries the page defaults itself and nothing else: `color-scheme`, the page colours and the page
+typography, every one of them reading a token it does not state.
 
-- `tokens.css` — the `@property` registration of every token: the type it takes and the default it falls back on
-- `schemes.css` — what the five colour anchors are worth, one block per platform colour scheme
-- `palettes.css` — the four ten-step colour scales, the nine series slots and the four area classes, the three
+The modules fall into two groups, one folder each, and the split holds in both directions: nothing in `markup/`
+assigns a token, and every `var()` in `tokens/` is a token deriving from another.
+
+`src/tokens/` — a family per pair, `<family>.ts` naming the tokens and `<family>.css` stating their values, and the
+only place either side of the family is revised:
+
+- `typography` — the brand faces and their fallback stacks, the sizes, the weights and the line height
+- `spacings` — the ladder a thing is set apart from its neighbour on
+- `scalings` — the ladder a thing measured against the text is sized on
+- `colors` — the five colour anchors, the light value registered and the dark one restated per scheme, and the text,
+  state and surface roles derived from them
+- `borders` — the line, the radii, the focus ring, the invalid outline and the vector stroke width
+- `palettes` — the four ten-step colour scales, the nine series slots and the four area classes, the three
   accent-derived scales following the anchors and the heat scale, the slots and the classes stated as literals
-- `reset.css`, then `headings.css`, `inlines.css`, `blocks.css`, `lists.css`, `tables.css`, `forms.css` — base rules
-  for one group of elements each
+
+`src/markup/` — base rules for plain document markup, carrying **no** `.ts` side and declaring no token of their own:
+
+- `reset.css`, then `headings.css`, `inlines.css`, `blocks.css`, `lists.css`, `tables.css`, `forms.css` — one group
+  of elements each
 
 # Layering
 
-The whole design system sits in one cascade layer, `tile`. Each module is imported into it, and the `:root` defaults in
+The whole design system sits in one cascade layer, `tile`. Each module is imported into it, and the page defaults in
 `index.css` are wrapped in a block of their own:
 
 ```css
-@import "./tokens.css" layer(tile);
-@import "./reset.css" layer(tile);
+@import "./tokens/typography.css" layer(tile);
+@import "./markup/reset.css" layer(tile);
 
 @layer tile {
     :root { /* … */ }
@@ -61,8 +75,8 @@ Two things the arrangement deliberately does not do:
 - **It does not touch the font import.** The Google Fonts `@import` stays unlayered, since it carries only
   `@font-face`, which a layer has no effect on.
 
-`@property` registrations are global regardless of the layer they are declared in, so `tokens.css` behaves identically
-inside it.
+`@property` registrations are global regardless of the layer they are declared in, so a token module behaves
+identically inside it.
 
 > [!WARNING]
 >
@@ -73,23 +87,43 @@ inside it.
 
 # Token Contract
 
-A token lives in three places, revised together:
+A token lives in two places, both inside its family pair, revised together:
 
-- `src/index.ts` — the `tile` entry naming it, which is what components and apps address
-- `src/tokens.css` — its `@property` registration
-- `src/index.css` — its `:root` assignment, or, for the five colour anchors, one assignment per scheme in
-  `src/schemes.css`, or, for a colour scale step, its assignment in `src/palettes.css`
+- `src/tokens/<family>.ts` — the entry naming it, which is what components and apps address
+- `src/tokens/<family>.css` — its `@property` registration, and its `:root` assignment where it needs one
 
-`src/index.test.ts` fails when a declared name is never assigned, when an assigned name is not declared, or when a rule
-reads a token no one declares. It says nothing about the value behind the name.
+**Its value is stated exactly once**, and which of the two carries it follows from what the value is:
+
+- a **literal** is the registration's `initial-value` and gets **no** `:root` assignment: a spacing step, a radius, a
+  weight, an anchor, a heat step, a series slot, an area class
+- a **derivation**, reading `var()`, `color-mix()` or `oklch()`, is a `:root` assignment and the registration carries
+  **no** `initial-value`, which it could not resolve anyway: a colour role, a derived scale step, the border colour,
+  the focus ring, the invalid outline
+- a **colour scheme variant** restates a literal inside `@media (prefers-color-scheme: dark)`, on top of the light
+  value the registration already carries; the light scheme is never restated
+
+`src/index.ts` gathers the families into `tile` and adds nothing of its own; a new family is added to the spread and to
+the re-exports there, and to the imports in `src/index.css`.
+
+`src/index.test.ts` fails when a declared name is defined in neither place or in both, when a defined name is not
+declared, when a rule reads a token no one declares, when a registration is missing or duplicated, when a scheme
+variant has no unconditional definition, and when a derived token carries a default it cannot resolve. It says nothing
+about the value behind the name.
 
 An `@property` registration states the type a token takes and the default it falls back on, under the constraints
 `css-developer` §Registrations sets out: only an absolute value takes a real type, and a derived token carries no
 default at all.
 
+> [!WARNING]
+>
+> Because a literal default now lives only in its registration, a browser that ignores `@property` leaves every one of
+> them unset rather than falling back on a `:root` copy. That is not a new floor: `oklch(from …)`, which the colour
+> roles are derived with, lands in the same browsers and versions, so nothing here was reachable without `@property`
+> support to begin with.
+
 # Colours
 
-Five anchors carry literals, one value each per colour scheme in `schemes.css`:
+Five anchors carry literals in `colors.css`, the light value registered and the dark one restated per scheme:
 
 - `--tile--color` and `--tile--background-color`
 - `--tile--color-subtle`, which an interface carries at rest, and `--tile--color-strong`, which marks a thing out;
@@ -135,7 +169,7 @@ straight off.
 
 `--tile--color-gray-*`, `--tile--color-subtle-*` and `--tile--color-strong-*` derive from the anchors, so an app
 retuning a brand carries them along and a step mixes towards the page in either scheme. A step is **NOT** a
-replacement for a role token: the text and background roles in `index.css` do not land on the ladder, and
+replacement for a role token: the text and background roles in `colors.css` do not land on the ladder, and
 `--tile--background-color-edit` and `--tile--background-color-stripe` sit below its first step.
 
 `--tile--color-heat-*` carries literals, for the same reason `--tile--color-invalid` does: a magnitude coding taking

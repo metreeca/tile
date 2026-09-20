@@ -1,0 +1,144 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The five anchors an app supplies its brand through, and the roles derived from them. A role says what a colour
+ * means in the interface, so a rule names the role it paints rather than the colour it paints in, and follows an app
+ * retuning the anchors.
+ */
+
+/*
+ * The accents stand in for a brand an app has yet to supply: the subtle one carries an interface at rest and the
+ * strong one marks a thing out, stating an emphasis relative to each other rather than an appearance. The error
+ * colour is an anchor of its own rather than a derivation of an accent, so a failure keeps reading as one whatever an
+ * app brands with.
+ *
+ * The light scheme is the registered value, so a browser answering neither media query still gets the light page, and
+ * only the dark scheme is restated below. An app supplying its brand states a value per scheme too, and rechecks that
+ * the text roles still hold AA contrast against the page and the striped row in both.
+ */
+
+@property --tile--color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #000;
+}
+
+@property --tile--background-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #FFF;
+}
+
+@property --tile--color-subtle {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #567;
+}
+
+@property --tile--color-strong {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #06C;
+}
+
+@property --tile--color-invalid {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #C00;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    :root {
+
+        --tile--color: #EEE;
+        --tile--background-color: #111;
+
+        --tile--color-subtle: #89A;
+        --tile--color-strong: #4AF;
+
+        --tile--color-invalid: #F66;
+
+    }
+
+}
+
+/*
+ * Every role is derived from an anchor, so it follows an app retuning the brand and holds in either colour scheme,
+ * and carries neither a type nor a default an initial value could state.
+ */
+
+@property --tile--color-label {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-placeholder {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-enabled {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-disabled {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-hover {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-focus {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-edit {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-stripe {
+    syntax: "*";
+    inherits: true;
+}
+
+/*
+ * A role painting text takes the subtle accent as it stands, since a mix towards the page costs the lightness it needs
+ * to hold AA contrast and would force the anchor itself down towards black. Only the focus ring, which owes 3:1, can
+ * afford the mix.
+ */
+
+:root {
+
+    --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
+    --tile--color-placeholder: var(--tile--color-label);
+    --tile--color-enabled: var(--tile--color-subtle);
+    --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+
+    --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
+    --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 80%, var(--tile--background-color));
+
+    --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
+    --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
+
+}

@@ -33,7 +33,7 @@ it. The rules it displaces, and what holds instead:
 
 | `react-developer-style` says                                        | here instead                                                                                                       |
 |---------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| declare component variables in a `:root` block atop each file       | a component declares **NO** token; a missing one is added to `tile-skin` through its three-place contract           |
+| declare component variables in a `:root` block atop each file       | a component declares **NO** token; a missing one is added to `tile-skin` through its two-place contract             |
 | name classes `.component-name-element`, BEM-like, component-prefixed | style the `<tile-*>` element the widget renders; a class earns its place only where the element cannot tell a part from its sibling |
 | nest every style under the root component **class**                 | nest under the custom element, whose prefix already carries the scope                                               |
 | always give an external variable a fallback, `var(--x, #fallback)`  | read a token plainly: a fallback restates an anchor and hides a missing import, and is reserved for a consumer that cannot count on the stylesheet being loaded at all |
@@ -47,7 +47,7 @@ semantic names describing purpose rather than appearance.
 **Write stylesheets**: a design system module inside the `tile` layer, or a component sheet beside its widget.
 
 **Keep colours and measures in tokens**: refuse a literal where a token says the same thing, and take a new token
-through the three-place contract rather than declaring it locally.
+through the two-place contract rather than declaring it locally.
 
 **Review**: name the token a rule sidesteps, the cascade accident it relies on, and the contrast a colour breaks.
 
@@ -60,9 +60,9 @@ through the three-place contract rather than declaring it locally.
 
 # Two Kinds of Stylesheet
 
-**A design system module** in `packages/tile-skin/src/` declares tokens and base rules for plain document markup. It is
-imported into the `tile` cascade layer, and a rule added there goes **inside** the layer: one left outside it outranks
-the whole design system and can no longer be overridden.
+**A design system module** in `packages/tile-skin/src/` declares either tokens, in `tokens/`, or base rules for plain
+document markup, in `markup/`. It is imported into the `tile` cascade layer, and a rule added there goes **inside**
+the layer: one left outside it outranks the whole design system and can no longer be overridden.
 
 **A component stylesheet** sits beside its widget as a sibling module (`tabs.css` next to `tabs.tsx`) and styles the one
 `<tile-*>` element that widget renders. It stays **unlayered**, so it beats the base rules whatever order the bundler
@@ -75,7 +75,7 @@ emits the two stylesheets in and whichever selector is the more specific.
 Every colour, measure, weight and radius comes from `@metreeca/tile-skin`. A literal survives only as an optical nudge
 below the scale, and says so in a comment.
 
-A component **NEVER** declares a token of its own. A token the design system is missing is added there, in the three
+A component **NEVER** declares a token of its own. A token the design system is missing is added there, in the two
 places its contract names, so the suite sees it and an app can retheme it.
 
 ## Selectors
@@ -157,7 +157,7 @@ Before reporting a stylesheet task complete, list every occurrence and justify o
 
 - every colour, measure, weight and radius resolves to a `@metreeca/tile-skin` token
 - every surviving literal is an optical nudge carrying its comment
-- no token is declared outside `tile-skin`, and a new one lives in all three contract places
+- no token is declared outside `tile-skin`, and a new one lives in both contract places
 
 **Cascade**
 

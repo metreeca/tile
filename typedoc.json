@@ -48,7 +48,7 @@
   ],
   "packageOptions": {
     "entryPoints": [
-      "src/*.{ts,tsx}"
+      "src/**/*.{ts,tsx}"
     ],
     "exclude": [
       "**/*.pure.ts",

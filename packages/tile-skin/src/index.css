@@ -15,26 +15,31 @@
  */
 
 /*
- * Modules are listed by increasing structural complexity, so a composite takes precedence over the plain elements it
- * is built from. Every one of them is imported into the tile layer. A rule an app or a component writes outside a
- * layer therefore wins whatever order the two stylesheets reach the document in, and whichever selector is the more
- * specific.
+ * The token modules come first, the anchors ahead of what derives from them, then the base rules by increasing
+ * structural complexity, so a composite takes precedence over the plain elements it is built from. Every one of them
+ * is imported into the tile layer. A rule an app or a component writes outside a layer therefore wins whatever order
+ * the two stylesheets reach the document in, and whichever selector is the more specific.
  */
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Mono&family=Roboto:wght@300;400;700&display=swap");
 
-@import "./tokens.css" layer(tile);
-@import "./schemes.css" layer(tile);
-@import "./palettes.css" layer(tile);
+@import "./tokens/typography.css" layer(tile);
+@import "./tokens/spacings.css" layer(tile);
+@import "./tokens/scalings.css" layer(tile);
+@import "./tokens/colors.css" layer(tile);
+@import "./tokens/borders.css" layer(tile);
+@import "./tokens/palettes.css" layer(tile);
 
-@import "./reset.css" layer(tile);
+@import "./markup/reset.css" layer(tile);
 
-@import "./headings.css" layer(tile);
-@import "./inlines.css" layer(tile);
-@import "./blocks.css" layer(tile);
-@import "./lists.css" layer(tile);
-@import "./tables.css" layer(tile);
-@import "./forms.css" layer(tile);
+@import "./markup/headings.css" layer(tile);
+@import "./markup/inlines.css" layer(tile);
+@import "./markup/blocks.css" layer(tile);
+@import "./markup/lists.css" layer(tile);
+@import "./markup/tables.css" layer(tile);
+@import "./markup/forms.css" layer(tile);
+
+/* The page defaults: every token value is stated once by the module registering it, so this file only reads them. */
 
 @layer tile {
 
@@ -45,80 +50,10 @@
         color: var(--tile--color);
         background-color: var(--tile--background-color);
 
-        /* Each brand face stands ahead of a generic stack covering it until it loads. */
-
-        --tile--font-family: Roboto, Helvetica, Arial, sans-serif;
-        --tile--font-family-heading: "Roboto Condensed", Helvetica, Arial, sans-serif;
-        --tile--font-family-mono: "Roboto Mono", Courier, monospace;
-
         font-family: var(--tile--font-family);
         font-size: var(--tile--font-size);
         font-weight: var(--tile--font-weight);
         line-height: var(--tile--line-height);
-
-        --tile--font-size: 1.125rem;
-        --tile--font-size-small: 90%;
-        --tile--font-size-large: 1.25em;
-
-        --tile--line-height: 1.2;
-
-        --tile--font-weight: 300;
-        --tile--font-weight-strong: 400;
-        --tile--font-weight-heavy: 700;
-
-        --tile--spacing-025: 0.25em;
-        --tile--spacing-050: 0.5em;
-        --tile--spacing-075: 0.75em;
-        --tile--spacing-100: 1em;
-        --tile--spacing-150: 1.5em;
-        --tile--spacing-200: 2em;
-        --tile--spacing-250: 2.5em;
-
-        --tile--scaling-025: 0.25em;
-        --tile--scaling-050: 0.5em;
-        --tile--scaling-075: 0.75em;
-        --tile--scaling-090: 0.9em;
-        --tile--scaling-100: 1em;
-        --tile--scaling-110: 1.1em;
-        --tile--scaling-125: 1.25em;
-        --tile--scaling-150: 1.5em;
-        --tile--scaling-200: 2em;
-        --tile--scaling-250: 2.5em;
-
-        --tile--border-style: solid;
-        --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
-        --tile--border-width: 1px;
-        --tile--border-radius: 0.25em;
-
-        --tile--border-radius-025: 25%;
-        --tile--border-radius-050: 50%;
-        --tile--border-radius-075: 75%;
-        --tile--border-radius-100: 100%;
-
-        /*
-         * A role painting text takes the subtle accent as it stands, since a mix towards the page costs the lightness
-         * it needs to hold AA contrast and would force the anchor itself down towards black. Only the focus ring,
-         * which owes 3:1, can afford the mix. The role marking a failure is an anchor of its own rather than a
-         * derivation: derived from an accent, it would carry whatever hue an app brands with and stop reading as an
-         * error.
-         */
-
-        --tile--color-faint: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
-        --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
-        --tile--color-placeholder: var(--tile--color-label);
-        --tile--color-enabled: var(--tile--color-subtle);
-        --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
-
-        --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
-        --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 80%, var(--tile--background-color));
-
-        --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
-        --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
-
-        --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
-        --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-invalid);
-
-        --tile--stroke-width: 2;
 
     }
 

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-/* The sampler is a scrolling page, unlike the app shell the loading spinner is laid out in. */
+/* The sampler is a scrolling page, unlike the shell the loading spinner sits in. */
 
-html, body, body > main, body > main > * {
+html, body:has(*) {
     height: auto;
     overflow: visible;
 }
 
-body > main > article {
+body > * {
+    display: block;
+}
+
+
+main {
     max-width: 45em;
     padding: var(--tile--spacing-150);
     margin: 0 auto;
@@ -39,7 +44,7 @@ h1 > img {
 
 /* The copyright closes the page, set apart from the section on show. */
 
-body > main > article > footer {
+main > footer {
     padding-top: var(--tile--spacing-150);
     text-align: center;
     color: var(--tile--color-label);

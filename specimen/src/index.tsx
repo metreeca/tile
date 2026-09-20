@@ -91,7 +91,7 @@ const borders: ReadonlyArray<Entry> = [
 
 render((
 
-	<article>
+	<main>
 
 		<h1>{app.icon && <img alt="" src={app.icon}/>}{app.name}</h1>
 
@@ -111,9 +111,11 @@ render((
 
 		<footer><small>{app.copy}</small></footer>
 
-	</article>
+	</main>
 
-), document.body.firstElementChild!);
+), document.body.appendChild(document.createElement(
+	"tile-specimen"
+)));
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

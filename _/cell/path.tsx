@@ -28,6 +28,8 @@ export type Path=undefined | Value | ReactNode | Array<undefined | Value | React
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// !!! responsive layout
+
 /**
  * Creates a breadcrumbs path component.
  */

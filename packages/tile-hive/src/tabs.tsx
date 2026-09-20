@@ -30,6 +30,8 @@ import { useId } from "preact/hooks";
 import { createTabs, type Tabs } from "./tabs.pure.js";
 import "./tabs.css";
 
+// !!! responsive layout
+
 
 /**
  * Creates a tabbed layout panel.

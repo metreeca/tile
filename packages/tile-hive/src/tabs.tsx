@@ -23,62 +23,13 @@
  * @module
  */
 
-import type { Optional } from "@metreeca/core";
-import { some, type Some, unique } from "@metreeca/core/arrays";
-import { createState } from "@metreeca/core/state";
 import { keys } from "@metreeca/tile";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
+import { createModel, type Model } from "./tabs.core.js";
 import "./tabs.css";
 
-
-/**
- * Tabbed panel state.
- *
- * Tracks which of a fixed set of labelled sections is on show, exposing the activation a tab strip offers: a direct
- * choice and the step to either neighbour, wrapping at both ends as keyboard navigation expects.
- */
-interface Model {
-
-	/**
-	 * The labels identifying the sections, in display order, without duplicates.
-	 */
-	readonly labels: readonly string[];
-
-	/**
-	 * The label of the section on show, or `undefined` if there are no sections.
-	 */
-	readonly active: Optional<string>;
-
-
-	/**
-	 * Activates a section.
-	 *
-	 * @param label The label of the section to show
-	 *
-	 * @returns A state showing `label`, or this state if `label` is unknown or already active
-	 */
-	select(label: string): this;
-
-	/**
-	 * Activates the following section, wrapping from the last to the first.
-	 *
-	 * @returns A state showing the following section, or this state if there are fewer than two sections
-	 */
-	next(): this;
-
-	/**
-	 * Activates the preceding section, wrapping from the first to the last.
-	 *
-	 * @returns A state showing the preceding section, or this state if there are fewer than two sections
-	 */
-	previous(): this;
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Creates a tabbed layout panel.
@@ -119,7 +70,7 @@ export function Tabs({
 
 		select,
 		next,
-		previous
+		back
 
 	} = useModel(() => createModel({
 
@@ -138,7 +89,7 @@ export function Tabs({
 			onKeyDown={keys({
 
 				ArrowRight: moving(next),
-				ArrowLeft: moving(previous),
+				ArrowLeft: moving(back),
 
 				Home: moving(() => select(labels[0])),
 				End: moving(() => select(labels[labels.length-1]))
@@ -203,57 +154,6 @@ export function Tabs({
 
 	function panel(index: number) {
 		return `${id}-panel-${index}`;
-	}
-
-
-	function createModel({
-
-		labels,
-		active
-
-	}: {
-
-		labels?: Some<string>
-		active?: string
-
-	} = {}): Model {
-
-		const sections = unique(some(labels));
-
-		return createState<Model>({
-
-			labels: sections,
-
-			active: active !== undefined && sections.includes(active) ? active : sections[0],
-
-			select(label: string) {
-
-				return this.labels.includes(label) ? { active: label } : {};
-
-			},
-
-			next() {
-
-				return { active: shift(this.labels, this.active, +1) };
-
-			},
-
-			previous() {
-
-				return { active: shift(this.labels, this.active, -1) };
-
-			}
-
-		});
-
-
-		function shift(labels: readonly string[], active: Optional<string>, offset: number): string | undefined {
-
-			return active === undefined ? undefined
-				: labels[(labels.indexOf(active)+offset+labels.length)%labels.length];
-
-		}
-
 	}
 
 }

@@ -105,8 +105,13 @@ const { labels, active, select } = useModel(() => createModel({ labels: Object.k
   one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
   **NEVER** reaches it.
-- Behaviour outgrowing a single widget moves to a sibling module as a state object of its own, leaving the component
-  only what it renders.
+- Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a state object of its own, leaving the
+  component only what it renders: `Tabs` in `tabs.tsx`, its model in `tabs.core.ts`.
+
+A `*.core.ts` module is **internal by name convention**: the widget beside it is its only consumer, and the `exports`
+wildcard that makes it importable is an artefact of the glob, **NEVER** a promise to whoever imports the package. It
+carries no entry in the package `README.md` and none in the reference a consumer is pointed at, and a change to it is
+not a change to the published API.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

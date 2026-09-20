@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { asObject, isFunction } from "../lens/datatypes/src/index.js";
+import { asObject, isFunction } from "../type/src/index.js";
 import { isString } from "@metreeca/core/string";
 import { Asset } from "@metreeca/data/hooks/asset";
 import { TileHint } from "@metreeca/view/widgets/hint";

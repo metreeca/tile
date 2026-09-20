@@ -20,6 +20,8 @@ colours and typography, and the `:root` default of every token.
 
 - `tokens.css` — the `@property` registration of every token: the type it takes and the default it falls back on
 - `schemes.css` — what the five colour anchors are worth, one block per platform colour scheme
+- `palettes.css` — the four ten-step colour scales, the nine series slots and the four area classes, the three
+  accent-derived scales following the anchors and the heat scale, the slots and the classes stated as literals
 - `reset.css`, then `headings.css`, `inlines.css`, `blocks.css`, `lists.css`, `tables.css`, `forms.css` — base rules
   for one group of elements each
 
@@ -76,7 +78,7 @@ A token lives in three places, revised together:
 - `src/index.ts` — the `tile` entry naming it, which is what components and apps address
 - `src/tokens.css` — its `@property` registration
 - `src/index.css` — its `:root` assignment, or, for the five colour anchors, one assignment per scheme in
-  `src/schemes.css`
+  `src/schemes.css`, or, for a colour scale step, its assignment in `src/palettes.css`
 
 `src/index.test.ts` fails when a declared name is never assigned, when an assigned name is not declared, or when a rule
 reads a token no one declares. It says nothing about the value behind the name.
@@ -90,8 +92,8 @@ default at all.
 Five anchors carry literals, one value each per colour scheme in `schemes.css`:
 
 - `--tile--color` and `--tile--background-color`
-- `--tile--color-accent-subtle`, which an interface carries at rest, and `--tile--color-accent-strong`, which marks a
-  thing out; both ship brand-agnostic, and an app supplies its own brand by overriding them
+- `--tile--color-subtle`, which an interface carries at rest, and `--tile--color-strong`, which marks a thing out;
+  both ship brand-agnostic, and an app supplies its own brand by overriding them
 - `--tile--color-invalid`, which a failure is told in
 
 Every other colour derives from them through `color-mix(in oklab, …)` or `oklch(from …)`, so an app retuning the
@@ -118,6 +120,108 @@ The striped table row is where the custom property cycle `css-developer` warns o
 Text roles hold WCAG AA contrast, 4.5:1 against the background they sit on, in **both** schemes and over the stripe;
 the focus ring holds 3:1. `--tile--border-color` and `--tile--color-disabled` sit below 3:1 **by design** and carry no
 meaning on their own, so they are the two exceptions a contrast check is allowed to pass over.
+
+# Palettes
+
+`palettes.css` carries the colours a chart, a coding or a map reads: four ten-step scales, nine series slots and four
+area classes. A step, a slot or a class is **NEVER** a substitute for a role token: a role says what a colour means in
+the interface, these say where a value sits or which thing it belongs to.
+
+## Scales
+
+Four ten-step scales address a colour by position rather than by role, the number being the share of the anchor a step
+carries: `010` is the faintest and `100` the anchor at full strength, which the top step of each derived scale reads
+straight off.
+
+`--tile--color-gray-*`, `--tile--color-subtle-*` and `--tile--color-strong-*` derive from the anchors, so an app
+retuning a brand carries them along and a step mixes towards the page in either scheme. A step is **NOT** a
+replacement for a role token: the text and background roles in `index.css` do not land on the ladder, and
+`--tile--background-color-edit` and `--tile--background-color-stripe` sit below its first step.
+
+`--tile--color-heat-*` carries literals, for the same reason `--tile--color-invalid` does: a magnitude coding taking
+the hue an app brands with stops reading as a temperature. It runs cool blue → green → yellow → red → violet, the
+violet standing for a measure past the top of the range.
+
+> [!WARNING]
+>
+> The heat scale codes by **hue**, and its lightness is deliberately **NOT** monotone: it peaks mid-scale and falls at
+> both ends. A step therefore means a band a legend names, never a position on a continuous gradient, and a consumer
+> **ALWAYS** states the band in text beside the colour. Ranking its steps by lightness, or reading a gradient across
+> them, is a misuse the values cannot support; a continuous heat map needs a monotone scale of its own.
+
+Text over a heat step takes `--tile--color` up to `070` and `--tile--background-color` from `080` on, where the scale
+turns dark enough to carry it. The dark scheme restates only the last two steps, which at their light values sit at
+2.05:1 and 2.76:1 against the page and lose the top of the range; the cool half holds in both schemes and is stated
+once.
+
+## Series
+
+`--tile--color-series-1` to `--tile--color-series-9` tell one thing apart from another. A number is a slot, not a
+share, so the three-digit form of a scale would misread here. The slots carry literals, for the reason
+`--tile--color-invalid` does: a series colour follows the thing it paints, so neither a rebrand nor a filter that
+drops a series may repaint the survivors. One value serves both schemes, since a tint that recedes on the light page
+stands out on the dark one.
+
+They are nine of the ten hues of [Tableau 10](https://www.tableau.com/blog/colors-upgrade-tableau-10-56782), its grey
+left out, reordered: Tableau's own sequence puts adjacent hues at the same lightness, which the gates reject.
+
+Validated against the package surfaces rather than against the defaults the `dataviz` skill ships, with
+`scripts/validate_palette.js`:
+
+- worst adjacent CVD ΔE 13.7, worst adjacent normal-vision ΔE 16.7, in the order declared
+- the order leads with Tableau's blue and clears both gates; 347 of 30,000 sampled blue-leading orders do
+- every slot clears 4.1:1 on `#111`, so one column serves both schemes
+
+> [!WARNING]
+>
+> **Lightness alternation carries the separation**, not hue spacing. Simulated protan and deutan vision collapses hue,
+> so a run of slots at one lightness fails however evenly their hues are spread: a generated set with even hues at one
+> lightness measured ΔE 0.7 against a target of 8, and needed a swing of 0.14 in OKLCh L before it passed. That is
+> what the declared order buys, and why it is not Tableau's.
+
+> [!WARNING]
+>
+> The **order** is the separation mechanism, not a preference: the figures above hold for adjacent pairs in the order
+> declared. Reordering the slots, resampling a hue or inserting a tenth forfeits the guarantee and means re-running
+> the validator over the candidate orderings. Nine hold only where neighbours are compared, on grouped bars, stacked
+> segments and lines; where every pair is compared, on a scatter, a bubble chart or a map, **only the first three
+> hold**.
+
+> [!WARNING]
+>
+> Four of the nine fall short of 3:1 against the light page: the yellow at 1.61:1, the pink at 1.98:1, the teal at
+> 2.29:1 and the orange at 2.42:1.
+> A chart carrying them **ALWAYS** states its figures in text as well, through direct labels or a table view, and the
+> slots are the one family a contrast check passes over wholesale rather than slot by slot.
+
+A tenth slot has no room left: at this lightness every candidate that clears the gates repeats a hue already in the
+set, passing on adjacency alone while colliding wherever all pairs are compared. A tenth thing is therefore gathered
+under one residual slot rather than coloured.
+
+## Areas
+
+`--tile--color-area-1` to `--tile--color-area-4` fill a shape rather than draw a mark: a region on a choropleth, a
+band on a terrain, a cell on a grid. They are the four colourblind-safe classes of the
+[ColorBrewer Paired](https://colorbrewer2.org/#type=qualitative&scheme=Paired&n=4) scheme, in its own order.
+
+The structure is the point: two pairs, a light and a dark of one hue each. A reader tells the members of a pair apart
+by lightness where hue alone would fail, and reads the two hues as two families, which is what a greyscale print or a
+photocopy survives on.
+
+Every pair of classes meets on a shared boundary, not only the ones a legend lists side by side, so the four are held
+to the **all-pairs** measure rather than the adjacent one:
+
+- worst all-pairs CVD ΔE 13.3 (`pale green ↔ pale blue`, deutan), tritan 4.3
+- worst all-pairs normal-vision ΔE 14.1, against the skill's floor of 15: the two pale classes are what sits below it
+- the pale classes hold 1.67:1 and 1.52:1 on the light page, the dark ones 4.77:1 and 3.38:1; on `#111` every class
+  clears 3.9:1
+
+> [!WARNING]
+>
+> **Four is the limit.** Paired stops being colourblind-safe past four classes, so a fifth class is a second map, an
+> inset or a facet, never a fifth colour. The normal-vision shortfall of 14.1 is accepted here **only** because a map
+> keeps its boundaries drawn and names its classes in the legend; a chart, which has neither, may not borrow these
+> four in place of the series slots.
 
 # Literals
 

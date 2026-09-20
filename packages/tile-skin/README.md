@@ -8,8 +8,10 @@ An app includes the stylesheet and gets a coherent look across every Tile compon
 type, spacing, sizing and focus affordances, and base rules applying them to plain document markup. Redefining a token
 in a later rule restyles everything that reads it, with no component change.
 
-The palette stands on five colour anchors, every other colour deriving from them, so retuning the anchors carries the
-whole interface along and the default look follows the platform colour scheme, light or dark, on its own.
+The palette stands on five colour anchors, every colour a role carries deriving from them, so retuning the anchors
+carries the whole interface along and the default look follows the platform colour scheme, light or dark, on its own.
+Beside the roles come the colours a chart, a coding or a map reads: ten-step scales, series slots and area classes,
+each holding a separation a reader can rely on.
 
 The dependency runs one way and stays optional: components carry only the structural styling they need to work, so an
 app that leaves this package out still gets a usable, plainly structured interface. What both sides honour is the token
@@ -46,7 +48,7 @@ Override any token to restyle the interface:
 
 ```css
 :root {
-    --tile--color-accent-strong: #D60;
+    --tile--color-strong: #D60;
     --tile--font-family: Inter, sans-serif;
 }
 ```
@@ -54,12 +56,27 @@ Override any token to restyle the interface:
 The stylesheet declares its rules in a `tile` cascade layer, so an override written outside a layer wins however the
 two stylesheets reach the document; an app whose own rules are layered orders its layer after `tile`.
 
-Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-accent-subtle`,
-`--tile--color-accent-strong` and `--tile--color-invalid`: labels, borders, stripes, focus rings and hover states
-derive from them and follow. The accents ship brand-agnostic, so an app supplies its own, a quieter value and a louder
-one per colour scheme, and rechecks that the text roles still hold AA contrast against the page and the striped row in
-both. An override the browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning
-a colour scheme sets `color-scheme` on the root element as usual.
+Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-subtle`,
+`--tile--color-strong` and `--tile--color-invalid`: labels, borders, stripes, focus rings and hover states derive from
+them and follow. The accents ship brand-agnostic, so an app supplies its own, a quieter value and a louder one per
+colour scheme, and rechecks that the text roles still hold AA contrast against the page and the striped row in both.
+An override the browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning a
+colour scheme sets `color-scheme` on the root element as usual.
+
+Where a colour stands for a position rather than for a role, take it from a ten-step scale: `--tile--color-gray-*` for
+a neutral, `--tile--color-subtle-*` and `--tile--color-strong-*` for a branded one, `--tile--color-heat-*` for a
+magnitude. The number is the share of the anchor the step carries, `010` the faintest and `100` the anchor itself, so
+the three derived scales follow a retheme. The heat scale keeps literals of its own and codes by hue, so a step means a
+band a legend names rather than a position on a gradient, and a consumer states the band in text beside the colour.
+
+Where a colour stands for one thing among others, take it from a slot or a class. `--tile--color-series-1` to
+`--tile--color-series-9` paint a bar, a line or a wedge: taken in sequence and held to the thing each one paints, so a
+filter dropping a series leaves the survivors their colours. `--tile--color-area-1` to `--tile--color-area-4` fill a
+shape instead, a region on a choropleth or a cell on a grid, and four is the limit: a fifth class is a second map. Both
+families keep one value per slot across colour schemes, and neither follows a rebrand. Nine series hold where only
+neighbours are compared; where every pair is compared, on a scatter, a bubble chart or a map, the first three hold.
+Some of both stay under 3:1 against the light page, so a chart carrying them states its figures in text as well and a
+map keeps its boundaries drawn and names its classes in the legend.
 
 Measures are stated in `em`, so a subtree given a size of its own takes its rhythm along. The two ladders answer
 different questions: `--tile--spacing-*` sets a thing apart from what surrounds it, while `--tile--scaling-*` sizes what
@@ -75,7 +92,7 @@ A component styled against a token it cannot count on, because the stylesheet ma
 fallback in the reference:
 
 ```css
-color: var(--tile--color-accent-strong, #06C);
+color: var(--tile--color-strong, #06C);
 ```
 
 Restyle a single subtree instead by assigning the tokens inline, naming them through the published contract rather than
@@ -84,7 +101,7 @@ as literal strings, so a renamed token breaks the build instead of silently losi
 ```tsx
 import { css } from "@metreeca/tile-skin";
 
-<section style={css({ colorAccentStrong: "#D60" })}>
+<section style={css({ colorStrong: "#D60" })}>
 ```
 
 Where CSS doesn't reach, on a canvas, in an SVG attribute or on a print target, take the value a token resolves to for
@@ -94,7 +111,7 @@ scheme in force:
 ```typescript
 import { tile } from "@metreeca/tile-skin";
 
-getComputedStyle(element).getPropertyValue(tile.colorAccentStrong);
+getComputedStyle(element).getPropertyValue(tile.colorStrong);
 ```
 
 # Support

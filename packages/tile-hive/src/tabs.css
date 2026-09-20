@@ -60,7 +60,7 @@ tile-tabs {
             &[aria-selected="true"] {
                 color: var(--tile--color);
                 border-bottom-width: calc(3 * var(--tile--border-width));
-                border-bottom-color: var(--tile--color-accent-strong);
+                border-bottom-color: var(--tile--color-strong);
                 margin-bottom: calc(-3 * var(--tile--border-width));
             }
 

@@ -94,14 +94,85 @@ code {
 .bar {
     display: inline-block;
     height: 1em;
-    background-color: var(--tile--color-accent-strong);
+    background-color: var(--tile--color-strong);
 }
 
 .box {
     display: inline-block;
     width: 1.5em;
     height: 1.5em;
-    background-color: var(--tile--color-accent-subtle);
+    background-color: var(--tile--color-subtle);
+}
+
+
+/*
+ * A ramp reads as one bordered band split into its steps, each swatch taking an equal share of the line. The step sits
+ * under the swatch rather than inside it, since the ink a label would need flips partway along every ramp.
+ */
+
+.ramp {
+
+    display: flex;
+    padding-left: 0;
+    margin-bottom: var(--tile--spacing-100);
+    list-style: none;
+
+    /* The step margin a list gives its items would drop every step but the first below the line. */
+
+    & > li {
+        flex: 1 1 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    /*
+     * The swatches sit flush and the band is bordered once, on its outer edges only: a hairline per swatch lands on
+     * the subpixel boundaries an equal share of the line leaves behind, and reads as a ragged edge.
+     */
+
+    & > li > span {
+        display: block;
+        height: var(--tile--scaling-200);
+        border-top-style: var(--tile--border-style);
+        border-bottom-style: var(--tile--border-style);
+    }
+
+    & > li:first-child > span {
+        border-left-style: var(--tile--border-style);
+        border-top-left-radius: var(--tile--border-radius);
+        border-bottom-left-radius: var(--tile--border-radius);
+    }
+
+    & > li:last-child > span {
+        border-right-style: var(--tile--border-style);
+        border-top-right-radius: var(--tile--border-radius);
+        border-bottom-right-radius: var(--tile--border-radius);
+    }
+
+    /* The reset hands every element the page background, which a label under a swatch has no use for. */
+
+    & > li > code {
+        display: inline-block;
+        margin-top: var(--tile--spacing-025);
+        font-size: var(--tile--font-size-small);
+        color: var(--tile--color-label);
+        background-color: transparent;
+    }
+
+}
+
+/* A set of slots stands apart, each chip bordered and rounded on its own: they name things, not a progression. */
+
+.ramp.chips {
+
+    gap: var(--tile--spacing-050);
+
+    & > li > span {
+        border-style: var(--tile--border-style);
+        border-radius: var(--tile--border-radius);
+    }
+
 }
 
 

@@ -34,6 +34,19 @@ describe("tile", () => {
 		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
 		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:/g), ([ , token ]) => token));
 
+	const registrations: ReadonlyArray<readonly [string, string]> = stylesheets
+		.flatMap(text => Array.from(text.matchAll(/@property\s+(--tile--[\w-]+)\s*\{([^}]*)}/g),
+			([ , token, body ]) => [ token, body ] as const
+		));
+
+	const registered = registrations.map(([ token ]) => token);
+
+	const derived = stylesheets
+		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
+		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:([^;]*);/g), ([ , token, value ]) => [ token, value ] as const))
+		.filter(([ , value ]) => /var\(|color-mix\(|oklch\(/.test(value))
+		.map(([ token ]) => token);
+
 
 	it("names every token the stylesheets read", () => {
 
@@ -53,6 +66,39 @@ describe("tile", () => {
 
 	});
 
+	it("names every token the stylesheet registers", () => {
+
+		expect(registered.filter(token => !declared.includes(token))).toEqual([]);
+
+	});
+
+	it("names no token the stylesheet leaves unregistered", () => {
+
+		expect(declared.filter(token => !registered.includes(token))).toEqual([]);
+
+	});
+
+	it("registers every token once", () => {
+
+		expect(registered.filter((token, index) => registered.indexOf(token) !== index)).toEqual([]);
+
+	});
+
+	it("registers every token as inherited", () => {
+
+		expect(registrations.filter(([ , body ]) => !/inherits:\s*true/.test(body)).map(([ token ]) => token)).toEqual([]);
+
+	});
+
+	it("registers a derived token without a default it cannot resolve", () => {
+
+		expect(registrations
+			.filter(([ token, body ]) => derived.includes(token) && /initial-value/.test(body))
+			.map(([ token ]) => token)
+		).toEqual([]);
+
+	});
+
 });
 
 describe("css", () => {
@@ -61,12 +107,12 @@ describe("css", () => {
 
 		expect(css({
 
-			colorAccentStrong: "#06C",
+			colorStrong: "#06C",
 			fontFamily: "Inter, sans-serif"
 
 		})).toEqual({
 
-			"--tile--color-accent-strong": "#06C",
+			"--tile--color-strong": "#06C",
 			"--tile--font-family": "Inter, sans-serif"
 
 		});
@@ -93,12 +139,12 @@ describe("css", () => {
 
 		expect(css({
 
-			colorAccentStrong: "#06C",
-			colorAccentSubtle: undefined
+			colorStrong: "#06C",
+			colorSubtle: undefined
 
 		})).toStrictEqual({
 
-			"--tile--color-accent-strong": "#06C"
+			"--tile--color-strong": "#06C"
 
 		});
 

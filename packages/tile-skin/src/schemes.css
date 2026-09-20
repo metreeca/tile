@@ -28,8 +28,8 @@
         --tile--color: #000;
         --tile--background-color: #FFF;
 
-        --tile--color-accent-subtle: #567;
-        --tile--color-accent-strong: #06C;
+        --tile--color-subtle: #567;
+        --tile--color-strong: #06C;
 
         --tile--color-invalid: #C00;
 
@@ -44,8 +44,8 @@
         --tile--color: #EEE;
         --tile--background-color: #111;
 
-        --tile--color-accent-subtle: #89A;
-        --tile--color-accent-strong: #4AF;
+        --tile--color-subtle: #89A;
+        --tile--color-strong: #4AF;
 
         --tile--color-invalid: #F66;
 

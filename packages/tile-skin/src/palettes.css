@@ -1,0 +1,175 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A scale addresses a colour by position on a ten-step ladder, where the number is the share of the anchor it carries:
+ * 010 is the faintest step and 100 the anchor at full strength. A consumer mapping a measure onto a scale reads the
+ * step by name, so the values behind the ladder stay revisable.
+ *
+ * The greyscale and the two accent scales are derived, so an app retuning the anchors carries them along and a step
+ * mixes towards the page in either colour scheme. The heat scale carries literals instead: a magnitude coding taking
+ * the hue an app brands with would stop reading as a temperature.
+ */
+
+:root {
+
+    --tile--color-gray-010: color-mix(in oklab, var(--tile--color) 10%, var(--tile--background-color));
+    --tile--color-gray-020: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+    --tile--color-gray-030: color-mix(in oklab, var(--tile--color) 30%, var(--tile--background-color));
+    --tile--color-gray-040: color-mix(in oklab, var(--tile--color) 40%, var(--tile--background-color));
+    --tile--color-gray-050: color-mix(in oklab, var(--tile--color) 50%, var(--tile--background-color));
+    --tile--color-gray-060: color-mix(in oklab, var(--tile--color) 60%, var(--tile--background-color));
+    --tile--color-gray-070: color-mix(in oklab, var(--tile--color) 70%, var(--tile--background-color));
+    --tile--color-gray-080: color-mix(in oklab, var(--tile--color) 80%, var(--tile--background-color));
+    --tile--color-gray-090: color-mix(in oklab, var(--tile--color) 90%, var(--tile--background-color));
+    --tile--color-gray-100: var(--tile--color);
+
+    --tile--color-subtle-010: color-mix(in oklab, var(--tile--color-subtle) 10%, var(--tile--background-color));
+    --tile--color-subtle-020: color-mix(in oklab, var(--tile--color-subtle) 20%, var(--tile--background-color));
+    --tile--color-subtle-030: color-mix(in oklab, var(--tile--color-subtle) 30%, var(--tile--background-color));
+    --tile--color-subtle-040: color-mix(in oklab, var(--tile--color-subtle) 40%, var(--tile--background-color));
+    --tile--color-subtle-050: color-mix(in oklab, var(--tile--color-subtle) 50%, var(--tile--background-color));
+    --tile--color-subtle-060: color-mix(in oklab, var(--tile--color-subtle) 60%, var(--tile--background-color));
+    --tile--color-subtle-070: color-mix(in oklab, var(--tile--color-subtle) 70%, var(--tile--background-color));
+    --tile--color-subtle-080: color-mix(in oklab, var(--tile--color-subtle) 80%, var(--tile--background-color));
+    --tile--color-subtle-090: color-mix(in oklab, var(--tile--color-subtle) 90%, var(--tile--background-color));
+    --tile--color-subtle-100: var(--tile--color-subtle);
+
+    --tile--color-strong-010: color-mix(in oklab, var(--tile--color-strong) 10%, var(--tile--background-color));
+    --tile--color-strong-020: color-mix(in oklab, var(--tile--color-strong) 20%, var(--tile--background-color));
+    --tile--color-strong-030: color-mix(in oklab, var(--tile--color-strong) 30%, var(--tile--background-color));
+    --tile--color-strong-040: color-mix(in oklab, var(--tile--color-strong) 40%, var(--tile--background-color));
+    --tile--color-strong-050: color-mix(in oklab, var(--tile--color-strong) 50%, var(--tile--background-color));
+    --tile--color-strong-060: color-mix(in oklab, var(--tile--color-strong) 60%, var(--tile--background-color));
+    --tile--color-strong-070: color-mix(in oklab, var(--tile--color-strong) 70%, var(--tile--background-color));
+    --tile--color-strong-080: color-mix(in oklab, var(--tile--color-strong) 80%, var(--tile--background-color));
+    --tile--color-strong-090: color-mix(in oklab, var(--tile--color-strong) 90%, var(--tile--background-color));
+    --tile--color-strong-100: var(--tile--color-strong);
+
+}
+
+/*
+ * The heat scale runs from a cool blue through green, yellow and red to a violet extremum standing for a measure past
+ * the top of its range. Its hue carries the reading and its lightness does not, peaking mid-scale and falling at both
+ * ends, so a step means a band a legend names and never a position on a continuous gradient. A consumer states the
+ * band in text beside the colour.
+ *
+ * Text over a step takes the page colour up to 070 and the page background from 080 on, where the scale turns dark
+ * enough to carry it. The dark scheme restates the last two steps, which at their light values sit below 3:1 against
+ * the page and lose the top of the range where it matters most; the cool half holds in both schemes and is stated
+ * once. The steps are registered on their light values, so a browser answering neither query still gets the light
+ * scale.
+ */
+
+@media (prefers-color-scheme: light) {
+
+    :root {
+
+        --tile--color-heat-010: #1B95F9;
+        --tile--color-heat-020: #28CBF3;
+        --tile--color-heat-030: #2DE2BF;
+        --tile--color-heat-040: #76F17E;
+        --tile--color-heat-050: #C9F14C;
+        --tile--color-heat-060: #FDDC59;
+        --tile--color-heat-070: #FA9522;
+        --tile--color-heat-080: #DF2212;
+        --tile--color-heat-090: #8F0D35;
+        --tile--color-heat-100: #9813B1;
+
+    }
+
+}
+
+@media (prefers-color-scheme: dark) {
+
+    :root {
+
+        --tile--color-heat-010: #1B95F9;
+        --tile--color-heat-020: #28CBF3;
+        --tile--color-heat-030: #2DE2BF;
+        --tile--color-heat-040: #76F17E;
+        --tile--color-heat-050: #C9F14C;
+        --tile--color-heat-060: #FDDC59;
+        --tile--color-heat-070: #FA9522;
+        --tile--color-heat-080: #DF2212;
+        --tile--color-heat-090: #B13550;
+        --tile--color-heat-100: #B940D2;
+
+    }
+
+}
+
+/*
+ * The series slots tell one thing apart from another, on a bar, a line or a wedge. A number is a slot rather than a
+ * share: the slots stand in a fixed order, and a consumer takes them in sequence and holds each one to the thing it
+ * paints, so a filter dropping a series leaves the survivors their colours. Their separation is what the order buys,
+ * measured under simulated colour vision deficiency, so reordering or resampling them forfeits it.
+ *
+ * The slots are literals rather than derivations of an accent: an app rebranding gets its brand on the interface
+ * without its charts changing meaning. They hold nine of the ten hues of the Tableau 10 qualitative scheme, its grey
+ * left out, in an order of this package's own choosing rather than Tableau's. One value serves both colour schemes,
+ * since every slot clears 4:1 against either page.
+ *
+ * The order is what separation rests on: the hues alternate in lightness as they run, and the pairs that collapse
+ * under simulated colour vision deficiency are kept out of each other's way. A set holding one lightness fails
+ * however far apart its hues sit, which is why Tableau's own order is not the one declared here.
+ *
+ * Nine slots hold where only neighbours are compared, on grouped bars, stacked segments and lines. Where every pair
+ * is compared, on a scatter, a bubble chart or a map, only the first three hold, and a fourth thing is faceted rather
+ * than coloured. A tenth thing is gathered under one residual slot, never given a colour of its own. A state is told
+ * in the role that names it, never in a slot.
+ *
+ * Four of the nine, the yellow, the pink, the teal and the orange, fall short of 3:1 against the light page, so a
+ * chart carrying them **ALWAYS** states its figures in text as well, through direct labels or a table view; on the
+ * dark page each one clears 4.1:1.
+ */
+
+:root {
+
+    --tile--color-series-1: #4E79A7;
+    --tile--color-series-2: #59A14F;
+    --tile--color-series-3: #EDC948;
+    --tile--color-series-4: #9C755F;
+    --tile--color-series-5: #76B7B2;
+    --tile--color-series-6: #F28E2B;
+    --tile--color-series-7: #B07AA1;
+    --tile--color-series-8: #FF9DA7;
+    --tile--color-series-9: #E15759;
+
+}
+
+/*
+ * The area classes fill a shape rather than draw a mark: a region on a choropleth, a band on a terrain, a cell on a
+ * grid. They come as two pairs, a light and a dark of one hue each, so a reader tells the members of a pair apart by
+ * lightness where hue alone would fail, and reads the two hues as two families. That pairing is what a photocopied or
+ * greyscale-printed map survives on, which a set of unrelated hues does not.
+ *
+ * Every pair of classes meets on a shared boundary, not just the ones a legend lists side by side, so the four are
+ * held to the all-pairs measure rather than the adjacent one. Four is where the scheme they come from stops being
+ * safe under simulated colour vision deficiency: a fifth class is a second map, never a fifth colour.
+ *
+ * The two pale classes fall short of 3:1 against the light page, so a map carrying them **ALWAYS** keeps its
+ * boundaries drawn and names its classes in the legend; on the dark page each class clears 3.9:1.
+ */
+
+:root {
+
+    --tile--color-area-1: #A6CEE3;
+    --tile--color-area-2: #1F78B4;
+    --tile--color-area-3: #B2DF8A;
+    --tile--color-area-4: #33A02C;
+
+}

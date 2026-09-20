@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { asArray, error, isArray, toType, Type } from "../datatypes/src/index.js";
+import { asArray, error, isArray, toType, Type } from "../../type/src/index.js";
 import { isEntry } from "@metreeca/core/entry";
 import { isNumber } from "@metreeca/core/number";
 import { evaluate, matches, Value } from "@metreeca/core/value";

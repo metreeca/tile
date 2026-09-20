@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { asArray } from "../datatypes/src/index.js";
+import { asArray } from "../../type/src/index.js";
 import { Entry } from "@metreeca/core/entry";
 import { Value } from "@metreeca/core/value";
 import { useGraph } from "@metreeca/data/contexts/graph";

@@ -23,8 +23,8 @@
 
                 :root {
 
-                    --tile--color-accent-subtle: #345;
-                    --tile--color-accent-strong: #D60;
+                    --tile--color-subtle: #345;
+                    --tile--color-strong: #D60;
 
                 }
 
@@ -34,8 +34,8 @@
 
                 :root {
 
-                    --tile--color-accent-subtle: #9AB;
-                    --tile--color-accent-strong: #F80;
+                    --tile--color-subtle: #9AB;
+                    --tile--color-strong: #F80;
 
                 }
 
@@ -75,12 +75,12 @@
 
             body:not(:has(*))::before {
                 top: 0;
-                background-color: var(--tile--color-accent-strong);
+                background-color: var(--tile--color-strong);
             }
 
             body:not(:has(*))::after {
                 bottom: 0;
-                background-color: var(--tile--color-accent-subtle);
+                background-color: var(--tile--color-subtle);
                 animation-delay: -1s;
             }
 

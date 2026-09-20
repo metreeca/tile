@@ -25,6 +25,7 @@
 
 @import "./tokens.css" layer(tile);
 @import "./schemes.css" layer(tile);
+@import "./palettes.css" layer(tile);
 
 @import "./reset.css" layer(tile);
 
@@ -105,11 +106,11 @@
         --tile--color-faint: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
         --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
         --tile--color-placeholder: var(--tile--color-label);
-        --tile--color-enabled: var(--tile--color-accent-subtle);
+        --tile--color-enabled: var(--tile--color-subtle);
         --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
-        --tile--color-hover: oklch(from var(--tile--color-accent-strong) calc(l - 0.1) c h);
-        --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-subtle) 80%, var(--tile--background-color));
+        --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
+        --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 80%, var(--tile--background-color));
 
         --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
         --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));

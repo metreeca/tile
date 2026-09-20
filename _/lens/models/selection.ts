@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isArray } from "../datatypes/src/index.js";
+import { isArray } from "../../type/src/index.js";
 import { matches, Value } from "@metreeca/core/value";
 import { Collection } from "@metreeca/data/models/collection";
 import { useState } from "react";

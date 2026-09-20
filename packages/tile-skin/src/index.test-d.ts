@@ -23,7 +23,7 @@ describe("tile", () => {
 	it("maps every token name to a custom property", () => {
 
 		expectTypeOf<keyof typeof tile>().toEqualTypeOf<Token>();
-		expectTypeOf(tile.colorAccentStrong).toExtend<Property>();
+		expectTypeOf(tile.colorStrong).toExtend<Property>();
 
 	});
 
@@ -54,7 +54,7 @@ describe("css", () => {
 	it("rejects a custom property in place of a token name", () => {
 
 		// @ts-expect-error custom property rather than token name
-		css({ [tile.colorAccentStrong]: "#000" });
+		css({ [tile.colorStrong]: "#000" });
 
 	});
 

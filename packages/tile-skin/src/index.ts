@@ -39,7 +39,7 @@
  *
  * ```css
  * :root {
- *     --tile--color-accent-strong: #D60;
+ *     --tile--color-strong: #D60;
  *     --tile--font-family: Inter, sans-serif;
  * }
  * ```
@@ -47,24 +47,52 @@
  * Assign the tokens inline to restyle a single subtree instead:
  *
  * ```tsx
- * <section style={css({ colorAccentStrong: "#D60" })}>
+ * <section style={css({ colorStrong: "#D60" })}>
  * ```
  *
  * @remarks
  *
  * **Colour schemes** — the stylesheet retunes itself for a dark platform colour scheme by adjusting five anchors,
- * `--tile--color`, `--tile--background-color`, `--tile--color-accent-subtle`, `--tile--color-accent-strong` and
- * `--tile--color-invalid`: every other colour is derived from them, so an app retheming the anchors carries the rest
- * of the palette with it, and one pinning a scheme sets `color-scheme` on the root element as usual. An app supplying
+ * `--tile--color`, `--tile--background-color`, `--tile--color-subtle`, `--tile--color-strong` and
+ * `--tile--color-invalid`: every colour a role carries is derived from them, so an app retheming the anchors carries
+ * the interface with it, and one pinning a scheme sets `color-scheme` on the root element as usual. An app supplying
  * its brand states a value per scheme too, and rechecks that the text roles still hold AA contrast against the page
- * and the striped row in both.
+ * and the striped row in both. The chart and map colours stand apart: the heat scale, the series slots and the area
+ * classes keep values of their own, so a rebrand leaves what they code unchanged.
  *
- * **Accents and the error colour** — `--tile--color-accent-subtle` carries an interface at rest, on links, enabled
- * controls and focus rings, while `--tile--color-accent-strong` marks a thing out, on hover and on a selection. The
- * pair states an emphasis relative to each other rather than an appearance, so a brand of any hue or lightness fits
- * it by supplying a quieter value and a louder one; the quieter value is the less saturated of the two, which leaves
- * it free to hold the higher contrast, as it does by default. `--tile--color-invalid` stands apart as an anchor of
- * its own rather than a derivation of an accent, so a failure keeps reading as one whatever an app brands with.
+ * **Accents and the error colour** — `--tile--color-subtle` carries an interface at rest, on links, enabled controls
+ * and focus rings, while `--tile--color-strong` marks a thing out, on hover and on a selection. The pair states an
+ * emphasis relative to each other rather than an appearance, so a brand of any hue or lightness fits it by supplying a
+ * quieter value and a louder one; the quieter value is the less saturated of the two, which leaves it free to hold the
+ * higher contrast, as it does by default. `--tile--color-invalid` stands apart as an anchor of its own rather than a
+ * derivation of an accent, so a failure keeps reading as one whatever an app brands with.
+ *
+ * **Colour scales** — where a colour stands for a position rather than for a role, a ten-step scale supplies it:
+ * `--tile--color-gray-*` for a neutral, `--tile--color-subtle-*` and `--tile--color-strong-*` for a branded one, and
+ * `--tile--color-heat-*` for a magnitude. The number is the share of the anchor the step carries, so `010` is the
+ * faintest and `100` the anchor itself, and the three derived scales follow an app retuning the anchors. The heat
+ * scale instead carries literals of its own, cool blue through green and red to a violet extremum standing for a
+ * measure past the top of its range: its hue carries the reading and its lightness does not, so a step means a band a
+ * legend names, never a position on a continuous gradient, and a consumer states the band in text beside the colour.
+ * Text over a heat step takes `--tile--color` up to `070` and `--tile--background-color` from `080` on.
+ *
+ * **Series slots** — `--tile--color-series-1` to `--tile--color-series-9` tell one thing apart from another, on a bar,
+ * a line or a wedge. A number is a slot rather than a share: the slots stand in a fixed order, taken in sequence and
+ * held to the thing each one paints, so a filter dropping a series leaves the survivors their colours. Their
+ * separation under simulated colour vision deficiency is what the order buys, so reordering or resampling them
+ * forfeits it, and a state is told in the role that names it rather than in a slot. Nine hold where only neighbours
+ * are compared; where every pair is compared, on a scatter, a bubble chart or a map, the first three hold and a
+ * fourth thing is faceted rather than coloured. One value serves both colour schemes; four of the nine stay under
+ * 3:1 against the light page, so a chart carrying them states its figures in text as well, through direct labels or a
+ * table view.
+ *
+ * **Area classes** — `--tile--color-area-1` to `--tile--color-area-4` fill a shape rather than draw a mark: a region
+ * on a choropleth, a band on a terrain, a cell on a grid. They come as two pairs, a light and a dark of one hue each,
+ * so the members of a pair are told apart by lightness where hue alone would fail, and the two hues read as two
+ * families; that pairing is what a greyscale print survives on. Every pair of classes meets on a shared boundary, so
+ * the four are held to the all-pairs measure rather than the adjacent one, and four is the limit: a fifth class is a
+ * second map, never a fifth colour. The two pale classes stay under 3:1 against the light page, so a map keeps its
+ * boundaries drawn and names its classes in the legend.
  *
  * **Spacing and scaling** — spacing, type and border tokens are stated in `em`, so a subtree given a size of its own
  * takes its rhythm along. The two ladders answer different questions: `--tile--spacing-*` sets a thing apart from what
@@ -83,7 +111,7 @@
  * **Missing and malformed values** — a token carrying a literal is registered with the type it takes and the value it
  * falls back to, so an override the browser cannot parse leaves the interface on the default rather than unstyled. A
  * component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
- * fallback in the reference: `var(--tile--color-accent-strong, #06C)`.
+ * fallback in the reference: `var(--tile--color-strong, #06C)`.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
@@ -94,7 +122,7 @@
  * default, and so keeps whatever the app overrode and whichever colour scheme is in force:
  *
  * ```typescript
- * getComputedStyle(element).getPropertyValue(tile.colorAccentStrong)
+ * getComputedStyle(element).getPropertyValue(tile.colorStrong)
  * ```
  *
  * @module index
@@ -163,13 +191,72 @@ export const tile = {
 	colorHover: "--tile--color-hover",
 	colorFocus: "--tile--color-focus",
 
-	colorAccentSubtle: "--tile--color-accent-subtle",
-	colorAccentStrong: "--tile--color-accent-strong",
+	colorSubtle: "--tile--color-subtle",
+	colorStrong: "--tile--color-strong",
 	colorInvalid: "--tile--color-invalid",
 
 	backgroundColor: "--tile--background-color",
 	backgroundColorEdit: "--tile--background-color-edit",
 	backgroundColorStripe: "--tile--background-color-stripe",
+
+	colorGray010: "--tile--color-gray-010",
+	colorGray020: "--tile--color-gray-020",
+	colorGray030: "--tile--color-gray-030",
+	colorGray040: "--tile--color-gray-040",
+	colorGray050: "--tile--color-gray-050",
+	colorGray060: "--tile--color-gray-060",
+	colorGray070: "--tile--color-gray-070",
+	colorGray080: "--tile--color-gray-080",
+	colorGray090: "--tile--color-gray-090",
+	colorGray100: "--tile--color-gray-100",
+
+	colorSubtle010: "--tile--color-subtle-010",
+	colorSubtle020: "--tile--color-subtle-020",
+	colorSubtle030: "--tile--color-subtle-030",
+	colorSubtle040: "--tile--color-subtle-040",
+	colorSubtle050: "--tile--color-subtle-050",
+	colorSubtle060: "--tile--color-subtle-060",
+	colorSubtle070: "--tile--color-subtle-070",
+	colorSubtle080: "--tile--color-subtle-080",
+	colorSubtle090: "--tile--color-subtle-090",
+	colorSubtle100: "--tile--color-subtle-100",
+
+	colorStrong010: "--tile--color-strong-010",
+	colorStrong020: "--tile--color-strong-020",
+	colorStrong030: "--tile--color-strong-030",
+	colorStrong040: "--tile--color-strong-040",
+	colorStrong050: "--tile--color-strong-050",
+	colorStrong060: "--tile--color-strong-060",
+	colorStrong070: "--tile--color-strong-070",
+	colorStrong080: "--tile--color-strong-080",
+	colorStrong090: "--tile--color-strong-090",
+	colorStrong100: "--tile--color-strong-100",
+
+	colorHeat010: "--tile--color-heat-010",
+	colorHeat020: "--tile--color-heat-020",
+	colorHeat030: "--tile--color-heat-030",
+	colorHeat040: "--tile--color-heat-040",
+	colorHeat050: "--tile--color-heat-050",
+	colorHeat060: "--tile--color-heat-060",
+	colorHeat070: "--tile--color-heat-070",
+	colorHeat080: "--tile--color-heat-080",
+	colorHeat090: "--tile--color-heat-090",
+	colorHeat100: "--tile--color-heat-100",
+
+	colorSeries1: "--tile--color-series-1",
+	colorSeries2: "--tile--color-series-2",
+	colorSeries3: "--tile--color-series-3",
+	colorSeries4: "--tile--color-series-4",
+	colorSeries5: "--tile--color-series-5",
+	colorSeries6: "--tile--color-series-6",
+	colorSeries7: "--tile--color-series-7",
+	colorSeries8: "--tile--color-series-8",
+	colorSeries9: "--tile--color-series-9",
+
+	colorArea1: "--tile--color-area-1",
+	colorArea2: "--tile--color-area-2",
+	colorArea3: "--tile--color-area-3",
+	colorArea4: "--tile--color-area-4",
 
 	boxShadowFocus: "--tile--box-shadow-focus",
 	outlineInvalid: "--tile--outline-invalid",
@@ -222,7 +309,7 @@ export type Value = undefined | boolean | number | string
  * don't:
  *
  * ```tsx
- * <section style={css({ colorAccentStrong: "#D60" })}>
+ * <section style={css({ colorStrong: "#D60" })}>
  * ```
  *
  * Numbers and booleans are converted to their CSS text form, so a scalar token is assigned without restating it as a

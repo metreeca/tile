@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDefined } from "../datatypes/src/index.js";
+import { isDefined } from "../../type/src/index.js";
 import { Entry, isEntry, toEntryString } from "@metreeca/core/entry";
 import { Frame, isFrame, Order } from "@metreeca/core/frame";
 import { isNumber } from "@metreeca/core/number";

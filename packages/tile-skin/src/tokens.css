@@ -207,7 +207,7 @@
 @property --tile--color-accent-subtle {
     syntax: "<color>";
     inherits: true;
-    initial-value: #046;
+    initial-value: #567;
 }
 
 @property --tile--color-accent-strong {

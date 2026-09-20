@@ -80,20 +80,21 @@
         --tile--border-radius-round: 1em;
 
         /*
-         * A mark or a fill carries an accent at full strength. A role painting text takes it down in lightness
-         * instead, keeping the chroma that a mix towards the page would wash out, far enough to hold AA contrast in
-         * either scheme. The role marking a failure is an anchor of its own rather than a derivation: derived from an
-         * accent, it would carry whatever hue an app brands with and stop reading as an error.
+         * A role painting text takes the subtle accent as it stands, since a mix towards the page costs the lightness
+         * it needs to hold AA contrast and would force the anchor itself down towards black. Only the focus ring,
+         * which owes 3:1, can afford the mix. The role marking a failure is an anchor of its own rather than a
+         * derivation: derived from an accent, it would carry whatever hue an app brands with and stop reading as an
+         * error.
          */
 
         --tile--color-faint: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
         --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
         --tile--color-placeholder: var(--tile--color-label);
-        --tile--color-enabled: color-mix(in oklab, var(--tile--color-accent-subtle) 80%, var(--tile--background-color));
+        --tile--color-enabled: var(--tile--color-accent-subtle);
         --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
         --tile--color-hover: oklch(from var(--tile--color-accent-strong) calc(l - 0.1) c h);
-        --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-subtle) 70%, var(--tile--background-color));
+        --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-subtle) 80%, var(--tile--background-color));
 
         --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
         --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));

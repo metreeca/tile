@@ -103,10 +103,11 @@ and neither name survives being read as an absolute.
 
 > [!WARNING]
 >
-> `subtle` is about **chroma**, **NOT** contrast: the subtle accent carries roughly half the chroma of the strong one
-> (0.083 against 0.177 in the light scheme) while holding the **higher** contrast, 10.4:1 against 5.6:1 on white,
-> because it is the darker of the two. A "fix" bringing its contrast down to match the name breaks the text roles
-> derived from it.
+> `subtle` is about **chroma**, **NOT** contrast or lightness: the subtle accent is near-neutral, carrying about a
+> fifth of the strong one's chroma (0.034 against 0.177 in the light scheme, 0.032 against 0.155 in the dark), at
+> much the same lightness. It is a slate beside a saturated colour, which is what the brand pair does too, and it
+> holds the higher contrast of the two, 5.91:1 against 5.57:1 on white. A "fix" darkening it or giving it the hue of
+> its partner undoes both the reading and the text roles derived from it.
 
 `--tile--color-invalid` is an anchor rather than a derivation of an accent on purpose: deriving it carried the hue an
 app brands with into the role marking a failure, so a blue-branded interface rejected a value in blue.

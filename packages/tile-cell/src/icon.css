@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-/**
- * Preact widgets and controls.
- *
- * Supplies the widgets a value is shown and edited through: labels, icons, buttons, fields and the other
- * single-purpose elements a screen is populated with. Behaviour comes from the state they observe, and styling is
- * structural only, so appearance stays with the design system or with whoever styles the app.
- *
- * @module index
+
+/*
+ * An icon rides with the text it sits in, so a control marked with one needs no measure of its own. The rule is keyed
+ * by the class lucide puts on every glyph, there being no element of ours to key it by.
  */
+
+.lucide {
+
+    display: inline-block;
+
+    width: var(--tile--scaling-100);
+    height: var(--tile--scaling-100);
+
+    stroke-width: var(--tile--stroke-width);
+
+}

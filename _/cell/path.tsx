@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isArray, isDefined } from "../Core/src/index.js";
+import { isArray, isDefined } from "../lens/datatypes/src/index.js";
 import { isEntry } from "@metreeca/core/entry";
 import { isValue, toValueString, Value } from "@metreeca/core/value";
 import { TileLink } from "@metreeca/view/widgets/link";

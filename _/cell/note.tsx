@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isEmpty } from "../Core/src/index.js";
+import { isEmpty } from "../lens/datatypes/src/index.js";
 import { classes } from "@metreeca/view";
 import { AlertTriangle, Frown, Ghost, HelpCircle, Info, Lock } from "@metreeca/view/widgets/icon";
 

@@ -66,6 +66,16 @@
  * it free to hold the higher contrast, as it does by default. `--tile--color-invalid` stands apart as an anchor of
  * its own rather than a derivation of an accent, so a failure keeps reading as one whatever an app brands with.
  *
+ * **Spacing and scaling** — spacing, type and border tokens are stated in `em`, so a subtree given a size of its own
+ * takes its rhythm along. The two ladders answer different questions: `--tile--spacing-*` sets a thing apart from what
+ * surrounds it, while `--tile--scaling-*` sizes what is measured against the text rather than spaced from it, a glyph,
+ * a spinner, a swatch or a dot, with `--tile--scaling-100` matching the text it sits in.
+ *
+ * **Radii and strokes** — `--tile--border-radius` is a length, rounding a field, a panel or a button by the same
+ * amount whatever size it is given, while `--tile--border-radius-*` carries a share of the box, so a mark rounds with
+ * its own size and every share above a half draws the same roundel. `--tile--stroke-width` carries a bare number, in
+ * the user units of the vector viewport it applies to, so the weight of a glyph holds at any size.
+ *
  * **Override order** — the stylesheet declares its rules in a `tile` cascade layer, so a rule an app or a component
  * writes outside a layer wins whatever order the two stylesheets reach the document in, and whichever selector is the
  * more specific. An app whose own rules are layered orders its layer after `tile`.
@@ -121,11 +131,26 @@ export const tile = {
 	spacing200: "--tile--spacing-200",
 	spacing250: "--tile--spacing-250",
 
+	scaling025: "--tile--scaling-025",
+	scaling050: "--tile--scaling-050",
+	scaling075: "--tile--scaling-075",
+	scaling090: "--tile--scaling-090",
+	scaling100: "--tile--scaling-100",
+	scaling110: "--tile--scaling-110",
+	scaling125: "--tile--scaling-125",
+	scaling150: "--tile--scaling-150",
+	scaling200: "--tile--scaling-200",
+	scaling250: "--tile--scaling-250",
+
 	borderStyle: "--tile--border-style",
 	borderColor: "--tile--border-color",
 	borderWidth: "--tile--border-width",
 	borderRadius: "--tile--border-radius",
-	borderRadiusRound: "--tile--border-radius-round",
+
+	borderRadius025: "--tile--border-radius-025",
+	borderRadius050: "--tile--border-radius-050",
+	borderRadius075: "--tile--border-radius-075",
+	borderRadius100: "--tile--border-radius-100",
 
 	color: "--tile--color",
 
@@ -147,7 +172,9 @@ export const tile = {
 	backgroundColorStripe: "--tile--background-color-stripe",
 
 	boxShadowFocus: "--tile--box-shadow-focus",
-	outlineInvalid: "--tile--outline-invalid"
+	outlineInvalid: "--tile--outline-invalid",
+
+	strokeWidth: "--tile--stroke-width"
 
 } as const;
 

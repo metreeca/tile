@@ -62,16 +62,20 @@ Packages are named after what they contribute, not after the library they contri
 
 # Package Summaries
 
-Every package states its summary in four places, which **MUST** be kept aligned:
+Every package states its summary in three places, which **MUST** be kept aligned:
 
 - `packages/<package>/package.json` `description` - `<summary> for @metreeca/tile interfaces.`
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
   project repository
-- `packages/<package>/src/index.ts`, module doc definition line - `<summary>.`, without the family suffix
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
-Revising one **ALWAYS** means revising the other three.
+A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
+without the family suffix. The file is **NEVER** added for the sake of the summary: a package whose modules each stand
+on their own (`tile-cell`, `tile-hive`) declares no root entry point, and its `package.json` `exports` carries no `"."`
+entry either.
+
+Revising one **ALWAYS** means revising the others.
 
 A package `README.md` **Usage** section opens with a note pointing at the API reference, then carries the real thing:
 what a consumer has to know to put the package to work, stubbed as `{TBD: usage overview and examples}` until written.
@@ -117,6 +121,11 @@ effects. It carries **NO** dependency on Preact, is tested without a DOM, and is
 other module, since a second binding reaches the same behaviour by importing it. The generated reference leaves it out
 for now, `typedoc.json` excluding `**/*.pure.ts`, so a published comment **NEVER** links into one. Internals stay in a
 `*.core.ts` module, which the published surface never exposes.
+
+A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.pack.ts`
+module, likewise left out of the reference by `typedoc.json`: the documented module beside it is the only path a
+consumer imports, and carries the comment the catalogue is described by. `icon.ts` documents the `Icon` namespace it
+hands out, `icon.pack.ts` names the glyph each role stands for.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDefined } from "../Core/src/index.js";
+import { isDefined } from "../datatypes/src/index.js";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
 import { Resource } from "@metreeca/data/models/resource";
 import { TileHint } from "@metreeca/view/widgets/hint";

@@ -26,12 +26,10 @@
     "directory": "packages/tile-cell"
   },
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "exports": {
-    ".": {
-      "@metreeca/source": "./src/index.ts",
-      "default": "./dist/index.js"
-    },
     "./*": {
       "@metreeca/source": [
         "./src/*.ts",
@@ -54,7 +52,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/*.css src/*.md dist/",
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "dependencies": {

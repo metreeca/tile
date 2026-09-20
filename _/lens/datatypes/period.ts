@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { error, immutable, inconvertible, isObject, Type } from "../Core/src/index.js";
+import { error, immutable, inconvertible, isObject, Type } from ".//src/index.js";
 import { toIntegerString } from "@metreeca/core/integer";
 import { isString } from "@metreeca/core/string";
 import { toTextString } from "@metreeca/core/text";

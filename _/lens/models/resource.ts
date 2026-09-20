@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isEmpty } from "../Core/src/index.js";
+import { isEmpty } from "../datatypes/src/index.js";
 import { Entry, isEntry } from "@metreeca/core/entry";
 import { Frame, toModel } from "@metreeca/core/frame";
 import { useGraph } from "@metreeca/data/contexts/graph";

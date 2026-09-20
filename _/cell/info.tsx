@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isArray } from "../Core/src/index.js";
+import { isArray } from "../lens/datatypes/src/index.js";
 import { classes } from "@metreeca/view";
 import React, { createElement, ReactNode } from "react";
 

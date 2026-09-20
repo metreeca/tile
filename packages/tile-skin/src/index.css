@@ -73,11 +73,26 @@
         --tile--spacing-200: 2em;
         --tile--spacing-250: 2.5em;
 
+        --tile--scaling-025: 0.25em;
+        --tile--scaling-050: 0.5em;
+        --tile--scaling-075: 0.75em;
+        --tile--scaling-090: 0.9em;
+        --tile--scaling-100: 1em;
+        --tile--scaling-110: 1.1em;
+        --tile--scaling-125: 1.25em;
+        --tile--scaling-150: 1.5em;
+        --tile--scaling-200: 2em;
+        --tile--scaling-250: 2.5em;
+
         --tile--border-style: solid;
         --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
         --tile--border-width: 1px;
         --tile--border-radius: 0.25em;
-        --tile--border-radius-round: 1em;
+
+        --tile--border-radius-025: 25%;
+        --tile--border-radius-050: 50%;
+        --tile--border-radius-075: 75%;
+        --tile--border-radius-100: 100%;
 
         /*
          * A role painting text takes the subtle accent as it stands, since a mix towards the page costs the lightness
@@ -101,6 +116,8 @@
 
         --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
         --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-invalid);
+
+        --tile--stroke-width: 2;
 
     }
 

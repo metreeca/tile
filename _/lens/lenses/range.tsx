@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDefined, Type } from "../Core/src/index.js";
+import { isDefined, Type } from "../datatypes/src/index.js";
 import { date } from "@metreeca/core/date";
 import { dateTime } from "@metreeca/core/dateTime";
 import { decimal } from "@metreeca/core/decimal";

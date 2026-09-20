@@ -15,7 +15,7 @@
  */
 
 
-import { isArray, isDefined, isEmpty, isObject } from "../Core/src/index.js";
+import { isArray, isDefined, isEmpty, isObject } from "../datatypes/src/index.js";
 import { Frame } from "@metreeca/core/frame";
 import { isNumber } from "@metreeca/core/number";
 import { isString } from "@metreeca/core/string";

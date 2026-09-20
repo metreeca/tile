@@ -4,9 +4,9 @@
 
 Preact widgets and controls for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer populates a screen with the widgets a value is shown and edited through: labels, icons, buttons, fields and
-the like. Behaviour comes from the state a widget observes, so what it does stays a separate decision from what it looks
-like.
+A consumer populates a screen with the single-purpose elements an app repeats: labels, icons, buttons, fields and flags
+that answer how a value is shown and changed. A widget takes its behaviour from the state it observes, so what it does
+is retuned without touching where it sits or what it looks like.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
 [@metreeca/tile-skin](https://www.npmjs.com/package/@metreeca/tile-skin) or to whoever styles the app.

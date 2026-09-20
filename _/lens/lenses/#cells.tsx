@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isTemporal } from "../Core/src/index.js";
+import { isTemporal } from "../datatypes/src/index.js";
 import { isBoolean } from "@metreeca/core/boolean";
 import { date } from "@metreeca/core/date";
 import { toDateTimeString } from "@metreeca/core/dateTime";

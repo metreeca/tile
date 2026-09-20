@@ -15,10 +15,11 @@
  */
 
 import { app } from "@metreeca/tile";
+import { Icon } from "@metreeca/tile-cell/icon";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
-import { type ComponentChild, render } from "preact";
+import { type ComponentChild, Fragment, render } from "preact";
 import "./index.css";
 
 
@@ -26,6 +27,11 @@ import "./index.css";
  * The custom property of a token and what the token is responsible for.
  */
 type Entry = readonly [Property, string]
+
+/**
+ * The name of an icon role and the glyph standing for it.
+ */
+type Glyph = readonly [string, Icon.LucideIcon]
 
 
 const anchors: ReadonlyArray<Entry> = [
@@ -79,12 +85,108 @@ const weights: ReadonlyArray<Entry> = [
 
 ];
 
-const borders: ReadonlyArray<Entry> = [
+const scalings: ReadonlyArray<Entry> = [
 
-	[ tile.borderRadius, "fields and panels" ],
-	[ tile.borderRadiusRound, "buttons" ]
+	[ tile.scaling075, "a mark subordinate to its text, a dot or a caret" ],
+	[ tile.scaling090, "a mark set a shade below the text" ],
+	[ tile.scaling100, "an icon beside a label" ],
+	[ tile.scaling110, "a mark set a shade above it" ],
+	[ tile.scaling125, "a roundel or a swatch" ],
+	[ tile.scaling150, "a glyph standing without a label" ],
+	[ tile.scaling200, "a mark heading a panel" ],
+	[ tile.scaling250, "a display mark on an empty or failed screen" ]
 
 ];
+
+const tints: ReadonlyArray<Entry> = [
+
+	[ tile.color, "a mark in the text colour, which it takes by inheritance" ],
+	[ tile.colorEnabled, "a mark on an enabled control" ],
+	[ tile.colorHover, "a mark under the pointer" ],
+	[ tile.colorLabel, "a mark beside secondary text" ],
+	[ tile.colorDisabled, "a mark on a control taking no input" ],
+	[ tile.colorInvalid, "a mark telling a failure" ]
+
+];
+
+const borders: ReadonlyArray<Entry> = [
+
+	[ tile.borderRadius, "fields, panels and buttons" ],
+	[ tile.borderRadius025, "a softly rounded mark" ],
+	[ tile.borderRadius050, "a roundel, a swatch or an avatar" ],
+	[ tile.borderRadius075, "a lozenge leaning towards the round" ],
+	[ tile.borderRadius100, "a mark rounded to its own edges" ]
+
+];
+
+const areas: ReadonlyArray<readonly [string, ReadonlyArray<Glyph>]> = [
+
+	[ "Session", [
+		[ "LogIn", Icon.LogIn ],
+		[ "LogOut", Icon.LogOut ]
+	] ],
+
+	[ "Navigation", [
+		[ "Link", Icon.Link ],
+		[ "Open", Icon.Open ],
+		[ "Back", Icon.Back ]
+	] ],
+
+	[ "Disclosure", [
+		[ "Expand", Icon.Expand ],
+		[ "Collapse", Icon.Collapse ]
+	] ],
+
+	[ "Search", [
+		[ "Search", Icon.Search ],
+		[ "Clear", Icon.Clear ]
+	] ],
+
+	[ "Ordering", [
+		[ "Sort", Icon.Sort ],
+		[ "Increasing", Icon.Increasing ],
+		[ "Decreasing", Icon.Decreasing ]
+	] ],
+
+	[ "Collections", [
+		[ "Insert", Icon.Insert ],
+		[ "Remove", Icon.Remove ]
+	] ],
+
+	[ "Records", [
+		[ "Create", Icon.Create ],
+		[ "Update", Icon.Update ],
+		[ "Delete", Icon.Delete ]
+	] ],
+
+	[ "Confirmation", [
+		[ "Accept", Icon.Accept ],
+		[ "Cancel", Icon.Cancel ],
+		[ "Close", Icon.Close ]
+	] ],
+
+	[ "Modes", [
+		[ "Menu", Icon.Menu ],
+		[ "Done", Icon.Done ]
+	] ],
+
+	[ "Notices", [
+		[ "About", Icon.About ],
+		[ "Info", Icon.Info ],
+		[ "Alert", Icon.Alert ],
+		[ "Help", Icon.Help ]
+	] ],
+
+	[ "Failures", [
+		[ "Unauthorized", Icon.Unauthorized ],
+		[ "Forbidden", Icon.Forbidden ],
+		[ "NotFound", Icon.NotFound ],
+		[ "Error", Icon.Error ]
+	] ]
+
+];
+
+const strokes: ReadonlyArray<number> = [ 1, 1.5, 2, 3 ];
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,6 +204,7 @@ render((
 
 			Colours: <Colours/>,
 			Scales: <Scales/>,
+			Icons: <Icons/>,
 			Text: <Text/>,
 			Tables: <Tables/>,
 			Forms: <Forms/>,
@@ -168,10 +271,79 @@ function Scales() {
 			<span style={{ fontWeight: `var(${ token })` }}>Aa</span>
 		}/>
 
+		<h3>Scaling</h3>
+
+		<p>The scaling ladder sizes what is measured against the text rather than spaced from it: a glyph, a spinner,
+			a swatch or a dot.</p>
+
+		<Samples entries={scalings} sample={token =>
+			<span class="box" style={{ width: `var(${ token })`, height: `var(${ token })` }}/>
+		}/>
+
 		<h3>Borders</h3>
 
+		<p>The radius palette is stated as a share of the box, so a mark rounds with whatever size it is given. Each
+			sample rounds two opposite corners: where the radii on one side add up to more than the side itself, the
+			browser scales them down to fit, and every share above a half draws the same roundel.</p>
+
 		<Samples entries={borders} sample={token =>
-			<span class="box" style={{ borderRadius: `var(${ token })` }}/>
+			<span class="box" style={{ borderRadius: `var(${ token }) 0` }}/>
+		}/>
+
+	</>;
+}
+
+function Icons() {
+	return <>
+
+		<p>An icon is asked for by the role it plays rather than by the shape it draws, so every control doing the same
+			thing carries the same glyph, and repointing a role restyles all of them at once.</p>
+
+		<h3>Roles</h3>
+
+		<dl class="areas">{areas.map(([ area, marks ]) => <Fragment key={area}>
+
+			<dt>{area}</dt>
+
+			<dd class="glyphs">{marks.map(([ name, Mark ]) =>
+				<span key={name}><Mark/> <code>{name}</code></span>
+			)}</dd>
+
+		</Fragment>)}</dl>
+
+		<h3>Size</h3>
+
+		<p>A glyph is drawn at <code>{tile.scaling100}</code>, so it rides with the text around it; any other step of
+			the ladder sizes it deliberately.</p>
+
+		<Samples entries={scalings} sample={token =>
+			<Icon.Rocket style={{ width: `var(${ token })`, height: `var(${ token })` }}/>
+		}/>
+
+		<h3>Stroke</h3>
+
+		<p>Every glyph is stroked at <code>{tile.strokeWidth}</code>, in user units of the icon viewport, so the weight
+			holds whatever size the glyph is drawn at.</p>
+
+		<div class="glyphs">{strokes.map(width =>
+			<span key={width}>
+				<Icon.Alert style={{
+
+					width: `var(${ tile.scaling200 })`,
+					height: `var(${ tile.scaling200 })`,
+					strokeWidth: width
+
+				}}/>{" "}<code>{width}</code>
+			</span>
+		)}</div>
+
+		<h3>Colour</h3>
+
+		<p>A glyph strokes <code>currentColor</code>, so it takes the colour of whatever it sits in and stays pinned to
+			its label through every state.</p>
+
+		<Samples entries={tints} sample={token =>
+			<Icon.Alert style={{ color: `var(${ token })` }}/>
 		}/>
 
 	</>;

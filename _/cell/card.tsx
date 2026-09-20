@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDefined } from "../Core/src/index.js";
+import { isDefined } from "../lens/datatypes/src/index.js";
 import { isNumber } from "@metreeca/core/number";
 import { isString } from "@metreeca/core/string";
 import { classes } from "@metreeca/view";

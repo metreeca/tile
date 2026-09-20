@@ -53,6 +53,7 @@
     "exclude": [
       "**/*.pure.ts",
       "**/*.core.ts",
+      "**/*.pack.ts",
       "**/*.test.ts",
       "**/*.test-d.ts"
     ],

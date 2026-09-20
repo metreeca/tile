@@ -128,6 +128,66 @@
     initial-value: 2.5em;
 }
 
+@property --tile--scaling-025 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.25em;
+}
+
+@property --tile--scaling-050 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.5em;
+}
+
+@property --tile--scaling-075 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.75em;
+}
+
+@property --tile--scaling-090 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.9em;
+}
+
+@property --tile--scaling-100 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+@property --tile--scaling-110 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.1em;
+}
+
+@property --tile--scaling-125 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.25em;
+}
+
+@property --tile--scaling-150 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.5em;
+}
+
+@property --tile--scaling-200 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2em;
+}
+
+@property --tile--scaling-250 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2.5em;
+}
+
 @property --tile--border-style {
     syntax: "*";
     inherits: true;
@@ -151,10 +211,28 @@
     initial-value: 0.25em;
 }
 
-@property --tile--border-radius-round {
+@property --tile--border-radius-025 {
     syntax: "*";
     inherits: true;
-    initial-value: 1em;
+    initial-value: 25%;
+}
+
+@property --tile--border-radius-050 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 50%;
+}
+
+@property --tile--border-radius-075 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 75%;
+}
+
+@property --tile--border-radius-100 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 100%;
 }
 
 @property --tile--color {
@@ -240,4 +318,10 @@
 @property --tile--outline-invalid {
     syntax: "*";
     inherits: true;
+}
+
+@property --tile--stroke-width {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 2;
 }

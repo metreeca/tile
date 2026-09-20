@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { error, immutable, inconvertible, Type } from "../Core/src/index.js";
+import { error, immutable, inconvertible, Type } from ".//src/index.js";
 import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
 import { isString } from "@metreeca/core/string";
 import { Text } from "@metreeca/core/text";

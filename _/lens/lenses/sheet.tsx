@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isFunction, isObject } from "../Core/src/index.js";
+import { isFunction, isObject } from "../datatypes/src/index.js";
 import { isEntry } from "@metreeca/core/entry";
 import { Frame, isFrame, Order, toFrameString } from "@metreeca/core/frame";
 import { isString } from "@metreeca/core/string";

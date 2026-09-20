@@ -5,10 +5,10 @@
 Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 An app includes the stylesheet and gets a coherent look across every Tile component: a token layer defining colour,
-type, spacing and focus affordances, and base rules applying them to plain document markup. Redefining a token in a
-later rule restyles everything that reads it, with no component change.
+type, spacing, sizing and focus affordances, and base rules applying them to plain document markup. Redefining a token
+in a later rule restyles everything that reads it, with no component change.
 
-The palette stands on four colour anchors, every other colour deriving from them, so retuning the anchors carries the
+The palette stands on five colour anchors, every other colour deriving from them, so retuning the anchors carries the
 whole interface along and the default look follows the platform colour scheme, light or dark, on its own.
 
 The dependency runs one way and stays optional: components carry only the structural styling they need to work, so an
@@ -58,9 +58,18 @@ Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-colo
 `--tile--color-accent-strong` and `--tile--color-invalid`: labels, borders, stripes, focus rings and hover states
 derive from them and follow. The accents ship brand-agnostic, so an app supplies its own, a quieter value and a louder
 one per colour scheme, and rechecks that the text roles still hold AA contrast against the page and the striped row in
-both. An override the
-browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning a colour scheme sets
-`color-scheme` on the root element as usual.
+both. An override the browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning
+a colour scheme sets `color-scheme` on the root element as usual.
+
+Measures are stated in `em`, so a subtree given a size of its own takes its rhythm along. The two ladders answer
+different questions: `--tile--spacing-*` sets a thing apart from what surrounds it, while `--tile--scaling-*` sizes what
+is measured against the text rather than spaced from it, a glyph, a spinner, a swatch or a dot, with
+`--tile--scaling-100` matching the text it sits in.
+
+Radii come both ways: `--tile--border-radius` is a length, rounding a field, a panel or a button by the same amount
+whatever size it is given, while `--tile--border-radius-*` carries a share of the box, so a mark rounds with its own
+size and every share above a half draws the same roundel. `--tile--stroke-width` carries a bare number, in the user
+units of the vector viewport it applies to, so the weight of a glyph holds at any size.
 
 A component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
 fallback in the reference:

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { error, isDefined, toType, Type } from "../Core/src/index.js";
+import { error, isDefined, toType, Type } from "../datatypes/src/index.js";
 import { evaluate, isValue, Value } from "@metreeca/core/value";
 import { useCache } from "@metreeca/data/hooks/cache";
 import { Collection } from "@metreeca/data/models/collection";

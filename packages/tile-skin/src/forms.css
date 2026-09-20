@@ -45,7 +45,7 @@ button {
     align-items: center;
     grid-column-gap: var(--tile--spacing-025);
 
-    border-radius: var(--tile--border-radius-round);
+    border-radius: var(--tile--border-radius);
     background-color: transparent;
 
     white-space: nowrap;

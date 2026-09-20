@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { immutable, isEmpty } from "../Core/src/index.js";
+import { immutable, isEmpty } from "../datatypes/src/index.js";
 import { Entry } from "@metreeca/core/entry";
 import { Frame, Query, toModel, toQuery } from "@metreeca/core/frame";
 import { Value } from "@metreeca/core/value";

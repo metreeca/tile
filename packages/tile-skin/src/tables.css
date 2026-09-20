@@ -23,7 +23,7 @@ table {
     font-size: var(--tile--font-size-small);
 }
 
-/* the stripe is painted rather than assigned to the background token, which derives from it and would cycle */
+/* The stripe is painted rather than assigned to the background token, which derives from it and would cycle. */
 
 tbody > tr:nth-child(odd) > td {
     background-color: var(--tile--background-color-stripe);

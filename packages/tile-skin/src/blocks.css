@@ -31,7 +31,7 @@ blockquote {
     background-color: var(--tile--background-color-stripe);
 
     & > p {
-        margin-bottom: 0.1em; /* an optical nudge between quoted paragraphs, below the spacing scale */
+        margin-bottom: 0.1em; /* An optical nudge between quoted paragraphs, below the spacing scale. */
     }
 
 }

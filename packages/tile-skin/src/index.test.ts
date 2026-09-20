@@ -61,12 +61,12 @@ describe("css", () => {
 
 		expect(css({
 
-			[tile.colorAccentLite]: "#06C",
+			[tile.colorAccentStrong]: "#06C",
 			[tile.fontFamily]: "Inter, sans-serif"
 
 		})).toEqual({
 
-			"--tile--color-accent-lite": "#06C",
+			"--tile--color-accent-strong": "#06C",
 			"--tile--font-family": "Inter, sans-serif"
 
 		});
@@ -93,12 +93,12 @@ describe("css", () => {
 
 		expect(css({
 
-			[tile.colorAccentLite]: "#06C",
-			[tile.colorAccentDark]: undefined
+			[tile.colorAccentStrong]: "#06C",
+			[tile.colorAccentSubtle]: undefined
 
 		})).toStrictEqual({
 
-			"--tile--color-accent-lite": "#06C"
+			"--tile--color-accent-strong": "#06C"
 
 		});
 

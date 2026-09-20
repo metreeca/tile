@@ -51,7 +51,7 @@ code {
 
     font-family: var(--tile--font-family-mono);
 
-    /* optical nudges, the mono face reading larger and thinner than the text around it at the same size and weight */
+    /* Optical nudges: the mono face reads larger and thinner than the text around it at the same size and weight. */
 
     font-size: 80%;
     font-weight: var(--tile--font-weight-strong);

@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-/* every token is registered here and named by the contract published in index.ts: adding or renaming one means
-   revising both, while the value it takes is given by index.css, alongside the other page defaults */
+/*
+ * Every token is registered here and named by the contract published in index.ts, so adding or renaming one means
+ * revising both. The value it takes is given by index.css, alongside the other page defaults.
+ */
 
-/* an anchored token carries the type it takes and the default it falls back on, so an override the browser cannot
-   parse leaves the interface styled rather than unstyled; a derived token stands on other tokens and carries neither,
-   as does one stated in a relative unit: a registered type requires a default resolved without context, which em,
-   rem and percentage values are not */
+/*
+ * An anchored token carries the type it takes and the default it falls back on, so an override the browser cannot
+ * parse leaves the interface styled rather than unstyled. A derived token stands on other tokens and carries neither,
+ * and so does one stated in a relative unit: a registered type requires a default resolved without context, which em,
+ * rem and percentage values are not.
+ */
 
 @property --tile--font-family {
     syntax: "*";
@@ -159,7 +163,7 @@
     initial-value: #000;
 }
 
-@property --tile--color-light {
+@property --tile--color-faint {
     syntax: "*";
     inherits: true;
 }
@@ -185,8 +189,9 @@
 }
 
 @property --tile--color-invalid {
-    syntax: "*";
+    syntax: "<color>";
     inherits: true;
+    initial-value: #C00;
 }
 
 @property --tile--color-hover {
@@ -199,16 +204,16 @@
     inherits: true;
 }
 
-@property --tile--color-accent-lite {
+@property --tile--color-accent-subtle {
     syntax: "<color>";
     inherits: true;
-    initial-value: #D60;
+    initial-value: #046;
 }
 
-@property --tile--color-accent-dark {
+@property --tile--color-accent-strong {
     syntax: "<color>";
     inherits: true;
-    initial-value: #345;
+    initial-value: #06C;
 }
 
 @property --tile--background-color {

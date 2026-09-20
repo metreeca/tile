@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-/* the accents carry the company brand, and every other colour derives from them and from the text and background
-   pair, so an app retuning the four anchors carries the whole interface along, in either scheme; the anchors are
-   registered on their light values, so a browser answering neither query still gets the light page */
+/*
+ * The accents stand in for a brand an app has yet to supply. Every other colour derives from them, from the error
+ * colour and from the text and background pair, so an app retuning the anchors carries the whole interface along in
+ * either scheme. The anchors are registered on their light values, so a browser answering neither query still gets
+ * the light page.
+ */
 
 @media (prefers-color-scheme: light) {
 
@@ -25,8 +28,10 @@
         --tile--color: #000;
         --tile--background-color: #FFF;
 
-        --tile--color-accent-lite: #D60;
-        --tile--color-accent-dark: #345;
+        --tile--color-accent-subtle: #046;
+        --tile--color-accent-strong: #06C;
+
+        --tile--color-invalid: #C00;
 
     }
 
@@ -39,8 +44,10 @@
         --tile--color: #EEE;
         --tile--background-color: #111;
 
-        --tile--color-accent-lite: #F80;
-        --tile--color-accent-dark: #9AB;
+        --tile--color-accent-subtle: #9BD;
+        --tile--color-accent-strong: #4AF;
+
+        --tile--color-invalid: #F66;
 
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* the strip is a row of tabs closed by a rule, with the section on show underneath */
+/* The strip is a row of tabs closed by a rule, with the section on show underneath. */
 
 tile-tabs {
 
@@ -34,14 +34,14 @@ tile-tabs {
         & > label {
 
             padding-bottom: var(--tile--spacing-050);
-            margin-bottom: calc(-1 * var(--tile--border-width)); /* the mark sits on the rule, not above it */
+            margin-bottom: calc(-1 * var(--tile--border-width)); /* The mark sits on the rule, not above it. */
             cursor: pointer;
 
             font-size: var(--tile--font-size-small);
             font-weight: var(--tile--font-weight-heavy);
             color: var(--tile--color-label);
 
-            background-color: transparent; /* the reset hands down an opaque page, which would mask the rule */
+            background-color: transparent; /* The reset hands down an opaque page, which would mask the rule. */
 
             border-bottom-style: var(--tile--border-style);
             border-bottom-color: transparent;
@@ -55,12 +55,12 @@ tile-tabs {
                 outline-offset: 0.1em;
             }
 
-            /* three times the rule to read as a highlight; weight is left alone, as it would reflow the strip */
+            /* Three times the rule, to read as a highlight. Weight is left alone, since it would reflow the strip. */
 
             &[aria-selected="true"] {
                 color: var(--tile--color);
                 border-bottom-width: calc(3 * var(--tile--border-width));
-                border-bottom-color: var(--tile--color-accent-lite);
+                border-bottom-color: var(--tile--color-accent-strong);
                 margin-bottom: calc(-3 * var(--tile--border-width));
             }
 

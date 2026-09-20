@@ -14,82 +14,93 @@
  * limitations under the License.
  */
 
-/* modules are listed by increasing structural complexity, so a composite takes precedence over its plain elements */
+/*
+ * Modules are listed by increasing structural complexity, so a composite takes precedence over the plain elements it
+ * is built from. Every one of them is imported into the tile layer. A rule an app or a component writes outside a
+ * layer therefore wins whatever order the two stylesheets reach the document in, and whichever selector is the more
+ * specific.
+ */
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Mono&family=Roboto:wght@300;400;700&display=swap");
 
-@import "./tokens.css";
-@import "./schemes.css";
+@import "./tokens.css" layer(tile);
+@import "./schemes.css" layer(tile);
 
-@import "./reset.css";
+@import "./reset.css" layer(tile);
 
-@import "./headings.css";
-@import "./inlines.css";
-@import "./blocks.css";
-@import "./lists.css";
-@import "./tables.css";
-@import "./forms.css";
+@import "./headings.css" layer(tile);
+@import "./inlines.css" layer(tile);
+@import "./blocks.css" layer(tile);
+@import "./lists.css" layer(tile);
+@import "./tables.css" layer(tile);
+@import "./forms.css" layer(tile);
 
-:root {
+@layer tile {
 
-    color-scheme: light dark;
+    :root {
 
-    color: var(--tile--color);
-    background-color: var(--tile--background-color);
+        color-scheme: light dark;
 
-    /* each brand face stands ahead of a generic stack covering it until it loads */
+        color: var(--tile--color);
+        background-color: var(--tile--background-color);
 
-    --tile--font-family: Roboto, Helvetica, Arial, sans-serif;
-    --tile--font-family-heading: "Roboto Condensed", Helvetica, Arial, sans-serif;
-    --tile--font-family-mono: "Roboto Mono", Courier, monospace;
+        /* Each brand face stands ahead of a generic stack covering it until it loads. */
 
-    font-family: var(--tile--font-family);
-    font-size: var(--tile--font-size);
-    font-weight: var(--tile--font-weight);
-    line-height: var(--tile--line-height);
+        --tile--font-family: Roboto, Helvetica, Arial, sans-serif;
+        --tile--font-family-heading: "Roboto Condensed", Helvetica, Arial, sans-serif;
+        --tile--font-family-mono: "Roboto Mono", Courier, monospace;
 
-    --tile--font-size: 1.125rem;
-    --tile--font-size-small: 90%;
-    --tile--font-size-large: 1.25em;
+        font-family: var(--tile--font-family);
+        font-size: var(--tile--font-size);
+        font-weight: var(--tile--font-weight);
+        line-height: var(--tile--line-height);
 
-    --tile--line-height: 1.2;
+        --tile--font-size: 1.125rem;
+        --tile--font-size-small: 90%;
+        --tile--font-size-large: 1.25em;
 
-    --tile--font-weight: 300;
-    --tile--font-weight-strong: 400;
-    --tile--font-weight-heavy: 700;
+        --tile--line-height: 1.2;
 
-    --tile--spacing-025: 0.25em;
-    --tile--spacing-050: 0.5em;
-    --tile--spacing-075: 0.75em;
-    --tile--spacing-100: 1em;
-    --tile--spacing-150: 1.5em;
-    --tile--spacing-200: 2em;
-    --tile--spacing-250: 2.5em;
+        --tile--font-weight: 300;
+        --tile--font-weight-strong: 400;
+        --tile--font-weight-heavy: 700;
 
-    --tile--border-style: solid;
-    --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
-    --tile--border-width: 1px;
-    --tile--border-radius: 0.25em;
-    --tile--border-radius-round: 1em;
+        --tile--spacing-025: 0.25em;
+        --tile--spacing-050: 0.5em;
+        --tile--spacing-075: 0.75em;
+        --tile--spacing-100: 1em;
+        --tile--spacing-150: 1.5em;
+        --tile--spacing-200: 2em;
+        --tile--spacing-250: 2.5em;
 
-    /* the anchors are the brand colours, carried at full strength by a mark or a fill; a role painting text takes
-       them down in lightness instead, keeping the chroma that a mix towards the page would wash out, far enough for
-       the pair to hold AA contrast in either scheme */
+        --tile--border-style: solid;
+        --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+        --tile--border-width: 1px;
+        --tile--border-radius: 0.25em;
+        --tile--border-radius-round: 1em;
 
-    --tile--color-light: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
-    --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
-    --tile--color-placeholder: var(--tile--color-label);
-    --tile--color-enabled: color-mix(in oklab, var(--tile--color-accent-dark) 80%, var(--tile--background-color));
-    --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
-    --tile--color-invalid: oklch(from var(--tile--color-accent-lite) calc(l - 0.1) calc(c * 1.15) h);
+        /*
+         * A mark or a fill carries an accent at full strength. A role painting text takes it down in lightness
+         * instead, keeping the chroma that a mix towards the page would wash out, far enough to hold AA contrast in
+         * either scheme. The role marking a failure is an anchor of its own rather than a derivation: derived from an
+         * accent, it would carry whatever hue an app brands with and stop reading as an error.
+         */
 
-    --tile--color-hover: oklch(from var(--tile--color-accent-lite) calc(l - 0.1) c h);
-    --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-dark) 70%, var(--tile--background-color));
+        --tile--color-faint: color-mix(in oklab, var(--tile--color) 25%, var(--tile--background-color));
+        --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
+        --tile--color-placeholder: var(--tile--color-label);
+        --tile--color-enabled: color-mix(in oklab, var(--tile--color-accent-subtle) 80%, var(--tile--background-color));
+        --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
-    --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
-    --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
+        --tile--color-hover: oklch(from var(--tile--color-accent-strong) calc(l - 0.1) c h);
+        --tile--color-focus: color-mix(in oklab, var(--tile--color-accent-subtle) 70%, var(--tile--background-color));
 
-    --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
-    --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-invalid);
+        --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
+        --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
+
+        --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
+        --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-invalid);
+
+    }
 
 }

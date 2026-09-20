@@ -42,25 +42,31 @@ import "@metreeca/tile-skin/index.css";
 An app assembling its own HTML links it in the document head instead: the stylesheet has to reach the document before
 it is painted, or the first frame shows the unstyled markup.
 
-Override any token in a later rule to restyle the interface:
+Override any token to restyle the interface:
 
 ```css
 :root {
-    --tile--color-accent-lite: #06C;
+    --tile--color-accent-strong: #D60;
     --tile--font-family: Inter, sans-serif;
 }
 ```
 
-Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-accent-lite` and
-`--tile--color-accent-dark`: labels, borders, stripes, focus rings and hover states derive from them and follow. An
-override the browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning a
-colour scheme sets `color-scheme` on the root element as usual.
+The stylesheet declares its rules in a `tile` cascade layer, so an override written outside a layer wins however the
+two stylesheets reach the document; an app whose own rules are layered orders its layer after `tile`.
+
+Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-accent-subtle`,
+`--tile--color-accent-strong` and `--tile--color-invalid`: labels, borders, stripes, focus rings and hover states
+derive from them and follow. The accents ship brand-agnostic, so an app supplies its own, a quieter value and a louder
+one per colour scheme, and rechecks that the text roles still hold AA contrast against the page and the striped row in
+both. An override the
+browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning a colour scheme sets
+`color-scheme` on the root element as usual.
 
 A component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
 fallback in the reference:
 
 ```css
-color: var(--tile--color-accent-lite, #D60);
+color: var(--tile--color-accent-strong, #06C);
 ```
 
 Restyle a single subtree instead by assigning the tokens inline, naming them through the published contract rather than
@@ -69,7 +75,7 @@ as literal strings:
 ```tsx
 import { css, tile } from "@metreeca/tile-skin";
 
-<section style={css({ [tile.colorAccentLite]: "#06C" })}>
+<section style={css({ [tile.colorAccentStrong]: "#D60" })}>
 ```
 
 # Support

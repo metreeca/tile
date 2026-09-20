@@ -21,24 +21,24 @@
  * that styling; the same names assign a token inline, restyling a single subtree through a style declaration any
  * rendering layer accepts. The values behind them are supplied by the companion stylesheet.
  *
- * An app that includes the stylesheet gets the default look, light or dark according to the platform colour scheme;
- * one that redefines the tokens in a later rule gets its own, with no component change. Components name tokens through
+ * An app that includes the stylesheet gets a brand-agnostic default look, light or dark according to the platform
+ * colour scheme; one that redefines the tokens gets its own, with no component change. Components name tokens through
  * this contract rather than through literal strings, so a renamed token breaks the build instead of silently losing
  * its styling.
  *
  * @example
  *
- * Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
+ * Include the stylesheet once, at the entry point of the app:
  *
  * ```typescript
  * import "@metreeca/tile-skin/index.css";
  * ```
  *
- * Override any token in a later rule to restyle the whole interface:
+ * Override any token to restyle the whole interface:
  *
  * ```css
  * :root {
- *     --tile--color-accent-lite: #06C;
+ *     --tile--color-accent-strong: #D60;
  *     --tile--font-family: Inter, sans-serif;
  * }
  * ```
@@ -46,20 +46,33 @@
  * Assign the tokens inline to restyle a single subtree instead:
  *
  * ```tsx
- * <section style={css({ [tile.colorAccentLite]: "#06C" })}>
+ * <section style={css({ [tile.colorAccentStrong]: "#D60" })}>
  * ```
  *
  * @remarks
  *
- * **Colour schemes** — the stylesheet retunes itself for a dark platform colour scheme by adjusting four anchors,
- * `--tile--color`, `--tile--background-color`, `--tile--color-accent-lite` and `--tile--color-accent-dark`: every
- * other colour is derived from them, so an app retheming the anchors carries the rest of the palette with it, and one
- * pinning a scheme sets `color-scheme` on the root element as usual.
+ * **Colour schemes** — the stylesheet retunes itself for a dark platform colour scheme by adjusting five anchors,
+ * `--tile--color`, `--tile--background-color`, `--tile--color-accent-subtle`, `--tile--color-accent-strong` and
+ * `--tile--color-invalid`: every other colour is derived from them, so an app retheming the anchors carries the rest
+ * of the palette with it, and one pinning a scheme sets `color-scheme` on the root element as usual. An app supplying
+ * its brand states a value per scheme too, and rechecks that the text roles still hold AA contrast against the page
+ * and the striped row in both.
+ *
+ * **Accents and the error colour** — `--tile--color-accent-subtle` carries an interface at rest, on links, enabled
+ * controls and focus rings, while `--tile--color-accent-strong` marks a thing out, on hover and on a selection. The
+ * pair states an emphasis relative to each other rather than an appearance, so a brand of any hue or lightness fits
+ * it by supplying a quieter value and a louder one; the quieter value is the less saturated of the two, which leaves
+ * it free to hold the higher contrast, as it does by default. `--tile--color-invalid` stands apart as an anchor of
+ * its own rather than a derivation of an accent, so a failure keeps reading as one whatever an app brands with.
+ *
+ * **Override order** — the stylesheet declares its rules in a `tile` cascade layer, so a rule an app or a component
+ * writes outside a layer wins whatever order the two stylesheets reach the document in, and whichever selector is the
+ * more specific. An app whose own rules are layered orders its layer after `tile`.
  *
  * **Missing and malformed values** — a token carrying a literal is registered with the type it takes and the value it
  * falls back to, so an override the browser cannot parse leaves the interface on the default rather than unstyled. A
  * component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
- * fallback in the reference: `var(--tile--color-accent-lite, #D60)`.
+ * fallback in the reference: `var(--tile--color-accent-strong, #06C)`.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
@@ -70,7 +83,7 @@
  * default, and so keeps whatever the app overrode and whichever colour scheme is in force:
  *
  * ```typescript
- * getComputedStyle(element).getPropertyValue(tile.colorAccentLite)
+ * getComputedStyle(element).getPropertyValue(tile.colorAccentStrong)
  * ```
  *
  * @module index
@@ -114,18 +127,18 @@ export const tile = {
 
 	color: "--tile--color",
 
-	colorLight: "--tile--color-light",
+	colorFaint: "--tile--color-faint",
 	colorLabel: "--tile--color-label",
 	colorPlaceholder: "--tile--color-placeholder",
 	colorEnabled: "--tile--color-enabled",
 	colorDisabled: "--tile--color-disabled",
-	colorInvalid: "--tile--color-invalid",
 
 	colorHover: "--tile--color-hover",
 	colorFocus: "--tile--color-focus",
 
-	colorAccentLite: "--tile--color-accent-lite",
-	colorAccentDark: "--tile--color-accent-dark",
+	colorAccentSubtle: "--tile--color-accent-subtle",
+	colorAccentStrong: "--tile--color-accent-strong",
+	colorInvalid: "--tile--color-invalid",
 
 	backgroundColor: "--tile--background-color",
 	backgroundColorEdit: "--tile--background-color-edit",
@@ -169,7 +182,7 @@ export type Value = | undefined | boolean | number | string
  * Assigns each token the value given for it, restyling the elements that read it without touching the ones that don't:
  *
  * ```tsx
- * <section style={css({ [tile.colorAccentLite]: "#06C" })}>
+ * <section style={css({ [tile.colorAccentStrong]: "#D60" })}>
  * ```
  *
  * Numbers and booleans are converted to their CSS text form, so a scalar token is assigned without restating it as a

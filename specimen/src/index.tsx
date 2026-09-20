@@ -32,8 +32,9 @@ const anchors: ReadonlyArray<Entry> = [
 
 	[ tile.color, "the text the page is written in" ],
 	[ tile.backgroundColor, "the canvas it is written on" ],
-	[ tile.colorAccentLite, "the brand light accent colour" ],
-	[ tile.colorAccentDark, "the brand dark accent colour" ]
+	[ tile.colorAccentSubtle, "the accent an interface carries at rest" ],
+	[ tile.colorAccentStrong, "the accent marking a thing out" ],
+	[ tile.colorInvalid, "the colour a failure is told in" ]
 
 ];
 
@@ -42,11 +43,10 @@ const roles: ReadonlyArray<Entry> = [
 	[ tile.colorEnabled, "links and enabled controls" ],
 	[ tile.colorHover, "links and buttons under the pointer" ],
 	[ tile.colorFocus, "focus rings and controls being pressed" ],
-	[ tile.colorInvalid, "values a field rejects, and the outline marking them" ],
 	[ tile.colorDisabled, "controls that take no input" ],
 	[ tile.colorLabel, "labels and secondary text" ],
 	[ tile.colorPlaceholder, "the text a field shows while empty" ],
-	[ tile.colorLight, "hairlines and decorative marks" ],
+	[ tile.colorFaint, "hairlines and decorative marks" ],
 	[ tile.borderColor, "borders and table rules" ],
 	[ tile.backgroundColorEdit, "fields open to editing" ],
 	[ tile.backgroundColorStripe, "striped rows and quoted blocks" ]
@@ -121,9 +121,10 @@ render((
 function Colours() {
 	return <>
 
-		<p>Four anchors carry the brand and the page. Every other colour is derived from them, so an app that retunes
-			the anchors carries the whole interface along, and the page follows the platform colour scheme without a
-			second palette to maintain.</p>
+		<p>Five anchors carry the page, the accents standing in for a brand until an app supplies one, and the colour a
+			failure is told in. Every other colour is derived from them, so an app that retunes the anchors carries the
+			whole interface along, and the page follows the platform colour scheme without a second palette to
+			maintain.</p>
 
 		<h3>Anchors</h3>
 
@@ -236,9 +237,9 @@ function Tables() {
 
 			<tbody>
 				<tr>
-					<td><code>{tile.colorAccentLite}</code></td>
+					<td><code>{tile.colorAccentStrong}</code></td>
 					<td>anchor</td>
-					<td>carries the brand orange</td>
+					<td>carries the accent a mark is made in</td>
 				</tr>
 				<tr>
 					<td><code>{tile.colorHover}</code></td>
@@ -289,16 +290,17 @@ function Theming() {
 		<p>Assigning the anchors inline restyles a subtree, and everything derived from them follows, with no component
 			change:</p>
 
-		<pre><code>{`<section style={css({ [tile.colorAccentLite]: "#06C" })}>`}</code></pre>
+		<pre><code>{`<section style={css({ [tile.colorAccentStrong]: "#06C" })}>`}</code></pre>
 
 		<div class="themed" style={css({
 
-			[tile.colorAccentLite]: "#06C",
-			[tile.colorAccentDark]: "#264"
+			[tile.colorAccentSubtle]: "#264",
+			[tile.colorAccentStrong]: "#06C"
 
 		})}>
 
-			<p>The <a href="#theming">link</a> takes the slate anchor, the rejected value the orange one.</p>
+			<p>The <a href="#theming">link</a> takes the resting accent, and the strong one under the pointer; the
+				rejected value keeps the error colour, which no accent feeds.</p>
 
 			<p>
 				<input type="email" value="still not an address"/>{" "}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* the sampler is a scrolling page, unlike the app shell the loading spinner is laid out in */
+/* The sampler is a scrolling page, unlike the app shell the loading spinner is laid out in. */
 
 html, body, body > main, body > main > * {
     height: auto;
@@ -28,7 +28,7 @@ body > main > article {
 }
 
 
-/* the app icon sits on the heading line, at the height of the text it precedes */
+/* The app icon sits on the heading line, at the height of the text it precedes. */
 
 h1 > img {
     width: auto;
@@ -37,7 +37,7 @@ h1 > img {
 }
 
 
-/* the copyright closes the page, set apart from the section on show */
+/* The copyright closes the page, set apart from the section on show. */
 
 body > main > article > footer {
     padding-top: var(--tile--spacing-150);
@@ -46,7 +46,7 @@ body > main > article > footer {
 }
 
 
-/* a token name is read as one word, in a listing as in a table cell */
+/* A token name is read as one word, in a listing as in a table cell. */
 
 code {
     white-space: nowrap;
@@ -55,7 +55,7 @@ code {
 
 /**** Token Listings **************************************************************************************************/
 
-/* a listing reads as a reference rather than a table of data, so the cells carry no rule */
+/* A listing reads as a reference rather than a table of data, so the cells carry no rule. */
 
 .samples {
 
@@ -89,14 +89,14 @@ code {
 .bar {
     display: inline-block;
     height: 1em;
-    background-color: var(--tile--color-accent-lite);
+    background-color: var(--tile--color-accent-strong);
 }
 
 .box {
     display: inline-block;
     width: 1.5em;
     height: 1.5em;
-    background-color: var(--tile--color-accent-dark);
+    background-color: var(--tile--color-accent-subtle);
 }
 
 

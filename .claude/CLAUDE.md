@@ -80,11 +80,14 @@ note, so the reader sees which entry point carries what. The section **NEVER** s
 
 # Skills
 
-Project skills live in `.claude/skills/`, alongside the personal ones:
+These skills carry the conventions this repository is held to, whether they sit in `.claude/skills/` or have since
+moved to the personal set. Each states the model it governs and what it takes precedence over, so the routing survives
+the move:
 
 | Skill                     | When to activate                                                            |
 |---------------------------|-----------------------------------------------------------------------------|
-| `preact-developer`        | Writing or reviewing a widget, a hook, a stylesheet or a custom element      |
+| `preact-developer`        | Writing or reviewing a widget, a hook or a custom element                   |
+| `css-developer`           | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
 | `accessibility-developer` | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
 
 # Component State

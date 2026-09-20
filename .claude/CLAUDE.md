@@ -87,11 +87,11 @@ These skills carry the conventions this repository is held to, whether they sit 
 moved to the personal set. Each states the model it governs and what it takes precedence over, so the routing survives
 the move:
 
-| Skill                     | When to activate                                                            |
-|---------------------------|-----------------------------------------------------------------------------|
-| `preact-developer`        | Writing or reviewing a widget, a hook or a custom element                   |
-| `css-developer`           | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
-| `accessibility-developer` | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
+| Skill              | When to activate                                                            |
+|--------------------|-----------------------------------------------------------------------------|
+| `preact-developer` | Writing or reviewing a widget, a hook or a custom element                   |
+| `css-developer`    | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
+| `a11y-developer`   | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
 
 # Component State
 

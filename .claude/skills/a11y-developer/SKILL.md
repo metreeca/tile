@@ -1,5 +1,5 @@
 ---
-name: accessibility-developer
+name: a11y-developer
 tools: Read, Edit, Write, Grep, Glob, WebFetch
 description: Accessibility specialist for Metreeca Tile widgets. Decides the role, state, keyboard behaviour and focus handling a component owes, and reviews markup for dangling references, unreachable controls and semantics carried by colour alone. MUST be used when creating or revising a component in tile-cell, tile-hive, tile-lens or tile-form, and whenever a role, aria-* attribute, tabindex or key handler is added.
 ---

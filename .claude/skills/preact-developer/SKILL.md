@@ -12,7 +12,7 @@ widgets that keep behaviour in state objects and leave the rendering layer with 
 - [Preact](https://preactjs.com/guide/v10/getting-started/) - the rendering layer these packages bind to
 - [Differences to React](https://preactjs.com/guide/v10/differences-to-react/) - what does not carry over
 - `.claude/CLAUDE.md` §Component State - the model pattern every stateful widget follows
-- `accessibility-developer` - the roles, keys and focus a widget owes
+- `a11y-developer` - the roles, keys and focus a widget owes
 - `css-developer` - the stylesheet a widget sits beside, and the tokens it styles with
 - `react-developer` - hook rules, prop and attribute ordering
 
@@ -98,7 +98,7 @@ rendering or styling claim holds only once seen in a browser.
 # Workflow
 
 1. **Model first**: behaviour as a state object, adopted with `useModel`
-2. **Contract**: roles, keys and focus, from `accessibility-developer`
+2. **Contract**: roles, keys and focus, from `a11y-developer`
 3. **Render**: custom element, destructured model, `keys` map
 4. **Style**: tokens, against the reset and the paint order above
 5. **Audit**: walk the checklist below before reporting

@@ -17,7 +17,7 @@
 /**
  * Icons.
  *
- * Supplies the glyph a control is marked with under the name of the role it stands for: a screen asks for
+ * Provides the glyph a control is marked with under the name of the role it stands for: a screen asks for
  * `Icon.Create` rather than for a plus sign, so retuning what a role looks like across an interface is a change to
  * this module alone. The whole Lucide catalogue hangs off the same namespace, for a glyph no role covers:
  * `<Icon.Rocket/>` costs a bundle no more than a direct import does, while a member picked at run time, `Icon[name]`,
@@ -25,7 +25,7 @@
  *
  * > [!NOTE]
  * >
- * > Glyphs are supplied by Lucide under the ISC and MIT licences. Redistribution, including within a bundled
+ * > Glyphs are provided by Lucide under the ISC and MIT licences. Redistribution, including within a bundled
  * > application, must preserve the copyright and permission notices reproduced in [Notices](./icon.md).
  *
  * An icon is hidden from assistive technology unless given a `role`, a `title` or an `aria-*` attribute, leaving the

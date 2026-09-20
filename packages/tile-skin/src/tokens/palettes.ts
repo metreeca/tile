@@ -23,7 +23,7 @@
  *
  * @remarks
  *
- * **Colour scales** — where a colour stands for a position rather than for a role, a ten-step scale supplies it:
+ * **Colour scales** — where a colour stands for a position rather than for a role, a ten-step scale provides it:
  * `colorGray*` for a neutral, `colorSubtle*` and `colorStrong*` for a branded one, and `colorHeat*` for a magnitude.
  * The number is the share of the anchor the step carries, so `010` is the faintest and `100` the anchor itself, and
  * the three derived scales follow an app retuning {@link colors the anchors}. A step is not a replacement for a role

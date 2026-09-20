@@ -25,13 +25,13 @@ repository **NEVER** reimplements them behind the interface.
 
 # References
 
-- [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, supplying the state primitives
+- [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
-  supplying the query model the state components expose
+  providing the query model the state components expose
 - [@metreeca/blue](https://github.com/metreeca/blue) - Declarative blueprints for model-driven linked data processing,
-  supplying the shapes that decide what an interface offers
-- [@metreeca/keep](https://github.com/metreeca/keep) - Model-driven storage API, supplying the store the interface
+  providing the shapes that decide what an interface offers
+- [@metreeca/keep](https://github.com/metreeca/keep) - Model-driven storage API, providing the store the interface
   reads from and writes to
 - [@metreeca/gate](https://github.com/metreeca/gate) - Zero-code model-driven endpoints for linked data resources, the
   server counterpart this layer talks to

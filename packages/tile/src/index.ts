@@ -17,7 +17,7 @@
 /**
  * Metadata and element wiring.
  *
- * Supplies what an interface needs wherever it is assembled and no single layer should own: what the app states about
+ * Provides what an interface needs wherever it is assembled and no single layer should own: what the app states about
  * itself, the defaults its controls observe, the element a page is rendered into, and the attribute values and event
  * handlers a component builds out of state. Nothing here renders or holds state, so reaching for it commits a consumer
  * neither to a rendering layer nor to a store.
@@ -100,7 +100,7 @@ export const app = immutable({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Supplies the custom element a page is rendered into.
+ * Provides the custom element a page is rendered into.
  *
  * Hands out a stable root for a rendering call: the same element answers every call naming it, so that repeated
  * calls, as issued on hot reload, replace the page rather than adding another copy of it.

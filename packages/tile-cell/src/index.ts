@@ -17,7 +17,7 @@
 /**
  * Preact widgets and controls.
  *
- * Supplies the pieces a widget declares its props out of, so a control offers the surface the platform already
+ * Provides the pieces a widget declares its props out of, so a control offers the surface the platform already
  * carries without restating it. The widgets themselves come from their own modules, leaving a screen with the ones it
  * renders and nothing else.
  *

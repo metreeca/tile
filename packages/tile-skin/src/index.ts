@@ -20,7 +20,7 @@
  * Names the tokens an app may override to restyle an interface, and a component reads to inherit that styling, and
  * gives the custom property each one resolves to, for a `var()` reference or a value taken outside the cascade.
  * Assigning tokens by name restyles a single subtree instead, through a style declaration any rendering layer accepts.
- * The values behind them are supplied by the companion stylesheet.
+ * The values behind them are provided by the companion stylesheet.
  *
  * An app that includes the stylesheet gets a brand-agnostic default look, light or dark according to the platform
  * colour scheme; one that redefines the tokens gets its own, with no component change. Components name tokens through

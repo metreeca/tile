@@ -31,7 +31,7 @@ npm install @metreeca/tile-skin
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-skin.index.html).
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-skin.html).
 
 Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
 

@@ -27,7 +27,7 @@ npm install @metreeca/tile-form  # this package
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-form.index.html).
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-form.html).
 
 {TBD: usage overview and examples}
 

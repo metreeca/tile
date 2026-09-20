@@ -75,8 +75,11 @@ Revising one **ALWAYS** means revising the other three.
 
 A package `README.md` **Usage** section opens with a note pointing at the API reference, then carries the real thing:
 what a consumer has to know to put the package to work, stubbed as `{TBD: usage overview and examples}` until written.
-A package publishing a single module links the reference inline; one publishing several tabulates them inside the
-note, so the reader sees which entry point carries what. The section **NEVER** stands in for the generated index.
+The note links the root of the package reference,
+`https://metreeca.github.io/tile/modules/_metreeca_<package>.html`, and **NEVER** the site root, a module page, or a
+table of them: the catalogue grows with every module added, and the generated navigation already carries it. Usage
+samples for a single module belong to that module's own documentation. The section **NEVER** stands in for the
+generated index.
 
 # Skills
 
@@ -96,7 +99,7 @@ A component holding state declares it as a `@metreeca/core` state object and ado
 `@metreeca/tile-data/model`, reading data and transitions straight off the model:
 
 ```tsx
-const { labels, active, select } = useModel(() => createModel({ labels: Object.keys(sections) }));
+const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));
 ```
 
 - A transition renders the component again on its own, so a handler just calls it; a transition changing nothing
@@ -110,9 +113,10 @@ const { labels, active, select } = useModel(() => createModel({ labels: Object.k
 
 A `*.pure.ts` module is a headless component in its own right, **NEVER** an internal appendix of the widget beside it:
 the suffix names what the module does without, which is a rendering layer, and **NEVER** claims anything about side
-effects. It carries **NO** dependency on Preact, is tested without a DOM, and is documented, summarised and versioned
-like any other published module, since a second binding reaches the same behaviour by importing it. Internals stay in
-a `*.core.ts` module, which the published surface never exposes.
+effects. It carries **NO** dependency on Preact, is tested without a DOM, and is documented and versioned like any
+other module, since a second binding reaches the same behaviour by importing it. The generated reference leaves it out
+for now, `typedoc.json` excluding `**/*.pure.ts`, so a published comment **NEVER** links into one. Internals stay in a
+`*.core.ts` module, which the published surface never exposes.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

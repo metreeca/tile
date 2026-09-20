@@ -28,7 +28,7 @@ npm install @metreeca/tile-lens  # this package
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-lens.index.html).
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html).
 
 {TBD: usage overview and examples}
 

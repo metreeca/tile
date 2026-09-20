@@ -15,6 +15,7 @@
  */
 
 import { app, host } from "@metreeca/tile";
+import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
@@ -297,6 +298,7 @@ render((
 			Text: <Text/>,
 			Tables: <Tables/>,
 			Forms: <Forms/>,
+			Widgets: <Widgets/>,
 			Theming: <Theming/>
 
 		}}/>
@@ -595,6 +597,32 @@ function Forms() {
 			<button type="button">Enabled</button>{" "}
 			<button type="button" disabled>Disabled</button>
 		</p>
+
+	</>;
+}
+
+function Widgets() {
+	return <>
+
+		<p>A widget renders the same plain markup the rules above style, adding what markup cannot carry on its own:
+			the name a control is read by, the states it moves through, and the gestures it answers to.</p>
+
+		<h3>Buttons</h3>
+
+		<p>A button is the native control, so the role, the activation by <code>Enter</code> and <code>Space</code>,
+			the tab stop, the focus ring and the greyed disabled state all come from the platform and from the rules
+			above. It shows a glyph, a label, or both, and takes every event handler a button accepts.</p>
+
+		<div class="controls">
+			<Button icon={<Icon.Create/>} label="New Item"/>
+			<Button label="Plain"/>
+			<Button icon={<Icon.Close/>} name="Close"/>
+			<Button disabled icon={<Icon.Delete/>} label="Disabled"/>
+		</div>
+
+		<p>A button showing a label is named by it; one standing on a glyph alone states its name itself, which the
+			type asks for. Whatever it carries, a button holds the smallest target a pointer is asked to hit, so a
+			glyph standing alone is reached as comfortably as a label.</p>
 
 	</>;
 }

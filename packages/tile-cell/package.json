@@ -30,6 +30,10 @@
     "*.css"
   ],
   "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./*": {
       "@metreeca/source": [
         "./src/*.ts",

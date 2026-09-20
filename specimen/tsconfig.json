@@ -7,6 +7,9 @@
       "@metreeca/tile*": [
         "../packages/tile*/src/index.ts"
       ],
+      "@metreeca/tile-cell/*": [
+        "../packages/tile-cell/src/*"
+      ],
       "@metreeca/tile-data/*": [
         "../packages/tile-data/src/*"
       ],

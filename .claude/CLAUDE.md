@@ -71,9 +71,11 @@ Every package states its summary in three places, which **MUST** be kept aligned
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
-without the family suffix. The file is **NEVER** added for the sake of the summary: a package whose modules each stand
-on their own (`tile-cell`, `tile-hive`) declares no root entry point, and its `package.json` `exports` carries no `"."`
-entry either.
+without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the
+surface the package's own modules are built out of, as `tile-cell` does for the props a widget declares. A package
+with no such surface (`tile-hive`) declares no root entry point, and its `package.json` `exports` carries no `"."`
+entry either. A root entry point **NEVER** re-exports the modules beside it: a screen takes the widgets it renders
+from their own modules, and nothing else along with them.
 
 Revising one **ALWAYS** means revising the others.
 

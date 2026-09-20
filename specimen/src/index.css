@@ -176,6 +176,21 @@ code {
 }
 
 
+/*
+ * A row of controls flows the way a toolbar would lay one out. The controls are spaced from one another rather than
+ * left to the single space between words, which reads as one run of text rather than as separate controls.
+ */
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--tile--spacing-150);
+    row-gap: var(--tile--spacing-050);
+    margin-bottom: var(--tile--spacing-100);
+}
+
+
 /* A sampler of marks flows in rows, each glyph reading beside the name it answers to. */
 
 .glyphs {

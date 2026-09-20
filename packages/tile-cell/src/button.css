@@ -1,0 +1,78 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The colour, the type and the states of a button are the design system's, so the sheet holds only what the widget
+ * owes on top of them. The element itself stands aside, laying the control out as the row or the grid around it
+ * would lay out a button written by hand.
+ */
+
+tile-button {
+
+    display: contents;
+
+    & > button {
+
+        /*
+         * A control is sized by what it carries, so it sits in a line of text as the native element does rather than
+         * taking the width of the block around it, which is what the flex row the design system gives every button
+         * would otherwise leave it with.
+         */
+
+        display: inline-flex;
+
+        /*
+         * A flex row takes its baseline from the first thing it carries, which is the glyph where a button is marked
+         * with one, so a row of buttons would sit at as many heights as it holds kinds. They line up on their middles
+         * instead, which is the one anchor a glyph and a label share.
+         */
+
+        vertical-align: middle;
+
+        /*
+         * A glyph standing alone leaves a box smaller than the minimum a pointer target is held to, so the control is
+         * floored at the step above the text and centres whatever it carries. The measure rides with the text, as the
+         * whole ladder does, so a button set in much smaller text owes a floor of its own.
+         */
+
+        justify-content: center;
+
+        min-width: var(--tile--scaling-150);
+        min-height: var(--tile--scaling-150);
+
+    }
+
+    /*
+     * A label needs room from the edge of the control it names, or the focus ring and the press target close on the
+     * text, while a glyph standing alone is already held clear by the floor above. The element states which of the
+     * two it carries, a selector having no way to tell a text node from a mark.
+     */
+
+    &[labelled] > button {
+        padding-inline: var(--tile--spacing-050);
+    }
+
+    /*
+     * A glyph is drawn inside a box of its own and leaves a margin within it, so the full step reads as a wider edge
+     * on the side it sits on than on the side the text ends at. A control leading with a mark is pulled in to the
+     * step below, which leaves the two edges reading as even. A glyph given as text takes the full step, being text.
+     */
+
+    &[labelled] > button:has(> *) {
+        padding-inline-start: var(--tile--spacing-025);
+    }
+
+}

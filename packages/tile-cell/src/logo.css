@@ -21,15 +21,56 @@
 
 tile-logo {
 
-    display: inline-block;
+    /*
+     * The mark and whatever stands beside it are a row, centred on the capitals rather than on the line they sit
+     * in. A line box reserves room for descenders whether the wording has any or not, so its middle lies below the
+     * middle of the letters and centring the two boxes leaves the mark reading low. The row is hung off the
+     * baseline instead, which is the line the letters actually share, and the mark is dropped back by half of what
+     * it overshoots the capitals by, which lands its middle on theirs.
+     *
+     * The row is wrapped so that a layout stretching the box, as a flex line or a grid row does to fill its cross
+     * axis, still finds the line to centre: a single unwrapped line has nothing for `align-content` to place and
+     * would sit against the top edge. Left alone, the box takes the row's own size and the two coincide, which is
+     * the ordinary case.
+     */
 
-    width: var(--tile--scaling-100);
-    aspect-ratio: 1;
+    --tile-logo-mark: calc(1.5 * 1cap);
+
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: baseline;
+    justify-content: center;
+
+    column-gap: var(--tile--spacing-050);
+
+    /*
+     * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app
+     * changing its face carries the lockup along rather than needing a figure retuned.
+     *
+     * It is set half again over the capitals rather than level with them. Matching them exactly reads as smaller: a
+     * mark is drawn open, with its weight spread over the whole square and gaps through it, while a letter is a
+     * solid stroke, so equal heights leave the mark looking the lighter of the two. The factor is optical
+     * compensation, below any ladder and answering to the eye rather than to a measure.
+     */
 
     & > img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+
+        flex: none; /* The mark holds its square whatever the wording beside it asks for. */
+
+        height: var(--tile-logo-mark);
+        aspect-ratio: 1;
+
+        object-fit: contain; /* The square takes an image of any proportions without cropping it. */
+
+        /*
+         * A replaced element sits on its bottom edge, so the row leaves the mark's foot on the baseline and the
+         * mark stands entirely above it. Half its overshoot over the capitals, given back, puts the middle of the
+         * mark on the middle of them. Every term is read off the face, so the lockup holds for any of them.
+         */
+
+        translate: 0 calc((var(--tile-logo-mark) - 1cap) / 2);
+
     }
 
 }

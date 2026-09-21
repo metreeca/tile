@@ -17,24 +17,30 @@
 /**
  * Logo.
  *
- * Offers the mark an app is recognised by, taken from what its own document states, so a screen carries the app
- * identity without being handed it.
+ * Offers the mark an app is recognised by, taken from what its own document states, and the row it stands in with
+ * whatever names the app beside it, so a screen carries the app identity without being handed it.
  *
  * @module
  */
 
 import { app } from "@metreeca/tile";
-import { createElement } from "preact";
+import { type ComponentChildren, createElement } from "preact";
 import "./logo.css";
 
 
 /**
  * Creates a logo.
  *
- * Shows the app icon at the size of the text it sits in, so a heading, a toolbar or a footer carries the mark without
- * a measure of its own. The mark is fitted to a square box whatever its proportions, so a wide or a tall one is shown
- * whole rather than cropped. A document stating no icon leaves nothing behind, so a screen assembled around the mark
- * closes up rather than holding a gap for it.
+ * Shows the app icon as a square standing exactly as tall as the capitals around it and sitting on their baseline, so
+ * a heading, a toolbar or a footer carries the mark without a measure of its own and the mark reads as part of the
+ * line rather than as something dropped into it. The mark is fitted to that square whatever its proportions, so a
+ * wide or a tall one is shown whole rather than cropped.
+ *
+ * Whatever stands for the app beside the mark, its name above all, is handed over as the children and set in a row
+ * with it, so the two travel as one thing: a screen places the lockup rather than placing a mark and a name and
+ * keeping them together itself. A document stating no icon leaves the row holding only what it was given, so a
+ * screen assembled around the mark closes up rather than holding a gap for it, and a logo with neither mark nor
+ * anything beside it leaves nothing behind at all.
  *
  * The mark is left out of the accessibility tree unless `name` states what it stands for, so a logo standing beside
  * the app name is read once. It survives a forced colour scheme and a printed page, where a background image would be
@@ -42,11 +48,13 @@ import "./logo.css";
  *
  * @param options The widget configuration
  *
- * @returns The logo, or nothing where the document states no icon
+ * @returns The logo, or nothing where the document states no icon and nothing was given to stand beside it
  */
 export function Logo({
 
-	name
+	name,
+
+	children
 
 }: {
 
@@ -56,13 +64,16 @@ export function Logo({
 	 */
 	name?: string
 
+	/**
+	 * What stands beside the mark in the row, such as the app name and the release on show; the mark alone if
+	 * omitted.
+	 */
+	children?: ComponentChildren
+
 }) {
 
-	return app.icon === undefined ? undefined : createElement("tile-logo", {}, <img
+	const mark = app.icon === undefined ? undefined : <img alt={name ?? ""} src={app.icon}/>;
 
-		alt={name ?? ""}
-		src={app.icon}
-
-	/>);
+	return mark === undefined && !children ? undefined : createElement("tile-logo", {}, mark, children);
 
 }

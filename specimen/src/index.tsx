@@ -21,11 +21,14 @@ import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Logo } from "@metreeca/tile-cell/logo";
 import { Note } from "@metreeca/tile-cell/note";
+import { Fetch, useFetch } from "@metreeca/tile-data/fetch";
+import { Page } from "@metreeca/tile-hive/page";
 import { Style } from "@metreeca/tile-hive/style";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
 import { type ComponentChild, Fragment, render } from "preact";
+import { useState } from "preact/hooks";
 import "./index.css";
 
 
@@ -419,35 +422,121 @@ const strokes: ReadonlyArray<number> = [ 1, 1.5, 2, 3 ];
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-render((
+/**
+ * What the sampler shows, keyed by the label the section is chosen by.
+ */
+const panels: Readonly<Record<string, ComponentChild>> = {
 
-	<main>
+	Colours: <Colours/>,
+	Surfaces: <Surfaces/>,
+	Palettes: <Palettes/>,
+	Scales: <Scales/>,
+	Icons: <Icons/>,
+	Text: <Text/>,
+	Tables: <Tables/>,
+	Forms: <Forms/>,
+	Widgets: <Widgets/>,
+	Theming: <Theming/>
 
-		<h1><Logo/>{app.name}</h1>
+};
+
+
+/**
+ * Stands in for the network, so that waiting is shown without anything to reach: every exchange takes the same
+ * couple of seconds and comes back empty.
+ */
+async function stall() {
+
+	await new Promise(resolve => setTimeout(resolve, 2000));
+
+	return new Response("{}", { headers: { "Content-Type": "application/json" } });
+
+}
+
+
+render(<Fetch fetch={stall}><Specimen/></Fetch>, host("tile-specimen"));
+
+
+/**
+ * The sampler, laid out in the frame every screen of an app is laid out in, so that the frame is shown by being used
+ * rather than by being described: the two flags it is tuned with are worked from the page itself.
+ */
+function Specimen() {
+
+	const fetch = useFetch();
+
+	const [lock, setLock] = useState(false);
+	const [wide, setWide] = useState(false);
+
+	return <Page
+
+		lock={lock}
+		wide={wide}
+
+		logo={<Logo>{app.name}</Logo>}
+		meta={`v${VERSION}`}
+
+		name={"!!!"}
+
+		// the control letting the tray back in stands in the content header, the tray itself answering nothing while
+		// it is locked
+
+		menu={<Button
+			icon={lock ? <Icon.Expand/> : <Icon.Collapse/>}
+			look="subtle"
+			name={lock ? "Release the tray" : "Lock the tray"}
+			onClick={() => setLock(!lock)}
+		/>}
+
+		tray={<>
+
+			<h1>Sections</h1>
+
+			{Object.keys(panels).map(label => <h2 key={label}>{label}</h2>)}
+
+			<hr/>
+
+			<h1>Layout</h1>
+
+			<h2>
+				<Button
+					icon={wide ? <Icon.Collapse/> : <Icon.Expand/>}
+					label={wide ? "Cap the measure" : "Take the width"}
+					look="subtle"
+					onClick={() => setWide(!wide)}
+				/>
+			</h2>
+
+			<hr/>
+
+			<h1>Waiting</h1>
+
+			<h2>
+				<Button
+					icon={<Icon.Search/>}
+					label="Run an exchange"
+					look="subtle"
+					onClick={() => { void fetch(app.base); }}
+				/>
+			</h2>
+
+		</>}
+
+		trayName="Sections and layout"
+
+		info={<small>{app.copy}</small>}
+		copy={<small>Apache 2.0</small>}
+
+	>
 
 		<p>{app.info} This page is both its documentation and its proof, styled by nothing but the stylesheet it
 			describes.</p>
 
-		<Tabs name={app.name} panels={{
+		<Tabs name={app.name} panels={panels}/>
 
-			Colours: <Colours/>,
-			Surfaces: <Surfaces/>,
-			Palettes: <Palettes/>,
-			Scales: <Scales/>,
-			Icons: <Icons/>,
-			Text: <Text/>,
-			Tables: <Tables/>,
-			Forms: <Forms/>,
-			Widgets: <Widgets/>,
-			Theming: <Theming/>
+	</Page>;
 
-		}}/>
-
-		<footer><small>{app.copy}</small></footer>
-
-	</main>
-
-), host("tile-specimen"));
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -84,6 +84,12 @@ The prefix belongs to the element, which the DOM requires to be hyphenated, **NE
 Data and transitions are read off the model by destructuring; a transition goes straight to a handler. Keyboard
 handling goes through `keys` from `@metreeca/tile`, whose map declares the keys the widget claims.
 
+## Props
+
+`children` comes **LAST**, in the destructuring and in the type alike, however the other props are ordered: it is what
+the caller writes between the tags rather than beside them, so the reader takes the configuration in before what the
+widget is handed, and every widget declaring one reads the same way.
+
 ## Styling
 
 A widget's stylesheet is a sibling module the component imports, styling the `<tile-*>` element it renders. What goes
@@ -110,5 +116,6 @@ Before reporting a component task complete, verify:
 - no `useRef` and no `useEffect` survive without a comment saying what rendered state could not answer
 - nothing is mirrored from props into state, and no value is computed in an effect
 - every element a handler reaches is rendered, and reached by a stable id rather than by DOM walking
+- `children`, where the widget takes one, is declared last in both the destructuring and the type
 - measures and colours come from tokens, and a literal carries its justification
 - the specimen builds, and every unverified visual claim is stated as such

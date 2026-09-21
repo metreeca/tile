@@ -21,6 +21,7 @@ import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Logo } from "@metreeca/tile-cell/logo";
 import { Note } from "@metreeca/tile-cell/note";
+import { Style } from "@metreeca/tile-hive/style";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { css, type Property, tile } from "@metreeca/tile-skin";
 import "@metreeca/tile-skin/index.css";
@@ -893,14 +894,16 @@ function Widgets() {
 			a control that answers nothing has nothing to say about what it would do.</p>
 
 		<p>A button stating no look takes the one the area around it is written in, from <code>{tile.look}</code>.
-			The row below assigns it once and holds three buttons that ask for nothing, plus one that asks to be
-			loud and stays loud.</p>
+			The row below wraps its controls in a <code>Style</code> area assigning it once, and holds three buttons
+			that ask for nothing, plus one that asks to be loud and stays loud.</p>
 
-		<div class="controls" style={css({ look: "subtle" })}>
-			<Button icon={<Icon.Create/>} label="New Item"/>
-			<Button label="Plain"/>
-			<Button mode="danger" icon={<Icon.Delete/>} label="Delete"/>
-			<Button look="strong" mode="commit" icon={<Icon.Save/>} label="Save"/>
+		<div class="controls">
+			<Style css={{ look: "subtle" }}>
+				<Button icon={<Icon.Create/>} label="New Item"/>
+				<Button label="Plain"/>
+				<Button mode="danger" icon={<Icon.Delete/>} label="Delete"/>
+				<Button look="strong" mode="commit" icon={<Icon.Save/>} label="Save"/>
+			</Style>
 		</div>
 
 		<h3>Notes</h3>

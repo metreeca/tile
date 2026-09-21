@@ -8,7 +8,11 @@ A consumer assembles a screen from the arrangements an app repeats: pages, table
 that answer where things sit. A layout places the widgets handed to it without knowing what they mean, so an arrangement
 is replaced without touching what the interface does.
 
-Styling is structural only: what an arrangement needs to work, with colour, type and spacing left to
+A container need not place anything. One may instead settle how the widgets it encloses appear, retuning the design
+system over an area so a toolbar, a panel or a whole screen is written in a single register rather than every widget in
+it repeating the same value, and a widget asking for something of its own still getting it.
+
+Styling is structural only: what an arrangement needs to work, with the values behind colour, type and spacing left to
 [@metreeca/tile-skin](https://www.npmjs.com/package/@metreeca/tile-skin) or to whoever styles the app.
 
 # Installation

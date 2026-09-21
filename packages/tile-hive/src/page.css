@@ -128,6 +128,15 @@ tile-page {
 
         & > header {
 
+            /*
+             * The two ends sit on the line they share rather than on the middle of the bar. Centring them holds
+             * their boxes level, which is not the same thing: an end set smaller than the other then floats, its
+             * words riding above the line the bar reads along. The baseline is what the eye follows across, whatever
+             * size either end happens to be set in.
+             */
+
+            align-items: baseline;
+
             padding-top: var(--tile-page-bar-inset);
             padding-bottom: var(--tile-page-bar-inset);
 
@@ -175,13 +184,18 @@ tile-page {
     & > aside {
 
         /*
-         * The tray is painted directly rather than by retuning `--tile--background-color`, which the edit colour is
-         * mixed from: assigning the token here and reading a colour derived from it in the same rule forms a custom
-         * property cycle and loses both. The reset hands every element `background-color: inherit`, so what the tray
-         * holds takes the painted colour along all the same.
+         * The tray is the surface the content stands in front of, which is what the sunken colour says: it steps
+         * away from the page in whichever direction the scheme leaves room for, so the two columns are told apart
+         * in both. A field colour would say the tray is something to type into, and a lifted one has nowhere to go
+         * on a white page, where a surface separates by line and shadow rather than by tint.
+         *
+         * It is painted directly rather than by retuning `--tile--background-color`, which the sunken colour is
+         * derived from: assigning the token here and reading a colour derived from it in the same rule forms a
+         * custom property cycle and loses both. The reset hands every element `background-color: inherit`, so what
+         * the tray holds takes the painted colour along all the same.
          */
 
-        background-color: var(--tile--background-color-edit);
+        background-color: var(--tile--background-color-sunken);
 
         border-right-style: var(--tile--border-style);
 

@@ -23,6 +23,7 @@
  * @module
  */
 
+import { classes } from "@metreeca/tile";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { useFetching } from "@metreeca/tile-data/fetch";
 import { type ComponentChildren, createElement } from "preact";
@@ -207,11 +208,17 @@ export function Page({
 
 		<main aria-labelledby={title}>
 
-			{/* the mark stands where the navigation would, a reader asked to wait having nowhere to go meanwhile */}
+			{/*
+			 * The mark stands over the navigation rather than in place of it: what it covers keeps its place and is
+			 * merely put out of sight, so the bar is the same height waiting or not and nothing shifts underneath a
+			 * reader. Being out of sight takes it out of the accessibility tree and out of reach with it, so nothing
+			 * answers a gesture while it cannot be seen.
+			 */}
 
 			<header>
 				{lead && <span id={title}>{lead}</span>}
-				{fetching ? <Icon.LoaderCircle/> : tail && <span>{tail}</span>}
+				{tail && <span class={classes({ busy: fetching })}>{tail}</span>}
+				{fetching && <Icon.LoaderCircle/>}
 			</header>
 
 			<section>{children}</section>

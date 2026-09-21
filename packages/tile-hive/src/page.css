@@ -133,7 +133,7 @@ tile-page {
 
             /* Each end of the header is a row of its own, so a control sits beside its label rather than under it. */
 
-            & > * {
+            & > span {
 
                 display: flex;
                 flex-direction: row;
@@ -270,6 +270,39 @@ tile-page {
 
             padding-left: var(--tile-page-main-gutter);
             padding-right: var(--tile-page-main-gutter);
+
+        }
+
+        /*
+         * The turning mark is placed against the bar rather than laid out in it, which is what keeps it out of the
+         * bar's height: the bar is as tall as what it was given to hold, and since both columns share the row,
+         * anything the mark added or took away would resize the whole frame for as long as an exchange ran. What it
+         * stands in for keeps its place and is merely put out of sight, so the room taken is the same either way and
+         * nothing shifts.
+         *
+         * It is set in from the edge by the column's own gutter, the way everything else in the column is: an
+         * absolutely positioned thing is placed against the padding box, which the padding is inside of, so an
+         * offset of nothing would leave the mark on the outer edge rather than where the navigation it covers sits.
+         *
+         * A control holds its own mark in off its edge, so stopping at the column edge would leave the turning mark
+         * standing a step to the right of the mark it replaced. The step it gives back is the one a control insets
+         * by, which is what lands the two on the same spot.
+         */
+
+        & > header {
+
+            position: relative;
+
+            & > .lucide {
+                position: absolute;
+                right: calc(var(--tile-page-main-gutter) + var(--tile--spacing-050));
+                top: 50%;
+                translate: 0 -50%;
+            }
+
+            & > .busy {
+                visibility: hidden;
+            }
 
         }
 

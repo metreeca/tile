@@ -31,10 +31,10 @@
  * saturation at a middling lightness, so it can be dark enough to read on white and saturated at the same time.
  * Yellow reaches full saturation only when it is very light, so any yellow dark enough to stroke on a white page has
  * already given up most of its chroma: every attempt to hold 4.5:1, and then 3:1, landed on an olive or a burnt
- * orange that read as muted or as a second failure colour. At its own lightness it carries chroma 0.151 against the
- * failure's 0.218, and separates from it by ΔE 25.8 under simulated deuteranopia and 42.7 under protanopia.
+ * orange that read as muted or as a second failure colour. At its own lightness it carries chroma 0.147 against the
+ * failure's 0.218, and separates from it by ΔE 25.2 under simulated deuteranopia and 42.0 under protanopia.
  *
- * A caution therefore paints a filled badge and sets its message in the dark page anchor over it, at 11.0:1, exactly
+ * A caution therefore paints a filled badge and sets its message in the dark page anchor over it, at 10.1:1, exactly
  * as the heat scale has text take one page anchor or the other according to the step beneath it. Stroking this
  * colour on the page instead gives 1.73:1 and is a defect. The other three statuses hold 4.5:1 and serve as either
  * text or mark.
@@ -67,23 +67,23 @@
     inherits: true;
 }
 
-@property --tile--color-information {
+@property --tile--color-info {
     syntax: "*";
     inherits: true;
 }
 
-@property --tile--color-success {
+@property --tile--color-pass {
     syntax: "*";
     inherits: true;
 }
 
-@property --tile--color-warning {
+@property --tile--color-warn {
     syntax: "<color>";
     inherits: true;
-    initial-value: #F0B133;
+    initial-value: #E6A92F;
 }
 
-@property --tile--color-invalid {
+@property --tile--color-fail {
     syntax: "*";
     inherits: true;
 }
@@ -112,9 +112,12 @@
         --tile--color-subtle: #567;
         --tile--color-strong: #06C;
 
-        --tile--color-information: #067;
-        --tile--color-success: #070;
-        --tile--color-invalid: #C00;
+        --tile--color-info: #0095AA;
+        --tile--color-pass: #129C02;
+        --tile--color-fail: #C00;
+
+        --tile--background-color-warn:
+            color-mix(in oklab, var(--tile--color-warn) 20%, var(--tile--background-color));
 
     }
 
@@ -130,9 +133,12 @@
         --tile--color-subtle: #89A;
         --tile--color-strong: #4AF;
 
-        --tile--color-information: #3CC;
-        --tile--color-success: #5C5;
-        --tile--color-invalid: #F66;
+        --tile--color-info: #3CC;
+        --tile--color-pass: #5C5;
+        --tile--color-fail: #F66;
+
+        --tile--background-color-warn:
+            color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color));
 
     }
 
@@ -146,9 +152,12 @@
     --tile--color-subtle: #567;
     --tile--color-strong: #06C;
 
-    --tile--color-information: #067;
-    --tile--color-success: #070;
-    --tile--color-invalid: #C00;
+    --tile--color-info: #0095AA;
+    --tile--color-pass: #129C02;
+    --tile--color-fail: #C00;
+
+    --tile--background-color-warn:
+        color-mix(in oklab, var(--tile--color-warn) 20%, var(--tile--background-color));
 
 }
 
@@ -160,9 +169,12 @@
     --tile--color-subtle: #89A;
     --tile--color-strong: #4AF;
 
-    --tile--color-information: #3CC;
-    --tile--color-success: #5C5;
-    --tile--color-invalid: #F66;
+    --tile--color-info: #3CC;
+    --tile--color-pass: #5C5;
+    --tile--color-fail: #F66;
+
+    --tile--background-color-warn:
+        color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color));
 
 }
 
@@ -237,43 +249,51 @@
     inherits: true;
 }
 
-@property --tile--background-color-information {
+@property --tile--background-color-info {
     syntax: "*";
     inherits: true;
 }
 
-@property --tile--background-color-success {
+@property --tile--background-color-pass {
     syntax: "*";
     inherits: true;
 }
 
-@property --tile--background-color-warning {
+@property --tile--background-color-warn {
     syntax: "*";
     inherits: true;
 }
 
-@property --tile--background-color-invalid {
+@property --tile--background-color-fail {
     syntax: "*";
     inherits: true;
 }
 
 /*
  * A role painting text takes the subtle accent as it stands, since a mix towards the page costs the lightness it needs
- * to hold AA contrast and would force the anchor itself down towards black. Only the focus ring, which owes 3:1, can
- * afford the mix.
+ * to hold AA contrast and would force the anchor itself down towards black. Only the focus ring, which owes 3:1
+ * rather than 4.5:1, can afford the mix, and 70% is as light as it goes: the edit background is the tightest surface
+ * it has to hold, at 3.02:1, and a lighter mix drops below the floor there first.
  */
 
 :root {
 
     --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
-    --tile--color-placeholder: var(--tile--color-label);
+    /*
+     * A placeholder takes the disabled colour rather than a mix of its own. Both stand for text the reader has not
+     * supplied and neither carries meaning, so a contrast check passes over both; what tells a disabled control from
+     * an empty one is the background it sits on, never the weight of the text. Anything darker read as an entered
+     * value, which is the one thing a placeholder must not do.
+     */
+
+    --tile--color-placeholder: var(--tile--color-disabled);
     --tile--color-enabled: var(--tile--color-subtle);
     --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
     --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
     --tile--color-pressed: oklch(from var(--tile--color-strong) calc(l - 0.2) c h);
     --tile--color-selected: var(--tile--color-strong);
-    --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 80%, var(--tile--background-color));
+    --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 70%, var(--tile--background-color));
 
     --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
     --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
@@ -297,13 +317,11 @@
      * one, and the page text holds far more, so a notice states its outcome in either.
      */
 
-    --tile--background-color-information:
-        color-mix(in oklab, var(--tile--color-information) 12%, var(--tile--background-color));
-    --tile--background-color-success:
-        color-mix(in oklab, var(--tile--color-success) 12%, var(--tile--background-color));
-    --tile--background-color-warning:
-        color-mix(in oklab, var(--tile--color-warning) 12%, var(--tile--background-color));
-    --tile--background-color-invalid:
-        color-mix(in oklab, var(--tile--color-invalid) 12%, var(--tile--background-color));
+    --tile--background-color-info:
+        color-mix(in oklab, var(--tile--color-info) 12%, var(--tile--background-color));
+    --tile--background-color-pass:
+        color-mix(in oklab, var(--tile--color-pass) 12%, var(--tile--background-color));
+    --tile--background-color-fail:
+        color-mix(in oklab, var(--tile--color-fail) 12%, var(--tile--background-color));
 
 }

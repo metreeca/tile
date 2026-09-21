@@ -102,6 +102,6 @@
     --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
     --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
-    --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-invalid);
+    --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-fail);
 
 }

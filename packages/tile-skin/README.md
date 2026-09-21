@@ -57,9 +57,9 @@ The stylesheet declares its rules in a `tile` cascade layer, so an override writ
 two stylesheets reach the document; an app whose own rules are layered orders its layer after `tile`.
 
 Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-subtle`,
-`--tile--color-strong` and the four status colours `--tile--color-invalid`, `--tile--color-success`,
-`--tile--color-warning` and `--tile--color-information`: labels, borders, stripes, focus rings, state fills, notice
-tints and elevation surfaces derive from them and follow. The accents ship brand-agnostic, so an app supplies its own,
+`--tile--color-strong` and the four status colours `--tile--color-info`, `--tile--color-pass`,
+`--tile--color-warn` and `--tile--color-fail`: labels, borders, stripes, focus rings, state fills, notice tints
+and elevation surfaces derive from them and follow. The accents ship brand-agnostic, so an app supplies its own,
 a quieter value and a louder one per colour scheme, and rechecks that the text roles still hold AA contrast against
 the page and the striped row in both. The status four take values of their own rather than derivations of an accent,
 so an outcome keeps reading as itself whatever an app brands with. An override the browser cannot parse leaves the
@@ -69,6 +69,59 @@ An interface follows the platform colour scheme on its own. An app that has to p
 `dark`, on the root element or on any subtree that has to differ from the page around it, which a
 `prefers-color-scheme` query cannot express; the stylesheet states `color-scheme` alongside, so native controls and
 scrollbars follow a pinned subtree too.
+
+## Modes
+
+A widget says what it is for through at most two attributes, and they never compete for the same channel.
+
+**`look` — how loud it appears.** Structural, carried by layout, weight and border rather than by colour: `subtle`
+recedes, `normal` is ordinary, `strong` is larger, earlier, heavier and bounded, and would read as strong in a
+single-colour interface. The pair is the one the colour anchors already use, so a single vocabulary names this axis
+throughout.
+
+**What it means** is colour-coded, and every meaning lands on one four-step scale:
+
+| Step   | Says                   | Token                |
+|--------|------------------------|----------------------|
+| `info` | stated or provisional  | `--tile--color-info` |
+| `pass` | completed as intended  | `--tile--color-pass` |
+| `warn` | completed with caveats | `--tile--color-warn` |
+| `fail` | failed to complete     | `--tile--color-fail` |
+
+The shape is one unjudged step plus a three-step verdict ramp: `info` is not a milder `pass`, it is the absence of a
+verdict. Four steps is the ceiling, because colour carries no more, so a meaning the scale does not carry is stated in
+words rather than in a fifth colour.
+
+Three kinds of meaning share the scale, and which one a widget carries follows from what the widget is, so no widget
+carries two:
+
+- **`level`**, on content: how much attention a passage deserves, set by the author ahead of time
+- **`mode`**, on controls: what activating will do, a consequence not yet incurred
+- **`status`**, on reported things: what the system says happened, at runtime
+
+`normal` is **the default of all three, and it is not a step**: it carries no colour coding at all and leaves the
+ordinary page colours, so a widget that states nothing is `normal` and a `level="normal"` passage is not a blue `info`
+admonition. Only the marked values reach the scale. The widget maps those onto the steps and states that mapping in
+its own documentation.
+
+| Attribute | `normal`            | `info`    | `pass`      | `warn`    | `fail`     |
+|-----------|---------------------|-----------|-------------|-----------|------------|
+| `level`   | an ordinary passage | `info`    | `highlight` | `warning` | `critical` |
+| `mode`    | an ordinary control | `safe`    | `commit`    | `alert`   | `danger`   |
+| `status`  | nothing to report   | `pending` | `success`   | `warning` | `failure`  |
+
+The two attributes together read as how it appears and what it means:
+
+```tsx
+<Button look="subtle" mode="danger"/>
+<Note   look="strong" level="warning"/>
+```
+
+> [!IMPORTANT]
+>
+> A step is never told by colour alone: an icon and the wording carry the same meaning, since the two ends of the
+> ramp are the pair colour vision deficiency collapses most readily. `--tile--color-warn` is a fill rather than a
+> stroke, so a caution paints a badge and sets its message in the page colour over it.
 
 A thing lifted off the page takes a surface and the shadow that goes with it together, `--tile--background-color-raised`
 with `--tile--box-shadow-raised` for a card that stays in the flow and `--tile--background-color-overlay` with

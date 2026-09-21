@@ -123,7 +123,7 @@ tile-entry {
         }
 
         &:invalid {
-            border-color: var(--tile--color-invalid);
+            border-color: var(--tile--color-fail);
         }
 
         & > option {

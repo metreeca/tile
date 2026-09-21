@@ -19,7 +19,7 @@
 tile-range {
 
     &:has(input:invalid) {
-        border-color: var(--tile--color-invalid);
+        border-color: var(--tile--color-fail);
     }
 
     & > section {

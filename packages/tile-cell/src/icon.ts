@@ -133,7 +133,7 @@
  *
  * ```css
  * .urgent {
- *     color: var(--tile--color-invalid);
+ *     color: var(--tile--color-fail);
  * }
  *
  * tile-toolbar .lucide {

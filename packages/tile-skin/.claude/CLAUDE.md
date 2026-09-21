@@ -221,22 +221,107 @@ registered and defined. Only the changelog records that it is on its way out.
 # Colours
 
 Eight anchors carry literals in `colors.css`. Seven state a value per colour scheme, in the four rules the contract
-above sets out; `--tile--color-warning` alone carries one value for both and keeps its registered default:
+above sets out; `--tile--color-warn` alone carries one value for both and keeps its registered default:
 
 - `--tile--color` and `--tile--background-color`
 - `--tile--color-subtle`, which an interface carries at rest, and `--tile--color-strong`, which marks a thing out;
   both ship brand-agnostic, and an app supplies its own brand by overriding them
-- `--tile--color-invalid`, which a failure is told in, with `--tile--color-success`, `--tile--color-warning` and
-  `--tile--color-information` beside it
+- `--tile--color-info`, `--tile--color-pass`, `--tile--color-warn` and `--tile--color-fail`, the four steps of the
+  meaning scale below
+
+## The meaning scale
+
+Every meaning a widget carries lands on these four steps, and **NO** widget invents a fifth colour: a meaning the
+scale does not carry is stated in words.
+
+| Step   | Says                   |
+|--------|------------------------|
+| `info` | stated or provisional  |
+| `pass` | completed as intended  |
+| `warn` | completed with caveats |
+| `fail` | failed to complete     |
+
+`info` is **NOT** a milder `pass`: it is the absence of a verdict, so the scale is one unjudged step ahead of a
+three-step ramp. Three kinds of meaning share it, chosen by what the widget **is**, so no widget carries two:
+`level` on content, `mode` on controls, `status` on reported things:
+
+| Attribute | `normal`            | `info`    | `pass`      | `warn`    | `fail`     |
+|-----------|---------------------|-----------|-------------|-----------|------------|
+| `level`   | an ordinary passage | `info`    | `highlight` | `warning` | `critical` |
+| `mode`    | an ordinary control | `safe`    | `commit`    | `alert`   | `danger`   |
+| `status`  | nothing to report   | `pending` | `success`   | `warning` | `failure`  |
+
+**`normal` is the default of all three, and it is NOT a step**: it carries no colour coding at all, leaving the
+ordinary page colours. A widget that states nothing is `normal`, and a `level="normal"` passage is **NOT** a blue
+`info` admonition. Only the four marked values reach the scale.
+
+Four steps is the ceiling, because colour carries no more: one absence of hue and three hues told apart at a glance.
+A meaning the scale does not carry is stated in **words**, never in a fifth colour.
+
+A widget maps its remaining values onto the steps and states that mapping where its consumers read it, or two widgets
+put the same meaning on different steps and the learned scale breaks:
+
+```
+tile-note    level   info → info    highlight → pass    warning → warn    critical → fail
+tile-button  mode    safe → info    commit → pass       alert → warn      danger → fail
+```
+
+### Which attribute a widget takes
+
+Decided by **tense**, which also places any new value:
+
+| Attribute | Answers                          | Tense    | Set by                    | Taken by        |
+|-----------|----------------------------------|----------|---------------------------|-----------------|
+| `level`   | how much attention this deserves | timeless | the author, ahead of time | content         |
+| `mode`    | what activating this will do     | future   | the designer              | controls        |
+| `status`  | what the system says happened    | past     | the system, at runtime    | reported things |
+
+Written into the page by a human: `level`. Appears because something ran: `status`. A consequence not yet incurred:
+`mode`. No tense at all: it is `look`, not a meaning.
+
+### `look`
+
+How loud a thing appears is a separate axis, carried by the `look` attribute and **NOT** colour-coded: it is told in
+layout, weight and border, so it never competes with the scale for the same channel and a widget carries one of each
+without the readings interfering.
+
+| Value    | Means                                                          |
+|----------|----------------------------------------------------------------|
+| `subtle` | recedes: lighter weight, no border, less room                  |
+| `normal` | ordinary weight, ordinary room                                 |
+| `strong` | carries the moment: heavier weight, a border, more room, first |
+
+`subtle` and `strong` are the pair the colour anchors already use, so one vocabulary names this axis everywhere.
+
+> [!CAUTION]
+> Do **NOT** name this attribute `role`, which collides with ARIA, or `style`, which collides with the DOM attribute
+> and the JSX prop. `primary` is **NOT** a value: it names a position in a flow, one per dialog, which a control
+> cannot know about itself, where `strong` names a level the control does know.
+
+### Tensions on the record
+
+- **Blue collides with the brand accent.** `--tile--color-strong` ships blue, so the `info` step and a strong control
+  are confusable, worse for an app branding in blue. The info token is a cyan for this reason.
+- **A step is NEVER told in colour alone**, since `pass` and `fail` are the pair colour vision deficiency collapses
+  most readily; the icon and the wording carry the same meaning.
+- **`mode="commit"` and `look="strong"` co-occur on nearly every Save button.** They stay distinct, but the pairing
+  has to stay the exception or green-plus-prominence becomes the default and means nothing.
+- **`pending` and `info` share the `info` step.** A pending that must read as *moving* rather than merely unjudged
+  adds the loading opacity and the motion tokens on top of the hue, not instead of it.
+- **`level` and `status` collapse at the attribute level today.** `tile-note` carries both, an authored empty-state
+  aside and a `Fault`. `pending` is the value that will force them apart, since an authored admonition is never
+  pending.
+- **`highlight` is the thinnest cell.** A passage reporting that something *went* well is really reporting a
+  `status`, so it earns its place only for a passage singled out as worth having.
 
 > [!WARNING]
 >
-> `--tile--color-warning` is a **fill, never a stroke**, and it carries **one value in both colour schemes**. A
+> `--tile--color-warn` is a **fill, never a stroke**, and it carries **one value in both colour schemes**. A
 > caution paints a filled badge with it and sets its message in the dark page anchor over it, at 11.0:1. Stroking it
 > on the page gives **1.73:1** and is a defect.
 >
 > This is forced by the colour space, **NOT** chosen. Red reaches full saturation at a middling lightness, so
-> `--tile--color-invalid` is dark enough to read on white and loud at once. Yellow reaches full saturation only when
+> `--tile--color-fail` is dark enough to read on white and loud at once. Yellow reaches full saturation only when
 > it is very light, so any yellow dark enough to stroke on white has already spent its chroma. Three rounds inside a
 > stroke budget proved it: `#850` at 4.5:1 read as mud, `#A40` escaped the mud only by moving to a burnt orange
 > sitting ΔE 2.0 from the failure red under simulated deuteranopia, and `#B67C00` at 3:1 was still muted at chroma
@@ -246,9 +331,15 @@ above sets out; `--tile--color-warning` alone carries one value for both and kee
 > Retuning it for a better stroke contrast walks straight back into the mud. If a caution ever genuinely needs
 > coloured text, that is a **second token**, not a change to this one.
 >
-> `--tile--color-invalid`, `--tile--color-success` and `--tile--color-information` hold 4.5:1 and serve as either text
-> or mark. Do **NOT** "restore symmetry" by turning them into fills: `markup/forms.css` and `tile-cell/src/note.css`
-> both paint text with `--tile--color-invalid`.
+> `--tile--color-fail` alone holds 4.5:1 and serves as either text or mark. `--tile--color-info` and
+> `--tile--color-pass` are **marks at 3:1**, not text: cyan and green are chroma-starved at the lightness 4.5:1
+> forces, so holding them to it left `info` at chroma 0.090 against the failure's 0.218, reading as dull beside
+> every other step. At the mark budget they reach 0.107 and 0.202 and lift from L 0.52 to L 0.61. They paint the
+> glyph, the rule and the fill of a notice whose text takes `--tile--color` on the tint, at 18.5:1.
+>
+> Do **NOT** drop `--tile--color-fail` to the mark budget to match them: `markup/forms.css` and
+> `tile-cell/src/note.css` both paint text with it, and red is the one hue reaching full chroma at a lightness dark
+> enough to carry a sentence.
 
 Every other colour derives from them through `color-mix(in oklab, …)` or `oklch(from …)`, so an app retuning the
 anchors carries the whole interface along.
@@ -265,15 +356,22 @@ and neither name survives being read as an absolute.
 > holds the higher contrast of the two, 5.91:1 against 5.57:1 on white. A "fix" darkening it or giving it the hue of
 > its partner undoes both the reading and the text roles derived from it.
 
-`--tile--color-invalid` is an anchor rather than a derivation of an accent on purpose: deriving it carried the hue an
+`--tile--color-fail` is an anchor rather than a derivation of an accent on purpose: deriving it carried the hue an
 app brands with into the role marking a failure, so a blue-branded interface rejected a value in blue.
 
 The striped table row is where the custom property cycle `css-developer` warns of would bite: it paints
 `background-color` instead of retuning `--tile--background-color`, which every other colour here stands on.
 
 Text roles hold WCAG AA contrast, 4.5:1 against the background they sit on, in **both** schemes and over the stripe;
-the focus ring holds 3:1. `--tile--border-color` and `--tile--color-disabled` sit below 3:1 **by design** and carry no
-meaning on their own, so they are the two exceptions a contrast check is allowed to pass over.
+the focus ring holds 3:1. The exceptions a contrast check is allowed to pass over, each **by design**:
+
+- `--tile--border-color`, `--tile--color-disabled` and `--tile--color-placeholder`, below 3:1, carrying no meaning
+  on their own. The last two share one value, 1.75:1 light and 1.52:1 dark on the edit background: both stand for
+  text the reader has not supplied, and a disabled control is told from an empty one by its **background**, never by
+  the weight of its text. Reading either as a text role is the mistake to avoid
+- `--tile--color-info` and `--tile--color-pass`, marks at 3:1, since the hues cannot hold chroma at the lightness
+  4.5:1 forces
+- `--tile--color-warn`, a fill, at 1.73:1 stroked
 
 # Palettes
 
@@ -292,7 +390,7 @@ retuning a brand carries them along and a step mixes towards the page in either 
 replacement for a role token: the text and background roles in `colors.css` do not land on the ladder, and
 `--tile--background-color-edit` and `--tile--background-color-stripe` sit below its first step.
 
-`--tile--color-heat-*` carries literals, for the same reason `--tile--color-invalid` does: a magnitude coding taking
+`--tile--color-heat-*` carries literals, for the same reason `--tile--color-fail` does: a magnitude coding taking
 the hue an app brands with stops reading as a temperature. It runs cool blue → green → yellow → red → violet, the
 violet standing for a measure past the top of the range.
 
@@ -312,7 +410,7 @@ once.
 
 `--tile--color-series-1` to `--tile--color-series-9` tell one thing apart from another. A number is a slot, not a
 share, so the three-digit form of a scale would misread here. The slots carry literals, for the reason
-`--tile--color-invalid` does: a series colour follows the thing it paints, so neither a rebrand nor a filter that
+`--tile--color-fail` does: a series colour follows the thing it paints, so neither a rebrand nor a filter that
 drops a series may repaint the survivors. One value serves both schemes, since a tint that recedes on the light page
 stands out on the dark one.
 

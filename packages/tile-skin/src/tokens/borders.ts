@@ -28,7 +28,7 @@
  *
  * **Marks** — `boxShadowFocus` and `outlineInvalid` are whole shorthand values rather than colours, so a rule states
  * the mark in one declaration and an app retuning the anchors carries it along. They pair with the
- * {@link colors `colorFocus`} and {@link colors `colorInvalid`} roles, which a consumer reaches for where
+ * {@link colors `colorFocus`} and {@link colors `colorFail`} roles, which a consumer reaches for where
  * it paints the mark itself.
  *
  * **Strokes** — `strokeWidth` carries a bare number, in the user units of the vector viewport it applies to, so the

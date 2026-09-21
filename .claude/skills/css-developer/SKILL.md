@@ -125,7 +125,7 @@ Reach for a layer or an honest selector, never for a specificity bump or `!impor
 
 ## Colours
 
-A role reads the token that names it (`--tile--color-enabled`, `--tile--color-invalid`), **NEVER** a colour of its own:
+A role reads the token that names it (`--tile--color-enabled`, `--tile--color-fail`), **NEVER** a colour of its own:
 the anchors decide, and an app retuning them carries the rule along.
 
 Derive a new role from an anchor with `color-mix(in oklab, …)` for a mix towards the page, or `oklch(from … )` where the

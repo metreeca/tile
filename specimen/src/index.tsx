@@ -39,54 +39,62 @@ type Entry = readonly [Property, string]
 type Stop = readonly [Property, string]
 
 /**
+ * The custom properties a colour is drawn in and filled with, and what the two of them stand for.
+ */
+type Pair = readonly [Property, Property, string]
+
+/**
  * The name of an icon role and the glyph standing for it.
  */
 type Glyph = readonly [string, Icon.LucideIcon]
 
 
-const anchors: ReadonlyArray<Entry> = [
+const page: ReadonlyArray<Entry> = [
 
 	[ tile.color, "the text the page is written in" ],
 	[ tile.backgroundColor, "the canvas it is written on" ],
-	[ tile.colorSubtle, "the accent an interface carries at rest" ],
-	[ tile.colorStrong, "the accent marking a thing out" ],
-	[ tile.colorInformation, "the colour an aside is told in" ],
-	[ tile.colorSuccess, "the colour an outcome that held is told in" ],
-	[ tile.colorWarning, "the colour a caution is filled with, never stroked in" ],
-	[ tile.colorInvalid, "the colour a failure is told in" ]
+	[ tile.backgroundColorEdit, "a field open to editing" ],
+	[ tile.backgroundColorStripe, "a striped row, a quoted block" ],
+	[ tile.borderColor, "a rule between things" ]
 
 ];
 
-const roles: ReadonlyArray<Entry> = [
+const accents: ReadonlyArray<Entry> = [
 
-	[ tile.colorEnabled, "links and enabled controls" ],
-	[ tile.colorHover, "links and buttons under the pointer" ],
-	[ tile.colorPressed, "a control being acted on" ],
-	[ tile.colorSelected, "a control an earlier choice left standing" ],
-	[ tile.colorFocus, "focus rings and controls being pressed" ],
-	[ tile.colorDisabled, "controls that take no input" ],
-	[ tile.colorLabel, "labels and secondary text" ],
-	[ tile.colorPlaceholder, "the text a field shows while empty" ],
-	[ tile.borderColor, "borders and table rules" ],
-	[ tile.backgroundColorEdit, "fields open to editing" ],
-	[ tile.backgroundColorStripe, "striped rows and quoted blocks" ]
+	[ tile.colorSubtle, "the quieter of the two, near-neutral" ],
+	[ tile.colorStrong, "the louder of the two, saturated" ]
 
 ];
 
-const fills: ReadonlyArray<Entry> = [
+const steps: ReadonlyArray<Pair> = [
 
-	[ tile.backgroundColorHover, "a control filling its box under the pointer" ],
-	[ tile.backgroundColorSelected, "a tab, a row or an option standing selected" ],
-	[ tile.backgroundColorPressed, "the same control while it is acted on" ]
+	[ tile.colorInfo, tile.backgroundColorInfo, "stated or provisional" ],
+	[ tile.colorPass, tile.backgroundColorPass, "completed as intended" ],
+	[ tile.colorWarn, tile.backgroundColorWarn, "completed with caveats" ],
+	[ tile.colorFail, tile.backgroundColorFail, "failed to complete" ]
 
 ];
 
-const notices: ReadonlyArray<Entry> = [
+const texts: ReadonlyArray<Entry> = [
 
-	[ tile.backgroundColorInformation, "an aside" ],
-	[ tile.backgroundColorSuccess, "an outcome that held" ],
-	[ tile.backgroundColorWarning, "a caution" ],
-	[ tile.backgroundColorInvalid, "a failure" ]
+	[ tile.colorLabel, "labels and secondary text" ]
+
+];
+
+const controls: ReadonlyArray<Entry> = [
+
+	[ tile.colorEnabled, "a control that answers" ],
+	[ tile.colorDisabled, "a control that takes no input" ],
+	[ tile.colorPlaceholder, "a field standing empty" ],
+	[ tile.colorFocus, "a control the keyboard has reached" ]
+
+];
+
+const states: ReadonlyArray<Pair> = [
+
+	[ tile.colorHover, tile.backgroundColorHover, "under the pointer" ],
+	[ tile.colorSelected, tile.backgroundColorSelected, "left standing by an earlier choice" ],
+	[ tile.colorPressed, tile.backgroundColorPressed, "while it is being acted on" ]
 
 ];
 
@@ -220,7 +228,7 @@ const tints: ReadonlyArray<Entry> = [
 	[ tile.colorHover, "a mark under the pointer" ],
 	[ tile.colorLabel, "a mark beside secondary text" ],
 	[ tile.colorDisabled, "a mark on a control taking no input" ],
-	[ tile.colorInvalid, "a mark telling a failure" ]
+	[ tile.colorFail, "a mark telling a failure" ]
 
 ];
 
@@ -400,47 +408,67 @@ render((
 function Colours() {
 	return <>
 
-		<p>Eight anchors carry the page: the accents standing in for a brand until an app supplies one, and the four
-			colours an outcome is told in. Every other colour is derived from them, so an app that retunes the anchors
-			carries the whole interface along, and the page follows the platform colour scheme without a second palette
-			to maintain. The status four take values of their own rather than derivations of an accent, so an outcome
-			keeps reading as itself whatever an app brands with.</p>
+		<p>Every colour an interface paints with stands on the page pair and the two accents, and is derived from them,
+			so an app that retunes those four carries the whole interface along. The four steps of the meaning scale stand
+			apart, keeping values of their own, so an outcome reads as itself whatever an app brands with.</p>
 
-		<h3>Anchors</h3>
+		<h3>Page</h3>
 
-		<Samples entries={anchors} sample={token =>
+		<p>What everything else is measured against, and the quiet marks the page itself is ruled and shaded with, each
+			mixed towards the canvas so it carries no meaning of its own.</p>
+
+		<Samples entries={page} sample={token =>
 			<span class="roundel" style={{ backgroundColor: `var(${ token })` }}/>
 		}/>
 
-		<h3>Roles</h3>
+		<h3>Accents</h3>
 
-		<p>A role names what a colour is for, not what it looks like: a component reads the role and inherits whatever
-			the anchors make of it.</p>
+		<p>The brand pair states an emphasis relative to each other and nothing else: which elements read them, and in
+			which state, is the business of the roles derived from them. An app supplies a quieter value and a louder one,
+			of any hue or lightness, and everything standing on them follows.</p>
 
-		<Samples entries={roles} sample={token =>
+		<Samples entries={accents} sample={token =>
 			<span class="roundel" style={{ backgroundColor: `var(${ token })` }}/>
+		}/>
+
+		<h3>Meaning</h3>
+
+		<p>Four steps, one unjudged and three of a verdict getting worse, shared by everything a widget has to say: how
+			much attention a passage deserves, what activating a control will do, what the system says happened. Each step
+			comes as a pair, one colour to draw the glyph and the rule in and one to fill the notice with, and a step is
+			never told in colour alone.</p>
+
+		<Pairs pairs={steps}/>
+
+		<h3>Text</h3>
+
+		<p>What text that is not body copy takes.</p>
+
+		<Samples entries={texts} sample={token =>
+			<span style={{ color: `var(${ token })` }}>Aa</span>
+		}/>
+
+		<h3>Controls</h3>
+
+		<p>Each shown in the same bordered field, so the four read against one another: whether a control answers, what
+			it shows while empty, and what the keyboard has reached. The focus colour is a ring rather than text, holding
+			the 3:1 a boundary owes rather than the 4.5:1 a sentence does.</p>
+
+		<Samples entries={controls} sample={token =>
+			<span class={token === tile.colorFocus ? "field focused" : "field"} style={
+
+				token === tile.colorFocus ? {} : { color: `var(${ token })` }
+
+			}>Value</span>
 		}/>
 
 		<h3>States</h3>
 
-		<p>A control colouring its text takes a <code>color</code> role, and one filling its whole box takes the
-			matching fill; the two are never combined on the same element, which would state the emphasis twice. The
-			fills stay light enough for the accent itself to hold AA contrast on them, so a label needs no second
-			colour.</p>
+		<p>What the pointer and an earlier choice leave behind, each as a pair: a control colouring its text takes the
+			first, one filling its whole box takes the second, and the two are never combined on the same element, which
+			would state the emphasis twice.</p>
 
-		<Samples entries={fills} sample={token =>
-			<span class="card" style={{ backgroundColor: `var(${ token })`, color: `var(${ tile.colorStrong })` }}>Aa</span>
-		}/>
-
-		<h3>Notices</h3>
-
-		<p>Each status tints a notice at the same share, so the four read as one family, and the status colour holds AA
-			contrast on its own tint. A status is never told in colour alone: the glyph and the wording carry it
-			too.</p>
-
-		<Samples entries={notices} sample={token =>
-			<span class="card" style={{ backgroundColor: `var(${ token })` }}>Aa</span>
-		}/>
+		<Pairs pairs={states}/>
 
 	</>;
 }
@@ -924,6 +952,37 @@ function Samples({ entries, sample }: {
 
 			<td class="sample">{sample(token)}</td>
 			<td><code>{token}</code></td>
+			<td>{note}</td>
+
+		</tr>)}</tbody>
+
+	</table>;
+
+}
+
+function Pairs({ pairs }: {
+
+	readonly pairs: ReadonlyArray<Pair>;
+
+}) {
+
+	return <table class="samples">
+
+		<tbody>{pairs.map(([ color, background, note ]) => <tr key={color}>
+
+			<td class="sample">
+				<span class="pair">
+					<span class="roundel" style={{ backgroundColor: `var(${ color })` }}/>
+					<span class="card" style={{
+
+						borderColor: `var(${ color })`,
+						backgroundColor: `var(${ background })`
+
+					}}>Aa</span>
+				</span>
+			</td>
+
+			<td><code>{color}</code><br/><code>{background}</code></td>
 			<td>{note}</td>
 
 		</tr>)}</tbody>

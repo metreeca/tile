@@ -68,8 +68,21 @@ code {
     }
 
     & > tbody > tr > td:first-child {
-        width: 3em;
+        width: 5em;
         text-align: center;
+        white-space: nowrap;
+    }
+
+    /*
+     * A pair shows its mark beside its fill, so the two are read together rather than one through the other. The
+     * row is a flex line rather than two inline boxes: a roundel sits on the text baseline while a card takes its
+     * own, so inline layout would leave the two at different heights.
+     */
+
+    & .pair {
+        display: inline-flex;
+        align-items: center;
+        column-gap: var(--tile--spacing-075);
     }
 
     & > tbody > tr > td:last-child {
@@ -117,6 +130,33 @@ code {
     border-width: var(--tile--border-width);
     border-color: var(--tile--border-color);
     border-radius: var(--tile--border-radius);
+}
+
+/*
+ * A control colour is only legible in a control, so every one of them is shown in the same bordered field carrying
+ * the same word: what varies between the rows is the token, not the shape around it. The focus row keeps the neutral
+ * rule and wears the ring the design system draws, which sits flush against the border rather than offset from it, so
+ * the two read as one mark rather than as two.
+ */
+
+.field {
+
+    display: inline-block;
+    padding: var(--tile--spacing-050) var(--tile--spacing-075);
+
+    background-color: var(--tile--background-color-edit);
+
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    border-radius: var(--tile--border-radius);
+
+    &.focused {
+        color: var(--tile--color-enabled);
+        outline: var(--tile--border-style) calc(2 * var(--tile--border-width)) var(--tile--color-focus);
+        outline-offset: 0;
+    }
+
 }
 
 /*

@@ -31,7 +31,7 @@ input {
     }
 
     &:invalid {
-        color: var(--tile--color-invalid);
+        color: var(--tile--color-fail);
         outline: var(--tile--outline-invalid);
         outline-offset: 0;
     }

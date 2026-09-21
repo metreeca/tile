@@ -29,20 +29,33 @@
  * dark panel sit on a light page. An app supplying its brand states a value per scheme too, and rechecks that the text
  * roles still hold AA contrast against the page and the striped row in both.
  *
- * **Accents** — `colorSubtle` carries an interface at rest, on links, enabled controls and focus rings, while
- * `colorStrong` marks a thing out, on hover and on a selection. The pair states an emphasis relative to each other
- * rather than an appearance, so a brand of any hue or lightness fits it by supplying a quieter value and a louder
- * one; the quieter value is the less saturated of the two, which leaves it free to hold the higher contrast, as it
- * does by default.
+ * **Accents** — `colorSubtle` is the quieter of the brand pair and `colorStrong` the louder. The pair states an
+ * emphasis relative to each other and nothing else: which elements read them, and in which state, is settled by the
+ * roles derived from them rather than by the anchors. A brand of any hue or lightness therefore fits by supplying
+ * two values; the quieter one is the less saturated, which leaves it free to hold the higher contrast, as it does by
+ * default.
  *
- * **Status** — `colorInformation`, `colorSuccess`, `colorWarning` and `colorInvalid` stand apart as anchors of their
- * own rather than derivations of an accent, so an outcome keeps reading as itself whatever an app brands with,
- * instead of being told in the brand's own hue. They are ordered by how much the outcome asks of the reader, from an
- * aside they may ignore to a failure they have to answer, and each pairs with a `backgroundColor*` role tinting a
- * notice. A status is never told in colour alone: an icon or a word carries it too.
+ * **Status** — `colorInfo`, `colorPass`, `colorWarn` and `colorFail` are a four-step scale every meaning a widget
+ * carries lands on: `info` says no verdict has been passed, and `pass`, `warn` and `fail` are a verdict getting
+ * worse. `info` is therefore not a milder `pass` but the absence of one, which is why the scale reads as one
+ * unjudged step ahead of a three-step ramp.
  *
- * **What a status colour may paint** — `colorInformation`, `colorSuccess` and `colorInvalid` hold AA contrast on the
- * page, the striped row and their own tint, so they paint text or a mark. `colorWarning` is a **fill**: a caution
+ * Three kinds of meaning share it, and which one a widget carries follows from what the widget is, so no widget
+ * carries two: `level` on content, how much attention a passage deserves; `mode` on controls, what activating will
+ * do; `status` on reported things, what the system says happened. Each declares `normal` explicitly, and `normal` is
+ * not a step: it paints nothing and leaves the ordinary page colours. A widget maps its remaining values onto the
+ * steps and states that mapping in its own documentation.
+ *
+ * How loud a widget appears is a separate axis, carried by its `look` attribute and told in placement, size and
+ * weight rather than in colour, so the two never compete for the same channel.
+ *
+ * The four stand apart as anchors rather than derivations of an accent, so a meaning keeps reading as itself
+ * whatever an app brands with, and each pairs with a `backgroundColor*` role tinting a notice. A step is never told
+ * in colour alone: an icon or a word carries it too, since the two ends of the ramp are the pair colour vision
+ * deficiency collapses most readily.
+ *
+ * **What a status colour may paint** — `colorInfo`, `colorPass` and `colorFail` hold AA contrast on the page,
+ * the striped row and their own tint, so they paint text or a mark. `colorWarn` is a **fill**: a caution
  * paints a filled badge with it and sets its message in the dark page anchor over it, at 11.0:1. Stroking it on the
  * page gives 1.73:1 and is a defect.
  *
@@ -54,8 +67,10 @@
  *
  * **Text** — `colorLabel` names a field, `colorPlaceholder` stands in for a value not yet given, and `colorEnabled`
  * tells a control that answers apart from `colorDisabled`, which tells one that does not.
- * Every text role holds AA contrast against the page and the striped row in both colour schemes; `colorDisabled`
- * carries no meaning on its own and is the one exception.
+ * Every text role holds AA contrast against the page and the striped row in both colour schemes, except
+ * `colorDisabled` and `colorPlaceholder`, which share one value and carry no meaning on their own: both stand for
+ * text the reader has not supplied, and a disabled control is told from an empty one by its background rather than
+ * by the weight of its text.
  *
  * **States** — `colorHover` marks what the pointer is over, `colorPressed` what is being acted on, `colorSelected`
  * what an earlier choice left standing, and `colorFocus` what the keyboard has reached, the focus ring holding 3:1.
@@ -88,10 +103,10 @@ export const colors = {
 	colorSubtle: "--tile--color-subtle",
 	colorStrong: "--tile--color-strong",
 
-	colorInformation: "--tile--color-information",
-	colorSuccess: "--tile--color-success",
-	colorWarning: "--tile--color-warning",
-	colorInvalid: "--tile--color-invalid",
+	colorInfo: "--tile--color-info",
+	colorPass: "--tile--color-pass",
+	colorWarn: "--tile--color-warn",
+	colorFail: "--tile--color-fail",
 
 	colorLabel: "--tile--color-label",
 	colorPlaceholder: "--tile--color-placeholder",
@@ -110,9 +125,9 @@ export const colors = {
 	backgroundColorPressed: "--tile--background-color-pressed",
 	backgroundColorSelected: "--tile--background-color-selected",
 
-	backgroundColorInformation: "--tile--background-color-information",
-	backgroundColorSuccess: "--tile--background-color-success",
-	backgroundColorWarning: "--tile--background-color-warning",
-	backgroundColorInvalid: "--tile--background-color-invalid"
+	backgroundColorInfo: "--tile--background-color-info",
+	backgroundColorPass: "--tile--background-color-pass",
+	backgroundColorWarn: "--tile--background-color-warn",
+	backgroundColorFail: "--tile--background-color-fail"
 
 } as const;

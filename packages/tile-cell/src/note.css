@@ -94,7 +94,7 @@ tile-note {
         font-weight: var(--tile--font-weight-heavy);
 
         & > :first-child {
-            color: var(--tile--color-invalid);
+            color: var(--tile--color-fail);
         }
 
     }

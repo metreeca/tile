@@ -34,6 +34,7 @@
 @import "./tokens/motions.css" layer(tile);
 @import "./tokens/opacities.css" layer(tile);
 @import "./tokens/viewports.css" layer(tile);
+@import "./tokens/visuals.css" layer(tile);
 
 @import "./markup/reset.css" layer(tile);
 

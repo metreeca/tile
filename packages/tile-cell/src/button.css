@@ -276,3 +276,61 @@ tile-button {
     }
 
 }
+
+
+/*
+ * A button stating no look of its own takes the one the area around it is written in, read off the `--tile--look`
+ * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every button
+ * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
+ * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
+ * rule here holds itself to a button carrying none.
+ *
+ * The declarations are the ones the attribute rules above carry, restated rather than shared: a style query is a
+ * conditional group and takes rules of its own, so the two forms of the same step cannot be written as one selector.
+ */
+
+@container style(--tile--look: normal) {
+
+    tile-button:not([look]) > button {
+        border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+    }
+
+}
+
+@container style(--tile--look: strong) {
+
+    tile-button:not([look]) > button {
+        border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+        font-weight: var(--tile--font-weight-heavy);
+    }
+
+    tile-button:not([look]) > button .lucide {
+        stroke-width: calc(1.5 * var(--tile--stroke-width));
+    }
+
+    tile-button:not([look]):not([labelled]) > button {
+        border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
+    }
+
+    tile-button:not([look])[labelled] > button .lucide {
+        stroke-width: calc(1.25 * var(--tile--stroke-width));
+    }
+
+}
+
+@container style(--tile--look: subtle) {
+
+    tile-button:not([look]) > button {
+        column-gap: var(--tile--spacing-025);
+    }
+
+    tile-button:not([look]) > button:enabled {
+        background-color: transparent;
+    }
+
+    tile-button:not([look])[mode="alert"] > button:enabled {
+        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
+        l calc(c * 1.8) calc(h - 12));
+    }
+
+}

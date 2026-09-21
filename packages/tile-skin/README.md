@@ -79,6 +79,14 @@ recedes, `normal` is ordinary, `strong` is larger, earlier, heavier and bounded,
 single-colour interface. The pair is the one the colour anchors already use, so a single vocabulary names this axis
 throughout.
 
+A widget stating no `look` takes the one the area around it is written in, from `--tile--look`, which is `normal`
+where nothing assigns it. An app quietens a whole toolbar, panel or screen by assigning the token there, and the one
+control in it that asks to be loud still is, since a stated attribute answers to itself alone.
+
+```tsx
+<div style={css({ look: "subtle" })}>
+```
+
 **What it means** is colour-coded, and every meaning lands on one four-step scale:
 
 | Step   | Says                   | Token                |

@@ -29,8 +29,8 @@
  *
  * The tokens are grouped by what they decide, each group standing on its own alongside the stylesheet module stating
  * its values: {@link typography}, {@link spacings}, {@link scalings}, {@link borders}, {@link colors},
- * {@link elevations}, {@link palettes}, {@link layers}, {@link motions}, {@link opacities} and {@link viewports}.
- * {@link tile} gathers them, so a consumer names a token without knowing which group it belongs to.
+ * {@link elevations}, {@link palettes}, {@link layers}, {@link motions}, {@link opacities}, {@link viewports} and
+ * {@link visuals}. {@link tile} gathers them, so a consumer names a token without knowing which group it belongs to.
  *
  * @example
  *
@@ -98,6 +98,7 @@ import { scalings } from "./tokens/scalings.js";
 import { spacings } from "./tokens/spacings.js";
 import { typography } from "./tokens/typography.js";
 import { viewports } from "./tokens/viewports.js";
+import { visuals } from "./tokens/visuals.js";
 
 
 /**
@@ -119,7 +120,8 @@ export const tile = {
 	...layers,
 	...motions,
 	...opacities,
-	...viewports
+	...viewports,
+	...visuals
 
 };
 

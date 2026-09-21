@@ -54,7 +54,7 @@ export function Button({
 
 	icon,
 	label,
-	look = "normal",
+	look,
 	mode = "normal",
 	name,
 	type = "button",
@@ -82,10 +82,14 @@ export function Button({
 	label?: string
 
 	/**
-	 * How loud the button appears, told in room, weight and rule rather than in colour, so it stays legible wherever
-	 * colour does not reach: `subtle` takes the room a glyph alone would and reads as part of the text around it,
-	 * `strong` is bounded, set heavier and given more room, and `normal`, the default, sits between the two. The
-	 * appearance is independent of what the button means, which `mode` states.
+	 * How loud the button appears, told in weight, rule and room rather than in colour, so it stays legible wherever
+	 * colour does not reach: `subtle` keeps no rule and reads as part of the text around it, `strong` is bounded and
+	 * set heaviest, and `normal` sits between the two. The appearance is independent of what the button means, which
+	 * `mode` states.
+	 *
+	 * A button stating nothing takes the look the area around it is written in, from the `--tile--look` token the
+	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone,
+	 * so one loud control in a quietened toolbar stays loud.
 	 */
 	look?: "subtle" | "normal" | "strong"
 
@@ -118,6 +122,9 @@ export function Button({
 	 * The element states what it carries, a stylesheet having no way to tell a label from a glyph standing alone, and
 	 * the two attributes it is styled by: they sit on the wrapper rather than on the control, so a rule reads them
 	 * without competing with the states the platform sets on the button itself.
+	 *
+	 * A look the consumer leaves out leaves the attribute off the element as well, which is what lets the stylesheet
+	 * tell a button asking for the ordinary step from one taking whatever the area around it is written in.
 	 */
 
 	return createElement("tile-button", {

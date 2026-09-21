@@ -892,6 +892,17 @@ function Widgets() {
 		<p>A disabled button leaves its mode behind and takes the greyed colour every inactive control shares, since
 			a control that answers nothing has nothing to say about what it would do.</p>
 
+		<p>A button stating no look takes the one the area around it is written in, from <code>{tile.look}</code>.
+			The row below assigns it once and holds three buttons that ask for nothing, plus one that asks to be
+			loud and stays loud.</p>
+
+		<div class="controls" style={css({ look: "subtle" })}>
+			<Button icon={<Icon.Create/>} label="New Item"/>
+			<Button label="Plain"/>
+			<Button mode="danger" icon={<Icon.Delete/>} label="Delete"/>
+			<Button look="strong" mode="commit" icon={<Icon.Save/>} label="Save"/>
+		</div>
+
 		<h3>Notes</h3>
 
 		<p>A note fills an area a screen has nothing else to put in, marked with the glyph matching what it has to

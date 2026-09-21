@@ -104,8 +104,9 @@ tile-button {
      * The ordinary step and the loud one are bounded, which is what tells a control from the text it sits in, while
      * the quiet step keeps no rule and reads as part of that text. The rule is the neutral one the design system
      * draws every boundary with: the control says what it means through its ink, and a second colour on the edge
-     * would state it twice. The loud step is set heaviest on top of it, which is what carries it where a row holds
-     * several controls and only one of them is the one to take.
+     * would state it twice. The loud step is the one exception, stating its meaning on the edge as well, since a
+     * control a row is meant to lead with is read before it is read closely. It is set heaviest on top of the rule,
+     * which is what carries it where a row holds several controls and only one of them is the one to take.
      */
 
     &[look="normal"] > button,
@@ -132,11 +133,27 @@ tile-button {
     /*
      * A mark standing alone gives the rule nothing to lean on, where a label set at the heaviest weight already
      * bounds the control from inside, so the hairline the design system draws every boundary with reads as an empty
-     * box around the glyph. It is carried twice as far into the ink there, staying the same neutral.
+     * box around the glyph. It is carried twice as far into the ink there, staying the same neutral, which is what an
+     * ordinary control falls back on where it has no step to state.
      */
 
     &[look="strong"]:not([labelled]) > button {
         border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
+    }
+
+    /*
+     * The loud step carrying a meaning draws its rule in its own ink instead, so the edge, the fill and the label all
+     * say the same thing and the control reads as one mark rather than as a coloured face in a neutral frame. It is
+     * the one place a border states what a control means rather than merely bounding it, and the loud step is where
+     * that is worth spending: it is the control a row is meant to lead with.
+     *
+     * Reading the ink off `currentColor` keeps the edge and the label one colour however the step is retuned, and
+     * costs one rule where naming each step would cost four. It holds 3:1 against the page and against the fill in
+     * both schemes, 3.57:1 at the worst.
+     */
+
+    &[look="strong"]:not([mode="normal"]) > button:enabled {
+        border-color: currentColor;
     }
 
     /*
@@ -304,6 +321,10 @@ tile-button {
 
     tile-button:not([look]):not([labelled]) > button {
         border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
+    }
+
+    tile-button:not([look]):not([mode="normal"]) > button:enabled {
+        border-color: currentColor;
     }
 
     tile-button:not([look])[labelled] > button .lucide {

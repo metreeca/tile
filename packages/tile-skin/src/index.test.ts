@@ -195,6 +195,28 @@ describe("css", () => {
 
 	});
 
+	it("sets a token from another named as the value", () => {
+
+		expect(css({ fontSize: "fontSizeLarge" })).toEqual({
+
+			"--tile--font-size": "var(--tile--font-size-large)",
+			"font-size": "var(--tile--font-size-large)"
+
+		});
+
+	});
+
+	it("writes a value naming no token as it stands", () => {
+
+		expect(css({ colorStrong: "#D60", borderStyle: "solid" })).toStrictEqual({
+
+			"--tile--color-strong": "#D60",
+			"--tile--border-style": "solid"
+
+		});
+
+	});
+
 	it("leaves a token nothing below the page reads again to the assignment alone", () => {
 
 		expect(css({ colorStrong: "#06C" })).toStrictEqual({ "--tile--color-strong": "#06C" });

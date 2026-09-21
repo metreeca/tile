@@ -23,7 +23,7 @@
  * @module
  */
 
-import { css as compile, type Token, type Value } from "@metreeca/tile-skin";
+import { css as compile, type Tokens } from "@metreeca/tile-skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./style.css";
 
@@ -60,9 +60,10 @@ export function Style({
 
 	/**
 	 * The value each token takes inside the area, keyed by {@link @metreeca/tile-skin!Token token name}; a token left
-	 * out or given `undefined` keeps whatever the cascade already gives it.
+	 * out or given `undefined` keeps whatever the cascade already gives it. A value naming a token of the same kind
+	 * stands for whatever that one carries, so an area is set from the design system rather than from a literal.
 	 */
-	css: Readonly<Partial<Record<Token, Value>>>
+	css: Tokens
 
 	/**
 	 * What the area holds, restyled by the tokens assigned to it and laid out as it would be without the area.

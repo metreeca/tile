@@ -473,7 +473,7 @@ function Specimen() {
 		lock={lock}
 		wide={wide}
 
-		logo={<Style css={{ fontSize: `var(${tile.scaling125})`}}><Logo>{app.name}</Logo></Style> }
+		logo={<Style css={{ fontSize: "fontSizeLarge" }}><Logo>{app.name}</Logo></Style>}
 		meta={<small>v{VERSION}</small>}
 
 		head={"!!!"}

@@ -64,4 +64,45 @@ describe("css", () => {
 
 	});
 
+	it("takes a token off the same ladder as a value", () => {
+
+		expectTypeOf(css({ colorStrong: "colorSubtle" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ backgroundColor: "backgroundColorEdit" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ colorGray050: "colorHeat050" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontSize: "fontSizeLarge" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ scaling100: "scaling200" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ spacing100: "spacing250" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ borderRadius: "borderRadius050" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontWeight: "fontWeightHeavy" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ opacityLoading: "opacityDisabled" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ zIndexModal: "zIndexToast" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ durationFast: "durationSlow" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ easingEnter: "easingExit" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ boxShadowRaised: "boxShadowOverlay" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontFamily: "fontFamilyMono" })).toEqualTypeOf<Style>();
+
+	});
+
+	it("takes a CSS value wherever a token name would go", () => {
+
+		expectTypeOf(css({ colorStrong: "#D60" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontSize: "1.5rem" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ borderStyle: "solid" })).toEqualTypeOf<Style>();
+
+	});
+
+	/*
+	 * Naming the kinds steers what an editor offers, and cannot do more than that: the value type admits any string,
+	 * since a CSS value is any string, so a token of the wrong kind is still taken — as the CSS value it spells,
+	 * which resolves to nothing. Suggesting the right names is the whole of what the kinds buy.
+	 */
+
+	it("takes a token off another ladder, as the CSS value it spells", () => {
+
+		expectTypeOf(css({ fontSize: "colorStrong" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontSize: "spacing100" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ colorStrong: "colorGray050" })).toEqualTypeOf<Style>();
+
+	});
+
 });

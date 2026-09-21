@@ -43,7 +43,7 @@ button {
     display: flex;
     flex-direction: row;
     align-items: center;
-    grid-column-gap: var(--tile--spacing-025);
+    grid-column-gap: var(--tile--spacing-050);
 
     border-radius: var(--tile--border-radius);
     background-color: transparent;

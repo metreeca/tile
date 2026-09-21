@@ -35,6 +35,13 @@ tile-button {
         display: inline-flex;
 
         /*
+         * A control is set a step above the copy around it, whatever it is asked to look like, so a label stays
+         * legible at the size a button holds it at. The loud step goes further still.
+         */
+
+        font-weight: var(--tile--font-weight-strong);
+
+        /*
          * A flex row takes its baseline from the first thing it carries, which is the glyph where a button is marked
          * with one, so a row of buttons would sit at as many heights as it holds kinds. They line up on their middles
          * instead, which is the one anchor a glyph and a label share.
@@ -62,6 +69,19 @@ tile-button {
      */
 
     &[labelled] > button {
+        padding-block: var(--tile--spacing-025);
+        padding-inline: var(--tile--spacing-075);
+    }
+
+    /*
+     * A mark standing alone sits in the floor above with a quarter step of air around it, which reads as a fill
+     * closing on the glyph beside a label held a step clear of the edge. It is given the step out sideways, the box
+     * sizing from its border so nothing below the floor changes what it measures, and keeps the height its
+     * neighbours are set at.
+     */
+
+    &:not([labelled]) > button {
+        padding-block: var(--tile--spacing-025);
         padding-inline: var(--tile--spacing-050);
     }
 
@@ -72,7 +92,187 @@ tile-button {
      */
 
     &[labelled] > button:has(> *) {
-        padding-inline-start: var(--tile--spacing-025);
+        padding-inline-start: var(--tile--spacing-050);
+    }
+
+    /*
+     * How loud the control appears is told in weight, rule and room, and never in colour, so it stays legible in an
+     * interface printed in one ink and leaves the whole colour channel to what the control means. The three steps
+     * keep the same room, so a row mixing them holds its rhythm and the ladder is read off the weight and the rule
+     * rather than off the width of one control against another.
+     *
+     * The ordinary step and the loud one are bounded, which is what tells a control from the text it sits in, while
+     * the quiet step keeps no rule and reads as part of that text. The rule is the neutral one the design system
+     * draws every boundary with: the control says what it means through its ink, and a second colour on the edge
+     * would state it twice. The loud step is set heaviest on top of it, which is what carries it where a row holds
+     * several controls and only one of them is the one to take.
+     */
+
+    &[look="normal"] > button,
+    &[look="strong"] > button {
+        border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+    }
+
+    &[look="strong"] > button {
+
+        font-weight: var(--tile--font-weight-heavy);
+
+        /*
+         * A glyph carries no weight of its own, so the heavier setting would leave the mark reading lighter than the
+         * label beside it. The stroke is drawn half again as thick, which is the nudge that puts the two back on the
+         * same footing rather than a measure the ladder carries.
+         */
+
+        & .lucide {
+            stroke-width: calc(1.5 * var(--tile--stroke-width));
+        }
+
+    }
+
+    /*
+     * A mark standing alone gives the rule nothing to lean on, where a label set at the heaviest weight already
+     * bounds the control from inside, so the hairline the design system draws every boundary with reads as an empty
+     * box around the glyph. It is carried twice as far into the ink there, staying the same neutral.
+     */
+
+    &[look="strong"]:not([labelled]) > button {
+        border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
+    }
+
+    /*
+     * A mark beside a label is read at the size of the text it sits in, where the full nudge closes the counters of
+     * the glyph and leaves it heavier than the word it leads. It takes half the nudge, the mark standing alone
+     * keeping the whole of it.
+     */
+
+    &[look="strong"][labelled] > button .lucide {
+        stroke-width: calc(1.25 * var(--tile--stroke-width));
+    }
+
+    /*
+     * The quiet step closes the gap between the mark and the label to the step below, which is what draws the two
+     * together into the one word a button read as text has to be.
+     */
+
+    &[look="subtle"] > button {
+        column-gap: var(--tile--spacing-025);
+    }
+
+    /*
+     * What activating the control will do is told in colour, on the four-step scale every meaning in the interface
+     * lands on: `safe` takes the unjudged step, `commit`, `alert` and `danger` the verdict ramp. Every step is built
+     * the same way, a tint filling the control and the step itself painting the label, so four controls side by side
+     * read as one family and a row of them is ordered by hue alone. A step that shouted past its neighbours would
+     * say more about the widget than about the action.
+     *
+     * The caution step is the one exception, and the colour space forces it: the amber holds 1.82:1 on its own tint,
+     * so its label takes the page ink instead. The fill still carries the step, and the glyph and the wording say the
+     * same thing, so the control loses nothing but the colour of its text.
+     *
+     * A step paints a control that is live, and one that is not leaves it to the disabled colour the design system
+     * greys every control with, which is why each rule is held to `:enabled`.
+     */
+
+    &[mode="safe"] > button:enabled {
+
+        color: var(--tile--color-info);
+        background-color: var(--tile--background-color-info);
+
+    }
+
+    &[mode="commit"] > button:enabled {
+
+        color: var(--tile--color-pass);
+        background-color: var(--tile--background-color-pass);
+
+    }
+
+    &[mode="alert"] > button:enabled {
+
+        color: var(--tile--color);
+        background-color: var(--tile--background-color-warn);
+
+    }
+
+    &[mode="danger"] > button:enabled {
+
+        color: var(--tile--color-fail);
+        background-color: var(--tile--background-color-fail);
+
+    }
+
+    /*
+     * Under the pointer the fill deepens by a share of what the control already carries, and under the press by
+     * twice that, so the two states are told apart by how far the same colour has travelled rather than by a second
+     * colour. A control carrying no step travels along the neutral the page itself is shaded with, and one carrying
+     * a step along the step, which is what keeps the colour the reader is following from giving way to the accent an
+     * ordinary button answers to. The shares are read off the tints the design system already mixes, so the five
+     * move together whichever scheme is in force.
+     */
+
+    &[mode="normal"] > button:enabled:hover {
+        background-color: var(--tile--background-color-stripe);
+    }
+
+    &[mode="normal"] > button:enabled:active {
+        background-color: color-mix(in oklab, var(--tile--color) 8%, var(--tile--background-color));
+    }
+
+    &[mode="safe"] > button:enabled:hover {
+        background-color: color-mix(in oklab, var(--tile--color-info) 12%, var(--tile--background-color-info));
+    }
+
+    &[mode="safe"] > button:enabled:active {
+        background-color: color-mix(in oklab, var(--tile--color-info) 24%, var(--tile--background-color-info));
+    }
+
+    &[mode="commit"] > button:enabled:hover {
+        background-color: color-mix(in oklab, var(--tile--color-pass) 12%, var(--tile--background-color-pass));
+    }
+
+    &[mode="commit"] > button:enabled:active {
+        background-color: color-mix(in oklab, var(--tile--color-pass) 24%, var(--tile--background-color-pass));
+    }
+
+    &[mode="alert"] > button:enabled:hover {
+        background-color: color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color-warn));
+    }
+
+    &[mode="alert"] > button:enabled:active {
+        background-color: color-mix(in oklab, var(--tile--color-warn) 24%, var(--tile--background-color-warn));
+    }
+
+    &[mode="danger"] > button:enabled:hover {
+        background-color: color-mix(in oklab, var(--tile--color-fail) 12%, var(--tile--background-color-fail));
+    }
+
+    &[mode="danger"] > button:enabled:active {
+        background-color: color-mix(in oklab, var(--tile--color-fail) 24%, var(--tile--background-color-fail));
+    }
+
+    /*
+     * The quiet step takes the ink of its mode and none of the fill, which is what leaves it reading as part of the
+     * text around it where the other two read as controls. The fill still answers the pointer, so the control says
+     * as much as its neighbours once it is reached.
+     */
+
+    &[look="subtle"] > button:enabled {
+        background-color: transparent;
+    }
+
+    /*
+     * The caution step has no ink of its own, the amber holding 1.73:1 on the page, so dropping its fill would leave
+     * the control saying nothing about what activating it does. It takes a darkened amber instead, carried towards
+     * the page ink rather than down the lightness axis: the ink is dark on a light page and light on a dark one, so
+     * one mix holds in both schemes, at 5.07:1 and 11.6:1, where a fixed lightness would pass in one and fail in the
+     * other. The mix costs the amber its chroma and would leave the ink reading as a brown, so the hue is turned
+     * towards the orange the eye still takes for a caution and the chroma is put back once the mix has made room for
+     * it. Both nudges ride on the mixed colour rather than on the anchor, where the chroma has none to give.
+     */
+
+    &[look="subtle"][mode="alert"] > button:enabled {
+        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
+        l calc(c * 1.8) calc(h - 12));
     }
 
 }

@@ -47,6 +47,7 @@ export { X as Remove } from "lucide-preact";
 
 export { Plus as Create } from "lucide-preact";
 export { Edit as Update } from "lucide-preact";
+export { Save } from "lucide-preact";
 export { Trash2 as Delete } from "lucide-preact";
 
 export { Check as Accept } from "lucide-preact";

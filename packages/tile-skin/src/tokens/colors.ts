@@ -78,6 +78,10 @@
  * colouring its text, and the two are never combined on the same element, which would state the emphasis twice. A
  * state is never told in colour alone.
  *
+ * **Filled steps** — `colorOver` is what text takes over a step painted as a fill rather than stroked, which
+ * `colorWarn` always is. It resolves to whichever page anchor is the dark one, so it stays dark in both colour
+ * schemes where `color` and `backgroundColor` each swap sides.
+ *
  * **Surfaces** — `backgroundColorEdit` marks a field that takes a value and `backgroundColorStripe` a table row
  * telling itself from its neighbour. A rule paints `background-color` with them rather than retuning
  * `backgroundColor`, which every other colour here stands on. A thing lifted off the page takes an
@@ -117,6 +121,7 @@ export const colors = {
 	colorPressed: "--tile--color-pressed",
 	colorSelected: "--tile--color-selected",
 	colorFocus: "--tile--color-focus",
+	colorOver: "--tile--color-over",
 
 	backgroundColorEdit: "--tile--background-color-edit",
 	backgroundColorStripe: "--tile--background-color-stripe",

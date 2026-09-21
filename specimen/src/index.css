@@ -160,6 +160,15 @@ code {
 }
 
 /*
+ * The samples carry fills of their own, which a stripe behind them would read as a second, weaker step of, so the
+ * rows are left on the page colour and the table is read by its columns alone.
+ */
+
+.buttons > tbody > tr > td {
+    background-color: transparent;
+}
+
+/*
  * A duration and an easing are only legible in motion, so the sample moves under the pointer and states the token it
  * is timed by through the property it sets. The travel is fixed, leaving the token the only thing that varies.
  */

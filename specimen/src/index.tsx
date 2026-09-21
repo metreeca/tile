@@ -48,6 +48,26 @@ type Pair = readonly [Property, Property, string]
  */
 type Glyph = readonly [string, Icon.LucideIcon]
 
+/**
+ * How loud a button appears.
+ */
+type Look = NonNullable<Parameters<typeof Button>[0]["look"]>
+
+/**
+ * What activating a button will do.
+ */
+type Mode = NonNullable<Parameters<typeof Button>[0]["mode"]>
+
+/**
+ * A mode, the action standing for it, and the glyph marking that action.
+ */
+type Action = readonly [Mode, string, Icon.LucideIcon]
+
+/**
+ * The name of a form a button is carried in and the sample drawing an action in that form.
+ */
+type Form = readonly [string, (look: Look, action: Action) => ComponentChild]
+
 
 const page: ReadonlyArray<Entry> = [
 
@@ -72,6 +92,31 @@ const steps: ReadonlyArray<Pair> = [
 	[ tile.colorPass, tile.backgroundColorPass, "completed as intended" ],
 	[ tile.colorWarn, tile.backgroundColorWarn, "completed with caveats" ],
 	[ tile.colorFail, tile.backgroundColorFail, "failed to complete" ]
+
+];
+
+const looks: ReadonlyArray<Look> = [ "subtle", "normal", "strong" ];
+
+const actions: ReadonlyArray<Action> = [
+
+	[ "normal", "Close", Icon.Close ],
+	[ "safe", "OK", Icon.Accept ],
+	[ "commit", "Save", Icon.Save ],
+	[ "alert", "Overwrite", Icon.Alert ],
+	[ "danger", "Delete", Icon.Delete ]
+
+];
+
+const forms: ReadonlyArray<Form> = [
+
+	[ "label and glyph", (look, [ mode, label, Glyph ]) =>
+		<Button look={look} mode={mode} icon={<Glyph/>} label={label}/> ],
+
+	[ "label", (look, [ mode, label ]) =>
+		<Button look={look} mode={mode} label={label}/> ],
+
+	[ "glyph", (look, [ mode, label, Glyph ]) =>
+		<Button look={look} mode={mode} icon={<Glyph/>} name={label}/> ]
 
 ];
 
@@ -279,6 +324,7 @@ const areas: ReadonlyArray<readonly [string, ReadonlyArray<Glyph>]> = [
 	[ "Records", [
 		[ "Create", Icon.Create ],
 		[ "Update", Icon.Update ],
+		[ "Save", Icon.Save ],
 		[ "Delete", Icon.Delete ]
 	] ],
 
@@ -832,6 +878,20 @@ function Widgets() {
 			type asks for. Whatever it carries, a button holds the smallest target a pointer is asked to hit, so a
 			glyph standing alone is reached as comfortably as a label.</p>
 
+		<p>How loud a button appears is set by <code>look</code>, told in room, weight and rule and never in colour,
+			so the ladder holds in an interface printed in one ink.</p>
+
+		<p>What activating a button will do is set by <code>mode</code>, told in colour on the four-step scale, and
+			the two compose without meeting: a table below for each of the three forms a button is carried in, running
+			every mode against every look. The four steps are built alike, a tinted fill ordered by hue, so a row of
+			them is read by colour rather than by loudness. Since no step is told by colour alone, every button here
+			states the same thing in its glyph and its label.</p>
+
+		{forms.map(form => <Buttons key={form[0]} form={form}/>)}
+
+		<p>A disabled button leaves its mode behind and takes the greyed colour every inactive control shares, since
+			a control that answers nothing has nothing to say about what it would do.</p>
+
 		<h3>Notes</h3>
 
 		<p>A note fills an area a screen has nothing else to put in, marked with the glyph matching what it has to
@@ -953,6 +1013,32 @@ function Samples({ entries, sample }: {
 			<td class="sample">{sample(token)}</td>
 			<td><code>{token}</code></td>
 			<td>{note}</td>
+
+		</tr>)}</tbody>
+
+	</table>;
+
+}
+
+function Buttons({ form: [ form, sample ] }: {
+
+	readonly form: Form;
+
+}) {
+
+	return <table class="buttons">
+
+		<thead>
+			<tr>
+				<th>{form}</th>
+				{looks.map(look => <th key={look}><code>look="{look}"</code></th>)}
+			</tr>
+		</thead>
+
+		<tbody>{actions.map(action => <tr key={action[0]}>
+
+			<td><code>mode="{action[0]}"</code></td>
+			{looks.map(look => <td key={look}>{sample(look, action)}</td>)}
 
 		</tr>)}</tbody>
 

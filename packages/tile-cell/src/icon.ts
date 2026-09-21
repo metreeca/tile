@@ -92,6 +92,7 @@
  * | **Records**      | the life of a single resource                                |
  * | `Create`         | brings a new resource into being                             |
  * | `Update`         | edits the resource on show                                   |
+ * | `Save`           | writes the edits back                                        |
  * | `Delete`         | destroys it                                                  |
  * | **Confirmation** | what becomes of what was entered                             |
  * | `Accept`         | commits it                                                   |

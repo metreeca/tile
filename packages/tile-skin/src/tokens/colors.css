@@ -119,6 +119,8 @@
         --tile--background-color-warn:
             color-mix(in oklab, var(--tile--color-warn) 20%, var(--tile--background-color));
 
+        --tile--color-over: var(--tile--color);
+
     }
 
 }
@@ -140,6 +142,8 @@
         --tile--background-color-warn:
             color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color));
 
+        --tile--color-over: var(--tile--background-color);
+
     }
 
 }
@@ -159,6 +163,8 @@
     --tile--background-color-warn:
         color-mix(in oklab, var(--tile--color-warn) 20%, var(--tile--background-color));
 
+    --tile--color-over: var(--tile--color);
+
 }
 
 [data-theme="dark"] {
@@ -175,6 +181,8 @@
 
     --tile--background-color-warn:
         color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color));
+
+    --tile--color-over: var(--tile--background-color);
 
 }
 
@@ -220,6 +228,11 @@
 }
 
 @property --tile--color-focus {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-over {
     syntax: "*";
     inherits: true;
 }

@@ -60,6 +60,29 @@
     initial-value: 1.25em;
 }
 
+/*
+ * The heading size is relative and level-independent: the hierarchy below the first level is carried by the face, the
+ * weight and the space around a heading rather than by a ladder of sizes, so a deep outline stays readable in a
+ * column. An app wanting a ladder overrides this token per level.
+ */
+
+@property --tile--font-size-heading {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+/*
+ * Tracking ships neutral, so the brand face decides it. It is stated as a token all the same, since an app supplying
+ * a condensed or a wide face has no other way to correct a heading without restating the rule.
+ */
+
+@property --tile--letter-spacing-heading {
+    syntax: "*";
+    inherits: true;
+    initial-value: normal;
+}
+
 @property --tile--line-height {
     syntax: "<number>";
     inherits: true;

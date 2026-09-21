@@ -28,8 +28,9 @@
  * its styling.
  *
  * The tokens are grouped by what they decide, each group standing on its own alongside the stylesheet module stating
- * its values: {@link typography}, {@link spacings}, {@link scalings}, {@link borders}, {@link colors} and
- * {@link palettes}. {@link tile} gathers them, so a consumer names a token without knowing which group it belongs to.
+ * its values: {@link typography}, {@link spacings}, {@link scalings}, {@link borders}, {@link colors},
+ * {@link elevations}, {@link palettes}, {@link layers}, {@link motions}, {@link opacities} and {@link viewports}.
+ * {@link tile} gathers them, so a consumer names a token without knowing which group it belongs to.
  *
  * @example
  *
@@ -46,6 +47,12 @@
  *     --tile--color-strong: #D60;
  *     --tile--font-family: Inter, sans-serif;
  * }
+ * ```
+ *
+ * Pin a colour scheme, on the root element or on any subtree that has to differ from the page:
+ *
+ * ```tsx
+ * <aside data-theme="dark">
  * ```
  *
  * Assign the tokens inline to restyle a single subtree instead:
@@ -82,18 +89,15 @@
 
 import { borders } from "./tokens/borders.js";
 import { colors } from "./tokens/colors.js";
+import { elevations } from "./tokens/elevations.js";
+import { layers } from "./tokens/layers.js";
+import { motions } from "./tokens/motions.js";
+import { opacities } from "./tokens/opacities.js";
 import { palettes } from "./tokens/palettes.js";
 import { scalings } from "./tokens/scalings.js";
 import { spacings } from "./tokens/spacings.js";
 import { typography } from "./tokens/typography.js";
-
-
-export * from "./tokens/borders.js";
-export * from "./tokens/colors.js";
-export * from "./tokens/palettes.js";
-export * from "./tokens/scalings.js";
-export * from "./tokens/spacings.js";
-export * from "./tokens/typography.js";
+import { viewports } from "./tokens/viewports.js";
 
 
 /**
@@ -110,7 +114,12 @@ export const tile = {
 	...scalings,
 	...borders,
 	...colors,
-	...palettes
+	...elevations,
+	...palettes,
+	...layers,
+	...motions,
+	...opacities,
+	...viewports
 
 };
 

@@ -46,13 +46,23 @@ tile-tabs {
             border-bottom-style: var(--tile--border-style);
             border-bottom-color: transparent;
 
+            /*
+             * The mark and the label are eased rather than switched, so the eye follows the strip to whichever tab
+             * took over. The fast step is what a pointer change owes, and a reader who asked for less motion gets
+             * none of it, the duration collapsing to zero on its own.
+             */
+
+            transition-property: color, border-bottom-color;
+            transition-duration: var(--tile--duration-fast);
+            transition-timing-function: var(--tile--easing-standard);
+
             &:hover {
                 color: var(--tile--color-hover);
             }
 
             &:focus-visible {
                 outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
-                outline-offset: 0.1em;
+                outline-offset: 0.1em; /* Clear of the text without reaching the neighbour: below the spacing ladder. */
             }
 
             /* Three times the rule, to read as a highlight. Weight is left alone, since it would reflow the strip. */
@@ -74,7 +84,7 @@ tile-tabs {
 
         &:focus-visible {
             outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
-            outline-offset: 0.1em;
+            outline-offset: 0.1em; /* The nudge the tab above takes, below the ladder for the same reason. */
         }
 
     }

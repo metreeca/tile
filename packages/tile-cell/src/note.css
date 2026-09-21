@@ -67,10 +67,19 @@ tile-note {
 
     &:has(> button) > :first-child {
 
-        padding: 0.75ex 0.75em;
+        /*
+         * The horizontal padding is the spacing step, while the vertical one is stated in ex and sits below the
+         * ladder: a head is one line, so its box is set from the height of the text rather than from the rhythm
+         * between blocks, and the step above would leave a pill deeper than the line it holds.
+         */
+
+        padding: 0.75ex var(--tile--spacing-075);
 
         border-style: var(--tile--border-style);
         border-color: var(--tile--color-enabled);
+
+        /* A pill rather than a panel, so the radius is half the line rather than the quarter-step a box takes. */
+
         border-radius: 0.5em;
 
     }
@@ -120,7 +129,20 @@ tile-note {
             content: '';
 
             position: sticky;
+
+            /*
+             * A bare 1, not a layering token: the masks are only ever compared against the content scrolling under
+             * them inside this box, so the ladder settling which of two things overlapping the page wins says nothing
+             * about them, and borrowing a step from it would claim a rank they never compete for.
+             */
+
             z-index: 1;
+
+            /*
+             * The colour of the page rather than an elevation shadow: this one hides what is leaving the scroll box
+             * instead of lifting the bar off it, so --tile--box-shadow-raised is the wrong tool however similar the
+             * declaration looks.
+             */
 
             box-shadow: 0 0 var(--tile--spacing-050) var(--tile--spacing-050) var(--tile--background-color);
 

@@ -27,15 +27,32 @@ describe("tile", () => {
 		.filter(name => name.endsWith(".css"))
 		.map(name => readFileSync(new URL(`./${ name }`, import.meta.url), "utf-8"));
 
-	/* A media query and the rules nested in it, so a scheme variant is told apart from an unconditional definition. */
+	/*
+	 * A media query and the rules nested in it, and a rule an app forces a scheme with, so a scheme variant is told
+	 * apart from an unconditional definition however the scheme is settled.
+	 */
 
 	const query = /@media[^{]*\{(?:[^{}]*\{[^{}]*})*[^{}]*}/g;
+	const forced = /\[data-theme[^{}]*\{[^{}]*}/g;
 
-	const unconditional = stylesheets.map(text => text.replace(query, ""));
-	const conditional = stylesheets.flatMap(text => text.match(query) ?? []);
+	const unconditional = stylesheets.map(text => text.replace(query, "").replace(forced, ""));
+	const conditional = stylesheets.flatMap(text => [ ...text.match(query) ?? [], ...text.match(forced) ?? [] ]);
+
+	/*
+	 * The scheme a conditional rule states, read off the query it sits in or the attribute it is the subject of. A
+	 * pinned attribute counts only where the rule selects it, never where a guard excludes it: the dark query selects
+	 * `:root:not([data-theme="light"])`, and naming light there says which scheme the rule is *not* for.
+	 */
+
+	const scheme = (name: string) => (rule: string): boolean =>
+		new RegExp(`prefers-color-scheme:\\s*${ name }`).test(rule)
+		|| new RegExp(`(?:^|})\\s*\\[data-theme="${ name }"]\\s*\\{`).test(rule);
+
+	const dark = conditional.filter(scheme("dark"));
+	const light = conditional.filter(scheme("light"));
 
 	const assignments = (texts: ReadonlyArray<string>): ReadonlyArray<readonly [string, string]> => texts
-		.flatMap(text => Array.from(text.matchAll(/:root\s*\{([^}]*)}/g), ([ , rule ]) => rule))
+		.flatMap(text => Array.from(text.matchAll(/(?::root|\[data-theme)[^{}]*\{([^}]*)}/g), ([ , rule ]) => rule))
 		.flatMap(rule => Array.from(rule.matchAll(/(--tile--[\w-]+)\s*:([^;]*);/g),
 			([ , token, value ]) => [ token, value ] as const
 		));
@@ -64,6 +81,14 @@ describe("tile", () => {
 	const defined = (token: string): number => (anchored.includes(token) ? 1 : 0)
 		+ defaults.filter(assignment => assignment === token).length;
 
+	/*
+	 * A token whose value differs by colour scheme states each scheme for itself and carries no unconditional
+	 * definition, so it is settled by covering both rather than by being defined once.
+	 */
+
+	const schemed = (token: string): boolean => assignments(light).some(([ name ]) => name === token)
+		&& assignments(dark).some(([ name ]) => name === token);
+
 
 	it("names every token the stylesheets read", () => {
 
@@ -79,13 +104,19 @@ describe("tile", () => {
 
 	it("defines every token in exactly one place", () => {
 
-		expect(declared.filter(token => defined(token) !== 1)).toEqual([]);
+		expect(declared.filter(token => !schemed(token) && defined(token) !== 1)).toEqual([]);
 
 	});
 
-	it("defines unconditionally every token a colour scheme restates", () => {
+	it("settles every token a colour scheme states, in both schemes or unconditionally", () => {
 
-		expect(variants.filter(token => defined(token) !== 1)).toEqual([]);
+		expect(variants.filter(token => !schemed(token) && defined(token) !== 1)).toEqual([]);
+
+	});
+
+	it("states both schemes for a token that carries no unconditional value", () => {
+
+		expect(declared.filter(token => defined(token) === 0 && !schemed(token))).toEqual([]);
 
 	});
 

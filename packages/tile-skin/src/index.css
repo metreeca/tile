@@ -28,7 +28,12 @@
 @import "./tokens/scalings.css" layer(tile);
 @import "./tokens/colors.css" layer(tile);
 @import "./tokens/borders.css" layer(tile);
+@import "./tokens/elevations.css" layer(tile);
 @import "./tokens/palettes.css" layer(tile);
+@import "./tokens/layers.css" layer(tile);
+@import "./tokens/motions.css" layer(tile);
+@import "./tokens/opacities.css" layer(tile);
+@import "./tokens/viewports.css" layer(tile);
 
 @import "./markup/reset.css" layer(tile);
 
@@ -55,6 +60,20 @@
         font-weight: var(--tile--font-weight);
         line-height: var(--tile--line-height);
 
+    }
+
+    /*
+     * A pinned scheme carries the native widgets with it: color-scheme is what a form control, a scrollbar and a
+     * caret answer to, and the tokens have no reach there. Stated for any element, not only the root, so an island
+     * that pins a scheme is not left with the controls of the page around it.
+     */
+
+    [data-theme="light"] {
+        color-scheme: light;
+    }
+
+    [data-theme="dark"] {
+        color-scheme: dark;
     }
 
 }

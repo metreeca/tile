@@ -57,11 +57,27 @@ The stylesheet declares its rules in a `tile` cascade layer, so an override writ
 two stylesheets reach the document; an app whose own rules are layered orders its layer after `tile`.
 
 Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-subtle`,
-`--tile--color-strong` and `--tile--color-invalid`: labels, borders, stripes, focus rings and hover states derive from
-them and follow. The accents ship brand-agnostic, so an app supplies its own, a quieter value and a louder one per
-colour scheme, and rechecks that the text roles still hold AA contrast against the page and the striped row in both.
-An override the browser cannot parse leaves the interface on the default rather than unstyled, and an app pinning a
-colour scheme sets `color-scheme` on the root element as usual.
+`--tile--color-strong` and the four status colours `--tile--color-invalid`, `--tile--color-success`,
+`--tile--color-warning` and `--tile--color-information`: labels, borders, stripes, focus rings, state fills, notice
+tints and elevation surfaces derive from them and follow. The accents ship brand-agnostic, so an app supplies its own,
+a quieter value and a louder one per colour scheme, and rechecks that the text roles still hold AA contrast against
+the page and the striped row in both. The status four take values of their own rather than derivations of an accent,
+so an outcome keeps reading as itself whatever an app brands with. An override the browser cannot parse leaves the
+interface on the default rather than unstyled.
+
+An interface follows the platform colour scheme on its own. An app that has to pin one sets `data-theme` to `light` or
+`dark`, on the root element or on any subtree that has to differ from the page around it, which a
+`prefers-color-scheme` query cannot express; the stylesheet states `color-scheme` alongside, so native controls and
+scrollbars follow a pinned subtree too.
+
+A thing lifted off the page takes a surface and the shadow that goes with it together, `--tile--background-color-raised`
+with `--tile--box-shadow-raised` for a card that stays in the flow and `--tile--background-color-overlay` with
+`--tile--box-shadow-overlay` for a menu or a dialog that leaves it. `--tile--z-index-*` settles which of two overlapping
+things wins, and `--tile--background-color-blanket` dims what a modal covers.
+
+Motion is stated the same way: `--tile--duration-*` says what kind of change a transition carries and
+`--tile--easing-*` how it accelerates, and every duration collapses to zero for a reader who asked for less motion, so
+a transition written through the tokens honours the preference with no rule of its own.
 
 Where a colour stands for a position rather than for a role, take it from a ten-step scale: `--tile--color-gray-*` for
 a neutral, `--tile--color-subtle-*` and `--tile--color-strong-*` for a branded one, `--tile--color-heat-*` for a
@@ -87,6 +103,38 @@ Radii come both ways: `--tile--border-radius` is a length, rounding a field, a p
 whatever size it is given, while `--tile--border-radius-*` carries a share of the box, so a mark rounds with its own
 size and every share above a half draws the same roundel. `--tile--stroke-width` carries a bare number, in the user
 units of the vector viewport it applies to, so the weight of a glyph holds at any size.
+
+A breakpoint is not a width token, because CSS accepts no custom property in a media feature and
+`@media (min-width: var(--x))` never matches. The design system runs the four queries once and hands the answers on as
+`--tile--viewport-*` tokens, `off` by default and `on` from each width upwards, which a rule branches on through a
+style query.
+
+| Token                     | From    | What it answers                                              |
+|---------------------------|---------|--------------------------------------------------------------|
+| `--tile--viewport-small`  | `30rem` | a phone held upright, the one-column floor                   |
+| `--tile--viewport-medium` | `48rem` | a tablet or a split window, where a second column fits       |
+| `--tile--viewport-large`  | `64rem` | a laptop, where navigation becomes a rail                    |
+| `--tile--viewport-xlarge` | `90rem` | a desktop, where the measure is capped rather than stretched |
+
+Every width is a floor, so the narrow layout is what a rule states unconditionally and each breakpoint only adds to
+it, leaving the narrower flags on; a band pairs the wider flag as `off` with the narrower one as `on`.
+
+```css
+@container style(--tile--viewport-medium: on) {
+    tile-screen {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+```
+
+The tokens are assigned on the root element and inherit, so every element sits inside a container the query matches
+and no rule declares one of its own. They make a breakpoint reusable rather than retunable: the width stays in the
+stylesheet, so overriding a flag forces it without moving the threshold, and an app wanting thresholds of its own
+writes its own media queries. Code needing the same answer reads the token through `getComputedStyle`, as it reads any
+other value outside the cascade.
+
+A widget changing shape because of the space it was given states a `@container` size query against its own inline size
+instead and needs no breakpoint at all.
 
 A component styled against a token it cannot count on, because the stylesheet may not be loaded at all, names its own
 fallback in the reference:

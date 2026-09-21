@@ -102,6 +102,83 @@ code {
     background-color: var(--tile--color-subtle);
 }
 
+/*
+ * A card is a patch large enough to read a surface, a fill or a tint off, bordered so it stays visible where the
+ * value it carries resolves to the page colour itself, as a raised surface does on a white page.
+ */
+
+.card {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3em;
+    height: 1.75em;
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    border-radius: var(--tile--border-radius);
+}
+
+/*
+ * A duration and an easing are only legible in motion, so the sample moves under the pointer and states the token it
+ * is timed by through the property it sets. The travel is fixed, leaving the token the only thing that varies.
+ */
+
+.slide {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    background-color: var(--tile--color-strong);
+    border-radius: var(--tile--border-radius);
+    transition-property: translate;
+    transition-duration: var(--tile--duration-normal);
+    transition-timing-function: var(--tile--easing-standard);
+}
+
+tr:hover .slide {
+    translate: 4em;
+}
+
+/*
+ * A viewport flag is only legible as a state, so the mark fills when the threshold is passed. Each rule reads the
+ * token through a style query rather than restating the width, which is the whole point of the family.
+ */
+
+.flag {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: var(--tile--border-radius-050);
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    background-color: transparent;
+}
+
+@container style(--tile--viewport-small: on) {
+    .flag.viewport-small {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-medium: on) {
+    .flag.viewport-medium {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-large: on) {
+    .flag.viewport-large {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-xlarge: on) {
+    .flag.viewport-xlarge {
+        background-color: var(--tile--color-strong);
+    }
+}
+
 
 /*
  * A ramp reads as one bordered band split into its steps, each swatch taking an equal share of the line. The step sits

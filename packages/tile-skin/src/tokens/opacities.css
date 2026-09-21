@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-h1, h2, h3 {
-    clear: both;
-    font-weight: var(--tile--font-weight-strong);
-    font-family: var(--tile--font-family-heading);
-    letter-spacing: var(--tile--letter-spacing-heading);
+/*
+ * How far a thing is faded when it is present but not available. Fading the container carries its border, its icon and
+ * whatever it encloses along, which a colour role cannot reach. Content being replaced fades less than a disabled
+ * control, since it is still worth reading while it is on its way out.
+ */
+
+@property --tile--opacity-disabled {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0.4;
 }
 
-h1 {
-    padding-bottom: var(--tile--spacing-025);
-    border-bottom-style: var(--tile--border-style);
-    margin-bottom: var(--tile--spacing-100);
-    font-size: var(--tile--font-size-large);
-}
-
-h2 {
-    margin-bottom: var(--tile--spacing-075);
-    font-size: var(--tile--font-size-heading);
-}
-
-h3 {
-    margin-bottom: var(--tile--spacing-050);
-    font-size: var(--tile--font-size-heading);
+@property --tile--opacity-loading {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0.6;
 }

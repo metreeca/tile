@@ -15,55 +15,114 @@
  */
 
 /*
- * The five anchors an app supplies its brand through, and the roles derived from them. A role says what a colour
- * means in the interface, so a rule names the role it paints rather than the colour it paints in, and follows an app
- * retuning the anchors.
+ * The anchors an app supplies its brand through, and the roles derived from them. A role says what a colour means in
+ * the interface, so a rule names the role it paints rather than the colour it paints in, and follows an app retuning
+ * the anchors.
  */
 
 /*
  * The accents stand in for a brand an app has yet to supply: the subtle one carries an interface at rest and the
- * strong one marks a thing out, stating an emphasis relative to each other rather than an appearance. The error
- * colour is an anchor of its own rather than a derivation of an accent, so a failure keeps reading as one whatever an
- * app brands with.
+ * strong one marks a thing out, stating an emphasis relative to each other rather than an appearance. The status
+ * colours are anchors of their own rather than derivations of an accent, so an outcome keeps reading as itself
+ * whatever an app brands with. The informational one is a cyan rather than the conventional blue, which the default
+ * strong accent already occupies.
  *
- * The light scheme is the registered value, so a browser answering neither media query still gets the light page, and
- * only the dark scheme is restated below. An app supplying its brand states a value per scheme too, and rechecks that
- * the text roles still hold AA contrast against the page and the striped row in both.
+ * The caution is a fill, never a stroke, and that is what lets it shout as loudly as the failure. Red reaches full
+ * saturation at a middling lightness, so it can be dark enough to read on white and saturated at the same time.
+ * Yellow reaches full saturation only when it is very light, so any yellow dark enough to stroke on a white page has
+ * already given up most of its chroma: every attempt to hold 4.5:1, and then 3:1, landed on an olive or a burnt
+ * orange that read as muted or as a second failure colour. At its own lightness it carries chroma 0.151 against the
+ * failure's 0.218, and separates from it by ΔE 25.8 under simulated deuteranopia and 42.7 under protanopia.
+ *
+ * A caution therefore paints a filled badge and sets its message in the dark page anchor over it, at 11.0:1, exactly
+ * as the heat scale has text take one page anchor or the other according to the step beneath it. Stroking this
+ * colour on the page instead gives 1.73:1 and is a defect. The other three statuses hold 4.5:1 and serve as either
+ * text or mark.
+ *
+ * One value serves both colour schemes, as a series slot does: a hazard yellow that dimmed on the dark page would
+ * stop being one, and the dark page anchor sitting over it stays dark in either scheme.
+ *
+ * Neither scheme is the default of the other: each states its own values below, and an app supplying its brand states
+ * a value per scheme too, rechecking that the text roles still hold AA contrast against the page and the striped row
+ * in both.
  */
 
 @property --tile--color {
-    syntax: "<color>";
+    syntax: "*";
     inherits: true;
-    initial-value: #000;
 }
 
 @property --tile--background-color {
-    syntax: "<color>";
+    syntax: "*";
     inherits: true;
-    initial-value: #FFF;
 }
 
 @property --tile--color-subtle {
-    syntax: "<color>";
+    syntax: "*";
     inherits: true;
-    initial-value: #567;
 }
 
 @property --tile--color-strong {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-information {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-success {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-warning {
     syntax: "<color>";
     inherits: true;
-    initial-value: #06C;
+    initial-value: #F0B133;
 }
 
 @property --tile--color-invalid {
-    syntax: "<color>";
+    syntax: "*";
     inherits: true;
-    initial-value: #C00;
+}
+
+/*
+ * Each scheme states itself, so neither is the silent default of the other: the pair of queries follows the platform,
+ * each guarded so an app pinning the opposite scheme is not overridden, and the pair of attribute rules carries a
+ * subtree pinned against it. A media query cannot be scoped to a subtree, which is why the second pair exists at all,
+ * and an attribute rule cannot read the platform, which is why the first does.
+ *
+ * The anchors below therefore carry no registered default: a value that differed by scheme while one of the two was
+ * also the fallback read as though the light scheme were merely what happens in the absence of dark. Between them the
+ * four rules cover every case, since prefers-color-scheme resolves to light wherever dark is not asked for.
+ *
+ * Only the custom properties follow a pinned subtree. Native controls and scrollbars answer to color-scheme, which
+ * index.css states for both attribute values.
+ */
+
+@media (prefers-color-scheme: light) {
+
+    :root:not([data-theme="dark"]) {
+
+        --tile--color: #000;
+        --tile--background-color: #FFF;
+
+        --tile--color-subtle: #567;
+        --tile--color-strong: #06C;
+
+        --tile--color-information: #067;
+        --tile--color-success: #070;
+        --tile--color-invalid: #C00;
+
+    }
+
 }
 
 @media (prefers-color-scheme: dark) {
 
-    :root {
+    :root:not([data-theme="light"]) {
 
         --tile--color: #EEE;
         --tile--background-color: #111;
@@ -71,11 +130,42 @@
         --tile--color-subtle: #89A;
         --tile--color-strong: #4AF;
 
+        --tile--color-information: #3CC;
+        --tile--color-success: #5C5;
         --tile--color-invalid: #F66;
 
     }
 
 }
+
+[data-theme="light"] {
+
+    --tile--color: #000;
+    --tile--background-color: #FFF;
+
+    --tile--color-subtle: #567;
+    --tile--color-strong: #06C;
+
+    --tile--color-information: #067;
+    --tile--color-success: #070;
+    --tile--color-invalid: #C00;
+
+}
+
+[data-theme="dark"] {
+
+    --tile--color: #EEE;
+    --tile--background-color: #111;
+
+    --tile--color-subtle: #89A;
+    --tile--color-strong: #4AF;
+
+    --tile--color-information: #3CC;
+    --tile--color-success: #5C5;
+    --tile--color-invalid: #F66;
+
+}
+
 
 /*
  * Every role is derived from an anchor, so it follows an app retuning the brand and holds in either colour scheme,
@@ -107,6 +197,16 @@
     inherits: true;
 }
 
+@property --tile--color-pressed {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-selected {
+    syntax: "*";
+    inherits: true;
+}
+
 @property --tile--color-focus {
     syntax: "*";
     inherits: true;
@@ -118,6 +218,41 @@
 }
 
 @property --tile--background-color-stripe {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-hover {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-pressed {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-selected {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-information {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-success {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-warning {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--background-color-invalid {
     syntax: "*";
     inherits: true;
 }
@@ -136,9 +271,39 @@
     --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
     --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
+    --tile--color-pressed: oklch(from var(--tile--color-strong) calc(l - 0.2) c h);
+    --tile--color-selected: var(--tile--color-strong);
     --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 80%, var(--tile--background-color));
 
     --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
     --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));
+
+    /*
+     * A filled state tints the page with the strong accent rather than the text anchor, so the fill says which accent
+     * the control answers to. The shares stay light enough for the accent itself to hold AA contrast on its own tint,
+     * 4.57:1 at the heaviest in the light scheme and 6.39:1 in the dark one, so a label needs no second colour.
+     */
+
+    --tile--background-color-hover:
+        color-mix(in oklab, var(--tile--color-strong) 6%, var(--tile--background-color));
+    --tile--background-color-selected:
+        color-mix(in oklab, var(--tile--color-strong) 10%, var(--tile--background-color));
+    --tile--background-color-pressed:
+        color-mix(in oklab, var(--tile--color-strong) 14%, var(--tile--background-color));
+
+    /*
+     * A status tint takes the same share whichever outcome it carries, so four notices read as one family. Every
+     * status colour holds AA contrast on its own tint, 4.88:1 at the worst in the light scheme and 5.80:1 in the dark
+     * one, and the page text holds far more, so a notice states its outcome in either.
+     */
+
+    --tile--background-color-information:
+        color-mix(in oklab, var(--tile--color-information) 12%, var(--tile--background-color));
+    --tile--background-color-success:
+        color-mix(in oklab, var(--tile--color-success) 12%, var(--tile--background-color));
+    --tile--background-color-warning:
+        color-mix(in oklab, var(--tile--color-warning) 12%, var(--tile--background-color));
+    --tile--background-color-invalid:
+        color-mix(in oklab, var(--tile--color-invalid) 12%, var(--tile--background-color));
 
 }

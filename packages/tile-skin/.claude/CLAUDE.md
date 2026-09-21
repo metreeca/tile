@@ -25,14 +25,64 @@ assigns a token, and every `var()` in `tokens/` is a token deriving from another
 `src/tokens/` — a family per pair, `<family>.ts` naming the tokens and `<family>.css` stating their values, and the
 only place either side of the family is revised:
 
-- `typography` — the brand faces and their fallback stacks, the sizes, the weights and the line height
+- `typography` — the brand faces and their fallback stacks, the sizes, the weights, the line height and the heading
+  tracking
 - `spacings` — the ladder a thing is set apart from its neighbour on
 - `scalings` — the ladder a thing measured against the text is sized on
-- `colors` — the five colour anchors, the light value registered and the dark one restated per scheme, and the text,
-  state and surface roles derived from them
+- `colors` — the eight colour anchors, the light value registered and the dark one restated per scheme, and the text,
+  status, state and surface roles derived from them
 - `borders` — the line, the radii, the focus ring, the invalid outline and the vector stroke width
+- `elevations` — the surfaces a thing lifted off the page is painted on, the shadows pairing with them and the
+  blanket dimming what a modal covers
 - `palettes` — the four ten-step colour scales, the nine series slots and the four area classes, the three
   accent-derived scales following the anchors and the heat scale, the slots and the classes stated as literals
+- `layers` — the stacking order two things overlapping the page are settled by
+- `motions` — the durations a change takes and the curves it accelerates on, the durations collapsing under
+  `prefers-reduced-motion`
+- `opacities` — how far a thing present but not available is faded
+- `viewports` — which breakpoints the viewport has passed, one flag each, `off` registered and `on` set from its width
+  upwards
+
+A breakpoint cannot be a width token: CSS does not accept a custom property in a media feature, so
+`@media (min-width: var(--x))` never matches. `viewports` carries the *answer* instead of the question, and this is
+the one measure in the package an app cannot retune through a custom property.
+
+**Nothing outside `viewports.css` ever states a width**, in CSS or in TypeScript. The stylesheet runs the four queries
+once and hands the answers on as tokens, and a rule branches on one through a style query:
+
+```css
+@container style(--tile--viewport-medium: on) {
+    tile-screen {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+```
+
+The tokens are assigned on `:root` and inherit, so every element sits inside a container a style query matches and no
+rule declares one of its own. Each is registered with `off`, so the narrow case is a value a rule matches rather than
+the absence of one. What this buys is **reuse, not retuning**: the width still lives in `viewports.css`, and
+overriding a flag forces it without moving the threshold.
+
+The standard set, and the **only** widths a rule in this repository breaks at:
+
+| Token            | From    | What it answers                                              |
+|------------------|---------|--------------------------------------------------------------|
+| `viewportSmall`  | `30rem` | a phone held upright, the one-column floor                   |
+| `viewportMedium` | `48rem` | a tablet or a split window, where a second column fits       |
+| `viewportLarge`  | `64rem` | a laptop, where navigation becomes a rail                    |
+| `viewportXlarge` | `90rem` | a desktop, where the measure is capped rather than stretched |
+
+Every width is a **floor**, so the narrow layout is what a rule states unconditionally and each breakpoint only adds
+to it, leaving the narrower flags on. A `max-width` query is **NEVER** mixed in: at the boundary two rules then both
+match, or neither does. A band is expressed by pairing the wider flag as `off` with the narrower one as `on`.
+
+Code needing the same answer reads the token through `getComputedStyle` as it reads any other, which is a
+point-in-time read; a component reacting to a threshold being crossed watches the element rather than polling. There
+is deliberately **no** TypeScript copy of the widths and **no** composed `matchMedia` string: one existed briefly and
+earned nothing but a test policing its own duplicate.
+
+A widget changing shape because of the space it was **given** states a `@container` size query against its own inline
+size and takes no breakpoint at all. These four are for the page-level decisions a container query cannot answer.
 
 `src/markup/` — base rules for plain document markup, carrying **no** `.ts` side and declaring no token of their own:
 
@@ -99,20 +149,67 @@ A token lives in two places, both inside its family pair, revised together:
 - a **derivation**, reading `var()`, `color-mix()` or `oklch()`, is a `:root` assignment and the registration carries
   **no** `initial-value`, which it could not resolve anyway: a colour role, a derived scale step, the border colour,
   the focus ring, the invalid outline
-- a **colour scheme variant** restates a literal inside `@media (prefers-color-scheme: dark)`, on top of the light
-  value the registration already carries; the light scheme is never restated
+- a **scheme-varying value** carries **NO** `initial-value`, and is therefore registered `syntax: "*"` like a
+  derivation, since a registration stating any other syntax **MUST** carry an initial value or the whole `@property`
+  rule is invalid. It states each scheme for itself, in four rules: two guarded media queries,
+  `@media (prefers-color-scheme: light)` under `:root:not([data-theme="dark"])` and
+  `@media (prefers-color-scheme: dark)` under `:root:not([data-theme="light"])`, and two attribute rules,
+  `[data-theme="light"]` and `[data-theme="dark"]`
 
-`src/index.ts` gathers the families into `tile` and adds nothing of its own; a new family is added to the spread and to
-the re-exports there, and to the imports in `src/index.css`.
+**Neither scheme is the default of the other.** Light is **NOT** a registered fallback that dark overrides: a value
+differing by scheme while one of the two doubled as the fallback read as though light were merely the absence of
+dark. Between them the four rules cover every case, since `prefers-color-scheme` resolves to `light` wherever dark is
+not asked for.
+
+The four forms are **NOT** redundant, and dropping any one breaks a case the others cannot reach:
+
+- a media query follows the platform, and its `:not()` guard is what stops it overriding an app that pinned the
+  opposite scheme at the root; its specificity has to stay above the two attribute rules that follow it
+- an attribute rule is unqualified rather than `:root[data-theme="…"]`, so a pinned **subtree** works, which is the
+  whole point: a media query cannot be scoped to one, so a dark panel on a light page has no other expression
+- both attribute rules are needed, since a pinned subtree inherits whatever encloses it and a light island inside a
+  dark one would otherwise stay dark
+
+> [!CAUTION]
+> When classifying a rule by scheme, an attribute counts only where the rule **selects** it, never where a guard
+> **excludes** it. `:root:not([data-theme="light"])` names light to say which scheme it is *not* for. A first cut of
+> the suite matched the bare attribute anywhere in the rule, classified the dark query as light as well, and passed
+> a stylesheet with an anchor missing from the light scheme entirely.
+
+Only custom properties follow a pinned subtree. Native controls, scrollbars and the caret answer to `color-scheme`,
+which `index.css` states for both attribute values alongside the page defaults.
+
+`src/index.ts` gathers the families into `tile` and adds nothing of its own; a new family is added to the spread and
+to the imports in `src/index.css`.
 
 `src/index.test.ts` fails when a declared name is defined in neither place or in both, when a defined name is not
-declared, when a rule reads a token no one declares, when a registration is missing or duplicated, when a scheme
-variant has no unconditional definition, and when a derived token carries a default it cannot resolve. It says nothing
-about the value behind the name.
+declared, when a rule reads a token no one declares, when a registration is missing or duplicated, when a token
+carrying no unconditional value is missing from either scheme, and when a derived token carries a default it cannot
+resolve. It says nothing about the value behind the name.
 
 An `@property` registration states the type a token takes and the default it falls back on, under the constraints
 `css-developer` §Registrations sets out: only an absolute value takes a real type, and a derived token carries no
 default at all.
+
+# Token Lifecycle
+
+A published token name is a public commitment, so it is **NEVER** renamed in place: a consumer's stylesheet reads the
+custom property directly and no compiler catches the break.
+
+Retiring a name runs in two releases:
+
+1. **Deprecate.** Add the new token through the contract above. Keep the old one declared and registered, and redefine
+   it as a derivation reading the new one, so both resolve and nothing painted through either changes. Mark the entry
+   in the `.ts` side with `@deprecated`, naming the replacement, and record the pair in `CHANGELOG.md`.
+2. **Remove.** Drop the old entry, its registration and its assignment in the next **minor** line, never in a patch.
+
+A consumer migrates by rewriting the call sites, which takes two passes because a token appears in two shapes: the
+TypeScript entry (`tile.colorStrong`), which an IDE rename or a `jscodeshift` codemod rewrites safely, and the custom
+property (`--tile--color-strong`), which a plain search and replace over `.css` files settles since the name cannot
+occur as anything else.
+
+The suite is **NOT** a lifecycle check: a deprecated token passes exactly as any other, since it is still declared,
+registered and defined. Only the changelog records that it is on its way out.
 
 > [!WARNING]
 >
@@ -123,12 +220,35 @@ default at all.
 
 # Colours
 
-Five anchors carry literals in `colors.css`, the light value registered and the dark one restated per scheme:
+Eight anchors carry literals in `colors.css`. Seven state a value per colour scheme, in the four rules the contract
+above sets out; `--tile--color-warning` alone carries one value for both and keeps its registered default:
 
 - `--tile--color` and `--tile--background-color`
 - `--tile--color-subtle`, which an interface carries at rest, and `--tile--color-strong`, which marks a thing out;
   both ship brand-agnostic, and an app supplies its own brand by overriding them
-- `--tile--color-invalid`, which a failure is told in
+- `--tile--color-invalid`, which a failure is told in, with `--tile--color-success`, `--tile--color-warning` and
+  `--tile--color-information` beside it
+
+> [!WARNING]
+>
+> `--tile--color-warning` is a **fill, never a stroke**, and it carries **one value in both colour schemes**. A
+> caution paints a filled badge with it and sets its message in the dark page anchor over it, at 11.0:1. Stroking it
+> on the page gives **1.73:1** and is a defect.
+>
+> This is forced by the colour space, **NOT** chosen. Red reaches full saturation at a middling lightness, so
+> `--tile--color-invalid` is dark enough to read on white and loud at once. Yellow reaches full saturation only when
+> it is very light, so any yellow dark enough to stroke on white has already spent its chroma. Three rounds inside a
+> stroke budget proved it: `#850` at 4.5:1 read as mud, `#A40` escaped the mud only by moving to a burnt orange
+> sitting ΔE 2.0 from the failure red under simulated deuteranopia, and `#B67C00` at 3:1 was still muted at chroma
+> 0.132. As a fill it reaches **chroma 0.151** against the failure's 0.218, and separates from it by **ΔE 25.8 deutan
+> and 42.7 protan**.
+>
+> Retuning it for a better stroke contrast walks straight back into the mud. If a caution ever genuinely needs
+> coloured text, that is a **second token**, not a change to this one.
+>
+> `--tile--color-invalid`, `--tile--color-success` and `--tile--color-information` hold 4.5:1 and serve as either text
+> or mark. Do **NOT** "restore symmetry" by turning them into fills: `markup/forms.css` and `tile-cell/src/note.css`
+> both paint text with `--tile--color-invalid`.
 
 Every other colour derives from them through `color-mix(in oklab, …)` or `oklch(from …)`, so an app retuning the
 anchors carries the whole interface along.
@@ -199,8 +319,7 @@ stands out on the dark one.
 They are nine of the ten hues of [Tableau 10](https://www.tableau.com/blog/colors-upgrade-tableau-10-56782), its grey
 left out, reordered: Tableau's own sequence puts adjacent hues at the same lightness, which the gates reject.
 
-Validated against the package surfaces rather than against the defaults the `dataviz` skill ships, with
-`scripts/validate_palette.js`:
+Validated against the package surfaces rather than against the defaults the `dataviz` skill ships:
 
 - worst adjacent CVD ΔE 13.7, worst adjacent normal-vision ΔE 16.7, in the order declared
 - the order leads with Tableau's blue and clears both gates; 347 of 30,000 sampled blue-leading orders do
@@ -216,8 +335,8 @@ Validated against the package surfaces rather than against the defaults the `dat
 > [!WARNING]
 >
 > The **order** is the separation mechanism, not a preference: the figures above hold for adjacent pairs in the order
-> declared. Reordering the slots, resampling a hue or inserting a tenth forfeits the guarantee and means re-running
-> the validator over the candidate orderings. Nine hold only where neighbours are compared, on grouped bars, stacked
+> declared. Reordering the slots, resampling a hue or inserting a tenth forfeits the guarantee and means re-measuring
+> the candidate orderings. Nine hold only where neighbours are compared, on grouped bars, stacked
 > segments and lines; where every pair is compared, on a scatter, a bubble chart or a map, **only the first three
 > hold**.
 

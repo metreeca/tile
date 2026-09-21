@@ -29,6 +29,12 @@
  * **Sizes** — `fontSize` is absolute, so a page holds its rhythm wherever it is embedded, while `fontSizeSmall` and
  * `fontSizeLarge` are relative and take the size of whatever they sit in along.
  *
+ * **Headings** — `fontSizeHeading` is one size for every level below the first, since the hierarchy is carried by the
+ * face, the weight and the space around a heading rather than by a ladder of sizes, which keeps a deep outline
+ * readable in a column. An app wanting a ladder overrides the token per level.
+ * `letterSpacingHeading` ships neutral and lets the brand face decide, so an app supplying a condensed or a wide face
+ * corrects the tracking without restating the rule.
+ *
  * **Weights** — `fontWeight` carries text at rest, `fontWeightStrong` marks a run out within it, and
  * `fontWeightHeavy` is what a title and a table header take.
  *
@@ -50,8 +56,10 @@ export const typography = {
 	fontSize: "--tile--font-size",
 	fontSizeSmall: "--tile--font-size-small",
 	fontSizeLarge: "--tile--font-size-large",
+	fontSizeHeading: "--tile--font-size-heading",
 
 	lineHeight: "--tile--line-height",
+	letterSpacingHeading: "--tile--letter-spacing-heading",
 
 	fontWeight: "--tile--font-weight",
 	fontWeightStrong: "--tile--font-weight-strong",

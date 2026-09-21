@@ -280,20 +280,36 @@
 }
 
 @property --tile--color-heat-090 {
-    syntax: "<color>";
+    syntax: "*";
     inherits: true;
-    initial-value: #8F0D35;
 }
 
 @property --tile--color-heat-100 {
-    syntax: "<color>";
+    syntax: "*";
     inherits: true;
-    initial-value: #9813B1;
+}
+
+/*
+ * The top two steps state each scheme for themselves, as the anchors in colors.css do and for the same reason: the
+ * query cannot be scoped to a subtree, the attribute cannot read the platform, and neither scheme is the default of
+ * the other. At their light values these two sit at 2.05:1 and 2.76:1 against the dark page and lose the top of the
+ * range, which is what the dark pair is for. The cool half holds in both schemes and is stated once.
+ */
+
+@media (prefers-color-scheme: light) {
+
+    :root:not([data-theme="dark"]) {
+
+        --tile--color-heat-090: #8F0D35;
+        --tile--color-heat-100: #9813B1;
+
+    }
+
 }
 
 @media (prefers-color-scheme: dark) {
 
-    :root {
+    :root:not([data-theme="light"]) {
 
         --tile--color-heat-090: #B13550;
         --tile--color-heat-100: #B940D2;
@@ -301,6 +317,21 @@
     }
 
 }
+
+[data-theme="light"] {
+
+    --tile--color-heat-090: #8F0D35;
+    --tile--color-heat-100: #9813B1;
+
+}
+
+[data-theme="dark"] {
+
+    --tile--color-heat-090: #B13550;
+    --tile--color-heat-100: #B940D2;
+
+}
+
 
 /*
  * The series slots tell one thing apart from another, on a bar, a line or a wedge. A number is a slot rather than a

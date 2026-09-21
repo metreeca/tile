@@ -1,0 +1,102 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Which breakpoints the viewport has passed. A media feature cannot read a custom property, so a breakpoint cannot be
+ * a width token: these carry the answer instead of the question, and a rule branches on a breakpoint by name through
+ * a style query rather than repeating its width.
+ *
+ * The widths below are the only place the design system states them at all: 30rem for a phone held upright, 48rem for
+ * a tablet or a split window, 64rem for a laptop and 90rem for a desktop. A rule elsewhere reads the flag, never the
+ * width.
+ */
+
+@property --tile--viewport-small {
+    syntax: "*";
+    inherits: true;
+    initial-value: off;
+}
+
+@property --tile--viewport-medium {
+    syntax: "*";
+    inherits: true;
+    initial-value: off;
+}
+
+@property --tile--viewport-large {
+    syntax: "*";
+    inherits: true;
+    initial-value: off;
+}
+
+@property --tile--viewport-xlarge {
+    syntax: "*";
+    inherits: true;
+    initial-value: off;
+}
+
+/*
+ * Every query is a floor, so a wider viewport leaves the narrower flags on and a rule reads them as a ladder rather
+ * than as a band. Each is assigned on the root element and inherits, so every element sits inside a container a style
+ * query can match without declaring one.
+ *
+ * The widths are stated in rem because each one asks whether the content fits, not how big the glass is, and content
+ * is measured in text: a comfortable line runs 65 to 75 characters, which is a multiple of the font size rather than
+ * of physical pixels. A reader who raises the browser default to 24px needs about half as much width again for the
+ * same words, so the layout that fitted at 768 pixels no longer does. A px query cannot see that and hands them the
+ * wide layout with the text crammed into it, while a rem query moves them down the ladder to the simpler one, which
+ * is what raising the font size asked for.
+ *
+ * Inside a media query rem resolves against the browser's initial font size, never against the root font size the
+ * page sets, so neither --tile--font-size nor an app overriding it moves these thresholds: only the reader's own
+ * browser setting does, which is the one input that should. Browser zoom scales the CSS pixel and so moves a px
+ * query and a rem query alike, and is not a case either unit handles better.
+ *
+ * A device-bound question, whether this is a touch phone, would take other units and other features. None of the four
+ * below asks one.
+ */
+
+@media (min-width: 30rem) {
+
+    :root {
+        --tile--viewport-small: on;
+    }
+
+}
+
+@media (min-width: 48rem) {
+
+    :root {
+        --tile--viewport-medium: on;
+    }
+
+}
+
+@media (min-width: 64rem) {
+
+    :root {
+        --tile--viewport-large: on;
+    }
+
+}
+
+@media (min-width: 90rem) {
+
+    :root {
+        --tile--viewport-xlarge: on;
+    }
+
+}

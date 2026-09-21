@@ -50,6 +50,9 @@ const anchors: ReadonlyArray<Entry> = [
 	[ tile.backgroundColor, "the canvas it is written on" ],
 	[ tile.colorSubtle, "the accent an interface carries at rest" ],
 	[ tile.colorStrong, "the accent marking a thing out" ],
+	[ tile.colorInformation, "the colour an aside is told in" ],
+	[ tile.colorSuccess, "the colour an outcome that held is told in" ],
+	[ tile.colorWarning, "the colour a caution is filled with, never stroked in" ],
 	[ tile.colorInvalid, "the colour a failure is told in" ]
 
 ];
@@ -58,6 +61,8 @@ const roles: ReadonlyArray<Entry> = [
 
 	[ tile.colorEnabled, "links and enabled controls" ],
 	[ tile.colorHover, "links and buttons under the pointer" ],
+	[ tile.colorPressed, "a control being acted on" ],
+	[ tile.colorSelected, "a control an earlier choice left standing" ],
 	[ tile.colorFocus, "focus rings and controls being pressed" ],
 	[ tile.colorDisabled, "controls that take no input" ],
 	[ tile.colorLabel, "labels and secondary text" ],
@@ -65,6 +70,23 @@ const roles: ReadonlyArray<Entry> = [
 	[ tile.borderColor, "borders and table rules" ],
 	[ tile.backgroundColorEdit, "fields open to editing" ],
 	[ tile.backgroundColorStripe, "striped rows and quoted blocks" ]
+
+];
+
+const fills: ReadonlyArray<Entry> = [
+
+	[ tile.backgroundColorHover, "a control filling its box under the pointer" ],
+	[ tile.backgroundColorSelected, "a tab, a row or an option standing selected" ],
+	[ tile.backgroundColorPressed, "the same control while it is acted on" ]
+
+];
+
+const notices: ReadonlyArray<Entry> = [
+
+	[ tile.backgroundColorInformation, "an aside" ],
+	[ tile.backgroundColorSuccess, "an outcome that held" ],
+	[ tile.backgroundColorWarning, "a caution" ],
+	[ tile.backgroundColorInvalid, "a failure" ]
 
 ];
 
@@ -279,6 +301,64 @@ const areas: ReadonlyArray<readonly [string, ReadonlyArray<Glyph>]> = [
 
 ];
 
+const surfaces: ReadonlyArray<Entry> = [
+
+	[ tile.backgroundColorSunken, "a well a thing is dropped into" ],
+	[ tile.backgroundColorRaised, "a card or a sticky header, which stays in the flow" ],
+	[ tile.backgroundColorOverlay, "a menu, a popover or a dialog, which leaves it" ]
+
+];
+
+const shadows: ReadonlyArray<Entry> = [
+
+	[ tile.boxShadowRaised, "the lift a card carries" ],
+	[ tile.boxShadowOverlay, "the lift a thing leaving the flow carries" ]
+
+];
+
+const stack: ReadonlyArray<Entry> = [
+
+	[ tile.zIndexSticky, "a header or a column pinned to an edge" ],
+	[ tile.zIndexDropdown, "a menu or a popover attached to a control" ],
+	[ tile.zIndexBlanket, "the dimming behind a thing demanding an answer" ],
+	[ tile.zIndexModal, "the thing demanding it" ],
+	[ tile.zIndexToast, "a message reporting what just happened" ],
+	[ tile.zIndexTooltip, "the label explaining whatever is below it" ]
+
+];
+
+const fades: ReadonlyArray<Entry> = [
+
+	[ tile.opacityLoading, "content on its way out while its replacement arrives" ],
+	[ tile.opacityDisabled, "a whole composite that takes no input" ]
+
+];
+
+const durations: ReadonlyArray<Entry> = [
+
+	[ tile.durationFast, "a hover or a press, which the eye should not wait for" ],
+	[ tile.durationNormal, "a panel opening or a row expanding, which has to be followed" ],
+	[ tile.durationSlow, "a change covering the viewport" ]
+
+];
+
+const easings: ReadonlyArray<Entry> = [
+
+	[ tile.easingEnter, "a thing arriving, decelerating into place" ],
+	[ tile.easingExit, "a thing leaving, accelerating away" ],
+	[ tile.easingStandard, "a thing that stays and merely moves" ]
+
+];
+
+const thresholds: ReadonlyArray<Entry> = [
+
+	[ tile.viewportSmall, "a phone held upright, from 30rem" ],
+	[ tile.viewportMedium, "a tablet or a split window, from 48rem" ],
+	[ tile.viewportLarge, "a laptop, from 64rem" ],
+	[ tile.viewportXlarge, "a desktop, from 90rem" ]
+
+];
+
 const strokes: ReadonlyArray<number> = [ 1, 1.5, 2, 3 ];
 
 
@@ -296,6 +376,7 @@ render((
 		<Tabs name={app.name} panels={{
 
 			Colours: <Colours/>,
+			Surfaces: <Surfaces/>,
 			Palettes: <Palettes/>,
 			Scales: <Scales/>,
 			Icons: <Icons/>,
@@ -319,10 +400,11 @@ render((
 function Colours() {
 	return <>
 
-		<p>Five anchors carry the page, the accents standing in for a brand until an app supplies one, and the colour a
-			failure is told in. Every other colour is derived from them, so an app that retunes the anchors carries the
-			whole interface along, and the page follows the platform colour scheme without a second palette to
-			maintain.</p>
+		<p>Eight anchors carry the page: the accents standing in for a brand until an app supplies one, and the four
+			colours an outcome is told in. Every other colour is derived from them, so an app that retunes the anchors
+			carries the whole interface along, and the page follows the platform colour scheme without a second palette
+			to maintain. The status four take values of their own rather than derivations of an accent, so an outcome
+			keeps reading as itself whatever an app brands with.</p>
 
 		<h3>Anchors</h3>
 
@@ -337,6 +419,83 @@ function Colours() {
 
 		<Samples entries={roles} sample={token =>
 			<span class="roundel" style={{ backgroundColor: `var(${ token })` }}/>
+		}/>
+
+		<h3>States</h3>
+
+		<p>A control colouring its text takes a <code>color</code> role, and one filling its whole box takes the
+			matching fill; the two are never combined on the same element, which would state the emphasis twice. The
+			fills stay light enough for the accent itself to hold AA contrast on them, so a label needs no second
+			colour.</p>
+
+		<Samples entries={fills} sample={token =>
+			<span class="card" style={{ backgroundColor: `var(${ token })`, color: `var(${ tile.colorStrong })` }}>Aa</span>
+		}/>
+
+		<h3>Notices</h3>
+
+		<p>Each status tints a notice at the same share, so the four read as one family, and the status colour holds AA
+			contrast on its own tint. A status is never told in colour alone: the glyph and the wording carry it
+			too.</p>
+
+		<Samples entries={notices} sample={token =>
+			<span class="card" style={{ backgroundColor: `var(${ token })` }}>Aa</span>
+		}/>
+
+	</>;
+}
+
+function Surfaces() {
+	return <>
+
+		<p>A thing lifted off the page takes a surface and the shadow that goes with it, together: a surface alone
+			reads as a flat patch of a slightly different colour, and a shadow alone lets the page show through
+			wherever an element inherits its background.</p>
+
+		<h3>Surfaces</h3>
+
+		<p>The surfaces are derived by lightening the page, so one derivation serves both schemes. On a light scheme
+			whose page is already white they resolve to the page itself and the shadow carries the whole separation,
+			which is what the samples below show; on a dark scheme they lighten as expected.</p>
+
+		<Samples entries={surfaces} sample={token =>
+			<span class="card" style={{ backgroundColor: `var(${ token })` }}/>
+		}/>
+
+		<h3>Shadows</h3>
+
+		<Samples entries={shadows} sample={token =>
+			<span class="card" style={{ boxShadow: `var(${ token })` }}/>
+		}/>
+
+		<h3>Layering</h3>
+
+		<p>The stacking order settles which of two things overlapping the page wins. A value is compared only against
+			its siblings in the same stacking context, so a menu opened inside a dialog keeps the menu step and still
+			paints above it, and no widget adds a step to clear an ancestor.</p>
+
+		<Samples entries={stack} sample={token =>
+			<code>{`var(${ token })`}</code>
+		}/>
+
+		<h3>Opacity</h3>
+
+		<p>Fading the container carries its border, its glyph and whatever it encloses along, which a colour role
+			cannot reach. A faded thing is exempt from the contrast budget only because it is also inert.</p>
+
+		<Samples entries={fades} sample={token =>
+			<span class="box" style={{ opacity: `var(${ token })` }}/>
+		}/>
+
+		<h3>Viewport</h3>
+
+		<p>A media feature cannot read a custom property, so a breakpoint is not a width token: the stylesheet runs the
+			four queries once and hands the answers on. A rule branches on the answer through a style query and never
+			repeats the width, and the flags are floors, so a wider viewport leaves the narrower ones standing. Resize
+			the window and watch the marks fill.</p>
+
+		<Samples entries={thresholds} sample={token =>
+			<span class={`flag ${ token.slice("--tile--".length) }`}/>
 		}/>
 
 	</>;
@@ -435,6 +594,23 @@ function Scales() {
 
 		<Samples entries={borders} sample={token =>
 			<span class="box" style={{ borderRadius: `var(${ token }) 0` }}/>
+		}/>
+
+		<h3>Motion</h3>
+
+		<p>A duration says what kind of change it carries rather than how many milliseconds it lasts, so a whole
+			interface slows down or speeds up from one place. Every duration collapses to zero for a reader who asked
+			for less motion, which is the reason to state one as a token rather than as a literal.</p>
+
+		<Samples entries={durations} sample={token =>
+			<span class="slide" style={{ transitionDuration: `var(${ token })` }}/>
+		}/>
+
+		<p>The entering curve decelerates and the leaving one accelerates, so the two read as opposite halves of the
+			same gesture.</p>
+
+		<Samples entries={easings} sample={token =>
+			<span class="slide" style={{ transitionTimingFunction: `var(${ token })` }}/>
 		}/>
 
 	</>;
@@ -688,6 +864,30 @@ function Theming() {
 			</p>
 
 		</div>
+
+		<h3>Colour scheme</h3>
+
+		<p>An interface follows the platform scheme on its own. An app that has to pin one sets <code>data-theme</code>
+			to <code>light</code> or <code>dark</code>, on the root element or on any subtree that has to differ from
+			the page around it, which a media query cannot express:</p>
+
+		<pre><code>{`<aside data-theme="dark">`}</code></pre>
+
+		<div class="themed" data-theme="dark">
+
+			<p>This panel is pinned dark whatever the page around it is doing, and everything derived from the anchors
+				follows: the <a href="#theming">link</a>, the rules, the fields and the striped rows.</p>
+
+			<p>
+				<input type="email" value="still not an address"/>{" "}
+				<button type="button">Button</button>
+			</p>
+
+		</div>
+
+		<p>Only the custom properties follow a pinned subtree. Native controls, scrollbars and the caret answer
+			to <code>color-scheme</code>, which the stylesheet states alongside, so the widgets above are drawn dark
+			too.</p>
 
 	</>;
 }

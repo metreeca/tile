@@ -1,0 +1,78 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * How long a change takes and how it accelerates. The fast step is for a change the eye should not have to wait for,
+ * the normal one for a change that has to be followed, and the slow one for a change covering the viewport.
+ */
+
+@property --tile--duration-fast {
+    syntax: "<time>";
+    inherits: true;
+    initial-value: 100ms;
+}
+
+@property --tile--duration-normal {
+    syntax: "<time>";
+    inherits: true;
+    initial-value: 200ms;
+}
+
+@property --tile--duration-slow {
+    syntax: "<time>";
+    inherits: true;
+    initial-value: 400ms;
+}
+
+/*
+ * The entering curve decelerates and the leaving one accelerates, so the two read as opposite halves of the same
+ * gesture. An easing function has no registrable type, so each is registered untyped.
+ */
+
+@property --tile--easing-standard {
+    syntax: "*";
+    inherits: true;
+    initial-value: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@property --tile--easing-enter {
+    syntax: "*";
+    inherits: true;
+    initial-value: cubic-bezier(0, 0, 0.2, 1);
+}
+
+@property --tile--easing-exit {
+    syntax: "*";
+    inherits: true;
+    initial-value: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/*
+ * A reader who asked for less motion gets none: collapsing the durations stops every transition stated through them,
+ * with no rule of its own anywhere else. The easings are left alone, since a curve over no time changes nothing.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    :root {
+
+        --tile--duration-fast: 0s;
+        --tile--duration-normal: 0s;
+        --tile--duration-slow: 0s;
+
+    }
+
+}

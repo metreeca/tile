@@ -102,6 +102,29 @@ import { visuals } from "./tokens/visuals.js";
 
 
 /**
+ * The CSS property a token is applied through as well as assigned, for the four the page states once and nothing
+ * reads again.
+ *
+ * Every other token is read by a rule on the elements that take it, so assigning it anywhere is enough to restyle
+ * what stands below. These four are read a single time, where the page sets its own typography, and an element
+ * further down takes the size, the face and the leading it inherits rather than looking them up again. Assigning one
+ * of them to an area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to
+ * predict from the name. Applying the property alongside the assignment makes the area behave as every other token
+ * already leads them to expect.
+ */
+const inherited: Readonly<Record<string, string>> = { // keyed by string, matching the entries css() walks
+
+	fontFamily: "font-family",
+	fontSize: "font-size",
+	fontWeight: "font-weight",
+	lineHeight: "line-height"
+
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
  * The custom property behind every design system token.
  *
  * Resolves each {@link Token token name} to the {@link Property custom property} carrying its value, for a `var()`
@@ -175,10 +198,17 @@ export type Value = undefined | boolean | number | string
  * Numbers and booleans are converted to their CSS text form, so a scalar token is assigned without restating it as a
  * string; a token mapped to `undefined` is left out, so a conditional override is expressed inline.
  *
+ * The face, the size, the weight and the leading a page is written in are applied to the area as well as assigned to
+ * it, since the page states each of them once and nothing below reads them again; an area given one of the four is
+ * therefore written in it, rather than assigning a value nothing would consult. What an area holds inherits them as
+ * it inherits any other, so a size stated on an area compounds with a size stated on an area inside it, exactly as
+ * CSS has it.
+ *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *
  * @returns An immutable {@link Style style declaration} assigning the {@link Property custom property} of each token
- * given a defined value in `tokens` its text form
+ * given a defined value in `tokens` its text form, and applying the CSS property as well for the four the page
+ * carries its own typography in
  */
 export function css(tokens: Readonly<Partial<Record<Token, Value>>>): Style {
 
@@ -186,7 +216,16 @@ export function css(tokens: Readonly<Partial<Record<Token, Value>>>): Style {
 
 	return Object.fromEntries(Object.entries(tokens)
 		.filter(([ , value ]) => value !== undefined)
-		.map(([ token, value ]) => [ properties[token], String(value) ])
+		.flatMap(([ token, value ]) => {
+
+			const property = inherited[token];
+			const text = String(value);
+
+			return property === undefined
+				? [ [ properties[token], text ] ]
+				: [ [ properties[token], text ], [ property, text ] ];
+
+		})
 	);
 
 }

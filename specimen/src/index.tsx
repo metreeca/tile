@@ -473,13 +473,10 @@ function Specimen() {
 		lock={lock}
 		wide={wide}
 
-		logo={<Logo>{app.name}</Logo>}
+		logo={<Style css={{ fontSize: `var(${tile.scaling125})`}}><Logo>{app.name}</Logo></Style> }
 		meta={<small>v{VERSION}</small>}
 
 		head={"!!!"}
-
-		// the control letting the tray back in stands in the content header, the tray itself answering nothing while
-		// it is locked
 
 		menu={<Button
 			icon={lock ? <Icon.Expand/> : <Icon.Collapse/>}

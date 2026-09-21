@@ -167,9 +167,37 @@ describe("css", () => {
 		})).toEqual({
 
 			"--tile--color-strong": "#06C",
-			"--tile--font-family": "Inter, sans-serif"
+
+			"--tile--font-family": "Inter, sans-serif",
+			"font-family": "Inter, sans-serif"
 
 		});
+
+	});
+
+	it("writes an area in the typography it is given, the page reading it only for itself", () => {
+
+		expect(css({
+
+			fontFamily: "Inter, sans-serif",
+			fontSize: "1.5rem",
+			fontWeight: 500,
+			lineHeight: 1.4
+
+		})).toEqual({
+
+			"--tile--font-family": "Inter, sans-serif", "font-family": "Inter, sans-serif",
+			"--tile--font-size": "1.5rem", "font-size": "1.5rem",
+			"--tile--font-weight": "500", "font-weight": "500",
+			"--tile--line-height": "1.4", "line-height": "1.4"
+
+		});
+
+	});
+
+	it("leaves a token nothing below the page reads again to the assignment alone", () => {
+
+		expect(css({ colorStrong: "#06C" })).toStrictEqual({ "--tile--color-strong": "#06C" });
 
 	});
 
@@ -183,6 +211,8 @@ describe("css", () => {
 		})).toEqual({
 
 			"--tile--line-height": "1.2",
+			"line-height": "1.2",
+
 			"--tile--border-style": "false"
 
 		});
@@ -207,7 +237,18 @@ describe("css", () => {
 	it("assigns every declared token", () => {
 
 		expect(css(Object.fromEntries(Object.keys(tile).map(token => [ token, "value" ]))))
-			.toEqual(Object.fromEntries(Object.values(tile).map(property => [ property, "value" ])));
+			.toEqual(Object.fromEntries([
+
+				...Object.values(tile).map(property => [ property, "value" ]),
+
+				// the four the page carries its own typography in are written as well as assigned
+
+				[ "font-family", "value" ],
+				[ "font-size", "value" ],
+				[ "font-weight", "value" ],
+				[ "line-height", "value" ]
+
+			]));
 
 	});
 

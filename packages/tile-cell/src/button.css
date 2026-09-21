@@ -165,9 +165,17 @@ tile-button {
      * read as one family and a row of them is ordered by hue alone. A step that shouted past its neighbours would
      * say more about the widget than about the action.
      *
-     * The caution step is the one exception, and the colour space forces it: the amber holds 1.82:1 on its own tint,
-     * so its label takes the page ink instead. The fill still carries the step, and the glyph and the wording say the
-     * same thing, so the control loses nothing but the colour of its text.
+     * Three steps paint their label in the anchor itself. The caution cannot, the amber holding 1.82:1 on its own
+     * tint, so it paints a darkened one: the anchor carried towards the page ink, which darkens it on a light page
+     * and lightens it on a dark one, so one expression holds in both schemes where a fixed lightness would pass in
+     * one and fail in the other. The mix costs the amber its chroma, so the hue is turned towards the orange the eye
+     * still takes for a caution and as much chroma as the gamut holds is asked back; the multiplier asks for more
+     * than sRGB can give and is clipped to the boundary, which is the point of asking. Both nudges ride on the mixed
+     * colour rather than on the anchor, where the chroma has none to give.
+     *
+     * The darkened amber reads on the fill and on the bare page alike, at 4.54:1 and 5.19:1 in the light scheme and
+     * 9.16:1 and 10.8:1 in the dark one, which is what lets the quiet step drop the fill and keep the same ink
+     * instead of owing a colour of its own.
      *
      * A step paints a control that is live, and one that is not leaves it to the disabled colour the design system
      * greys every control with, which is why each rule is held to `:enabled`.
@@ -189,7 +197,8 @@ tile-button {
 
     &[mode="alert"] > button:enabled {
 
-        color: var(--tile--color);
+        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
+        l calc(c * 1.8) calc(h - 12));
         background-color: var(--tile--background-color-warn);
 
     }
@@ -260,21 +269,6 @@ tile-button {
         background-color: transparent;
     }
 
-    /*
-     * The caution step has no ink of its own, the amber holding 1.73:1 on the page, so dropping its fill would leave
-     * the control saying nothing about what activating it does. It takes a darkened amber instead, carried towards
-     * the page ink rather than down the lightness axis: the ink is dark on a light page and light on a dark one, so
-     * one mix holds in both schemes, at 5.07:1 and 11.6:1, where a fixed lightness would pass in one and fail in the
-     * other. The mix costs the amber its chroma and would leave the ink reading as a brown, so the hue is turned
-     * towards the orange the eye still takes for a caution and the chroma is put back once the mix has made room for
-     * it. Both nudges ride on the mixed colour rather than on the anchor, where the chroma has none to give.
-     */
-
-    &[look="subtle"][mode="alert"] > button:enabled {
-        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
-        l calc(c * 1.8) calc(h - 12));
-    }
-
 }
 
 
@@ -326,11 +320,6 @@ tile-button {
 
     tile-button:not([look]) > button:enabled {
         background-color: transparent;
-    }
-
-    tile-button:not([look])[mode="alert"] > button:enabled {
-        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
-        l calc(c * 1.8) calc(h - 12));
     }
 
 }

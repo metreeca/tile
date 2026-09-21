@@ -28,21 +28,24 @@ tile-logo {
      * baseline instead, which is the line the letters actually share, and the mark is dropped back by half of what
      * it overshoots the capitals by, which lands its middle on theirs.
      *
-     * The row is wrapped so that a layout stretching the box, as a flex line or a grid row does to fill its cross
-     * axis, still finds the line to centre: a single unwrapped line has nothing for `align-content` to place and
-     * would sit against the top edge. Left alone, the box takes the row's own size and the two coincide, which is
-     * the ordinary case.
+     * The row is a grid flowing in one direction rather than a flex line, so the mark and what stands beside it
+     * never break onto two: a lockup that wraps stops being one thing. The wording holds its line for the same
+     * reason. A grid also places its single row where a flex line cannot, which is what centres the lockup when a
+     * layout stretches the box to fill its cross axis; left alone, the box takes the row's own size and the two
+     * coincide, which is the ordinary case.
      */
 
     --tile-logo-mark: calc(1.5 * 1cap);
 
-    display: inline-flex;
-    flex-wrap: wrap;
+    display: inline-grid;
+    grid-auto-flow: column;
     align-content: center;
     align-items: baseline;
     justify-content: center;
 
     column-gap: var(--tile--spacing-050);
+
+    white-space: nowrap;
 
     /*
      * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app

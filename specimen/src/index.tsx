@@ -474,9 +474,9 @@ function Specimen() {
 		wide={wide}
 
 		logo={<Logo>{app.name}</Logo>}
-		meta={`v${VERSION}`}
+		meta={<small>v{VERSION}</small>}
 
-		name={"!!!"}
+		head={"!!!"}
 
 		// the control letting the tray back in stands in the content header, the tray itself answering nothing while
 		// it is locked
@@ -521,8 +521,6 @@ function Specimen() {
 			</h2>
 
 		</>}
-
-		trayName="Sections and layout"
 
 		info={<small>{app.copy}</small>}
 		copy={<small>Apache 2.0</small>}

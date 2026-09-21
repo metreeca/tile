@@ -50,11 +50,14 @@ import "./page.css";
  * is held back by the control offering it.
  *
  * The two columns are landmarks a reader moves between directly. The content is named by the heading it is already
- * showing, whether that is `name` or the `done` standing in for it, so a reader arriving at it hears which screen
- * they are on; the tray is named by `trayName`, which only the app can supply. `lock` takes the tray out of reach
- * for every gesture at once, pointer and keyboard alike, so a reader is never left tabbing into something the screen
- * is showing as unavailable; whoever sets it owes the reader somewhere to land if the focus was in the tray at the
- * time.
+ * showing, whether that is `head` or the `done` standing in for it, so a reader arriving at it hears which screen
+ * they are on. The tray carries no name of its own: what a reader wants named there is the sections or the filters
+ * it holds, which say what they are far better than a word for the whole region would, so a screen names those as
+ * it puts them in.
+ *
+ * `lock` takes the tray out of reach for every gesture at once, pointer and keyboard alike, so a reader is never
+ * left tabbing into something the screen is showing as unavailable; whoever sets it owes the reader somewhere to
+ * land if the focus was in the tray at the time.
  *
  * The content is capped at a comfortable reading measure and centred in whatever room is left, so widening the
  * window leaves the lines as long as they were; `wide` lifts the cap for content a window never has too much room
@@ -75,11 +78,10 @@ export function Page({
 	done,
 	back,
 
-	name,
+	head,
 	menu,
 
 	tray,
-	trayName,
 
 	info,
 	copy,
@@ -114,7 +116,7 @@ export function Page({
 	meta?: ComponentChildren
 
 	/**
-	 * The control leaving the content of the moment, shown at the head of the content column in place of `name`,
+	 * The control leaving the content of the moment, shown at the head of the content column in place of `head`,
 	 * which is what marks the screen as one the reader is finished with rather than one they arrived at.
 	 */
 	done?: ComponentChildren
@@ -126,9 +128,11 @@ export function Page({
 	back?: ComponentChildren
 
 	/**
-	 * What the content of the moment is called, shown at the head of its column unless `done` stands there instead.
+	 * What the content of the moment is called, which for a screen describing a resource is that resource's own
+	 * label. It heads the content column unless `done` stands there instead, and names the content landmark either
+	 * way, so a reader arriving at it hears which screen they are on.
 	 */
-	name?: ComponentChildren
+	head?: ComponentChildren
 
 	/**
 	 * The control opening what the screen keeps out of the way, shown at the end of the content header where `back`
@@ -137,16 +141,11 @@ export function Page({
 	menu?: ComponentChildren
 
 	/**
-	 * The standing controls the tray holds, such as the sections of the app and the filters in force.
+	 * The standing controls the tray holds, such as the sections of the app and the filters in force. The tray is a
+	 * complementary landmark carrying no name of its own, so a group within it that a reader would want to reach
+	 * directly, a navigation block above all, names itself as it is put in.
 	 */
 	tray?: ComponentChildren
-
-	/**
-	 * What the tray is called, telling its landmark apart from the content beside it for a reader moving between
-	 * them; unnamed if omitted, which leaves the tray announced by its kind alone. Wording the interface is written
-	 * in, never ours, so a screen speaking to its readers in another language names it in theirs.
-	 */
-	trayName?: string
 
 	/**
 	 * What stands at the foot of the tray, such as the reader signed in and the way out.
@@ -169,8 +168,8 @@ export function Page({
 
 	const fetching = useFetching();
 
-	const lead = done ?? name;
-	const trail = back ?? menu;
+	const lead = done ?? head;
+	const tail = back ?? menu;
 
 	// the content landmark is named by the heading already on show, so the reference and what it points at stand or
 	// fall on the same condition and the reference is never left dangling
@@ -194,12 +193,7 @@ export function Page({
 
 		{/* locking takes the tray out of reach for every gesture at once, rather than for the pointer alone */}
 
-		<aside
-
-			aria-label={trayName}
-			inert={lock}
-
-		>
+		<aside inert={lock}>
 
 			<header>
 				{logo && <span>{logo}</span>}
@@ -217,7 +211,7 @@ export function Page({
 
 			<header>
 				{lead && <span id={title}>{lead}</span>}
-				{fetching ? <Icon.LoaderCircle/> : trail && <span>{trail}</span>}
+				{fetching ? <Icon.LoaderCircle/> : tail && <span>{tail}</span>}
 			</header>
 
 			<section>{children}</section>

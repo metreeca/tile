@@ -25,13 +25,6 @@ body > * {
 }
 
 
-/* The copyright closes each column, set apart from what stands above it. */
-
-tile-page footer {
-    color: var(--tile--color-label);
-}
-
-
 /* A token name is read as one word, in a listing as in a table cell. */
 
 code {

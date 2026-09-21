@@ -109,6 +109,8 @@
         --tile--color: #000;
         --tile--background-color: #FFF;
 
+        --tile--color-label: color-mix(in oklab, var(--tile--color) 47%, var(--tile--background-color));
+
         --tile--color-subtle: #567;
         --tile--color-strong: #06C;
 
@@ -132,6 +134,8 @@
         --tile--color: #EEE;
         --tile--background-color: #111;
 
+        --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
+
         --tile--color-subtle: #89A;
         --tile--color-strong: #4AF;
 
@@ -153,6 +157,8 @@
     --tile--color: #000;
     --tile--background-color: #FFF;
 
+    --tile--color-label: color-mix(in oklab, var(--tile--color) 47%, var(--tile--background-color));
+
     --tile--color-subtle: #567;
     --tile--color-strong: #06C;
 
@@ -171,6 +177,8 @@
 
     --tile--color: #EEE;
     --tile--background-color: #111;
+
+    --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
 
     --tile--color-subtle: #89A;
     --tile--color-strong: #4AF;
@@ -287,11 +295,17 @@
  * to hold AA contrast and would force the anchor itself down towards black. Only the focus ring, which owes 3:1
  * rather than 4.5:1, can afford the mix, and 70% is as light as it goes: the edit background is the tightest surface
  * it has to hold, at 3.02:1, and a lighter mix drops below the floor there first.
+ *
+ * The label is stated per scheme rather than derived here, because one share cannot serve both. It mixes the text
+ * anchor towards the page in either scheme, but the two ends behave nothing alike: white carries almost all the
+ * luminance in the range, so mixing away from black in the light scheme spends contrast slowly, while mixing away
+ * from #EEE towards #111 in the dark one spends it fast. A single share is therefore pinned by whichever scheme runs
+ * out first, which is the dark one, and the light scheme inherits a label far darker than it needs to be. Stating
+ * each for itself lets the light label sit where it reads as a label rather than as the copy around it.
  */
 
 :root {
 
-    --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
     /*
      * A placeholder takes the disabled colour rather than a mix of its own. Both stand for text the reader has not
      * supplied and neither carries meaning, so a contrast check passes over both; what tells a disabled control from

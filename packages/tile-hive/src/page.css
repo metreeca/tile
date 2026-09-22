@@ -97,14 +97,33 @@ tile-page {
     }
 
     /*
-     * A locked frame puts the tray out of reach and leaves the content live. Reach is settled by `inert` on the
-     * element, which takes the tray out of the tab order and the accessibility tree along with the pointer, so this
-     * rule only has to say as much: the blur states it without taking the colour away, and both figures are optical
-     * nudges below any ladder, enough to read as out of focus and not enough to read as gone.
+     * A locked frame puts the tray out of reach and leaves the content live. Reach itself is settled by `inert` on
+     * the column, which takes the tray out of the tab order and the accessibility tree along with the pointer, so
+     * these rules only have to show it.
+     *
+     * What the tray holds is faded by the locked step, the furthest rung of the design system's ladder of reach: a
+     * disabled control still has to be understood, while nothing in a locked tray is on offer, so it fades past the
+     * step a control fades to and leaves the reader with where it stood rather than with what it says.
+     *
+     * The fade is carried by the three parts rather than by the column, so the surface the tray is painted on and
+     * the edge it is told apart by are left alone: the tray is still the place it was, and it is what the place
+     * holds that is out of reach. Fading the column would take its surface towards the page and lose the very
+     * separation that says there are two columns here.
+     *
+     * The step back is followed rather than snapped to, so a reader who locks the tray sees where it went and a
+     * reader who lets it back in sees it return. The transition stands on the reachable state, which is what makes
+     * it run in both directions, and collapses to nothing with the duration token for a reader who asked for less
+     * motion.
      */
 
-    &[locked] > aside {
-        filter: blur(1px) brightness(0.9);
+    & > aside > * {
+        transition-property: opacity;
+        transition-duration: var(--tile--duration-normal);
+        transition-timing-function: var(--tile--easing-standard);
+    }
+
+    &[locked] > aside > * {
+        opacity: var(--tile--opacity-locked);
     }
 
     & > * {

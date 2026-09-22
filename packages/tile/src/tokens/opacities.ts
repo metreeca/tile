@@ -29,8 +29,10 @@
  * **Contrast** — a faded thing is exempt from the contrast budget only because it is also inert. Anything a reader is
  * still expected to act on, or to read, states its colour through a role instead and keeps its ratio.
  *
- * **Loading** — `opacityLoading` is lighter than `opacityDisabled`, since content being replaced is still worth
- * reading while it is on its way out.
+ * **Steps** — the three steps are a ladder of reach: `opacityLoading` is lightest, content being replaced being still worth
+ * reading while it is on its way out; `opacityDisabled` goes further, a disabled control being there to be understood
+ * rather than read; `opacityLocked` goes furthest, a region put out of reach offering nothing, so what a reader is
+ * left with is where it stood.
  *
  * @module opacities
  */
@@ -44,6 +46,7 @@
 export const opacities = {
 
 	opacityDisabled: "--tile--opacity-disabled",
-	opacityLoading: "--tile--opacity-loading"
+	opacityLoading: "--tile--opacity-loading",
+	opacityLocked: "--tile--opacity-locked"
 
 } as const;

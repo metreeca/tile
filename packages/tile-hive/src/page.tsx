@@ -93,9 +93,9 @@ export function Page({
 }: {
 
 	/**
-	 * Whether the tray is out of reach, as it is while the content has the reader's full attention: it is blurred,
-	 * drops out of the tab order and the accessibility tree, and answers no gesture until it is let back in;
-	 * reachable if omitted.
+	 * Whether the tray is out of reach, as it is while the content has the reader's full attention: what it holds
+	 * fades away while the surface it stands on keeps its place, it drops out of the tab order and the accessibility
+	 * tree, and it answers no gesture until it is let back in; reachable if omitted.
 	 */
 	lock?: boolean
 
@@ -218,14 +218,12 @@ export function Page({
 
 		<main aria-labelledby={title}>
 
-			{
-
-				// The mark takes the navigation's place for as long as an exchange runs, standing in the bar like
-				// everything else rather than being laid over it. It is drawn as the control it stands in for, so
-				// the bar is the same size either way, and the whole end is made inert meanwhile: waiting is already
-				// stated by `aria-busy` on the frame, so a reader meets nothing here and nothing answers a gesture.
-
-			}
+			{/*
+			 * The mark takes the navigation's place for as long as an exchange runs, standing in the bar like
+			 * everything else rather than being laid over it. It is drawn as the control it stands in for, so
+			 * the bar is the same size either way, and the whole end is made inert meanwhile: waiting is already
+			 * stated by `aria-busy` on the frame, so a reader meets nothing here and nothing answers a gesture.
+			 */}
 
 			<header>
 				{lead && <span id={title}>{lead}</span>}

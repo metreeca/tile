@@ -16,8 +16,11 @@
 
 /*
  * How far a thing is faded when it is present but not available. Fading the container carries its border, its icon and
- * whatever it encloses along, which a colour role cannot reach. Content being replaced fades less than a disabled
- * control, since it is still worth reading while it is on its way out.
+ * whatever it encloses along, which a colour role cannot reach.
+ *
+ * The three steps are a ladder of reach. Content being replaced fades least, since it is still worth reading while it
+ * is on its way out. A disabled control fades further, being there to be understood rather than read. A region put out
+ * of reach fades furthest of all: nothing in it is offered, and what a reader is left with is where it stood.
  */
 
 @property --tile--opacity-disabled {
@@ -30,4 +33,10 @@
     syntax: "<number>";
     inherits: true;
     initial-value: 0.6;
+}
+
+@property --tile--opacity-locked {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0.3;
 }

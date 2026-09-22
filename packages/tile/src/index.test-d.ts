@@ -15,7 +15,7 @@
  */
 
 import { describe, expectTypeOf, it } from "vitest";
-import { css, type Property, type Style, tile, type Token } from "./index.js";
+import { css, type Property, type Style, tile, type Token, type Value } from "./index.js";
 
 
 describe("tile", () => {
@@ -35,18 +35,36 @@ describe("tile", () => {
 
 });
 
+describe("Value", () => {
+
+	it("closes the value space of a keyword token", () => {
+
+		expectTypeOf<Value<"look">>().toEqualTypeOf<"subtle" | "normal" | "strong" | undefined>();
+		expectTypeOf<Value<"viewportMedium">>().toEqualTypeOf<"on" | "off" | undefined>();
+
+	});
+
+	it("leaves the value space open where CSS does", () => {
+
+		expectTypeOf<string>().toExtend<Value<"fontFamily">>();
+		expectTypeOf<string>().toExtend<Value<"boxShadowRaised">>();
+
+	});
+
+	it("admits no string of its own where the value space is settled", () => {
+
+		expectTypeOf<string>().not.toExtend<Value<"colorStrong">>();
+		expectTypeOf<string>().not.toExtend<Value<"spacing100">>();
+
+	});
+
+});
+
 describe("css", () => {
 
 	it("produces a style declaration", () => {
 
 		expectTypeOf(css({ color: "#000" })).toEqualTypeOf<Style>();
-
-	});
-
-	it("accepts a numeric or boolean value", () => {
-
-		expectTypeOf(css({ lineHeight: 1.2 })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ borderStyle: false })).toEqualTypeOf<Style>();
 
 	});
 
@@ -70,6 +88,7 @@ describe("css", () => {
 		expectTypeOf(css({ backgroundColor: "backgroundColorEdit" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ colorGray050: "colorHeat050" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ fontSize: "fontSizeLarge" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontSize: "scaling125" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ scaling100: "scaling200" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ spacing100: "spacing250" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ borderRadius: "borderRadius050" })).toEqualTypeOf<Style>();
@@ -83,25 +102,102 @@ describe("css", () => {
 
 	});
 
-	it("takes a CSS value wherever a token name would go", () => {
+	it("rejects a token off another ladder", () => {
 
-		expectTypeOf(css({ colorStrong: "#D60" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ fontSize: "1.5rem" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ borderStyle: "solid" })).toEqualTypeOf<Style>();
+		// @ts-expect-error a colour where a size goes
+		css({ fontSize: "colorStrong" });
+
+		// @ts-expect-error a spacing where a size goes
+		css({ fontSize: "spacing100" });
+
+		// @ts-expect-error a scale step where an ink goes
+		css({ colorStrong: "colorGray050" });
 
 	});
 
-	/*
-	 * Naming the kinds steers what an editor offers, and cannot do more than that: the value type admits any string,
-	 * since a CSS value is any string, so a token of the wrong kind is still taken — as the CSS value it spells,
-	 * which resolves to nothing. Suggesting the right names is the whole of what the kinds buy.
-	 */
+	it("takes a CSS value wherever a token name would go", () => {
 
-	it("takes a token off another ladder, as the CSS value it spells", () => {
+		expectTypeOf(css({ colorStrong: "#D60" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ color: "currentColor" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontSize: "1.5rem" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ spacing100: 0 })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ letterSpacingHeading: "-0.02em" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ durationFast: "150ms" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ easingEnter: "ease-out" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ opacityLoading: "50%" })).toEqualTypeOf<Style>();
 
-		expectTypeOf(css({ fontSize: "colorStrong" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ fontSize: "spacing100" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ colorStrong: "colorGray050" })).toEqualTypeOf<Style>();
+	});
+
+	it("takes a number where the value is a scalar", () => {
+
+		expectTypeOf(css({ lineHeight: 1.2 })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontWeight: 600 })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ opacityLoading: 0.5 })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ zIndexModal: 10 })).toEqualTypeOf<Style>();
+
+	});
+
+	it("takes a keyword off the closed set a token carries", () => {
+
+		expectTypeOf(css({ look: "subtle" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ viewportMedium: "on" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ borderStyle: "dashed" })).toEqualTypeOf<Style>();
+
+	});
+
+	it("takes a CSS function wherever one resolves to the value", () => {
+
+		expectTypeOf(css({ colorStrong: "color-mix(in oklab, #D60, white)" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ spacing100: "calc(2 * 1rem)" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontSize: "var(--app--size)" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ easingEnter: "cubic-bezier(0.2, 0, 0, 1)" })).toEqualTypeOf<Style>();
+
+	});
+
+	it("takes any string where CSS leaves the value open", () => {
+
+		expectTypeOf(css({ fontFamilyMono: "'Fira Code', monospace" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ boxShadowRaised: "0 1px 2px #0003" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ outlineInvalid: "2px solid #C00" })).toEqualTypeOf<Style>();
+
+	});
+
+	it("rejects a value off another shape", () => {
+
+		// @ts-expect-error a length where a colour goes
+		css({ colorStrong: "1rem" });
+
+		// @ts-expect-error a colour where a length goes
+		css({ fontSize: "#D60" });
+
+		// @ts-expect-error a length where a scalar goes
+		css({ zIndexModal: "10px" });
+
+		// @ts-expect-error a duration carries a unit
+		css({ durationFast: 150 });
+
+		// @ts-expect-error a length other than zero carries a unit
+		css({ spacing100: 4 });
+
+	});
+
+	it("rejects a keyword outside the closed set a token carries", () => {
+
+		// @ts-expect-error no such visual register
+		css({ look: "loud" });
+
+		// @ts-expect-error a flag is on or off
+		css({ viewportMedium: "yes" });
+
+		// @ts-expect-error no such line style
+		css({ borderStyle: "squiggly" });
+
+	});
+
+	it("rejects a boolean", () => {
+
+		// @ts-expect-error no token takes a boolean
+		css({ borderStyle: false });
 
 	});
 

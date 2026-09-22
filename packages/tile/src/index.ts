@@ -87,6 +87,7 @@
  * @module index
  */
 
+import type { Alias, Literal } from "./index.core.js";
 import { borders } from "./tokens/borders.js";
 import { colors } from "./tokens/colors.js";
 import { elevations } from "./tokens/elevations.js";
@@ -102,17 +103,19 @@ import { visuals } from "./tokens/visuals.js";
 
 
 /**
- * The CSS property a token is applied through as well as assigned, for the four the page states once and nothing
- * reads again.
+ * The CSS property a token is applied through as well as assigned, for a token the page alone reads.
  *
  * Every other token is read by a rule on the elements that take it, so assigning it anywhere is enough to restyle
- * what stands below. These four are read a single time, where the page sets its own typography, and an element
- * further down takes the size, the face and the leading it inherits rather than looking them up again. Assigning one
- * of them to an area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to
- * predict from the name. Applying the property alongside the assignment makes the area behave as every other token
- * already leads them to expect.
+ * what stands below. A token listed here is read a single time, where the page sets its own defaults, and an element
+ * further down takes the property it inherits rather than looking the token up again. Assigning one of them to an
+ * area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to predict from the
+ * name. Applying the property alongside the assignment makes the area behave as every other token already leads them
+ * to expect.
+ *
+ * A token joins the list on that condition alone, whatever it decides: the page is its only reader, and the entry
+ * names the property the page states it through, which is what carries an override down the subtree.
  */
-const inherited: Readonly<Record<string, string>> = { // keyed by string, matching the entries css() walks
+const inherited: Readonly<Record<string, string>> = {
 
 	fontFamily: "font-family",
 	fontSize: "font-size",
@@ -168,6 +171,21 @@ export type Property = typeof tile[Token]
 
 
 /**
+ * The tokens assigned to an area, and what each is assigned.
+ *
+ * Every token is optional, so an override names the ones it restyles and leaves the rest at whatever the cascade
+ * already gives them. Each takes the {@link Value value} that token admits, be that a name off the ladder it belongs
+ * to or a CSS value of the shape it carries, so an editor offers the handful of names and keywords that belong where
+ * one is assigned: a colour offers colours, a text size the type and scaling ladders, the visual register the three
+ * words it is defined over.
+ */
+export type Tokens = {
+
+	readonly [K in Token]?: Value<K>
+
+}
+
+/**
  * The name of a design system token.
  *
  * Addresses a token in a {@link css} call, where a {@link Property custom property} is rejected.
@@ -177,160 +195,28 @@ export type Token = keyof typeof tile
 /**
  * The value a design system token is assigned.
  *
- * A {@link Token token name} stands for the value that token carries, so one token is set from another by naming it
- * and an editor offers the names as it would any other suggestion; anything else is a CSS value, written as it would
- * be in a stylesheet. A number or a boolean is written as its text form, sparing the caller a conversion where a
- * token takes a scalar; `undefined` assigns nothing, so a token is left at whatever the cascade already gives it.
+ * Admits what the token in hand can carry and nothing else, as three alternatives, two of them named by types this
+ * reference leaves out:
  *
- * The bare `string` is intersected with an empty type, which keeps the token names as suggestions of their own rather
- * than letting them dissolve into the wider type; it accepts exactly what `string` accepts.
- */
-export type Value = undefined | boolean | number | Token | (string & {})
-
-
-/**
- * A step of a ten-step scale, and a slot of a series or a class of an area.
- */
-type Step = "010" | "020" | "030" | "040" | "050" | "060" | "070" | "080" | "090" | "100"
-type Slot = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-
-
-/**
- * The scale steps, series slots and area classes, which address a colour by position rather than by role.
- */
-type Palette = Extract<Token,
-	| `colorGray${Step}`
-	| `colorSubtle${Step}`
-	| `colorStrong${Step}`
-	| `colorHeat${Step}`
-	| `colorSeries${Slot}`
-	| `colorArea${Slot}`
->
-
-/**
- * The tokens painting a mark or a passage of text, and the rule between two of them.
- */
-type Ink = Exclude<Extract<Token, `color${string}` | "borderColor">, Palette>
-
-/**
- * The tokens painting a surface.
- */
-type Fill = Extract<Token, `backgroundColor${string}`>
-
-/**
- * The tokens sizing text.
- */
-type Type = Extract<Token, `fontSize${string}`>
-
-/**
- * The tokens sizing a thing against the text around it.
- */
-type Scaling = Extract<Token, `scaling${string}`>
-
-/**
- * The tokens setting a thing apart from its neighbour.
- */
-type Spacing = Extract<Token, `spacing${string}`>
-
-/**
- * The tokens rounding a corner.
- */
-type Radius = Extract<Token, `borderRadius${string}`>
-
-/**
- * The tokens sizing a line.
- */
-type Stroke = Extract<Token, "borderWidth" | "strokeWidth">
-
-/**
- * The tokens tracking a run of text.
- */
-type Tracking = Extract<Token, `letterSpacing${string}`>
-
-/**
- * The tokens weighting text.
- */
-type Weight = Extract<Token, `fontWeight${string}`>
-
-/**
- * The tokens fading a thing present but not available.
- */
-type Opacity = Extract<Token, `opacity${string}`>
-
-/**
- * The tokens ordering two things that overlap.
- */
-type Layer = Extract<Token, `zIndex${string}`>
-
-/**
- * The tokens timing a change.
- */
-type Timing = Extract<Token, `duration${string}`>
-
-/**
- * The tokens curving a change.
- */
-type Easing = Extract<Token, `easing${string}`>
-
-/**
- * The tokens carrying a shadow or an outline, stated as a whole shorthand.
- */
-type Shadow = Extract<Token, `boxShadow${string}` | "outlineInvalid">
-
-/**
- * The tokens carrying a font stack.
- */
-type Family = Extract<Token, `fontFamily${string}`>
-
-
-/**
- * The tokens a token may be set from, being those carrying the same kind of value.
+ * - `Alias<K>` — the {@link Token token names} `K` may be set from, being the ladder it belongs to and no other: a
+ *   colour offers colours, a text size the type and scaling ladders and not the spacing one, though all are lengths.
+ *   An alias stands for whatever the token it names carries, so `colorStrong: "colorSubtle"` assigns a reference to
+ *   that token rather than the text of its name. A token belonging to no ladder, a flag or a keyword, has no alias
+ *   at all.
+ * - `Literal<K>` — the CSS values `K` takes written out, of the shape it is defined over: a colour where a colour
+ *   goes, a length carrying a unit unless it is zero, a keyword token held to the words it names. A number is taken
+ *   where the value is a scalar, sparing the caller a conversion, and a function wherever a value is computed, since
+ *   what one resolves to is beyond the reach of a type.
+ * - `undefined` — assigns nothing, so a token is left at whatever the cascade already gives it, and a conditional
+ *   override is expressed inline.
  *
- * Resolves a token to the ladder it belongs to, so an editor offers the handful of names that would make sense where
- * it is assigned rather than every name the design system carries, or every name of the same broad sort: a text size
- * offers the type ladder and not the spacing one, though both are lengths, because a size set from a gap is not a
- * thing anyone means. A token belonging to no ladder, a flag or a keyword, resolves to nothing and is left to the CSS
- * value alone.
+ * An arbitrary string is taken only where CSS states no shape to hold a value to, as a font stack or a shorthand.
+ * Everywhere else a value of the wrong shape is rejected at the call site rather than assigned and left to resolve to
+ * nothing.
  *
- * @typeParam K The token being assigned
+ * @typeParam K The token being assigned; every token, and so every value any of them admits, where left out
  */
-type Kind<K extends Token> =
-	K extends Palette ? Palette :
-		K extends Ink ? Ink :
-			K extends Fill ? Fill :
-				K extends Type ? Type :
-					K extends Scaling ? Scaling :
-						K extends Spacing ? Spacing :
-							K extends Radius ? Radius :
-								K extends Stroke ? Stroke :
-									K extends Tracking ? Tracking :
-										K extends Weight ? Weight :
-											K extends Opacity ? Opacity :
-												K extends Layer ? Layer :
-													K extends Timing ? Timing :
-														K extends Easing ? Easing :
-															K extends Shadow ? Shadow :
-																K extends Family ? Family :
-																	never
-
-
-/**
- * The tokens assigned to an area, and what each is assigned.
- *
- * Each token takes either a token of its own kind, which stands for the value that one carries, or a CSS value
- * written as it would be in a stylesheet. Naming the kinds is what lets an editor suggest the handful of tokens that
- * belong where one is assigned: a colour offers colours, a length offers the spacing and scaling ladders, and neither
- * offers the other.
- *
- * Steering what is offered is the whole of what the kinds do. A CSS value is any string, so any string is taken, and
- * a token of the wrong kind is accepted as the CSS value it spells — which resolves to nothing, as a misspelt value
- * would. The kinds spare a consumer the search, not the mistake.
- */
-export type Tokens = {
-
-	readonly [K in Token]?: Kind<K> | undefined | boolean | number | (string & {})
-
-}
+export type Value<K extends Token = Token> = undefined | Alias<K> | Literal<K>
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -346,15 +232,17 @@ export type Tokens = {
  * ```
  *
  * A value naming a token stands for whatever that token carries, so one token is set from another without spelling
- * out the reference, and an editor offers the names that belong where it is assigned — a colour offers colours, a
- * length the spacing and scaling ladders:
+ * out the reference, and an editor offers the names that belong where it is assigned, a colour offering colours and a
+ * text size the type and scaling ladders:
  *
  * ```tsx
  * <section style={css({ fontSize: "fontSizeLarge" })}>
  * ```
  *
- * Numbers and booleans are converted to their CSS text form, so a scalar token is assigned without restating it as a
- * string; a token mapped to `undefined` is left out, so a conditional override is expressed inline.
+ * Anything else is a CSS value of the shape the token carries, so a colour where a length goes is rejected here rather
+ * than assigned and left to resolve to nothing. A number is converted to its CSS text form, sparing a scalar token
+ * the restatement as a string; a token mapped to `undefined` is left out, so a conditional override is expressed
+ * inline.
  *
  * The face, the size, the weight and the leading a page is written in are applied to the area as well as assigned to
  * it, since the page states each of them once and nothing below reads them again; an area given one of the four is
@@ -373,8 +261,8 @@ export function css(tokens: Tokens): Style {
 	const properties: Readonly<Record<string, Property>> = tile; // keyed by string, matching the entries below
 
 	return Object.fromEntries(Object.entries(tokens)
-		.filter(([ , value ]) => value !== undefined)
-		.flatMap(([ token, value ]) => {
+		.filter(([, value]) => value !== undefined)
+		.flatMap(([token, value]) => {
 
 			const property = inherited[token];
 
@@ -386,8 +274,8 @@ export function css(tokens: Tokens): Style {
 				: String(value);
 
 			return property === undefined
-				? [ [ properties[token], text ] ]
-				: [ [ properties[token], text ], [ property, text ] ];
+				? [[properties[token], text]]
+				: [[properties[token], text], [property, text]];
 
 		})
 	);

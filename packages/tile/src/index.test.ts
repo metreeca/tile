@@ -223,19 +223,19 @@ describe("css", () => {
 
 	});
 
-	it("converts a scalar value to its text form", () => {
+	it("converts a numeric value to its text form", () => {
 
 		expect(css({
 
 			lineHeight: 1.2,
-			borderStyle: false
+			zIndexModal: 400
 
 		})).toEqual({
 
 			"--tile--line-height": "1.2",
 			"line-height": "1.2",
 
-			"--tile--border-style": "false"
+			"--tile--z-index-modal": "400"
 
 		});
 

@@ -1,5 +1,6 @@
 {
   "intentionallyNotExported": [
-    "index.ts:Kind"
+    "index.core.ts:Alias",
+    "index.core.ts:Literal"
   ]
 }

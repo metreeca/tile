@@ -15,7 +15,8 @@
  */
 
 /*
- * The frame is the tray beside the content, each a scrolling column with a header and a footer of its own.
+ * The frame is the tray beside the content, each a scrolling column with a header and a footer of its own. A screen
+ * standing on its content alone is the same frame with the tray column left out of it.
  *
  * The frame settles no type at all: it states no size, no family and no weight beyond the one that tells a tray
  * heading from its sub-entry, so everything in it is set in whatever the app is written in and a bar reads as part of
@@ -74,6 +75,15 @@ tile-page {
 
     grid-template-columns: var(--tile-page-tray-width) 1fr;
     grid-template-rows: auto 1fr auto;
+
+    /*
+     * A frame showing the content alone is one column wide: the tray column is not merely emptied but taken out of
+     * the track list, so nothing of the room it held is left beside the content.
+     */
+
+    &[main] {
+        grid-template-columns: 1fr;
+    }
 
     /*
      * Waiting fades the frame by the loading step: the content is on its way out rather than unavailable, so it

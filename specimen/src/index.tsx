@@ -79,24 +79,24 @@ function Specimen() {
 	const fetch = useFetch();
 
 	const [lock, setLock] = useState(false);
+	const [main, setMain] = useState(false);
 	const [wide, setWide] = useState(false);
 
 	const [reader, setReader] = useState<string>();
 
 	const tray = lock ? "Release the tray" : "Lock the tray";
+	const side = main ? "Show the tray" : "Hide the tray";
 	const measure = wide ? "Cap the measure" : "Take the width";
 
 	return <Page
 
 		lock={lock}
+		main={main}
 		wide={wide}
 
 		logo={<Style css={{ fontSize: "fontSizeLarge" }}><Logo>{app.name}</Logo></Style>}
-		meta={<small>v{VERSION}</small>}
 
-		head={<>
-
-			{/* !!! main */}
+		meta={<>
 
 			<Button
 				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
@@ -104,6 +104,18 @@ function Specimen() {
 				name={tray}
 				title={tray}
 				onClick={() => setLock(!lock)}
+			/>
+
+		</>}
+
+		head={<>
+
+			<Button
+				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
+				look="subtle"
+				name={side}
+				title={side}
+				onClick={() => setMain(!main)}
 			/>
 
 			<Button
@@ -116,13 +128,19 @@ function Specimen() {
 
 		</>}
 
-		menu={<Button
-			icon={<Icon.Search/>}
-			look="subtle"
-			name="Run an exchange"
-			title="Run an exchange"
-			onClick={() => { void fetch(app.base); }}
-		/>}
+		menu={<>
+
+			<small>v{VERSION}</small>
+
+			<Button
+				icon={<Icon.Search/>}
+				look="subtle"
+				name="Run an exchange"
+				title="Run an exchange"
+				onClick={() => { void fetch(app.base); }}
+			/>
+
+		</>}
 
 		tray={<>
 
@@ -157,6 +175,7 @@ function Specimen() {
 			/>
 
 		}
+
 		copy={<small>{app.copy}</small>}
 
 	>

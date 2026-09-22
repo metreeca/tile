@@ -40,8 +40,9 @@ import "./page.css";
  * Creates a page.
  *
  * Lays a screen out as two scrolling columns, the tray and the content, each carrying a header that stays in view as
- * the column scrolls and a footer beneath what it holds. Every slot is optional and one left out takes no room, so a
- * screen with no tray footer closes up rather than holding a gap for it.
+ * the column scrolls and a footer beneath what it holds; a screen with no use for the tray is laid out on the content
+ * column alone. Every slot is optional and one left out takes no room, so a screen with no tray footer closes up
+ * rather than holding a gap for it.
  *
  * Waiting is stated by the page itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark in the content
@@ -50,7 +51,7 @@ import "./page.css";
  * content is on its way out rather than unavailable, and a gesture that must not be repeated while an exchange runs
  * is held back by the control offering it.
  *
- * The two columns are landmarks a reader moves between directly. The content is named by the heading it is already
+ * The columns are landmarks a reader moves between directly. The content is named by the heading it is already
  * showing, whether that is `head` or the `done` standing in for it, so a reader arriving at it hears which screen
  * they are on. The tray carries no name of its own: what a reader wants named there is the sections or the filters
  * it holds, which say what they are far better than a word for the whole region would, so a screen names those as
@@ -58,7 +59,8 @@ import "./page.css";
  *
  * `lock` takes the tray out of reach for every gesture at once, pointer and keyboard alike, so a reader is never
  * left tabbing into something the screen is showing as unavailable; whoever sets it owes the reader somewhere to
- * land if the focus was in the tray at the time.
+ * land if the focus was in the tray at the time. `main` goes further and leaves the tray out of the frame altogether,
+ * for a screen a reader is meant to see through rather than move around in.
  *
  * The content is capped at a comfortable reading measure and centred in whatever room is left, so widening the
  * window leaves the lines as long as they were; `wide` lifts the cap for content a window never has too much room
@@ -71,6 +73,7 @@ import "./page.css";
 export function Page({
 
 	lock = false,
+	main = false,
 	wide = false,
 
 	logo,
@@ -97,6 +100,14 @@ export function Page({
 	 * reachable if omitted.
 	 */
 	lock?: boolean
+
+	/**
+	 * Whether the content stands on its own, the tray being left out of the frame rather than merely put out of reach
+	 * as `lock` leaves it: the column closes up, the content takes the room it held, and nothing handed to the tray
+	 * slots is shown or left in the accessibility tree. Set it where a screen is meant to be seen through rather than
+	 * moved around in, such as a sign-in or a splash; the tray stands if omitted.
+	 */
+	main?: boolean
 
 	/**
 	 * Whether the content is given the whole width beside the tray, rather than the reading measure it is otherwise
@@ -188,13 +199,14 @@ export function Page({
 		"aria-busy": fetching,
 
 		locked: lock,
+		main,
 		wide
 
 	}, <>
 
 		{/* locking takes the tray out of reach for every gesture at once, rather than for the pointer alone */}
 
-		<aside inert={lock}>
+		{!main && <aside inert={lock}>
 
 			<header>
 				{logo && <span>{logo}</span>}
@@ -204,7 +216,7 @@ export function Page({
 			<section>{tray}</section>
 			<footer>{info}</footer>
 
-		</aside>
+		</aside>}
 
 		<main aria-labelledby={title}>
 

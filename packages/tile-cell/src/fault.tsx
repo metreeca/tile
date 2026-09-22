@@ -54,7 +54,8 @@ const Notices: Partial<Readonly<Record<number, readonly [Icon.LucideIcon, string
  * Creates a fault notice.
  *
  * Takes problem details as they are handed out by {@link @metreeca/http!success success} and shows them as a
- * warning note, so that a screen with nothing to render says why rather than staying blank.
+ * warning note, so that a screen with nothing to render says why rather than staying blank. The notice is read out
+ * as soon as it reaches the page, the failure arriving where the reader expected what they asked for.
  *
  * A failure the reader can act on is told in their own terms and left at that: an unidentified reader (401), one
  * denied access (403) and a resource missing (404) or withdrawn (410) are each answered by the reader themselves, so

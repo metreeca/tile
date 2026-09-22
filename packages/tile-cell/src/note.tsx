@@ -40,6 +40,9 @@ import "./note.css";
  * Where the reader is asked something, `onAccept` turns the head into a native control, so the activation by `Enter`
  * and `Space`, the tab stop and the focus ring come with it rather than having to be asked for.
  *
+ * A note telling of a failure is read out as soon as it reaches the page, so a reader who does not see it learns of
+ * the failure where they expected the answer; an aside waits to be come upon in reading order.
+ *
  * @param options The widget configuration
  *
  * @returns The note
@@ -58,8 +61,9 @@ export function Note({
 }: {
 
 	/**
-	 * Whether the note tells of a failure rather than of an aside: the headline is set heavier and the glyph is drawn
-	 * in the colour a failure is told in; an aside if omitted.
+	 * Whether the note tells of a failure rather than of an aside: the headline is set heavier, the glyph is drawn in
+	 * the colour a failure is told in, and the notice is read out as soon as it reaches the page rather than waiting
+	 * to be come upon; an aside if omitted.
 	 */
 	warning?: boolean
 
@@ -99,9 +103,18 @@ export function Note({
 
 	const $icon = icon ?? (warning ? <Icon.Alert/> : onAccept ? <Icon.Help/> : <Icon.Info/>);
 
-	// the element states the kind of notice, a stylesheet having no way to tell a warning from an aside
+	/*
+	 * The element states the kind of notice, a stylesheet having no way to tell a warning from an aside.
+	 *
+	 * A note telling of a failure is read out as soon as it reaches the page, a failure being met where the reader
+	 * expected what they asked for: a screen swapping one in for the content it could not show would otherwise
+	 * leave a reader who does not see it waiting on an area that has already given its answer. An aside, which
+	 * reports nothing, is met in reading order like any other passage.
+	 */
 
 	return createElement("tile-note", {
+
+		role: warning ? "alert" : undefined,
 
 		warning
 

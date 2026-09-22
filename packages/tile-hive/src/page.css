@@ -48,13 +48,56 @@ tile-page {
     --tile-page-main-gutter: 1.5rem;
 
     /*
-     * The air above and below what a bar holds. A bar takes its height from this and from whatever it was given to
+     * The air above and below what a bar holds. A bar takes its height from these and from whatever it was given to
      * show, rather than being held to a height of its own: a bar told how tall to be either crops a taller control
      * or keeps a band of empty page around a shorter one, and which of the two it does depends on the size the app
      * writes in, which is the thing the frame does not settle.
+     *
+     * Each edge stands on its own, so the gap that tells a bar from the body it borders is set apart from the one
+     * that tells it from the edge of the frame. The header leaves the wider gap beneath it, the heading standing
+     * over the body rather than floating between the two.
      */
 
-    --tile-page-bar-inset: 0.75rem;
+    --tile-page-head-inset-top: 0.75rem;
+    --tile-page-head-inset-bottom: 0.5rem;
+
+    --tile-page-foot-inset-top: 0.25rem;
+    --tile-page-foot-inset-bottom: 0.5rem;
+
+    /*
+     * The band each bar lays over the body it borders, so content leaving the column reads as passing under the bar
+     * rather than as stopping at an edge. It is a measure of the column like the gutters, so it is stated in rem and
+     * holds still while the text around it changes.
+     *
+     * The band carries no colour of its own: it fades out of whatever the column it hangs in is painted with, which
+     * the reset already hands it, so the tray fades out of its sunken surface and the content out of the page with
+     * nothing said twice.
+     *
+     * What is stated is the depth and the fall from solid to clear across it. The fall is eased rather than
+     * straight: a ramp running evenly arrives at each end at a rate of its own, and both the start and the finish
+     * then show as a line, which is the one thing a band is there to avoid. The stops trace a curve leaving and
+     * arriving flat in its rate as well as in its value, so the band settles into the bar at one end and into the
+     * page at the other with nothing to mark either.
+     *
+     * The stops stand for opaque and clear rather than for a colour, a mask reading the alpha of its gradient
+     * alone, which is why they are literals and read no token. The two bars read the one list, in opposite
+     * directions.
+     */
+
+    --tile-page-shade-depth: 1.5rem;
+
+    --tile-page-shade-ramp:
+        rgb(0 0 0 / 100%) 0%,
+        rgb(0 0 0 / 99%) 10%,
+        rgb(0 0 0 / 94%) 20%,
+        rgb(0 0 0 / 84%) 30%,
+        rgb(0 0 0 / 68%) 40%,
+        rgb(0 0 0 / 50%) 50%,
+        rgb(0 0 0 / 32%) 60%,
+        rgb(0 0 0 / 16%) 70%,
+        rgb(0 0 0 / 6%) 80%,
+        rgb(0 0 0 / 1%) 90%,
+        rgb(0 0 0 / 0%) 100%;
 
     display: grid;
 
@@ -167,14 +210,54 @@ tile-page {
 
             white-space: nowrap;
 
+            /* The band each bar hangs over the body is placed against the bar, which is what this box is here for. */
+
+            position: relative;
+
+        }
+
+        /*
+         * Each bar hangs a band over the body beside it, fading out of the colour the column is painted in, so text
+         * running past the edge of the body is seen to carry on under the bar rather than to stop at a line.
+         *
+         * The band belongs to the bar and not to the body: a box inside the scroller would travel with what it holds
+         * and leave the reader meeting the fade in the middle of a paragraph, wherever the body happened to stand.
+         * The bars are outside the scroller, so a band hung from one stays where the edge is.
+         *
+         * The colour is the one the reset hands every box, so the band is painted in whatever the column it hangs in
+         * is painted with and the fade is carried by a mask over it rather than by a colour written into it: a
+         * gradient cannot ask what the background is, and a column repainted takes its bands along with it.
+         *
+         * It answers no gesture, the body underneath keeping the pointer and the wheel.
+         */
+
+        & > header::after,
+        & > footer::before {
+
+            content: "";
+
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: var(--tile-page-shade-depth);
+
+            pointer-events: none;
+
         }
 
         & > header {
 
             grid-row: 1;
 
-            padding-top: var(--tile-page-bar-inset);
-            padding-bottom: var(--tile-page-bar-inset);
+            padding-top: var(--tile-page-head-inset-top);
+            padding-bottom: var(--tile-page-head-inset-bottom);
+
+            /* The band hangs below the bar, solid where the body meets it and gone a band later. */
+
+            &::after {
+                top: 100%;
+                mask-image: linear-gradient(to bottom, var(--tile-page-shade-ramp));
+            }
 
             /* Each end of the header is a row of its own, so a control sits beside its label rather than under it. */
 
@@ -200,16 +283,30 @@ tile-page {
 
             overflow: auto;
 
+            /*
+             * The body keeps a band of its own clear at each end, so a column with nothing to scroll is read plainly:
+             * what it holds starts below the band and ends above it, and the fade is met only once the reader has
+             * moved something under a bar.
+             */
+
+            padding-top: var(--tile-page-shade-depth);
+            padding-bottom: var(--tile-page-shade-depth);
+
         }
 
         & > footer {
 
             grid-row: 3;
 
-            padding-top: var(--tile-page-bar-inset);
-            padding-bottom: var(--tile-page-bar-inset);
+            padding-top: var(--tile-page-foot-inset-top);
+            padding-bottom: var(--tile-page-foot-inset-bottom);
 
-            margin-top: var(--tile--spacing-100);
+            /* The band hangs above the bar, solid where the body meets it and gone a band earlier. */
+
+            &::before {
+                bottom: 100%;
+                mask-image: linear-gradient(to top, var(--tile-page-shade-ramp));
+            }
 
             /* The first thing in the footer takes the left and pushes whatever follows to the right. */
 
@@ -313,14 +410,17 @@ tile-page {
 
     & > main {
 
-        /* The content is capped at the reading measure and centred in whatever room the window leaves beyond it. */
+        /*
+         * The content is capped at the reading measure and centred in whatever room the window leaves beyond it. The
+         * centring is asked of the row each part sits in rather than of a pair of automatic margins, so every part
+         * states its air in padding alone and a screen retuning one edge has one place to do it.
+         */
 
         & > * {
 
             width: 100%;
             max-width: var(--tile-page-main-width);
-            margin-left: auto;
-            margin-right: auto;
+            justify-self: center;
 
             padding-left: var(--tile-page-main-gutter);
             padding-right: var(--tile-page-main-gutter);

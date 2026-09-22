@@ -70,19 +70,17 @@ tile-button {
 
     &[labelled] > button {
         padding-block: var(--tile--spacing-025);
-        padding-inline: var(--tile--spacing-075);
+        padding-inline: var(--tile--spacing-050);
     }
 
     /*
-     * A mark standing alone sits in the floor above with a quarter step of air around it, which reads as a fill
-     * closing on the glyph beside a label held a step clear of the edge. It is given the step out sideways, the box
-     * sizing from its border so nothing below the floor changes what it measures, and keeps the height its
-     * neighbours are set at.
+     * A mark standing alone sits in the floor above with a quarter step of air all round, which reads as a fill
+     * closing on the glyph rather than as a box drawn around it. The box sizes from its border, so nothing below the
+     * floor changes what the control measures, and it keeps the height its neighbours are set at.
      */
 
     &:not([labelled]) > button {
-        padding-block: var(--tile--spacing-025);
-        padding-inline: var(--tile--spacing-050);
+        padding: var(--tile--spacing-025);
     }
 
     /*
@@ -92,7 +90,7 @@ tile-button {
      */
 
     &[labelled] > button:has(> *) {
-        padding-inline-start: var(--tile--spacing-050);
+        padding-inline-start: var(--tile--spacing-025);
     }
 
     /*

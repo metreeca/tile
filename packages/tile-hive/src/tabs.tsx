@@ -18,16 +18,16 @@
  * Tabbed panel.
  *
  * Presents a fixed set of labelled panels one at a time, under a strip of tabs the reader chooses from with the
- * pointer or with the keyboard.
+ * pointer or with the keyboard, or under a menu standing in for the strip where the labels would not fit.
  *
  * @module
  */
 
-import { type Optional } from "@metreeca/core";
+import { opt, type Optional } from "@metreeca/core";
 import { keys } from "@metreeca/tile-cell";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
-import { useId } from "preact/hooks";
+import { useEffect, useId, useState } from "preact/hooks";
 import { createTabs, type Tabs } from "./tabs.core.js";
 import "./tabs.css";
 
@@ -39,8 +39,14 @@ import "./tabs.css";
  * first one on offer. A panel is chosen with the pointer or with the keyboard, the arrow keys stepping to either
  * neighbour and wrapping at both ends, `Home` and `End` jumping to either end of the strip.
  *
- * A panel given no content is disabled: its label keeps its place in the strip, marked as such, but no gesture ever
- * brings it on show, a pointer choice being refused and keyboard steps and jumps passing it by.
+ * A panel given no content is disabled: its label keeps its place, marked as such, but no gesture ever brings it on
+ * show, a pointer choice being refused and keyboard steps and jumps passing it by.
+ *
+ * Where the labels would not fit on one line, the strip gives way to a menu offering the same choice under the same
+ * rules, worked with the keys the platform gives a menu of its own: the labels keep their order, a disabled one stays
+ * out of reach, and the panel on show carries on unchanged, named as before but presented as a plain region rather
+ * than as a tab panel. The strip comes back as soon as the labels fit again, so which of the two a reader meets
+ * follows the room the widget is given rather than anything the caller states.
  *
  * Every panel on offer stays in the document while another is on show, so what it holds keeps its state throughout,
  * at the cost of being rendered whether or not it is visible. The panels are taken as they stand when the widget first
@@ -62,7 +68,8 @@ export function Tabs({
 }: {
 
 	/**
-	 * The accessible name of the tab strip, telling it apart where a screen carries more than one; unnamed if omitted.
+	 * The accessible name of the tabs, telling them apart where a screen carries more than one, whether they are
+	 * offered as a strip or as a menu; unnamed if omitted.
 	 */
 	name?: string
 
@@ -75,6 +82,9 @@ export function Tabs({
 }) {
 
 	const id = useId();
+	const strip = `${id}-strip`;
+
+	const [collapsed, setCollapsed] = useState(false);
 
 	const {
 
@@ -96,12 +106,30 @@ export function Tabs({
 	const order = Object.keys(labels);
 	const enabled = order.filter(label => labels[label]);
 
-	return createElement("tile-tabs", {},
+	/*
+	 * Whether the labels fit is settled by layout rather than by a measure of the window, so the strip is measured as
+	 * it stands and watched for as long as the widget lives. It keeps its place in the document while the menu stands
+	 * in for it, laid out at the width it would have had but taken off show, so the same measurement says when the
+	 * labels fit again.
+	 */
+
+	useEffect(() => opt(document.getElementById(strip) ?? undefined, element => {
+
+		const observer = new ResizeObserver(() => setCollapsed(element.scrollWidth > element.clientWidth));
+
+		observer.observe(element);
+
+		return () => observer.disconnect();
+
+	}), [strip]);
+
+	return createElement("tile-tabs", { collapsed },
 
 		<nav
 
 			aria-label={name}
 
+			id={strip}
 			role="tablist"
 
 			onKeyDown={keys({
@@ -132,6 +160,37 @@ export function Tabs({
 			>{label}</label>
 		)}</nav>,
 
+		/*
+		 * The menu offers the choice the strip did, the platform supplying the keys and the focus a strip owes by
+		 * hand. It stands as wide as its labels rather than as wide as the bar, so the ring a platform leaves on it
+		 * after a choice wraps the control alone; the bar it stands in carries the rule closing it off, which the
+		 * strip carried while the strip stood there.
+		 *
+		 * The ring the menu keeps after a pointer choice is the platform's own verdict, which a menu earns by taking
+		 * the arrow keys next: a tab, which takes none of its own, is left unmarked by the same gesture. The widget
+		 * states neither, both being settled by `:focus-visible`.
+		 */
+
+		collapsed && <span><select
+
+			aria-label={name}
+
+			value={active}
+
+			onChange={event => select(event.currentTarget.value)}
+
+		>{order.map(label =>
+
+			<option
+
+				disabled={!labels[label]}
+
+				key={label}
+				value={label}
+
+			>{label}</option>
+		)}</select></span>,
+
 		// every enabled panel is rendered, so the tab controlling it always has something to point at
 
 		order.map((label, index) => !labels[label] ? null :
@@ -144,7 +203,14 @@ export function Tabs({
 
 				id={panel(index)}
 				key={label}
-				role="tabpanel"
+
+				/*
+				 * A tab panel promises the strip that chose it, which the menu leaves off show, so what the reader
+				 * meets then is a named area of the screen instead. The name stands either way: a tab taken off show
+				 * still names what it points at.
+				 */
+
+				role={collapsed ? "region" : "tabpanel"}
 				tabIndex={0} // a stop of its own, so a panel carrying no control is still reached by key
 
 			>{panels[label]}</div>

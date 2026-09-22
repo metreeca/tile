@@ -89,6 +89,89 @@ tile-tabs {
 
     }
 
+    /*
+     * Where the labels would not fit on one line, the strip gives way to the menu. It keeps its place in the
+     * document all the same, closed to nothing and taken off show, so what it holds leaves the accessibility tree
+     * and the tab order while the measurement deciding when the labels fit again still stands: the box is as wide
+     * as it ever was, which is all the measurement asks of it.
+     *
+     * It is closed rather than lifted out of the flow, since a box taken out of the flow is a positioned box, and a
+     * positioned box paints over the band a page hangs from its header.
+     */
+
+    &[collapsed] > nav {
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        border-bottom-style: none; /* Closed to nothing means nothing, and a rule would hold the box a pixel open. */
+    }
+
+    /*
+     * The bar the menu stands in carries the rule the strip carried, across the whole width, so the section below is
+     * set off exactly as before. The bar is a flex line rather than a line of text, so nothing of the menu is left
+     * hanging over the rule by the descender an inline box reserves.
+     *
+     * The bar also holds the gap down to the rule, which the menu would otherwise have carried as padding of its
+     * own: a platform draws the ring around the whole of a control, so a menu padded to clear the rule would be
+     * ringed clear of it too, where the ring is meant to sit on the menu the way the platform draws its own.
+     */
+
+    & > span {
+
+        display: flex;
+
+        padding-bottom: var(--tile--spacing-025);
+
+        border-bottom-style: var(--tile--border-style);
+
+        /*
+         * The menu takes the width of its labels, so the ring a platform leaves on it after a choice wraps the
+         * control rather than the whole bar; it gives that width up where the labels outrun the room, the platform
+         * clipping what is left.
+         */
+
+        & > select {
+
+            cursor: pointer;
+
+            font-size: var(--tile--font-size-small);
+            font-weight: var(--tile--font-weight-heavy);
+            color: var(--tile--color);
+
+            background-color: transparent; /* The page shows through, so the bar reads as the strip it stands in for. */
+
+            /*
+             * The ring stands wherever the platform calls the focus worth marking, which for a menu takes in a
+             * pointer choice: the arrow keys work it from there, so the mark is owed. A tab, which the same gesture
+             * leaves unmarked, takes no keys of its own until the strip is entered.
+             */
+
+            &:focus-visible {
+                outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
+                outline-offset: 0.1em; /* The nudge a tab takes, below the spacing ladder for the same reason. */
+            }
+
+            /*
+             * The list is drawn by the platform, on a surface of its own that the inherited page colours would not
+             * stand against. Each entry is handed the page colours outright, so it stays readable wherever it is
+             * drawn.
+             */
+
+            & > option {
+
+                color: var(--tile--color);
+                background-color: var(--tile--background-color);
+
+                &:disabled {
+                    color: var(--tile--color-disabled);
+                }
+
+            }
+
+        }
+
+    }
+
     & > div {
 
         padding-top: var(--tile--spacing-150);

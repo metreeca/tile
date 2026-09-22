@@ -461,6 +461,15 @@ tile-page {
         & > .busy {
 
             /*
+             * The mark carries no paint of its own, so it covers only what it draws. The reset hands every box the
+             * colour of the one around it, which on a box taking the whole of the bar would paint the heading out
+             * along with the end it stands at. What the mark does take off show is the navigation alone, which the
+             * rule above already settles.
+             */
+
+            background-color: transparent;
+
+            /*
              * Both lines are named, where a part standing in the row names the row alone: a line left to `auto` on a
              * box out of flow falls to the edge of the column rather than to the line after, which would leave the
              * mark standing over the whole of it.

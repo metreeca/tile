@@ -15,16 +15,21 @@
  */
 
 /*
- * The focus is marked by the soft glow rather than by a drawn ring. The glow follows whatever contour the control
- * already carries, its rounded corners included, where an outline states a rectangle of its own and has to be nudged
- * clear of the text to be read at all. The reset takes the platform ring away, so a control reaching the keyboard
- * owes the mark, and one styled into a box of its own is marked around that box.
+ * The focus is marked by a drawn outline. It follows whatever contour the control already carries, its rounded
+ * corners included, and it survives a forced-colours pass, which a shadow does not: a page rendered in the system
+ * palette keeps the mark. The reset takes the platform ring away, so a control reaching the keyboard owes the mark,
+ * and one styled into a box of its own is marked around that box.
+ *
+ * The offset is stated wherever a mark is, the outline shorthand not carrying it. A control standing free is marked
+ * outside its edge, and a control already enclosed by a border is marked just inside it, so the two lines are read
+ * as one edge rather than as a doubled one.
  */
 
 button, select {
 
     &:focus-visible {
-        box-shadow: var(--tile--box-shadow-focus);
+        outline: var(--tile--outline-focus);
+        outline-offset: var(--tile--border-width);
     }
 
 }
@@ -34,21 +39,34 @@ input {
     border-style: var(--tile--border-style);
     border-radius: var(--tile--border-radius-025);
 
-    &:focus {
-
-        box-shadow: inset var(--tile--box-shadow-focus);
-
-        &[type=checkbox],
-        &[type=radio] {
-            box-shadow: var(--tile--box-shadow-focus);
-        }
-
-    }
-
     &:invalid {
         color: var(--tile--color-fail);
         outline: var(--tile--outline-invalid);
         outline-offset: 0;
+    }
+
+    /*
+     * Both marks are outlines, and a field carries both states at once as soon as an invalid value is being typed
+     * into it, so the focus mark is written after the invalid one and takes the single outline on offer for as long
+     * as the field holds the keyboard. What the value is worth goes on being said in colour, which the focus mark
+     * leaves standing.
+     */
+
+    &:focus {
+
+        outline: var(--tile--outline-focus);
+        outline-offset: calc(-2 * var(--tile--border-width));
+
+        /*
+         * A box too small to be marked from within is marked from without: an inset ring on a tick box would close
+         * over what it encloses.
+         */
+
+        &[type=checkbox],
+        &[type=radio] {
+            outline-offset: var(--tile--border-width);
+        }
+
     }
 
 }

@@ -168,7 +168,7 @@ type Easing = Extract<Token, `easing${string}`>
 /**
  * The tokens carrying a shadow or an outline, stated as a whole shorthand.
  */
-type Shadow = Extract<Token, `boxShadow${string}` | "outlineInvalid">
+type Shadow = Extract<Token, `boxShadow${string}` | `outline${string}`>
 
 /**
  * The tokens carrying a font stack.

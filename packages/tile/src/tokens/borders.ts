@@ -17,8 +17,8 @@
 /**
  * Border tokens.
  *
- * Names what is drawn at the edge of a box: the line enclosing it, the corner rounding it, the ring marking it
- * focused and the outline marking it invalid, together with the weight a vector glyph is stroked at.
+ * Names what is drawn at the edge of a box: the line enclosing it, the corner rounding it, the outline marking it
+ * focused and the one marking it invalid, together with the weight a vector glyph is stroked at.
  *
  * @remarks
  *
@@ -27,10 +27,11 @@
  * whatever size it is given and a subtree given a size of its own rounds to match. A shape rather than a corner, a
  * roundel or a pill, is a share of its box rather than a step on this ladder, and the component drawing it says so.
  *
- * **Marks** — `boxShadowFocus` and `outlineInvalid` are whole shorthand values rather than colours, so a rule states
- * the mark in one declaration and an app retuning the anchors carries it along. They pair with the
- * {@link colors `colorFocus`} and {@link colors `colorFail`} roles, which a consumer reaches for where
- * it paints the mark itself.
+ * **Marks** — `outlineFocus` and `outlineInvalid` are whole `outline` shorthand values rather than colours, so a rule
+ * states the mark in one declaration and an app retuning the anchors carries it along. `outline-offset` is not part of
+ * that shorthand, so a rule setting either mark states the offset alongside it, and a mark left at the offset the
+ * platform gives the control will not sit where the rule expects. They pair with the {@link colors `colorFocus`} and
+ * {@link colors `colorFail`} roles, which a consumer reaches for where it paints the mark itself.
  *
  * **Strokes** — `strokeWidth` carries a bare number, in the user units of the vector viewport it applies to, so the
  * weight of a glyph holds at any size.
@@ -55,7 +56,7 @@ export const borders = {
 	borderRadius075: "--tile--border-radius-075",
 	borderRadius100: "--tile--border-radius-100",
 
-	boxShadowFocus: "--tile--box-shadow-focus",
+	outlineFocus: "--tile--outline-focus",
 	outlineInvalid: "--tile--outline-invalid",
 
 	strokeWidth: "--tile--stroke-width"

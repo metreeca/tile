@@ -15,8 +15,8 @@
  */
 
 /*
- * What is drawn at the edge of a box: the line that encloses it, the corner that rounds it, the ring that marks it
- * focused and the outline that marks it invalid. The stroke width sits here too, carrying the weight of a drawn line
+ * What is drawn at the edge of a box: the line that encloses it, the corner that rounds it, the outline that marks it
+ * focused and the one that marks it invalid. The stroke width sits here too, carrying the weight of a drawn line
  * where the line is a vector glyph rather than a border.
  *
  * Nothing here carries a plain default beside its ladder: a box names the step it rounds on, as it names the step it
@@ -73,7 +73,7 @@
     initial-value: 1em;
 }
 
-@property --tile--box-shadow-focus {
+@property --tile--outline-focus {
     syntax: "*";
     inherits: true;
 }
@@ -95,14 +95,15 @@
 
 /*
  * The three values standing on other tokens, which an initial value cannot carry: the enclosing line takes its colour
- * from the page, and the two marks are assembled from the width, the style and the colour role each one signals.
+ * from the page, and the two marks are assembled from the width, the style and the colour role each one signals. The
+ * focus mark is drawn at twice the width, so it reads as a mark rather than as a second border.
  */
 
 :root {
 
     --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
-    --tile--box-shadow-focus: 0 0 2px 1px var(--tile--color-focus);
+    --tile--outline-focus: var(--tile--border-style) calc(2 * var(--tile--border-width)) var(--tile--color-focus);
     --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-fail);
 
 }

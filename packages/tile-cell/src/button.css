@@ -232,14 +232,26 @@ tile-button {
      * a step along the step, which is what keeps the colour the reader is following from giving way to the accent an
      * ordinary button answers to. The shares are read off the tints the design system already mixes, so the five
      * move together whichever scheme is in force.
+     *
+     * The neutral pair is laid over the surface the control stands on rather than mixed into the page. A step states
+     * itself in hue and is seen on any surface, while a control carrying no step is told apart by lightness alone, so
+     * a tint computed from the page reads on the page and nowhere else: on the sunken tray, which stands a step from
+     * the page in the very direction the tint travels, the two all but meet. Carried as the page ink at a share of
+     * cover, it deepens whatever it is laid over by as much, and the same gesture reads the same wherever the control
+     * stands.
+     *
+     * The share is half the one a step travels, rather than the share the striped row is mixed at: cover is spent in
+     * the space the screen composites in, where a mix is spent in oklab, so the same figure buys less. At these
+     * shares the pointer stands at 1.14:1 on the page and 1.14:1 on the tray in the light scheme, 1.13:1 and 1.11:1
+     * in the dark one, where the mixed tint gave 1.12:1 on the page and 1.03:1 on the tray.
      */
 
     &[mode="normal"] > button:enabled:hover {
-        background-color: var(--tile--background-color-stripe);
+        background-color: color-mix(in oklab, var(--tile--color) 6%, transparent);
     }
 
     &[mode="normal"] > button:enabled:active {
-        background-color: color-mix(in oklab, var(--tile--color) 8%, var(--tile--background-color));
+        background-color: color-mix(in oklab, var(--tile--color) 12%, transparent);
     }
 
     &[mode="safe"] > button:enabled:hover {

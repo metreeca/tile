@@ -23,9 +23,8 @@
  * @module
  */
 
-import { type ComponentChildren, createElement } from "preact";
+import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
 import "./button.css";
-import { type Handlers } from "./index.js";
 
 
 /**
@@ -39,9 +38,6 @@ import { type Handlers } from "./index.js";
  * The glyph is kept out of the accessibility tree, leaving the label or `name` to name the control on its own, and
  * the control is drawn at least as large as the smallest target a pointer is asked to hit, label or no label.
  *
- * Every event handler a `<button>` accepts is passed on unchanged, so a gesture beyond activation is wired without
- * wrapping the widget in an element of its own.
- *
  * @param options The widget configuration
  *
  * @returns The button
@@ -50,18 +46,27 @@ import { type Handlers } from "./index.js";
  */
 export function Button({
 
+	name,
+
 	disabled,
 
 	icon,
 	label,
-	look,
+
+	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 	mode = "normal",
-	name,
 	type = "button",
 
-	...handlers
+	onClick
 
 }: {
+
+	/**
+	 * The accessible name, required where a glyph stands alone and no text names the button; where a label is shown as
+	 * well, it must include the text of that label, so that a reader asking for the control by what they see reaches
+	 * it.
+	 */
+	name?: string
 
 	/**
 	 * Whether the button is inactive, greyed and out of the tab order as the platform leaves a disabled control; live
@@ -104,19 +109,22 @@ export function Button({
 	mode?: "normal" | "safe" | "commit" | "alert" | "danger"
 
 	/**
-	 * The accessible name, required where a glyph stands alone and no text names the button; where a label is shown as
-	 * well, it must include the text of that label, so that a reader asking for the control by what they see reaches
-	 * it.
-	 */
-	name?: string
-
-	/**
 	 * What the button does to the form it sits in: `submit` sends it, `reset` restores it, and `button`, the default,
 	 * leaves it alone, so that a button inside a form behaves as one outside it unless asked otherwise.
 	 */
 	type?: "button" | "submit" | "reset"
 
-} & ({ label: string } | { name: string }) & Handlers<"button">) {
+	/**
+	 * What activating the button is handed to, whether the activation comes from a pointer, from `Enter` or from
+	 * `Space`; a button whose work is done by the form it submits or resets if omitted. The activation event is handed
+	 * over as it stands, so a handler may read the modifier keys it carries or stop a `submit` or `reset` from
+	 * reaching the form.
+	 *
+	 * @param event The activation event
+	 */
+	onClick?: (event: TargetedMouseEvent<HTMLButtonElement>) => void
+
+} & ({ label: string } | { name: string })) {
 
 	/*
 	 * The element states what it carries, a stylesheet having no way to tell a label from a glyph standing alone, and
@@ -141,7 +149,7 @@ export function Button({
 		aria-label={name}
 		type={type}
 
-		{...handlers}
+		onClick={onClick}
 
 	>{icon}{label}</button>);
 

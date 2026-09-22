@@ -27,8 +27,8 @@ wins:
   a prop into state. A transition on the model renders on its own, so there is no setter to pass and no dependency array
   to keep honest.
 - **still in force**: the Rules of Hooks, since `useModel` is a hook like any other; state immutability, since a
-  transition returns new state rather than editing what the render read; and the prop and attribute ordering of
-  `react-developer-props`.
+  transition returns new state rather than editing what the render read; and the JSX attribute ordering of
+  `react-developer-props`, whose prop ordering §Props settles instead.
 
 Styling belongs to `css-developer` throughout, which likewise takes precedence over `react-developer-style`.
 
@@ -86,9 +86,34 @@ handling goes through `keys` from `@metreeca/tile-cell`, whose map declares the 
 
 ## Props
 
-`children` comes **LAST**, in the destructuring and in the type alike, however the other props are ordered: it is what
-the caller writes between the tags rather than beside them, so the reader takes the configuration in before what the
-widget is handed, and every widget declaring one reads the same way.
+A widget declares its props in one order, the same in the destructuring and in the type, groups separated by a blank
+line:
+
+1. `name`, the accessible name, where the widget takes one
+2. boolean options, alphabetically
+3. the remaining options, alphabetically
+4. event handlers, alphabetically
+5. `children`
+
+What the widget is called comes before what it is given, what it is given before what it hands back, and what the
+caller writes between the tags after all of it, so every widget reads the same way. This settles the prop ordering
+`react-developer-props` states for booleans, data and handlers alone; its JSX attribute ordering stays in force.
+
+```tsx
+export function Button({
+
+	name,
+
+	disabled,
+
+	icon,
+	label,
+	type = "button",
+
+	onClick
+
+}: { /* … */ })
+```
 
 ## Styling
 
@@ -116,6 +141,6 @@ Before reporting a component task complete, verify:
 - no `useRef` and no `useEffect` survive without a comment saying what rendered state could not answer
 - nothing is mirrored from props into state, and no value is computed in an effect
 - every element a handler reaches is rendered, and reached by a stable id rather than by DOM walking
-- `children`, where the widget takes one, is declared last in both the destructuring and the type
+- props follow §Props, the same order in the destructuring and in the type
 - measures and colours come from tokens, and a literal carries its justification
 - the specimen builds, and every unverified visual claim is stated as such

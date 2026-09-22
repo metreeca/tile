@@ -17,16 +17,14 @@
 /**
  * Preact widgets and controls.
  *
- * Provides the pieces a widget declares its props out of, the defaults its controls observe, and the attribute values
- * and event handlers it builds out of state, so a control offers the surface the platform already carries without
- * restating it. The widgets themselves come from their own modules, leaving a screen with the ones it renders and
- * nothing else.
+ * Provides the defaults a widget's controls observe, and the attribute values and event handlers it builds out of
+ * state, so a control offers the surface the platform already carries without restating it. The widgets themselves
+ * come from their own modules, leaving a screen with the ones it renders and nothing else.
  *
  * @module index
  */
 
 import { type Optional } from "@metreeca/core";
-import { type JSX } from "preact";
 
 
 /**
@@ -43,22 +41,6 @@ export const AutoLength = 2;
  * The number of entries a self-submitting control offers at a time.
  */
 export const AutoSize = 10;
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Native event handlers.
- *
- * Collects every event handler prop an element accepts, so a gesture a widget doesn't itself interpret is wired
- * straight on the control it renders rather than around the widget.
- *
- * @typeParam T The tag of the element whose handlers are taken
- */
-export type Handlers<T extends keyof JSX.IntrinsicElements> =
-	Pick<JSX.IntrinsicElements[T],
-		Extract<keyof JSX.IntrinsicElements[T], `on${string}`>
-	>
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,32 +27,56 @@ describe("createTabs", () => {
 
 			const model = createTabs();
 
-			expect(model.labels).toEqual([]);
+			expect(model.labels).toEqual({});
 			expect(model.active).toBeUndefined();
 
 		});
 
-		it("should keep the labels given, in order", async () => {
+		it("should enable the labels listed, in order", async () => {
 
-			expect(createTabs({ labels: ["one", "two", "three"] }).labels).toEqual(["one", "two", "three"]);
+			const model = createTabs({ labels: ["one", "two", "three"] });
+
+			expect(model.labels).toEqual({ one: true, two: true, three: true });
+			expect(Object.keys(model.labels)).toEqual(["one", "two", "three"]);
 
 		});
 
 		it("should accept a single label", async () => {
 
-			expect(createTabs({ labels: "one" }).labels).toEqual(["one"]);
+			expect(createTabs({ labels: "one" }).labels).toEqual({ one: true });
 
 		});
 
 		it("should remove duplicate labels, keeping the first occurrence", async () => {
 
-			expect(createTabs({ labels: ["one", "two", "one"] }).labels).toEqual(["one", "two"]);
+			expect(Object.keys(createTabs({ labels: ["one", "two", "one"] }).labels)).toEqual(["one", "two"]);
+
+		});
+
+		it("should keep the labels given, in order, with the state each carries", async () => {
+
+			const model = createTabs({ labels: { one: true, two: false, three: true } });
+
+			expect(model.labels).toEqual({ one: true, two: false, three: true });
+			expect(Object.keys(model.labels)).toEqual(["one", "two", "three"]);
 
 		});
 
 		it("should show the first panel by default", async () => {
 
 			expect(createTabs({ labels: ["one", "two"] }).active).toBe("one");
+
+		});
+
+		it("should show the first enabled panel by default", async () => {
+
+			expect(createTabs({ labels: { one: false, two: true, three: true } }).active).toBe("two");
+
+		});
+
+		it("should show no panel if every panel is disabled", async () => {
+
+			expect(createTabs({ labels: { one: false, two: false } }).active).toBeUndefined();
 
 		});
 
@@ -71,6 +95,12 @@ describe("createTabs", () => {
 		it("should reject an unknown panel", async () => {
 
 			expect(() => createTabs({ labels: ["one", "two"], active: "none" })).toThrow(TypeError);
+
+		});
+
+		it("should ignore a disabled panel given on show", async () => {
+
+			expect(createTabs({ labels: { one: true, two: false }, active: "two" }).active).toBe("one");
 
 		});
 
@@ -98,6 +128,14 @@ describe("createTabs", () => {
 
 		});
 
+		it("should ignore a disabled label", async () => {
+
+			const tabs = createTabs({ labels: { one: true, two: true, three: false } });
+
+			expect(tabs.select("three")).toBe(tabs);
+
+		});
+
 	});
 
 	describe("next", () => {
@@ -114,9 +152,30 @@ describe("createTabs", () => {
 
 		});
 
+		it("should step over a disabled panel", async () => {
+
+			expect(createTabs({ labels: { one: true, two: false, three: true } }).next().active).toBe("three");
+
+		});
+
+		it("should wrap over a disabled panel", async () => {
+
+			expect(createTabs({ labels: { one: true, two: true, three: false }, active: "two" }).next().active)
+				.toBe("one");
+
+		});
+
 		it("should ignore a single panel", async () => {
 
 			const model = createTabs({ labels: "one" });
+
+			expect(model.next()).toBe(model);
+
+		});
+
+		it("should ignore a single enabled panel", async () => {
+
+			const model = createTabs({ labels: { one: true, two: false } });
 
 			expect(model.next()).toBe(model);
 
@@ -146,9 +205,30 @@ describe("createTabs", () => {
 
 		});
 
+		it("should step over a disabled panel", async () => {
+
+			expect(createTabs({ labels: { one: true, two: false, three: true }, active: "three" }).back().active)
+				.toBe("one");
+
+		});
+
+		it("should wrap over a disabled panel", async () => {
+
+			expect(createTabs({ labels: { one: false, two: true, three: true } }).back().active).toBe("three");
+
+		});
+
 		it("should ignore a single panel", async () => {
 
 			const model = createTabs({ labels: "one" });
+
+			expect(model.back()).toBe(model);
+
+		});
+
+		it("should ignore a single enabled panel", async () => {
+
+			const model = createTabs({ labels: { one: true, two: false } });
 
 			expect(model.back()).toBe(model);
 

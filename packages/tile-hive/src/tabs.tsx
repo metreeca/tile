@@ -23,6 +23,7 @@
  * @module
  */
 
+import { type Optional } from "@metreeca/core";
 import { keys } from "@metreeca/tile-cell";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
@@ -30,18 +31,19 @@ import { useId } from "preact/hooks";
 import { createTabs, type Tabs } from "./tabs.core.js";
 import "./tabs.css";
 
-// !!! responsive layout
-
 
 /**
  * Creates a tabbed layout panel.
  *
  * Presents the labels of the panels given, in order, and the content of the one currently chosen, starting from the
- * first. A panel is chosen with the pointer or with the keyboard, the arrow keys stepping to either neighbour and
- * wrapping at both ends, `Home` and `End` jumping to the first and to the last.
+ * first one on offer. A panel is chosen with the pointer or with the keyboard, the arrow keys stepping to either
+ * neighbour and wrapping at both ends, `Home` and `End` jumping to either end of the strip.
  *
- * Every panel stays in the document while another is on show, so what it holds keeps its state throughout, at the
- * cost of being rendered whether or not it is visible. The panels are taken as they stand when the widget first
+ * A panel given no content is disabled: its label keeps its place in the strip, marked as such, but no gesture ever
+ * brings it on show, a pointer choice being refused and keyboard steps and jumps passing it by.
+ *
+ * Every panel on offer stays in the document while another is on show, so what it holds keeps its state throughout,
+ * at the cost of being rendered whether or not it is visible. The panels are taken as they stand when the widget first
  * renders: a label added or removed later leaves the strip unchanged.
  *
  * @param options The widget configuration
@@ -65,9 +67,10 @@ export function Tabs({
 	name?: string
 
 	/**
-	 * The content of each panel, keyed by the label activating it and presented in key order.
+	 * The content of each panel, keyed by the label activating it and presented in key order; a label given no content
+	 * stands for a disabled panel.
 	 */
-	panels: Readonly<Record<string, ComponentChildren>>
+	panels: Readonly<Record<string, Optional<ComponentChildren>>>
 
 }) {
 
@@ -84,9 +87,14 @@ export function Tabs({
 
 	} = useModel(() => createTabs({
 
-		labels: Object.keys(panels)
+		labels: Object.fromEntries(Object.entries(panels)
+			.map(([label, content]): [string, boolean] => [label, content !== undefined])
+		)
 
 	}));
+
+	const order = Object.keys(labels);
+	const enabled = order.filter(label => labels[label]);
 
 	return createElement("tile-tabs", {},
 
@@ -101,16 +109,17 @@ export function Tabs({
 				ArrowRight: moving(next),
 				ArrowLeft: moving(back),
 
-				Home: moving(() => select(labels[0])),
-				End: moving(() => select(labels[labels.length-1]))
+				Home: moving(() => select(enabled[0])),
+				End: moving(() => select(enabled[enabled.length-1]))
 
 			})}
 
-		>{labels.map((label, index) =>
+		>{order.map((label, index) =>
 
 			<label
 
-				aria-controls={panel(index)}
+				aria-controls={labels[label] ? panel(index) : undefined}
+				aria-disabled={!labels[label]}
 				aria-selected={label === active}
 
 				id={tab(index)}
@@ -118,14 +127,14 @@ export function Tabs({
 				role="tab"
 				tabIndex={label === active ? 0 : -1}
 
-				onClick={() => select(label)}
+				onClick={() => select(label)} // a disabled label is refused by the model, leaving the strip as it was
 
 			>{label}</label>
 		)}</nav>,
 
-		// every panel is rendered, so the tab controlling it always has something to point at
+		// every enabled panel is rendered, so the tab controlling it always has something to point at
 
-		labels.map((label, index) =>
+		order.map((label, index) => !labels[label] ? null :
 
 			<div
 
@@ -150,7 +159,7 @@ export function Tabs({
 
 			const moved = transition().active;
 
-			document.getElementById(tab(moved === undefined ? -1 : labels.indexOf(moved)))?.focus();
+			document.getElementById(tab(moved === undefined ? -1 : order.indexOf(moved)))?.focus();
 
 		};
 	}

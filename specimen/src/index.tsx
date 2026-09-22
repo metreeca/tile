@@ -41,7 +41,8 @@ import "./index.css";
 
 
 /**
- * What the sampler shows, keyed by the label the section is chosen by.
+ * What the sampler shows, keyed by the label the section is chosen by; a section with nothing to show yet is given no
+ * content, so its label stands in the strip as a disabled tab.
  */
 const panels: Readonly<Record<string, ComponentChild>> = {
 
@@ -52,6 +53,7 @@ const panels: Readonly<Record<string, ComponentChild>> = {
 	Icons: <Icons/>,
 	Text: <Text/>,
 	Tables: <Tables/>,
+	Charts: undefined,
 	Forms: <Forms/>,
 	Widgets: <Widgets/>,
 	Theming: <Theming/>

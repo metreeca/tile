@@ -60,6 +60,13 @@ tile-tabs {
                 color: var(--tile--color-hover);
             }
 
+            /* A tab that cannot be chosen is greyed, the pointer and `aria-disabled` saying so alongside the colour. */
+
+            &[aria-disabled="true"] {
+                color: var(--tile--color-disabled);
+                cursor: default;
+            }
+
             &:focus-visible {
                 outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
                 outline-offset: 0.1em; /* Clear of the text without reaching the neighbour: below the spacing ladder. */

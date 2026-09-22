@@ -17,15 +17,15 @@
 /**
  * Headless tabs.
  *
- * Offers what a tab strip does without drawing one: a fixed set of labelled panels, the one on show, and the
- * activation a reader performs on it. A rendering layer adopts them and supplies the markup, the styling and the
- * gestures, so the same behaviour serves any layer.
+ * Offers what a tab strip does without drawing one: a fixed set of labelled panels, which of them are open to a
+ * reader, the one on show, and the activation a reader performs on it. A rendering layer adopts them and supplies
+ * the markup, the styling and the gestures, so the same behaviour serves any layer.
  *
  * @module
  */
 
-import { assert, opt, type Optional } from "@metreeca/core";
-import { some, type Some, unique } from "@metreeca/core/arrays";
+import { assert, isArray, isString, opt, type Optional } from "@metreeca/core";
+import { type Some, unique } from "@metreeca/core/arrays";
 import { createState } from "@metreeca/core/state";
 
 
@@ -33,7 +33,8 @@ import { createState } from "@metreeca/core/state";
  * Headless tabs.
  *
  * Holds a fixed set of labelled panels and the one on show, offering the activation a tab strip performs: a direct
- * choice and the step to either neighbour, wrapping at both ends as keyboard navigation expects.
+ * choice and the step to either neighbour, wrapping at both ends as keyboard navigation expects. A panel may be
+ * disabled: its label keeps its place, but no activation brings it on show and stepping passes it over.
  *
  * An activation yields new tabs and leaves these as they stand, so tabs read earlier keep their panels and their
  * choice. One that changes nothing yields these tabs themselves, which a rendering layer takes as nothing to redraw.
@@ -41,12 +42,13 @@ import { createState } from "@metreeca/core/state";
 export interface Tabs {
 
 	/**
-	 * The labels identifying the panels, in display order, as given, without duplicates and none of them blank.
+	 * Whether each panel can be shown, keyed by the label identifying it: the labels in display order, as given,
+	 * without duplicates and none of them blank.
 	 */
-	readonly labels: readonly string[];
+	readonly labels: Readonly<Record<string, boolean>>;
 
 	/**
-	 * The label of the panel on show, or `undefined` if there are no panels.
+	 * The label of the panel on show, or `undefined` if no panel is enabled.
 	 */
 	readonly active: Optional<string>;
 
@@ -56,22 +58,22 @@ export interface Tabs {
 	 *
 	 * @param label The label of the panel to show
 	 *
-	 * @returns Tabs showing `label`, or these tabs if `label` is unknown or already on show
+	 * @returns Tabs showing `label`, or these tabs if `label` is unknown, disabled or already on show
 	 */
 	select(label: string): this;
 
 
 	/**
-	 * Activates the following panel, wrapping from the last to the first.
+	 * Activates the following enabled panel, stepping over disabled ones and wrapping from the last to the first.
 	 *
-	 * @returns Tabs showing the following panel, or these tabs if they hold fewer than two panels
+	 * @returns Tabs showing the following enabled panel, or these tabs if they hold no other enabled panel
 	 */
 	next(): this;
 
 	/**
-	 * Activates the preceding panel, wrapping from the first to the last.
+	 * Activates the preceding enabled panel, stepping over disabled ones and wrapping from the first to the last.
 	 *
-	 * @returns Tabs showing the preceding panel, or these tabs if they hold fewer than two panels
+	 * @returns Tabs showing the preceding enabled panel, or these tabs if they hold no other enabled panel
 	 */
 	back(): this;
 
@@ -85,9 +87,10 @@ export interface Tabs {
  *
  * @param options The tabs configuration
  *
- * @returns Immutable {@link Tabs} holding the panels `labels` identifies and showing `active`
+ * @returns Immutable {@link Tabs} holding the panels `labels` identifies, showing `active` if its panel is enabled
+ * and the first enabled panel otherwise
  *
- * @throws {@link !TypeError TypeError} If `labels` includes a blank label, or if `active` doesn't identify one of them
+ * @throws {@link !TypeError TypeError} If `labels` includes a blank label, or if `active` isn't one of them
  */
 export function createTabs({
 
@@ -97,27 +100,37 @@ export function createTabs({
 }: {
 
 	/**
-	 * The labels identifying the panels, in display order, taken as given, duplicates removed, keeping the first
-	 * occurrence; empty if omitted.
+	 * The labels identifying the panels, in display order: a record stating for each label whether its panel can be
+	 * shown, or a list of labels whose panels can all be shown, taken as given with duplicates removed, keeping the
+	 * first occurrence; empty if omitted.
 	 */
-	labels?: Some<string>
+	labels?: Some<string> | Readonly<Record<string, boolean>>
 
 	/**
-	 * The label of the panel to show; the first panel if omitted.
+	 * The label of the panel to show; the first enabled panel if omitted or if it identifies a disabled panel.
 	 */
 	active?: string
 
 } = {}): Tabs {
 
-	const panels = assert(unique(some(labels)),
-		labels => labels.every(label => label.trim().length > 0),
+	const entries: readonly (readonly [string, boolean])[] = labels === undefined ? []
+		: isString(labels) ? [[labels, true]]
+			: isArray<string>(labels) ? unique(labels).map((label): [string, boolean] => [label, true])
+				: Object.entries(labels).map(([label, shown]): [string, boolean] => [label, shown === true]);
+
+	const panels = assert(Object.fromEntries(entries),
+		panels => Object.keys(panels).every(label => label.trim().length > 0),
 		"unexpected blank panel labels"
 	);
 
-	const panel = opt(active,
-		label => assert(label, label => panels.includes(label), `unknown panel label <${label}>`),
-		panels[0]
+	const enabled = Object.keys(panels).filter(label => panels[label]);
+
+	const chosen = opt(active,
+		label => assert(label, label => label in panels, `unknown panel label <${label}>`),
+		enabled[0]
 	);
+
+	const panel = enabled.includes(chosen) ? chosen : enabled[0];
 
 	return createState<Tabs>({
 
@@ -127,29 +140,31 @@ export function createTabs({
 
 		select(label: string) {
 
-			return this.labels.includes(label) ? { active: label } : {};
+			return enabled.includes(label) ? { active: label } : {};
 
 		},
 
 
 		next() {
 
-			return { active: shift(this.labels, this.active, +1) };
+			return { active: shift(this.active, +1) };
 
 		},
 
 		back() {
 
-			return { active: shift(this.labels, this.active, -1) };
+			return { active: shift(this.active, -1) };
 
 		}
 
 	});
 
 
-	function shift(labels: readonly string[], active: Optional<string>, offset: number): Optional<string> {
+	// stepping runs on the enabled panels alone, so a disabled one is passed over rather than landed on and left
 
-		return opt(active, label => labels[(labels.indexOf(label)+offset+labels.length)%labels.length]);
+	function shift(active: Optional<string>, offset: number): Optional<string> {
+
+		return opt(active, label => enabled[(enabled.indexOf(label)+offset+enabled.length)%enabled.length]);
 
 	}
 

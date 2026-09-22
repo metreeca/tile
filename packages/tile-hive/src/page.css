@@ -48,6 +48,23 @@ tile-page {
     --tile-page-main-gutter: 1.5rem;
 
     /*
+     * The inset every part of the content column is held to, which is the reading measure stated as air rather than
+     * as a width: each part takes the whole of the column and pushes its own content into the middle of it, instead
+     * of the part itself being narrowed and centred. The two look alike and behave differently where it counts, the
+     * body being the box that scrolls: narrowed, it carries its scrollbar in from the edge of the window and leaves
+     * it floating beside the text; full width, the bar stands where a reader looks for it and the text is still held
+     * to the measure.
+     *
+     * A percentage in a custom property is resolved where the property is read rather than where it is stated, so
+     * this is a measure of whatever part reads it and not of the frame it is declared on.
+     */
+
+    --tile-page-main-inset: max(
+        var(--tile-page-main-gutter),
+        calc((100% - var(--tile-page-main-width)) / 2)
+    );
+
+    /*
      * The air above and below what a bar holds. A bar takes its height from these and from whatever it was given to
      * show, rather than being held to a height of its own: a bar told how tall to be either crops a taller control
      * or keeps a band of empty page around a shorter one, and which of the two it does depends on the size the app
@@ -415,20 +432,16 @@ tile-page {
         position: relative;
 
         /*
-         * The content is capped at the reading measure and centred in whatever room the window leaves beyond it. The
-         * centring is asked of the row each part sits in rather than of a pair of automatic margins, so every part
-         * states its air in padding alone and a screen retuning one edge has one place to do it.
+         * Every part takes the whole of the column and holds what it shows to the reading measure, centred in
+         * whatever room the window leaves beyond it. The measure is stated as air rather than as a width, so the
+         * body scrolls at the edge of the window and its scrollbar stands there with it, where a reader looks for
+         * it, rather than being drawn in beside the text. Every part states its air in padding alone, so a screen
+         * retuning one edge has one place to do it.
          */
 
         & > * {
-
-            width: 100%;
-            max-width: var(--tile-page-main-width);
-            justify-self: center;
-
-            padding-left: var(--tile-page-main-gutter);
-            padding-right: var(--tile-page-main-gutter);
-
+            padding-left: var(--tile-page-main-inset);
+            padding-right: var(--tile-page-main-inset);
         }
 
         /*
@@ -477,9 +490,13 @@ tile-page {
 
             grid-row: 1 / 2;
 
+            /* Both edges are named as well, so the mark takes the whole of the row and reads the inset off it. */
+
             position: absolute;
             top: 0;
             bottom: 0;
+            left: 0;
+            right: 0;
 
             display: flex;
             flex-direction: row;
@@ -511,8 +528,8 @@ tile-page {
 
     /* Content a window never has too much room for takes the whole of it, the measure being no help to a grid. */
 
-    &[wide] > main > * {
-        max-width: none;
+    &[wide] {
+        --tile-page-main-inset: var(--tile-page-main-gutter);
     }
 
 }

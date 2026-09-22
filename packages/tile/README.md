@@ -213,9 +213,22 @@ import { css } from "@metreeca/tile";
 <section style={css({ colorStrong: "#D60" })}>
 ```
 
-Where CSS doesn't reach, on a canvas, in an SVG attribute or on a print target, take the value a token resolves to for
-the element it applies to, rather than a copy of the default, and keep whatever the app overrode along with the colour
-scheme in force:
+Read a token where a single CSS value is written by hand rather than by a rule, in an inline style or a presentation
+attribute. The reference resolves wherever it is read, so it carries whatever the app overrode and whichever colour
+scheme is in force:
+
+```tsx
+import { css, tile } from "@metreeca/tile";
+
+<span style={{ backgroundColor: css.var(tile.colorStrong) }}/>
+```
+
+A component that cannot count on the stylesheet being loaded writes the reference by hand instead, naming in it the
+fallback it wants, as above.
+
+Where a reference doesn't reach, on a canvas or against an API taking a colour as text, take the value a token resolves
+to for the element it applies to, rather than a copy of the default, and keep whatever the app overrode along with the
+colour scheme in force:
 
 ```typescript
 import { tile } from "@metreeca/tile";

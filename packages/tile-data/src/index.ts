@@ -49,7 +49,7 @@ export const app = immutable({
 	 * root if the tag is missing.
 	 */
 	base: resolve(resolve(location.href, "/"),
-		(document.querySelector<HTMLBaseElement>("base")?.href || "/").replace(/\/*$/, "/")
+		(document.querySelector("base")?.href || "/").replace(/\/*$/, "/")
 	),
 
 	/**

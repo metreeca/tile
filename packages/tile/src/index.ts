@@ -18,8 +18,8 @@
  * Design system.
  *
  * Names the tokens an app may override to restyle an interface, and a component reads to inherit that styling, and
- * gives the custom property each one resolves to, for a `var()` reference or a value taken outside the cascade.
- * Assigning tokens by name restyles a single subtree instead, through a style declaration any rendering layer accepts.
+ * gives the custom property each one resolves to, for a value taken outside the cascade. A token is read wherever a
+ * CSS value is written by hand, and assigned to a subtree through a style declaration any rendering layer accepts.
  * The values behind them are provided by the companion stylesheet.
  *
  * An app that includes the stylesheet gets a brand-agnostic default look, light or dark according to the platform
@@ -61,6 +61,12 @@
  * <section style={css({ colorStrong: "#D60" })}>
  * ```
  *
+ * Read a token where a single CSS value is written by hand:
+ *
+ * ```tsx
+ * <span style={{ backgroundColor: css.var(tile.colorStrong) }}/>
+ * ```
+ *
  * @remarks
  *
  * **Override order** — the stylesheet declares its rules in a `tile` cascade layer, so a rule an app or a component
@@ -70,15 +76,16 @@
  * **Missing and malformed values** — a token carrying a literal states it as the registered default of its custom
  * property, so the value lives in one place and an override the browser cannot parse leaves the interface on the
  * default rather than unstyled. A component styled against a token it cannot count on, because the stylesheet may not
- * be loaded at all, names its own fallback in the reference: `var(--tile--color-strong, #06C)`.
+ * be loaded at all, names its own fallback in the reference it writes by hand: `var(--tile--color-strong, #06C)`,
+ * which is the one case {@link css.var} does not cover.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
  * links it in the document head.
  *
- * **Values outside the cascade** — a consumer painting where CSS doesn't reach, on a canvas, in an SVG attribute or on
- * a print target, takes the value a token resolves to for the element it applies to, rather than a copy of the
- * default, and so keeps whatever the app overrode and whichever colour scheme is in force:
+ * **Values outside the cascade** — a consumer painting where a reference doesn't reach, on a canvas or against an API
+ * taking a colour as text, takes the value a token resolves to for the element it applies to, rather than a copy of
+ * the default, and so keeps whatever the app overrode and whichever colour scheme is in force:
  *
  * ```typescript
  * getComputedStyle(element).getPropertyValue(tile.colorStrong)
@@ -130,9 +137,10 @@ const inherited: Readonly<Record<string, string>> = {
 /**
  * The custom property behind every design system token.
  *
- * Resolves each {@link Token token name} to the {@link Property custom property} carrying its value, for a `var()`
- * reference or a value taken outside the cascade; overriding a token for a subtree goes through {@link css} instead.
- * Gathers every token group, so a consumer names a token without knowing which one it belongs to.
+ * Resolves each {@link Token token name} to the {@link Property custom property} carrying its value, which is what
+ * {@link css.var} reads a token through and what a value taken outside the cascade is looked up by; assigning a token
+ * to a subtree goes through {@link css} instead. Gathers every token group, so a consumer names a token without
+ * knowing which one it belongs to.
  */
 export const tile = {
 
@@ -165,7 +173,8 @@ export type Style = Readonly<Record<string, string>>
 /**
  * The custom property carrying the value of a design system token.
  *
- * Addresses a token wherever CSS reads one, in a `var()` reference or a computed-style read, as given by {@link tile}.
+ * Addresses a token wherever CSS reads one, as given by {@link tile}: it is what {@link css.var} takes and what a
+ * computed-style read is keyed by.
  */
 export type Property = typeof tile[Token]
 
@@ -250,34 +259,70 @@ export type Value<K extends Token = Token> = undefined | Alias<K> | Literal<K>
  * it inherits any other, so a size stated on an area compounds with a size stated on an area inside it, exactly as
  * CSS has it.
  *
+ * Reading a token where a single CSS value is written by hand, rather than assigning one, goes through
+ * {@link css.var} instead.
+ *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *
  * @returns An immutable {@link Style style declaration} assigning the {@link Property custom property} of each token
  * given a defined value in `tokens` its text form, or a reference to the token it names, and applying the CSS
  * property as well for the four the page carries its own typography in
  */
-export function css(tokens: Tokens): Style {
+export const css = Object.assign(
 
-	const properties: Readonly<Record<string, Property>> = tile; // keyed by string, matching the entries below
+	function css(tokens: Tokens): Style {
 
-	return Object.fromEntries(Object.entries(tokens)
-		.filter(([, value]) => value !== undefined)
-		.flatMap(([token, value]) => {
+		const properties: Readonly<Record<string, Property>> = tile; // keyed by string, matching the entries below
 
-			const property = inherited[token];
+		return Object.fromEntries(Object.entries(tokens)
+			.filter(([, value]) => value !== undefined)
+			.flatMap(([token, value]) => {
 
-			// a value naming a token stands for what that token carries; no CSS value is spelt as a token name,
-			// the names being camel-cased identifiers and CSS values keywords, numbers, colours and functions
+				const property = inherited[token];
 
-			const text = typeof value === "string" && value in properties
-				? `var(${properties[value]})`
-				: String(value);
+				// a value naming a token stands for what that token carries; no CSS value is spelt as a token name,
+				// the names being camel-cased identifiers and CSS values keywords, numbers, colours and functions
 
-			return property === undefined
-				? [[properties[token], text]]
-				: [[properties[token], text], [property, text]];
+				const text = typeof value === "string" && value in properties
+					? `var(${properties[value]})`
+					: String(value);
 
-		})
-	);
+				return property === undefined
+					? [[properties[token], text]]
+					: [[properties[token], text], [property, text]];
 
-}
+			})
+		);
+
+	}, {
+
+		/**
+		 * Reads a design system token.
+		 *
+		 * Gives the reference a CSS value takes a token through, so a consumer paints with the design system wherever
+		 * a value is written by hand rather than by a rule: an inline style, an SVG presentation attribute, a length
+		 * handed to a widget that takes one.
+		 *
+		 * ```tsx
+		 * <span style={{ backgroundColor: css.var(tile.colorStrong) }}/>
+		 * ```
+		 *
+		 * The reference resolves wherever it is read, so it carries whatever an app overrode and whichever colour
+		 * scheme is in force, which a copy of the default value would not. Assigning a token for a subtree goes
+		 * through {@link css} itself instead, and a consumer that cannot count on the stylesheet being loaded at all
+		 * writes the reference by hand, naming in it the fallback it wants.
+		 *
+		 * @param property The {@link Property custom property} carrying the value of the token to be read, as given
+		 * by {@link tile}
+		 *
+		 * @returns A `var()` reference resolving to the value `property` carries on the element reading it
+		 */
+		var(property: Property): string {
+
+			return `var(${ property })`;
+
+		}
+
+	}
+
+);

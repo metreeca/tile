@@ -36,6 +36,18 @@ blockquote {
 
 }
 
+/*
+ * A preformatted block is set apart on the stripe, as a quotation is, and keeps the lines it was given: what runs past
+ * the measure is scrolled rather than folded, the breaks being the author's.
+ */
+
+pre {
+    padding: var(--tile--spacing-050);
+    margin-bottom: var(--tile--spacing-100);
+    overflow-x: auto;
+    background-color: var(--tile--background-color-stripe);
+}
+
 hr {
 
     margin: var(--tile--spacing-150) 0;

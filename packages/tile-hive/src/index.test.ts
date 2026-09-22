@@ -39,4 +39,18 @@ describe("host", () => {
 
 	});
 
+	it("hands the element it creates the height to fill", () => {
+
+		expect(host("tile-filled").getAttribute("style")).toBe("display: block; height: 100%");
+
+	});
+
+	it("leaves an element the document already carries as it stands", () => {
+
+		document.body.appendChild(document.createElement("tile-standing"));
+
+		expect(host("tile-standing").getAttribute("style")).toBeNull();
+
+	});
+
 });

@@ -51,6 +51,10 @@ code {
 
     font-family: var(--tile--font-family-mono);
 
+    /* A code span names one thing, so it is read as one word rather than folded at a hyphen or a space. */
+
+    white-space: nowrap;
+
     /* Optical nudges: the mono face reads larger and thinner than the text around it at the same size and weight. */
 
     font-size: 80%;

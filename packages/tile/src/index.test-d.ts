@@ -202,3 +202,27 @@ describe("css", () => {
 	});
 
 });
+
+describe("css.var", () => {
+
+	it("produces a CSS value", () => {
+
+		expectTypeOf(css.var(tile.colorStrong)).toEqualTypeOf<string>();
+
+	});
+
+	it("rejects a token name in place of a custom property", () => {
+
+		// @ts-expect-error token name rather than custom property
+		css.var("colorStrong");
+
+	});
+
+	it("rejects a custom property no token resolves to", () => {
+
+		// @ts-expect-error unknown custom property
+		css.var("--tile--nope");
+
+	});
+
+});

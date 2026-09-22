@@ -281,3 +281,25 @@ describe("css", () => {
 	});
 
 });
+
+describe("css.var", () => {
+
+	it("reads a token through the custom property carrying its value", () => {
+
+		expect(css.var(tile.colorStrong)).toBe("var(--tile--color-strong)");
+
+	});
+
+	it("reads every declared token", () => {
+
+		expect(Object.values(tile).filter(property => css.var(property) !== `var(${ property })`)).toEqual([]);
+
+	});
+
+	it("reads a token as css assigns one named as a value", () => {
+
+		expect(css({ fontSize: "fontSizeLarge" })[tile.fontSize]).toBe(css.var(tile.fontSizeLarge));
+
+	});
+
+});

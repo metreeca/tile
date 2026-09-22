@@ -83,6 +83,9 @@ function Specimen() {
 
 	const [reader, setReader] = useState<string>();
 
+	const tray = lock ? "Release the tray" : "Lock the tray";
+	const measure = wide ? "Cap the measure" : "Take the width";
+
 	return <Page
 
 		lock={lock}
@@ -98,14 +101,16 @@ function Specimen() {
 			<Button
 				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
 				look="subtle"
-				name={lock ? "Release the tray" : "Lock the tray"}
+				name={tray}
+				title={tray}
 				onClick={() => setLock(!lock)}
 			/>
 
 			<Button
 				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
-				name={wide ? "Cap the measure" : "Take the width"}
 				look="subtle"
+				name={measure}
+				title={measure}
 				onClick={() => setWide(!wide)}
 			/>
 
@@ -113,8 +118,9 @@ function Specimen() {
 
 		menu={<Button
 			icon={<Icon.Search/>}
-			name="Run an exchange"
 			look="subtle"
+			name="Run an exchange"
+			title="Run an exchange"
 			onClick={() => { void fetch(app.base); }}
 		/>}
 
@@ -136,6 +142,7 @@ function Specimen() {
 					icon={<Icon.LogOut/>}
 					look="subtle"
 					name="Sign out"
+					title="Sign out"
 					onClick={() => setReader(undefined)}
 				/>
 
@@ -143,8 +150,9 @@ function Specimen() {
 
 			: <Button
 				icon={<Icon.LogIn/>}
-				name="Sign in"
 				look="subtle"
+				name="Sign in"
+				title="Sign in"
 				onClick={() => setReader("reader@example.com")}
 			/>
 

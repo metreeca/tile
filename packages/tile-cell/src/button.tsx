@@ -33,7 +33,7 @@ import "./button.css";
  * Shows a glyph, a label, or a glyph followed by a label, on a native control, so the button role, the activation by
  * `Enter` and `Space`, the single tab stop, the focus ring and the greyed disabled state come with it rather than
  * having to be asked for. A button states a label, a name, or both: a glyph standing alone is named by `name`, which
- * the type requires.
+ * the type requires; a hint offered on top of these speaks to a resting pointer alone and names nothing.
  *
  * The glyph is kept out of the accessibility tree, leaving the label or `name` to name the control on its own, and
  * the control is drawn at least as large as the smallest target a pointer is asked to hit, label or no label.
@@ -52,6 +52,7 @@ export function Button({
 
 	icon,
 	label,
+	title,
 
 	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 	mode = "normal",
@@ -85,6 +86,16 @@ export function Button({
 	 * standing alone.
 	 */
 	label?: string
+
+	/**
+	 * The hint the platform shows on resting the pointer on the button, such as the shortcut it answers to or what a
+	 * glyph stands for at greater length than its name; no hint if omitted.
+	 *
+	 * It names nothing, the label or `name` having named the button already, and it reaches neither a reader who
+	 * never rests the pointer nor one on a touch screen, so whatever a reader has to take in to use the control
+	 * belongs in the label or beside it rather than here.
+	 */
+	title?: string
 
 	/**
 	 * How loud the button appears, told in weight, rule and room rather than in colour, so it stays legible wherever
@@ -147,6 +158,7 @@ export function Button({
 		disabled={disabled}
 
 		aria-label={name}
+		title={title}
 		type={type}
 
 		onClick={onClick}

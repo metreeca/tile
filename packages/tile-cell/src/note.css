@@ -78,9 +78,9 @@ tile-note {
         border-style: var(--tile--border-style);
         border-color: var(--tile--color-enabled);
 
-        /* A pill rather than a panel, so the radius is half the line rather than the quarter-step a box takes. */
+        /* Rounded a step deeper than a panel, so the badge reads as a marker rather than as a box of its own. */
 
-        border-radius: 0.5em;
+        border-radius: var(--tile--border-radius-050);
 
     }
 

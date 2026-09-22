@@ -22,9 +22,10 @@
  *
  * @remarks
  *
- * **Radii** — `borderRadius` is a length, rounding a field, a panel or a button by the same amount whatever size it
- * is given, while `borderRadius025` to `borderRadius100` carry a share of the box, so a mark rounds with its own size.
- * Every share above a half draws the same roundel.
+ * **Radii** — `borderRadius025` to `borderRadius100` round a corner by a length, on the steps
+ * {@link spacings the spacing ladder} carries and stated the same way, in `em`, so a box rounds by the same amount
+ * whatever size it is given and a subtree given a size of its own rounds to match. A shape rather than a corner, a
+ * roundel or a pill, is a share of its box rather than a step on this ladder, and the component drawing it says so.
  *
  * **Marks** — `boxShadowFocus` and `outlineInvalid` are whole shorthand values rather than colours, so a rule states
  * the mark in one declaration and an app retuning the anchors carries it along. They pair with the
@@ -48,7 +49,6 @@ export const borders = {
 	borderStyle: "--tile--border-style",
 	borderColor: "--tile--border-color",
 	borderWidth: "--tile--border-width",
-	borderRadius: "--tile--border-radius",
 
 	borderRadius025: "--tile--border-radius-025",
 	borderRadius050: "--tile--border-radius-050",

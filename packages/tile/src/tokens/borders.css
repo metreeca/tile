@@ -18,6 +18,9 @@
  * What is drawn at the edge of a box: the line that encloses it, the corner that rounds it, the ring that marks it
  * focused and the outline that marks it invalid. The stroke width sits here too, carrying the weight of a drawn line
  * where the line is a vector glyph rather than a border.
+ *
+ * Nothing here carries a plain default beside its ladder: a box names the step it rounds on, as it names the step it
+ * is spaced on, so one reading serves both.
  */
 
 @property --tile--border-style {
@@ -38,38 +41,36 @@
 }
 
 /*
- * The plain radius is a length, so a field, a panel or a button rounds by the same amount whatever size it is given,
- * while a share rounds a mark with its own size. Every share above a half draws the same roundel.
+ * The radius ladder rounds a corner by a length, on the steps the spacing ladder carries and stated the same way, in
+ * em, so a subtree given a size of its own rounds to match. A step rounds a box by the same amount whatever size the
+ * box is given, which is what tells one corner from another down a column of boxes of differing heights.
+ *
+ * A shape rather than a corner — a roundel, a swatch, an avatar, a pill — is NOT a step on this ladder: it is a
+ * share of the box, so it follows the size rather than the rhythm, and it is stated by the component drawing it.
  */
 
-@property --tile--border-radius {
+@property --tile--border-radius-025 {
     syntax: "*";
     inherits: true;
     initial-value: 0.25em;
 }
 
-@property --tile--border-radius-025 {
-    syntax: "*";
-    inherits: true;
-    initial-value: 25%;
-}
-
 @property --tile--border-radius-050 {
     syntax: "*";
     inherits: true;
-    initial-value: 50%;
+    initial-value: 0.5em;
 }
 
 @property --tile--border-radius-075 {
     syntax: "*";
     inherits: true;
-    initial-value: 75%;
+    initial-value: 0.75em;
 }
 
 @property --tile--border-radius-100 {
     syntax: "*";
     inherits: true;
-    initial-value: 100%;
+    initial-value: 1em;
 }
 
 @property --tile--box-shadow-focus {

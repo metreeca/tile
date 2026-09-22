@@ -283,11 +283,10 @@ const marks: ReadonlyArray<Entry> = [
 
 const borders: ReadonlyArray<Entry> = [
 
-	[ tile.borderRadius, "fields, panels and buttons" ],
-	[ tile.borderRadius025, "a softly rounded mark" ],
-	[ tile.borderRadius050, "a roundel, a swatch or an avatar" ],
-	[ tile.borderRadius075, "a lozenge leaning towards the round" ],
-	[ tile.borderRadius100, "a mark rounded to its own edges" ]
+	[ tile.borderRadius025, "a field, a panel or a button" ],
+	[ tile.borderRadius050, "a badge or a chip, read as a marker rather than a box" ],
+	[ tile.borderRadius075, "a card or a tile carrying a surface of its own" ],
+	[ tile.borderRadius100, "a sheet or a dialog, the deepest corner the ladder draws" ]
 
 ];
 
@@ -560,9 +559,9 @@ export function Palettes() {
 export function Scales() {
 	return <>
 
-		<p>The spacing and scaling ladders, and the plain radius, are stated in <code>em</code>, so a subtree given a
-			size of its own takes its rhythm along. The body size stands apart, stated in <code>rem</code>, so a page
-			holds its rhythm wherever it is embedded.</p>
+		<p>The spacing, scaling and radius ladders are stated in <code>em</code>, so a subtree given a size of its own
+			takes its rhythm along. The body size stands apart, stated in <code>rem</code>, so a page holds its rhythm
+			wherever it is embedded.</p>
 
 		<h3>Spacing</h3>
 
@@ -626,12 +625,14 @@ export function Scales() {
 
 		}/>
 
-		<p>The radius palette is stated as a share of the box, so a mark rounds with whatever size it is given. Each
-			sample rounds two opposite corners: where the radii on one side add up to more than the side itself, the
-			browser scales them down to fit, and every share above a half draws the same roundel.</p>
+		<p>The radius ladder runs on the steps the spacing ladder carries and is stated the same way, in
+			<code>em</code>, so a box rounds by the same amount whatever size it is given and a column of boxes of
+			differing heights reads as one corner throughout. A shape rather than a corner, a roundel or a pill, is a
+			share of its own box instead, and the component drawing it says so rather than reaching for a step
+			here.</p>
 
 		<Samples entries={borders} sample={property =>
-			<span class="box" style={{ borderRadius: `${ css.var(property) } 0` }}/>
+			<span class="box" style={{ borderRadius: css.var(property) }}/>
 		}/>
 
 		<h3>Motion</h3>
@@ -699,7 +700,7 @@ export function Text() {
 
 		<pre><code>{
 			`const style = css({ colorSubtle: "#345", colorStrong: "#D60", fontFamily: "Inter, sans-serif",`
-			+ ` fontSizeLarge: "1.5em", spacing100: "1.25em", borderRadius: "0.25em" });`
+			+ ` fontSizeLarge: "1.5em", spacing100: "1.25em", borderRadius025: "0.25em" });`
 		}</code></pre>
 
 		<hr/>

@@ -91,7 +91,7 @@ describe("css", () => {
 		expectTypeOf(css({ fontSize: "scaling125" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ scaling100: "scaling200" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ spacing100: "spacing250" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ borderRadius: "borderRadius050" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ borderRadius025: "borderRadius050" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ fontWeight: "fontWeightHeavy" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ opacityLoading: "opacityDisabled" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ zIndexModal: "zIndexToast" })).toEqualTypeOf<Style>();

@@ -54,7 +54,7 @@
     display: inline-block;
     width: var(--tile--scaling-125);
     height: var(--tile--scaling-125);
-    border-radius: var(--tile--border-radius-050);
+    border-radius: 50%; /* A roundel is a share of its own box, so the mark states the shape rather than a step. */
     border-style: var(--tile--border-style);
     border-width: var(--tile--border-width);
     border-color: var(--tile--border-color);
@@ -75,7 +75,7 @@
     border-style: var(--tile--border-style);
     border-width: var(--tile--border-width);
     border-color: var(--tile--border-color);
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
 }
 
 
@@ -114,14 +114,14 @@
 
     & > li:first-child > span {
         border-left-style: var(--tile--border-style);
-        border-top-left-radius: var(--tile--border-radius);
-        border-bottom-left-radius: var(--tile--border-radius);
+        border-top-left-radius: var(--tile--border-radius-025);
+        border-bottom-left-radius: var(--tile--border-radius-025);
     }
 
     & > li:last-child > span {
         border-right-style: var(--tile--border-style);
-        border-top-right-radius: var(--tile--border-radius);
-        border-bottom-right-radius: var(--tile--border-radius);
+        border-top-right-radius: var(--tile--border-radius-025);
+        border-bottom-right-radius: var(--tile--border-radius-025);
     }
 
     /* The reset hands every element the page background, which a label under a swatch has no use for. */
@@ -144,7 +144,7 @@
 
     & > li > span {
         border-style: var(--tile--border-style);
-        border-radius: var(--tile--border-radius);
+        border-radius: var(--tile--border-radius-025);
     }
 
 }

@@ -29,3 +29,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile`: a code span is read as one word, rather than folded at a hyphen or a space
 - `@metreeca/tile-hive`: `host()` fits the root it creates to whatever holds it, so a frame rendered into it fills
   the window rather than standing as tall as its content; a root the document already carries is left as it stands
+
+### Changed
+
+- `@metreeca/tile`: the radius ladder carries lengths, on the steps and in the `em` the spacing ladder is stated in,
+  so a box rounds by the same amount whatever size it is given; `borderRadius025` to `borderRadius100` keep their
+  names and change value from a share of the box to `0.25em`, `0.5em`, `0.75em` and `1em`
+- `@metreeca/tile`: a roundel, an avatar or a pill is a share of its own box rather than a step on a ladder, and is
+  stated by the component drawing it
+
+### Removed
+
+- `@metreeca/tile`: `borderRadius` is dropped, the ladder starting at `borderRadius025` with the same value it
+  carried; a box names the step it rounds on, as it names the step it is spaced on

@@ -71,9 +71,15 @@ tile-tabs {
                 cursor: default;
             }
 
+            /*
+             * A tab carries no box the glow could follow, so it is the label that the glow settles on, and the rule
+             * the label sits over that its lower lobe blends into. The mark it leaves is the one the selected tab
+             * already wears, softened and spread, rather than a second shape drawn around it: the colour the strip
+             * marks its choice with is left to that rule, which a focused tab never restates.
+             */
+
             &:focus-visible {
-                outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
-                outline-offset: 0.1em; /* Clear of the text without reaching the neighbour: below the spacing ladder. */
+                box-shadow: var(--tile--box-shadow-focus);
             }
 
             /* Three times the rule, to read as a highlight. Weight is left alone, since it would reflow the strip. */
@@ -111,26 +117,40 @@ tile-tabs {
      * set off exactly as before. The bar is a flex line rather than a line of text, so nothing of the menu is left
      * hanging over the rule by the descender an inline box reserves.
      *
-     * The bar also holds the gap down to the rule, which the menu would otherwise have carried as padding of its
-     * own: a platform draws the ring around the whole of a control, so a menu padded to clear the rule would be
-     * ringed clear of it too, where the ring is meant to sit on the menu the way the platform draws its own.
+     * The bar holds the gap down to the rule, wide enough for the glow the menu is marked with to fall short of it.
+     * The mark reads as belonging to the control rather than to the rule, which is what a reader expects of a boxed
+     * control, and the rule goes on saying only what it said before: where the section below begins.
      */
 
     & > span {
 
         display: flex;
 
-        padding-bottom: var(--tile--spacing-025);
+        padding-bottom: var(--tile--spacing-050);
 
         border-bottom-style: var(--tile--border-style);
 
         /*
-         * The menu takes the width of its labels, so the ring a platform leaves on it after a choice wraps the
-         * control rather than the whole bar; it gives that width up where the labels outrun the room, the platform
-         * clipping what is left.
+         * The menu takes the width of its labels, so the glow left on it after a choice wraps the control rather
+         * than the whole bar; it gives that width up where the labels outrun the room, the platform clipping what
+         * is left.
          */
 
         & > select {
+
+            /*
+             * The menu is given a box of its own to be marked by: the padding sets it off what surrounds it and the
+             * radius rounds the corners the glow is drawn around. The padding at the sides is taken back as negative
+             * margin, so the box grows around the label without moving it: the menu goes on starting where the first
+             * tab of the strip started, and the section below lines up with both.
+             */
+
+            padding: var(--tile--spacing-025);
+
+            margin-left: calc(-1 * var(--tile--spacing-025));
+            margin-right: calc(-1 * var(--tile--spacing-025));
+
+            border-radius: var(--tile--border-radius-050);
 
             cursor: pointer;
 
@@ -141,14 +161,16 @@ tile-tabs {
             background-color: transparent; /* The page shows through, so the bar reads as the strip it stands in for. */
 
             /*
-             * The ring stands wherever the platform calls the focus worth marking, which for a menu takes in a
+             * The mark stands wherever the platform calls the focus worth showing, which for a menu takes in a
              * pointer choice: the arrow keys work it from there, so the mark is owed. A tab, which the same gesture
              * leaves unmarked, takes no keys of its own until the strip is entered.
+             *
+             * What is owed is the glow the design system marks a control with, which follows the contour the box
+             * above gives it, rounded corners included, and stops short of the rule below.
              */
 
             &:focus-visible {
-                outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
-                outline-offset: 0.1em; /* The nudge a tab takes, below the spacing ladder for the same reason. */
+                box-shadow: var(--tile--box-shadow-focus);
             }
 
             /*
@@ -176,9 +198,10 @@ tile-tabs {
 
         padding-top: var(--tile--spacing-150);
 
+        /* A panel is a box, so the glow follows its contour, the padding setting it clear of what the panel holds. */
+
         &:focus-visible {
-            outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
-            outline-offset: 0.1em; /* The nudge the tab above takes, below the ladder for the same reason. */
+            box-shadow: var(--tile--box-shadow-focus);
         }
 
     }

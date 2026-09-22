@@ -32,7 +32,7 @@
 .badge {
     display: inline-block;
     padding: var(--tile--spacing-025) var(--tile--spacing-050);
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
     background-color: var(--tile--color-warn);
 }
 
@@ -45,7 +45,7 @@
     & > span {
         position: absolute;
         inset: 0;
-        border-radius: var(--tile--border-radius);
+        border-radius: var(--tile--border-radius-025);
     }
 
 }
@@ -82,7 +82,7 @@
     border-style: var(--tile--border-style);
     border-width: var(--tile--border-width);
     border-color: var(--tile--border-color);
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
 
     &.focused {
         color: var(--tile--color-enabled);
@@ -105,7 +105,7 @@
     width: var(--tile--scaling-150);
     height: var(--tile--scaling-150);
     background-color: var(--tile--color-strong);
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
     transition-property: translate;
     transition-duration: var(--tile--duration-normal);
     transition-timing-function: var(--tile--easing-standard);
@@ -129,7 +129,7 @@ tr:hover .slide {
     display: inline-block;
     width: var(--tile--scaling-150);
     height: var(--tile--scaling-150);
-    border-radius: var(--tile--border-radius-050);
+    border-radius: 50%; /* A roundel is a share of its own box, so the mark states the shape rather than a step. */
     border-style: var(--tile--border-style);
     border-width: var(--tile--border-width);
     border-color: var(--tile--border-color);
@@ -168,5 +168,5 @@ tr:hover .slide {
 .themed {
     padding: var(--tile--spacing-100);
     background-color: var(--tile--background-color-edit);
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
 }

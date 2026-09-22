@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
+/*
+ * The focus is marked by the soft glow rather than by a drawn ring. The glow follows whatever contour the control
+ * already carries, its rounded corners included, where an outline states a rectangle of its own and has to be nudged
+ * clear of the text to be read at all. The reset takes the platform ring away, so a control reaching the keyboard
+ * owes the mark, and one styled into a box of its own is marked around that box.
+ */
+
+button, select {
+
+    &:focus-visible {
+        box-shadow: var(--tile--box-shadow-focus);
+    }
+
+}
+
 input {
 
     border-style: var(--tile--border-style);
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
 
     &:focus {
 
@@ -45,7 +60,7 @@ button {
     align-items: center;
     grid-column-gap: var(--tile--spacing-050);
 
-    border-radius: var(--tile--border-radius);
+    border-radius: var(--tile--border-radius-025);
     background-color: transparent;
 
     white-space: nowrap;
@@ -58,11 +73,6 @@ button {
     &:enabled {
 
         cursor: pointer;
-
-        &:focus-visible {
-            outline: var(--tile--border-style) var(--tile--border-width) var(--tile--color-focus);
-            outline-offset: 0.1em;
-        }
 
         &:hover {
             color: var(--tile--color-hover);

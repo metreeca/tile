@@ -36,10 +36,10 @@ import "./style.css";
  * system is retuned over. A token assigned nearer the thing it paints wins, so an area nests inside another and
  * settles what the wider one left.
  *
- * Tokens are named through the {@link @metreeca/tile-skin!tile published contract} rather than as literal strings, so
- * a renamed token breaks the build instead of silently losing its styling; a token mapped to `undefined` is left out,
- * so a conditional override is expressed inline. A screen that already renders an element of its own assigns the same
- * tokens to it with {@link @metreeca/tile-skin!css css}, sparing the extra wrapper.
+ * Tokens are named through the {@link @metreeca/tile-skin!index.tile published contract} rather than as literal
+ * strings, so a renamed token breaks the build instead of silently losing its styling; a token mapped to `undefined`
+ * is left out, so a conditional override is expressed inline. A screen that already renders an element of its own
+ * assigns the same tokens to it with {@link @metreeca/tile-skin!index.css css}, sparing the extra wrapper.
  *
  * The area takes no box of its own, so what it holds sits in the row, the grid or the flow around it exactly as it
  * would without the wrapper. Being an element all the same, it stands between what it holds and whatever encloses
@@ -59,9 +59,9 @@ export function Style({
 }: {
 
 	/**
-	 * The value each token takes inside the area, keyed by {@link @metreeca/tile-skin!Token token name}; a token left
-	 * out or given `undefined` keeps whatever the cascade already gives it. A value naming a token of the same kind
-	 * stands for whatever that one carries, so an area is set from the design system rather than from a literal.
+	 * The value each token takes inside the area, keyed by {@link @metreeca/tile-skin!index.Token token name}; a token
+	 * left out or given `undefined` keeps whatever the cascade already gives it. A value naming a token of the same
+	 * kind stands for whatever that one carries, so an area is set from the design system rather than from a literal.
 	 */
 	css: Tokens
 

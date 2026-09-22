@@ -1,0 +1,5 @@
+{
+  "intentionallyNotExported": [
+    "index.ts:Kind"
+  ]
+}

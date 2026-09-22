@@ -128,9 +128,10 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
 A `*.pure.ts` module is a headless component in its own right, **NEVER** an internal appendix of the widget beside it:
 the suffix names what the module does without, which is a rendering layer, and **NEVER** claims anything about side
 effects. It carries **NO** dependency on Preact, is tested without a DOM, and is documented and versioned like any
-other module, since a second binding reaches the same behaviour by importing it. The generated reference leaves it out
-for now, `typedoc.json` excluding `**/*.pure.ts`, so a published comment **NEVER** links into one. Internals stay in a
-`*.core.ts` module, which the published surface never exposes.
+other module, since a second binding reaches the same behaviour by importing it. The generated reference carries it
+like any other module, a type declared there being public wherever a published signature names it: TypeDoc drops a
+symbol whose module is excluded, re-exported or not, so excluding these would leave a public type undocumented.
+Internals stay in a `*.core.ts` module, which the published surface never exposes.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.pack.ts`
 module, likewise left out of the reference by `typedoc.json`: the documented module beside it is the only path a

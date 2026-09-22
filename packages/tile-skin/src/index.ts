@@ -378,7 +378,8 @@ export function css(tokens: Tokens): Style {
 
 			const property = inherited[token];
 
-			// a value naming a token stands for what that token carries; no CSS value is spelt as a token name, the
+			// a value naming a token stands for what that token carries; no CSS value is spelt as a token name,
+			// the
 			// names being camel-cased identifiers and CSS values keywords, numbers, colours and functions
 
 			const text = typeof value === "string" && value in properties

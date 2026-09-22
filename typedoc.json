@@ -54,7 +54,6 @@
       "src/**/*.{ts,tsx}"
     ],
     "exclude": [
-      "**/*.pure.ts",
       "**/*.core.ts",
       "**/*.pack.ts",
       "**/*.test.ts",

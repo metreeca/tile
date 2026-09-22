@@ -43,7 +43,7 @@ import "./page.css";
  * the column scrolls and a footer beneath what it holds. Every slot is optional and one left out takes no room, so a
  * screen with no tray footer closes up rather than holding a gap for it.
  *
- * Waiting is stated by the page itself: while the {@link @metreeca/tile-data/fetch!Fetch shared client} has exchanges
+ * Waiting is stated by the page itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark in the content
  * header in place of whatever navigation sits there. No call site takes part, so a screen states waiting by
  * performing its exchanges through that client and nothing else. Nothing is taken out of reach meanwhile: the

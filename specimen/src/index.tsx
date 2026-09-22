@@ -37,6 +37,7 @@ import { Style } from "@metreeca/tile-hive/style";
 import { Tabs } from "@metreeca/tile-hive/tabs";
 import { type ComponentChild, render } from "preact";
 import { useState } from "preact/hooks";
+import "./index.css";
 
 
 /**
@@ -88,6 +89,15 @@ function Specimen() {
 	const side = main ? "Show the tray" : "Hide the tray";
 	const measure = wide ? "Cap the measure" : "Take the width";
 
+	function edit() {
+
+		setLock(true);
+
+		setTimeout(() => setLock(false), 1000);
+
+	}
+
+
 	return <Page
 
 		lock={lock}
@@ -103,7 +113,7 @@ function Specimen() {
 				look="subtle"
 				name={tray}
 				title={tray}
-				onClick={() => setLock(!lock)}
+				onClick={edit}
 			/>
 
 		</>}
@@ -176,7 +186,7 @@ function Specimen() {
 
 		}
 
-		copy={<small>{app.copy}</small>}
+		foot={<small>{app.copy}</small>}
 
 	>
 

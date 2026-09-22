@@ -41,7 +41,7 @@ tile-page {
      * gutter of its own with it and step out of the line.
      */
 
-    --tile-page-tray-width: 20rem;
+    --tile-page-tray-width: 15rem;
     --tile-page-main-width: 75rem;
 
     --tile-page-tray-gutter: 1.25rem;
@@ -114,13 +114,27 @@ tile-page {
          * bars of one column and the bars of the other are the same boxes rather than two stacks that happen to
          * agree. The column keeps a box of its own all the same, which is what the tray is painted on and what
          * `inert` takes out of reach as a whole.
+         *
+         * Each part names the row it belongs to rather than falling into the next free one, so a bar the screen gave
+         * nothing to show is left out without the body of that column riding up into the row it held.
          */
 
         display: grid;
         grid-row: 1 / -1;
         grid-template-rows: subgrid;
 
-        /* The bars are outside the scroller, so they need nothing to hold them in place as the body moves. */
+        /* A bar given nothing to show is left out rather than standing as a band of empty page. */
+
+        & > header:empty,
+        & > footer:empty {
+            display: none;
+        }
+
+        /*
+         * The bars are outside the scroller, so they need nothing to hold them in place as the body moves. Each
+         * centres what it holds on the middle of its own box, and the two columns hand their bars to the same rows,
+         * so what stands in one bar stands level with what stands in the other whatever size either was given.
+         */
 
         & > header,
         & > footer {
@@ -138,14 +152,7 @@ tile-page {
 
         & > header {
 
-            /*
-             * The two ends sit on the line they share rather than on the middle of the bar. Centring them holds
-             * their boxes level, which is not the same thing: an end set smaller than the other then floats, its
-             * words riding above the line the bar reads along. The baseline is what the eye follows across, whatever
-             * size either end happens to be set in.
-             */
-
-            align-items: baseline;
+            grid-row: 1;
 
             padding-top: var(--tile-page-bar-inset);
             padding-bottom: var(--tile-page-bar-inset);
@@ -168,6 +175,8 @@ tile-page {
 
         & > section {
 
+            grid-row: 2;
+
             /* The body is the only part that scrolls, which is what leaves the bars standing without being told to. */
 
             overflow: auto;
@@ -175,6 +184,8 @@ tile-page {
         }
 
         & > footer {
+
+            grid-row: 3;
 
             padding-top: var(--tile-page-bar-inset);
             padding-bottom: var(--tile-page-bar-inset);
@@ -297,39 +308,6 @@ tile-page {
 
         }
 
-        /*
-         * The turning mark is placed against the bar rather than laid out in it, which is what keeps it out of the
-         * bar's height: the bar is as tall as what it was given to hold, and since both columns share the row,
-         * anything the mark added or took away would resize the whole frame for as long as an exchange ran. What it
-         * stands in for keeps its place and is merely put out of sight, so the room taken is the same either way and
-         * nothing shifts.
-         *
-         * It is set in from the edge by the column's own gutter, the way everything else in the column is: an
-         * absolutely positioned thing is placed against the padding box, which the padding is inside of, so an
-         * offset of nothing would leave the mark on the outer edge rather than where the navigation it covers sits.
-         *
-         * A control holds its own mark in off its edge, so stopping at the column edge would leave the turning mark
-         * standing a step to the right of the mark it replaced. The step it gives back is the one a control insets
-         * by, which is what lands the two on the same spot.
-         */
-
-        & > header {
-
-            position: relative;
-
-            & > .lucide {
-                position: absolute;
-                right: calc(var(--tile-page-main-gutter) + var(--tile--spacing-050));
-                top: 50%;
-                translate: 0 -50%;
-            }
-
-            & > .busy {
-                visibility: hidden;
-            }
-
-        }
-
     }
 
     /* Content a window never has too much room for takes the whole of it, the measure being no help to a grid. */
@@ -342,9 +320,12 @@ tile-page {
      * The mark turns for as long as the frame is busy, at twice the slowest step, which is the one change here that
      * covers no distance and so has no step of its own. A reader who asked for less motion gets a still mark, the
      * duration collapsing to zero with every other, with no rule of its own.
+     *
+     * It is reached by a class of its own rather than by the name lucide writes on the glyph, which an app is free to
+     * show anywhere for anything: a mark turns here because it stands for waiting, never because of what it draws.
      */
 
-    & .lucide-loader-circle {
+    & > main > header .busy {
         animation: tile-page-turn calc(2 * var(--tile--duration-slow)) linear infinite;
     }
 

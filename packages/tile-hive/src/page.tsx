@@ -23,7 +23,7 @@
  * @module
  */
 
-import { classes } from "@metreeca/tile-cell";
+import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { useFetching } from "@metreeca/tile-data/fetch";
 import { type ComponentChildren, createElement } from "preact";
@@ -78,17 +78,15 @@ export function Page({
 
 	logo,
 	meta,
+	tray,
+	info,
 
 	done,
 	back,
 
 	head,
 	menu,
-
-	tray,
-
-	info,
-	copy,
+	foot,
 
 	children
 
@@ -118,44 +116,19 @@ export function Page({
 	wide?: boolean
 
 	/**
-	 * The mark the app is recognised by, shown at the head of the tray.
+	 * The mark the app is recognised by, standing at the head of the tray.
 	 */
 	logo?: ComponentChildren
 
 	/**
-	 * What the app says about itself beside the mark, such as the name and the release on show.
+	 * What stands opposite the mark at the head of the tray, such as the release on show or a standing control.
 	 */
 	meta?: ComponentChildren
 
 	/**
-	 * The control leaving the content of the moment, shown at the head of the content column in place of `head`,
-	 * which is what marks the screen as one the reader is finished with rather than one they arrived at.
-	 */
-	done?: ComponentChildren
-
-	/**
-	 * The control returning to the step before, shown at the end of the content header; superseded by the turning
-	 * mark while the shared client is busy.
-	 */
-	back?: ComponentChildren
-
-	/**
-	 * What the content of the moment is called, which for a screen describing a resource is that resource's own
-	 * label. It heads the content column unless `done` stands there instead, and names the content landmark either
-	 * way, so a reader arriving at it hears which screen they are on.
-	 */
-	head?: ComponentChildren
-
-	/**
-	 * The control opening what the screen keeps out of the way, shown at the end of the content header where `back`
-	 * is left out; superseded by the turning mark while the shared client is busy.
-	 */
-	menu?: ComponentChildren
-
-	/**
-	 * The standing controls the tray holds, such as the sections of the app and the filters in force. The tray is a
-	 * complementary landmark carrying no name of its own, so a group within it that a reader would want to reach
-	 * directly, a navigation block above all, names itself as it is put in.
+	 * The standing controls the tray holds, such as the sections of the app and the filters in force. The tray
+	 * carries no name of its own, so a group a reader would want to reach directly, a navigation block above all,
+	 * names itself as it is put in.
 	 */
 	tray?: ComponentChildren
 
@@ -165,12 +138,37 @@ export function Page({
 	info?: ComponentChildren
 
 	/**
-	 * What stands at the foot of the content, such as the copyright and the terms.
+	 * The way out of the content of the moment, standing at the head of the content column in place of `head` and
+	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
+	 * they simply arrived at.
 	 */
-	copy?: ComponentChildren
+	done?: ComponentChildren
 
 	/**
-	 * The content of the moment, filling the column beside the tray.
+	 * The control returning to the step before, standing at the end of the content header and taking the place `menu`
+	 * would have had; it gives way to the turning mark while an exchange is in flight.
+	 */
+	back?: ComponentChildren
+
+	/**
+	 * What the content of the moment is called. It heads the content column unless `done` stands there instead, and
+	 * names the content landmark either way, so a reader arriving at it hears which screen they are on.
+	 */
+	head?: ComponentChildren
+
+	/**
+	 * The control opening whatever the screen holds back, standing at the end of the content header where `back` is
+	 * left out; it gives way to the turning mark while an exchange is in flight.
+	 */
+	menu?: ComponentChildren
+
+	/**
+	 * What stands at the foot of the content, such as the copyright and the terms.
+	 */
+	foot?: ComponentChildren
+
+	/**
+	 * The content of the moment, filling the body of the content column.
 	 */
 	children?: ComponentChildren
 
@@ -208,33 +206,39 @@ export function Page({
 
 		{!main && <aside inert={lock}>
 
-			<header>
+            <header>
 				{logo && <span>{logo}</span>}
 				{meta && <span>{meta}</span>}
-			</header>
+            </header>
 
-			<section>{tray}</section>
-			<footer>{info}</footer>
+            <section>{tray}</section>
+            <footer>{info}</footer>
 
-		</aside>}
+        </aside>}
 
 		<main aria-labelledby={title}>
 
-			{/*
-			 * The mark stands over the navigation rather than in place of it: what it covers keeps its place and is
-			 * merely put out of sight, so the bar is the same height waiting or not and nothing shifts underneath a
-			 * reader. Being out of sight takes it out of the accessibility tree and out of reach with it, so nothing
-			 * answers a gesture while it cannot be seen.
-			 */}
+			{
+
+				// The mark takes the navigation's place for as long as an exchange runs, standing in the bar like
+				// everything else rather than being laid over it. It is drawn as the control it stands in for, so
+				// the bar is the same size either way, and the whole end is made inert meanwhile: waiting is already
+				// stated by `aria-busy` on the frame, so a reader meets nothing here and nothing answers a gesture.
+
+			}
 
 			<header>
 				{lead && <span id={title}>{lead}</span>}
-				{tail && <span class={classes({ busy: fetching })}>{tail}</span>}
-				{fetching && <Icon.LoaderCircle/>}
+				{(tail || fetching) && <span inert={fetching}>{fetching
+
+					? <Button icon={<Icon.RefreshCw class="busy"/>} look="subtle" name="Waiting"/>
+					: tail
+
+				}</span>}
 			</header>
 
 			<section>{children}</section>
-			<footer>{copy}</footer>
+			<footer>{foot}</footer>
 
 		</main>
 

@@ -30,12 +30,6 @@ import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
 import "./page.css";
 
-// !!! responsive layout
-
-// !!! faults: the trace and the error boundary the legacy frame carried have no counterpart here yet, faults being
-// !!! raised against the @metreeca/tile-data/faults context and shown by whoever the app puts in charge of showing them
-
-
 /**
  * Creates a page.
  *
@@ -45,11 +39,12 @@ import "./page.css";
  * rather than holding a gap for it.
  *
  * Waiting is stated by the page itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
- * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark in the content
- * header in place of whatever navigation sits there. No call site takes part, so a screen states waiting by
- * performing its exchanges through that client and nothing else. Nothing is taken out of reach meanwhile: the
- * content is on its way out rather than unavailable, and a gesture that must not be repeated while an exchange runs
- * is held back by the control offering it.
+ * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark at the end of the
+ * content header, in place of whatever navigation sits there. Nothing else moves while it stands: a screen with no
+ * content header is not given one for the duration, and a header that stands keeps the height it had. No call site
+ * takes part, so a screen states waiting by performing its exchanges through that client and nothing else. Nothing is
+ * taken out of reach meanwhile: the content is on its way out rather than unavailable, and a gesture that must not be
+ * repeated while an exchange runs is held back by the control offering it.
  *
  * The columns are landmarks a reader moves between directly. The content is named by the heading it is already
  * showing, whether that is `head` or the `done` standing in for it, so a reader arriving at it hears which screen
@@ -218,22 +213,26 @@ export function Page({
 
 		<main aria-labelledby={title}>
 
-			{/*
-			 * The mark takes the navigation's place for as long as an exchange runs, standing in the bar like
-			 * everything else rather than being laid over it. It is drawn as the control it stands in for, so
-			 * the bar is the same size either way, and the whole end is made inert meanwhile: waiting is already
-			 * stated by `aria-busy` on the frame, so a reader meets nothing here and nothing answers a gesture.
-			 */}
-
 			<header>
 				{lead && <span id={title}>{lead}</span>}
-				{(tail || fetching) && <span inert={fetching}>{fetching
-
-					? <Button icon={<Icon.RefreshCw class="busy"/>} look="subtle" name="Waiting"/>
-					: tail
-
-				}</span>}
+				{tail && <span inert={fetching}>{tail}</span>}
 			</header>
+
+			{/*
+			 * The mark stands in the row the header is laid in without standing in the header itself: a bar the
+			 * screen gave nothing to show is left out, and waiting has no business bringing one back. It takes the
+			 * navigation's place for as long as an exchange runs, the end of the bar being taken off show meanwhile,
+			 * and the bar keeps the height its own content asks for either way.
+			 *
+			 * It is drawn as the control it stands in for, so it comes to rest exactly where the control it covers
+			 * stood, with nothing measured off by hand. The whole of it is made inert: waiting is already stated by
+			 * `aria-busy` on the frame, so a reader meets nothing here, the name the control type asks for never
+			 * reaches anybody, and nothing answers a gesture.
+			 */}
+
+			{fetching && <span class="busy" inert>
+				<Button icon={<Icon.RefreshCw/>} look="subtle" name="Waiting"/>
+			</span>}
 
 			<section>{children}</section>
 			<footer>{foot}</footer>

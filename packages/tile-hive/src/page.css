@@ -410,6 +410,10 @@ tile-page {
 
     & > main {
 
+        /* The column is the box the mark hangs from, which is what places the mark in the row the header is laid in. */
+
+        position: relative;
+
         /*
          * The content is capped at the reading measure and centred in whatever room the window leaves beyond it. The
          * centring is asked of the row each part sits in rather than of a pair of automatic margins, so every part
@@ -427,25 +431,79 @@ tile-page {
 
         }
 
+        /*
+         * The navigation the mark stands in for is taken off show as well as out of reach, so the two are never read
+         * as standing one on top of the other. It keeps its place in the bar all the same, which is what holds the
+         * bar at the height it had. Reach is settled by `inert` on the element, and the rule reads the attribute the
+         * markup already owes rather than asking for a class saying the same thing again.
+         */
+
+        & > header > span[inert] {
+            visibility: hidden;
+        }
+
+        /*
+         * The mark hangs over the header row rather than standing in it. A bar the screen gave nothing to show is
+         * left out, and waiting has no business bringing one back: out of flow, the mark neither makes a bar where
+         * there was none nor adds to the height of one that stands, whatever that bar happens to hold. A screen with
+         * no bar at all leaves the row closed up and the mark comes to rest in the band the body already holds clear
+         * at its top.
+         *
+         * Where it comes to rest is settled by giving it the bar's own box rather than by measuring anything off: it
+         * takes the whole of the row, reads the same insets the header reads and the same measure and gutter every
+         * part of the column reads, and lays out what it holds the way the header lays out its ends. What it holds
+         * is the control it stands in for, so the two agree down to the air a glyph is drawn with, and a retuned
+         * button or a retuned bar carries the mark along with no offset left behind to go stale.
+         *
+         * It answers no gesture, the column underneath keeping the pointer and the wheel.
+         */
+
+        & > .busy {
+
+            /*
+             * Both lines are named, where a part standing in the row names the row alone: a line left to `auto` on a
+             * box out of flow falls to the edge of the column rather than to the line after, which would leave the
+             * mark standing over the whole of it.
+             */
+
+            grid-row: 1 / 2;
+
+            position: absolute;
+            top: 0;
+            bottom: 0;
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+
+            padding-top: var(--tile-page-head-inset-top);
+            padding-bottom: var(--tile-page-head-inset-bottom);
+
+            pointer-events: none;
+
+            /*
+             * The mark turns for as long as the frame is busy, at twice the slowest step, which is the one change
+             * here that covers no distance and so has no step of its own. A reader who asked for less motion gets a
+             * still mark, the duration collapsing to zero with every other, with no rule of its own.
+             *
+             * The glyph is reached as the drawing the mark holds rather than by the name lucide writes on it, which
+             * an app is free to show anywhere for anything: a mark turns here because it stands for waiting, never
+             * because of what it draws.
+             */
+
+            & svg {
+                animation: tile-page-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+            }
+
+        }
+
     }
 
     /* Content a window never has too much room for takes the whole of it, the measure being no help to a grid. */
 
     &[wide] > main > * {
         max-width: none;
-    }
-
-    /*
-     * The mark turns for as long as the frame is busy, at twice the slowest step, which is the one change here that
-     * covers no distance and so has no step of its own. A reader who asked for less motion gets a still mark, the
-     * duration collapsing to zero with every other, with no rule of its own.
-     *
-     * It is reached by a class of its own rather than by the name lucide writes on the glyph, which an app is free to
-     * show anywhere for anything: a mark turns here because it stands for waiting, never because of what it draws.
-     */
-
-    & > main > header .busy {
-        animation: tile-page-turn calc(2 * var(--tile--duration-slow)) linear infinite;
     }
 
 }

@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@metreeca/core": "^0.10.0",
-    "@metreeca/tile-skin": "^0.1.0"
+    "@metreeca/tile": "^0.1.0"
   },
   "devDependencies": {
     "preact": "^10.29.8",

@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile-form)](https://www.npmjs.com/package/@metreeca/tile-form)
 
-Preact linked data editors for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Preact linked data forms for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 A consumer turns a described resource into an editable form: the shape decides which properties are offered, what each
 one accepts and when a value is valid, so editing rules stay with the model rather than being restated per screen.

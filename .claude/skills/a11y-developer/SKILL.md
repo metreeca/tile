@@ -74,11 +74,11 @@ Activation lives in the model, focus in the DOM, and the element to focus exists
 A key-driven move therefore records that focus is owed, and the effect for that render hands it over. Focus moves only
 where the interaction implies it: a pointer activation leaves focus where the browser put it.
 
-## What the Skin Does Not Cover
+## What the Design System Does Not Cover
 
-`@metreeca/tile-skin` styles `:focus-visible` for native controls only, so an element made focusable by `tabIndex`
-needs its own focus ring. State **NEVER** rests on colour alone: the mark on a selected item stands alongside a text
-colour and the state attribute an assistive technology reads.
+`@metreeca/tile` styles `:focus-visible` for native controls only, so an element made focusable by `tabIndex` needs
+its own focus ring. State **NEVER** rests on colour alone: the mark on a selected item stands alongside a text colour
+and the state attribute an assistive technology reads.
 
 # Workflow
 

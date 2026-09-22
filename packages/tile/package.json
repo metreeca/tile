@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile-skin",
+  "name": "@metreeca/tile",
   "version": "0.1.0",
-  "description": "Design system for @metreeca/tile interfaces.",
+  "description": "Design system for Metreeca Tile interfaces.",
   "keywords": [
     "typescript",
     "css",
@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metreeca/tile.git",
-    "directory": "packages/tile-skin"
+    "directory": "packages/tile"
   },
   "type": "module",
   "sideEffects": [

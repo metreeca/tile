@@ -15,6 +15,8 @@
  */
 
 import { InternalServerError, NotFound } from "@metreeca/http";
+import { css, type Property, tile } from "@metreeca/tile";
+import "@metreeca/tile/index.css";
 import { Fault } from "@metreeca/tile-cell/fault";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
@@ -26,8 +28,6 @@ import { host } from "@metreeca/tile-hive";
 import { Page } from "@metreeca/tile-hive/page";
 import { Style } from "@metreeca/tile-hive/style";
 import { Tabs } from "@metreeca/tile-hive/tabs";
-import { css, type Property, tile } from "@metreeca/tile-skin";
-import "@metreeca/tile-skin/index.css";
 import { type ComponentChild, Fragment, render } from "preact";
 import { useState } from "preact/hooks";
 import "./index.css";

@@ -13,7 +13,7 @@ system over an area so a toolbar, a panel or a whole screen is written in a sing
 it repeating the same value, and a widget asking for something of its own still getting it.
 
 Styling is structural only: what an arrangement needs to work, with the values behind colour, type and spacing left to
-[@metreeca/tile-skin](https://www.npmjs.com/package/@metreeca/tile-skin) or to whoever styles the app.
+[@metreeca/tile](https://www.npmjs.com/package/@metreeca/tile) or to whoever styles the app.
 
 # Installation
 

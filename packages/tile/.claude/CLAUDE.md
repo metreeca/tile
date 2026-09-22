@@ -8,7 +8,7 @@
 
 # Overview
 
-`@metreeca/tile-skin` is the design system: a token layer and the base rules applying it to plain document markup. It
+`@metreeca/tile` is the design system: a token layer and the base rules applying it to plain document markup. It
 carries no components and no behaviour, and nothing in it imports a rendering framework.
 
 # Module Layout
@@ -104,9 +104,9 @@ The whole design system sits in one cascade layer, `tile`. Each module is import
 ```
 
 What this buys is a single guarantee: **an unlayered rule beats every layered one**, whatever the specificity and
-whatever order the stylesheets reach the document in. An app or a binding package therefore overrides the skin by
-writing an ordinary rule, with no `!important`, no specificity inflation and no control over load order. It is what
-lets the specimen state the brand in an inline `<style>` and still win over the bundle vite injects afterwards.
+whatever order the stylesheets reach the document in. An app or a binding package therefore overrides the design
+system by writing an ordinary rule, with no `!important`, no specificity inflation and no control over load order. It
+is what lets the specimen state the brand in an inline `<style>` and still win over the bundle vite injects afterwards.
 
 Three rules follow, and they are the whole of the discipline:
 
@@ -130,8 +130,8 @@ identically inside it.
 
 > [!WARNING]
 >
-> Layering removes specificity from the comparison **between** stylesheets: a skin rule can no longer outrank a
-> component rule, however specific it is. Nothing relies on that today, since no module here selects `label` or `nav`,
+> Layering removes specificity from the comparison **between** stylesheets: a design system rule can no longer outrank
+> a component rule, however specific it is. Nothing relies on that today, since no module here selects `label` or `nav`,
 > which is where `tile-hive` competes. Adding a high-specificity base rule for an element a component also styles is
 > the case to watch.
 

@@ -11,7 +11,7 @@ takes its behaviour from the state it observes, so what it does is retuned witho
 looks like.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
-[@metreeca/tile-skin](https://www.npmjs.com/package/@metreeca/tile-skin) or to whoever styles the app.
+[@metreeca/tile](https://www.npmjs.com/package/@metreeca/tile) or to whoever styles the app.
 
 # Installation
 

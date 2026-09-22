@@ -1,8 +1,8 @@
-# @metreeca/tile-skin
+# @metreeca/tile
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile-skin)](https://www.npmjs.com/package/@metreeca/tile-skin)
+[![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
-Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Design system for [Metreeca Tile](https://github.com/metreeca/tile) interfaces.
 
 An app includes the stylesheet and gets a coherent look across every Tile component: a token layer defining colour,
 type, spacing, sizing and focus affordances, and base rules applying them to plain document markup. Redefining a token
@@ -20,7 +20,7 @@ naming contract, published here as typed constants.
 # Installation
 
 ```shell
-npm install @metreeca/tile-skin
+npm install @metreeca/tile
 ```
 
 > [!WARNING]
@@ -33,12 +33,12 @@ npm install @metreeca/tile-skin
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-skin.html).
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile.html).
 
 Include the stylesheet once, at the entry point of the app, ahead of the app styles overriding it:
 
 ```typescript
-import "@metreeca/tile-skin/index.css";
+import "@metreeca/tile/index.css";
 ```
 
 An app assembling its own HTML links it in the document head instead: the stylesheet has to reach the document before
@@ -208,7 +208,7 @@ Restyle a single subtree instead by assigning the tokens inline, naming them thr
 as literal strings, so a renamed token breaks the build instead of silently losing its styling:
 
 ```tsx
-import { css } from "@metreeca/tile-skin";
+import { css } from "@metreeca/tile";
 
 <section style={css({ colorStrong: "#D60" })}>
 ```
@@ -218,7 +218,7 @@ the element it applies to, rather than a copy of the default, and keep whatever 
 scheme in force:
 
 ```typescript
-import { tile } from "@metreeca/tile-skin";
+import { tile } from "@metreeca/tile";
 
 getComputedStyle(element).getPropertyValue(tile.colorStrong);
 ```

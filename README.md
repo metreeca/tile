@@ -6,20 +6,20 @@ Model-driven user interfaces for queryable linked data APIs.
 [@metreeca/qest](https://github.com/metreeca/qest) API already defines. Behaviour lives in state a component only
 observes, so the same screen logic serves any rendering layer.
 
-- **Preact Bindings**: the contexts and hooks a component is wired to, the widgets, layouts and containers it is
-  assembled from, and the views and editors built over them; the state itself stays framework-agnostic
 - **Model-Driven**: the shape of a resource decides the controls offered for it, so a model change reaches the interface
   without a matching interface change
 - **Live Data**: reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store, sharing the
   caching, batching and validation the rest of the stack relies on
+- **Preact Bindings**: the contexts and hooks a component is wired to, the widgets, layouts and containers it is
+  assembled from, and the views and forms built over them; the state itself stays framework-agnostic
 - **Design System**: an optional token layer styling whatever a binding renders; components stay usable without it, both
   sides honouring the same token naming contract
 
 # Installation
 
 ```shell
-npm install @metreeca/tile-<binding>  # Preact binding package, one per component layer
-npm install @metreeca/tile-skin       # design system package, optional
+npm install @metreeca/tile            # design system package, optional
+npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 ```
 
 > [!WARNING]
@@ -33,12 +33,14 @@ styles whatever a binding renders.
 
 | Package               | Description            |
 |-----------------------|------------------------|
+| [@metreeca/tile]      | Design system          |
 | [@metreeca/tile-data] | Contexts and hooks     |
 | [@metreeca/tile-cell] | Widgets and controls   |
 | [@metreeca/tile-hive] | Layouts and containers |
 | [@metreeca/tile-lens] | Linked data views      |
-| [@metreeca/tile-form] | Linked data editors    |
-| [@metreeca/tile-skin] | Design system          |
+| [@metreeca/tile-form] | Linked data forms      |
+
+[@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
 [@metreeca/tile-data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.html
 
@@ -49,8 +51,6 @@ styles whatever a binding renders.
 [@metreeca/tile-lens]: https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html
 
 [@metreeca/tile-form]: https://metreeca.github.io/tile/modules/_metreeca_tile-form.html
-
-[@metreeca/tile-skin]: https://metreeca.github.io/tile/modules/_metreeca_tile-skin.html
 
 # Usage
 

@@ -6,13 +6,13 @@
   },
   "references": [
     {
+      "path": "../tile/tsconfig.build.json"
+    },
+    {
       "path": "../tile-cell/tsconfig.build.json"
     },
     {
       "path": "../tile-data/tsconfig.build.json"
-    },
-    {
-      "path": "../tile-skin/tsconfig.build.json"
     }
   ],
   "exclude": [

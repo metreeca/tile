@@ -6,7 +6,7 @@
   },
   "references": [
     {
-      "path": "../tile-skin/tsconfig.build.json"
+      "path": "../tile/tsconfig.build.json"
     }
   ],
   "exclude": [

@@ -61,7 +61,7 @@ emits nothing.
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
 `tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
-the views and editors built over them). A binding package adds observation and rendering over state it never redefines:
+the views and forms built over them). A binding package adds observation and rendering over state it never redefines:
 behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour
 without restating it.
 
@@ -77,6 +77,9 @@ Every package states its summary in three places, which **MUST** be kept aligned
   project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
+
+The suffix names the family a package belongs to, so `@metreeca/tile` itself names the project instead, as
+`<summary> for Metreeca Tile interfaces.`, rather than pointing at itself.
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the

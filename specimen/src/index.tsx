@@ -83,7 +83,7 @@ function Specimen() {
 	const [main, setMain] = useState(false);
 	const [wide, setWide] = useState(false);
 
-	const [reader, setReader] = useState<string>();
+	const [user, setUser] = useState<string>();
 
 	const tray = lock ? "Release the tray" : "Lock the tray";
 	const side = main ? "Show the tray" : "Hide the tray";
@@ -160,18 +160,18 @@ function Specimen() {
 
 		</>}
 
-		info={reader
+		info={user
 
 			? <>
 
-				<small>{reader}</small>
+				<small>{user}</small>
 
 				<Button
 					icon={<Icon.LogOut/>}
 					look="subtle"
 					name="Sign out"
 					title="Sign out"
-					onClick={() => setReader(undefined)}
+					onClick={() => setUser(undefined)}
 				/>
 
 			</>
@@ -181,7 +181,7 @@ function Specimen() {
 				look="subtle"
 				name="Sign in"
 				title="Sign in"
-				onClick={() => setReader("reader@example.com")}
+				onClick={() => setUser("user@example.com")}
 			/>
 
 		}

@@ -48,6 +48,14 @@ tile-logo {
     white-space: nowrap;
 
     /*
+     * The wording is set in the heading face, so the lockup reads as a mark rather than as running text. The mark is
+     * measured in `cap`, which is read off that face, so it follows the swap on its own.
+     */
+
+    font-family: var(--tile--font-family-heading);
+    letter-spacing: var(--tile--letter-spacing-heading);
+
+    /*
      * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app
      * changing its face carries the lockup along rather than needing a figure retuned.
      *

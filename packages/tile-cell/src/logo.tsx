@@ -31,16 +31,17 @@ import "./logo.css";
 /**
  * Creates a logo.
  *
- * Shows the app icon as a square standing exactly as tall as the capitals around it and sitting on their baseline, so
- * a heading, a toolbar or a footer carries the mark without a measure of its own and the mark reads as part of the
- * line rather than as something dropped into it. The mark is fitted to that square whatever its proportions, so a
- * wide or a tall one is shown whole rather than cropped.
+ * Shows the app icon as a square measured against the capitals beside it and sitting on their baseline, so a heading,
+ * a toolbar or a footer carries the mark without a measure of its own and the mark reads as part of the line rather
+ * than as something dropped into it. The mark is fitted to that square whatever its proportions, so a wide or a tall
+ * one is shown whole rather than cropped.
  *
  * Whatever stands for the app beside the mark, its name above all, is handed over as the children and set in a row
  * with it, so the two travel as one thing: a screen places the lockup rather than placing a mark and a name and
- * keeping them together itself. A document stating no icon leaves the row holding only what it was given, so a
- * screen assembled around the mark closes up rather than holding a gap for it, and a logo with neither mark nor
- * anything beside it leaves nothing behind at all.
+ * keeping them together itself. The wording is set in the heading face whatever the line around it is written in, so
+ * the lockup reads as a mark rather than as running text, and an app changing that face carries it along. A document
+ * stating no icon leaves the row holding only what it was given, so a screen assembled around the mark closes up
+ * rather than holding a gap for it, and a logo with neither mark nor anything beside it leaves nothing behind at all.
  *
  * The mark is left out of the accessibility tree unless `name` states what it stands for, so a logo standing beside
  * the app name is read once. It survives a forced colour scheme and a printed page, where a background image would be

@@ -221,7 +221,11 @@ tile-tabs {
 
         padding-top: var(--tile--spacing-150);
 
-        /* A panel is a box, so the ring is drawn on its contour, the padding setting it clear of what it holds. */
+        /*
+         * A panel takes no stop of its own, so it reaches the keyboard only where it is the box that scrolls and the
+         * browser hands it one on that account. It is a box either way, so the ring is drawn on its contour, the
+         * padding setting it clear of what it holds.
+         */
 
         &:focus-visible {
             outline: var(--tile--outline-focus);

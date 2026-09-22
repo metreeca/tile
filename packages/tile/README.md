@@ -77,7 +77,9 @@ A widget says what it is for through at most two attributes, and they never comp
 **`look` — how loud it appears.** Structural, carried by layout, weight and border rather than by colour: `subtle`
 recedes, `normal` is ordinary, `strong` is larger, earlier, heavier and bounded, and would read as strong in a
 single-colour interface. The pair is the one the colour anchors already use, so a single vocabulary names this axis
-throughout.
+throughout. A widget offers the steps that say something about it and names them in its own documentation, so a tab
+strip with no form louder than its rule takes `subtle` and `normal` alone, and an area written in a step it does not
+offer lands on the nearest one it does.
 
 A widget stating no `look` takes the one the area around it is written in, from `--tile--look`, which is `normal`
 where nothing assigns it. An app quietens a whole toolbar, panel or screen by assigning the token there, and the one

@@ -63,6 +63,9 @@ import "./tabs.css";
 export function Tabs({
 
 	name,
+
+	look,
+
 	panels
 
 }: {
@@ -72,6 +75,20 @@ export function Tabs({
 	 * offered as a strip or as a menu; unnamed if omitted.
 	 */
 	name?: string
+
+	/**
+	 * How loud the tabs appear, told in the rule closing them off rather than in colour, so the step still reads
+	 * where colour does not: `normal` carries the rule, setting the panel on show apart from the strip or from the
+	 * menu standing in for it, and `subtle` keeps none, the labels then reading as part of what surrounds them. The
+	 * mark the chosen tab wears stays either way, so the choice is as plain under one step as under the other. No
+	 * loud step is offered, a rule being as far as a strip goes.
+	 *
+	 * Tabs stating nothing take the look the area around them is written in, from the `--tile--look` token the design
+	 * system carries, which is `normal` where nothing assigns it; an area written loud lands on `normal` as well,
+	 * there being no step above it here. A look stated here answers to that alone, so a strip asking for the rule
+	 * keeps it inside a quietened panel.
+	 */
+	look?: "subtle" | "normal"
 
 	/**
 	 * The content of each panel, keyed by the label activating it and presented in key order; a label given no content
@@ -123,7 +140,12 @@ export function Tabs({
 
 	}), [strip]);
 
-	return createElement("tile-tabs", { collapsed },
+	/*
+	 * A look the consumer leaves out leaves the attribute off the element, which is what lets the stylesheet tell
+	 * tabs asking for the ordinary step from ones taking whatever the area around them is written in.
+	 */
+
+	return createElement("tile-tabs", { collapsed, look },
 
 		<nav
 

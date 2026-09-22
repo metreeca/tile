@@ -194,6 +194,32 @@ tile-tabs {
 
     }
 
+    /*
+     * How loud the tabs appear is told in the rule closing them off, and never in colour. The quiet step keeps none,
+     * the labels reading as part of what surrounds them where the ordinary step sets the panel on show apart from
+     * them. The strip and the bar standing in for it drop the rule alike, so the two go on looking the same, and the
+     * mark the chosen tab wears stays either way: it is what the strip says its choice with rather than part of the
+     * rule.
+     */
+
+    &[look="subtle"] {
+
+        & > nav,
+        & > span {
+            border-bottom-style: none;
+        }
+
+        /*
+         * With no rule to stand clear of, the label closes the room below it to the step below, which is what draws
+         * the mark the chosen tab wears up against the word it marks.
+         */
+
+        & > nav > label {
+            padding-bottom: var(--tile--spacing-025);
+        }
+
+    }
+
     & > div {
 
         padding-top: var(--tile--spacing-150);
@@ -204,6 +230,33 @@ tile-tabs {
             box-shadow: var(--tile--box-shadow-focus);
         }
 
+    }
+
+}
+
+
+/*
+ * Tabs stating no look of their own take the one the area around them is written in, read off the `--tile--look`
+ * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every widget
+ * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
+ * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
+ * rule here holds itself to tabs carrying none.
+ *
+ * Only the quiet step is restated, the ordinary one being what the rules above already draw; an area written loud
+ * lands there too, there being no step above it here. The declarations are the ones the attribute rules carry,
+ * restated rather than shared: a style query is a conditional group and takes rules of its own, so the two forms of
+ * the same step cannot be written as one selector.
+ */
+
+@container style(--tile--look: subtle) {
+
+    tile-tabs:not([look]) > nav,
+    tile-tabs:not([look]) > span {
+        border-bottom-style: none;
+    }
+
+    tile-tabs:not([look]) > nav > label {
+        padding-bottom: var(--tile--spacing-025);
     }
 
 }

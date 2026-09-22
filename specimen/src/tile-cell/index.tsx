@@ -328,7 +328,7 @@ export function Widgets() {
 
 		<div class="notes">
 			<Note><div>Nothing to show here</div></Note>
-			<Note warning><div>{"The resource you're\nlooking for is missing"}</div></Note>
+			<Note level="critical"><div>{"The resource you're\nlooking for is missing"}</div></Note>
 			<Note text="Discard the changes?" onAccept={() => {}}/>
 		</div>
 

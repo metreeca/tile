@@ -18,7 +18,7 @@
  * Note.
  *
  * Offers the notice a screen shows where it has nothing else to put, whether an aside, a failure or a question,
- * marked with a glyph and centred in the space it is given.
+ * centred in the space it is given and marked with a glyph unless the reader is asked to answer it.
  *
  * @module
  */
@@ -38,7 +38,8 @@ import "./note.css";
  * mark on its own, above what the body carries.
  *
  * Where the reader is asked something, `onAccept` turns the head into a native control, so the activation by `Enter`
- * and `Space`, the tab stop and the focus ring come with it rather than having to be asked for.
+ * and `Space`, the tab stop and the focus ring come with it rather than having to be asked for. The head then stands
+ * on its wording alone, the box around it saying that it answers to a click where a glyph would say it twice.
  *
  * A note telling of a failure is read out as soon as it reaches the page, so a reader who does not see it learns of
  * the failure where they expected the answer; an aside waits to be come upon in reading order.
@@ -49,9 +50,8 @@ import "./note.css";
  */
 export function Note({
 
-	warning = false,
-
 	icon,
+	level = "normal",
 	text,
 
 	onAccept,
@@ -61,23 +61,29 @@ export function Note({
 }: {
 
 	/**
-	 * Whether the note tells of a failure rather than of an aside: the headline is set heavier, the glyph is drawn in
-	 * the colour a failure is told in, and the notice is read out as soon as it reaches the page rather than waiting
-	 * to be come upon; an aside if omitted.
-	 */
-	warning?: boolean
-
-	/**
 	 * The glyph marking the notice, kept out of the accessibility tree unless it carries a label of its own, so that
-	 * the note is read by its headline; the mark matching the kind of notice if omitted, that is an alert for a
-	 * warning, a question mark where the reader is asked something, and an information mark otherwise.
+	 * the note is read by its headline; the mark matching the kind of notice if omitted, that is an alert where the
+	 * passage carries a caution or tells of a failure and an information mark otherwise. A note the reader answers
+	 * shows no mark at all, so what is given here plays no part alongside `onAccept`.
 	 */
 	icon?: ComponentChildren
 
 	/**
-	 * The headline the notice is read by, required where `onAccept` makes the head a control, which a glyph standing
-	 * alone would leave unnamed. It is kept on the one line the head occupies, so wording asking for more room
-	 * belongs in the body.
+	 * How much attention the passage deserves, told in the weight of the headline and the colour of the mark on the
+	 * four-step scale every meaning in the interface lands on: `info` states something no verdict has been passed on
+	 * (`info`), `highlight` singles out a passage worth having (`pass`), `warning` carries a caveat the reader is to
+	 * weigh (`warn`), `critical` tells of a failure (`fail`), and `normal`, the default, says nothing in particular
+	 * and takes no colour at all. A level is never told in colour alone, so a note carrying one says the same thing
+	 * in its mark and its wording.
+	 *
+	 * A note telling of a failure is read out as soon as it reaches the page rather than waiting to be come upon.
+	 */
+	level?: "normal" | "info" | "highlight" | "warning" | "critical"
+
+	/**
+	 * The headline the notice is read by, required where `onAccept` makes the head a control, which carries no mark
+	 * to name it by. It is kept on the one line the head occupies, so wording asking for more room belongs in the
+	 * body.
 	 */
 	text?: string
 
@@ -101,10 +107,10 @@ export function Note({
 
 } & ({ onAccept?: undefined } | { text: string })) {
 
-	const $icon = icon ?? (warning ? <Icon.Alert/> : onAccept ? <Icon.Help/> : <Icon.Info/>);
+	const $icon = icon ?? (level === "warning" || level === "critical" ? <Icon.Alert/> : <Icon.Info/>);
 
 	/*
-	 * The element states the kind of notice, a stylesheet having no way to tell a warning from an aside.
+	 * The element states the level, which a stylesheet has no other way to read.
 	 *
 	 * A note telling of a failure is read out as soon as it reaches the page, a failure being met where the reader
 	 * expected what they asked for: a screen swapping one in for the content it could not show would otherwise
@@ -114,14 +120,14 @@ export function Note({
 
 	return createElement("tile-note", {
 
-		role: warning ? "alert" : undefined,
+		role: level === "critical" ? "alert" : undefined,
 
-		warning
+		level
 
 	}, <>
 
 		{onAccept
-			? <button type="button" onClick={onAccept}>{$icon}{text}</button>
+			? <button type="button" onClick={onAccept}>{text}</button>
 			: <span>{$icon}{text}</span>
 		}
 

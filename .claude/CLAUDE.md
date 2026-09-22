@@ -50,6 +50,14 @@ repository **NEVER** reimplements them behind the interface.
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
 immediately under `packages/` (for example `packages/tile-lens`).
 
+A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
+those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
+stale sibling up to date first, whatever order the workspaces are visited in. A package added here declares a
+reference for every `@metreeca/tile*` dependency it takes, or it compiles against whatever its sibling last left
+behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinfo` each package's `clean` removes
+alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
+emits nothing.
+
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
 `tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
@@ -73,9 +81,9 @@ Every package states its summary in three places, which **MUST** be kept aligned
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the
 surface the package's own modules are built out of, as `tile-cell` does for the props a widget declares. A package
-with no such surface (`tile-hive`) declares no root entry point, and its `package.json` `exports` carries no `"."`
-entry either. A root entry point **NEVER** re-exports the modules beside it: a screen takes the widgets it renders
-from their own modules, and nothing else along with them.
+with no such surface declares no root entry point, and its `package.json` `exports` carries no `"."` entry either. A
+root entry point **NEVER** re-exports the modules beside it: a screen takes the widgets it renders from their own
+modules, and nothing else along with them.
 
 Revising one **ALWAYS** means revising the others.
 

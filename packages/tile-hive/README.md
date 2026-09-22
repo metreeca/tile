@@ -5,8 +5,8 @@
 Preact layouts and containers for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 A consumer assembles a screen from the arrangements an app repeats: pages, tables, accordions, panes, grids and stacks
-that answer where things sit. A layout places the widgets handed to it without knowing what they mean, so an arrangement
-is replaced without touching what the interface does.
+that answer where things sit, and takes from here the element the screen is rendered into. A layout places the widgets
+handed to it without knowing what they mean, so an arrangement is replaced without touching what the interface does.
 
 A container need not place anything. One may instead settle how the widgets it encloses appear, retuning the design
 system over an area so a toolbar, a panel or a whole screen is written in a single register rather than every widget in

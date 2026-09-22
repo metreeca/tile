@@ -82,7 +82,7 @@ A widget renders a `<tile-*>` custom element through `createElement`, importing 
 The prefix belongs to the element, which the DOM requires to be hyphenated, **NEVER** to the exported component.
 
 Data and transitions are read off the model by destructuring; a transition goes straight to a handler. Keyboard
-handling goes through `keys` from `@metreeca/tile`, whose map declares the keys the widget claims.
+handling goes through `keys` from `@metreeca/tile-cell`, whose map declares the keys the widget claims.
 
 ## Props
 

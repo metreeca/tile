@@ -30,6 +30,10 @@
     "*.css"
   ],
   "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./*": {
       "@metreeca/source": [
         "./src/*.ts",
@@ -51,18 +55,18 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && cp src/*.css dist/",
-    "check": "npx vitest --typecheck --passWithNoTests run"
+    "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json && cp src/*.css dist/",
+    "check": "npx vitest --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
     "@metreeca/core": "^0.10.0",
-    "@metreeca/tile": "^0.1.0",
     "@metreeca/tile-cell": "^0.1.0",
     "@metreeca/tile-data": "^0.1.0",
     "@metreeca/tile-skin": "^0.1.0"
   },
   "devDependencies": {
+    "happy-dom": "^20.0.0",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vite": "^8.3.0",

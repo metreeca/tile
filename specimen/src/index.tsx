@@ -15,13 +15,14 @@
  */
 
 import { InternalServerError, NotFound } from "@metreeca/http";
-import { app, host } from "@metreeca/tile";
 import { Fault } from "@metreeca/tile-cell/fault";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Logo } from "@metreeca/tile-cell/logo";
 import { Note } from "@metreeca/tile-cell/note";
+import { app } from "@metreeca/tile-data";
 import { Fetch, useFetch } from "@metreeca/tile-data/fetch";
+import { host } from "@metreeca/tile-hive";
 import { Page } from "@metreeca/tile-hive/page";
 import { Style } from "@metreeca/tile-hive/style";
 import { Tabs } from "@metreeca/tile-hive/tabs";

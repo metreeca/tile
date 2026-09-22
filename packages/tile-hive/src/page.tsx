@@ -23,7 +23,7 @@
  * @module
  */
 
-import { classes } from "@metreeca/tile";
+import { classes } from "@metreeca/tile-cell";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { useFetching } from "@metreeca/tile-data/fetch";
 import { type ComponentChildren, createElement } from "preact";

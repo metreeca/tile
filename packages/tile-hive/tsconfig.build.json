@@ -1,8 +1,20 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "customConditions": []
   },
+  "references": [
+    {
+      "path": "../tile-cell/tsconfig.build.json"
+    },
+    {
+      "path": "../tile-data/tsconfig.build.json"
+    },
+    {
+      "path": "../tile-skin/tsconfig.build.json"
+    }
+  ],
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",

@@ -4,9 +4,9 @@
 
 Preact contexts and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer reaches the ambient services a subtree inherits, the accessors a component reads them back with, and the
-adoption of a headless state object as the state of a component. Nothing here renders, so what a component shows stays
-a separate decision from what it is wired to.
+A consumer reaches what the app states about itself, the ambient services a subtree inherits, the accessors a component
+reads them back with, and the adoption of a headless state object as the state of a component. Nothing here renders, so
+what a component shows stays a separate decision from what it is wired to.
 
 The shared fetch client an app publishes once is a plain `fetch` function, so a deployment hands over one of its own:
 [@metreeca/http](https://github.com/metreeca/http) provides composable middlewares covering authentication, caching and
@@ -23,6 +23,11 @@ npm install @metreeca/tile-data  # this package
 >
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
+
+> [!WARNING]
+>
+> Importing what the app states about itself reads the document, so it belongs to a browser: a consumer without one, a
+> test or a server render, has to supply a DOM before the import runs.
 
 # Usage
 

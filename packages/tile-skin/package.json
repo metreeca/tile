@@ -52,8 +52,8 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && rsync -a --include=\"*/\" --include=\"*.css\" --exclude=\"*\" src/ dist/",
+    "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json && rsync -a --include=\"*/\" --include=\"*.css\" --exclude=\"*\" src/ dist/",
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "devDependencies": {

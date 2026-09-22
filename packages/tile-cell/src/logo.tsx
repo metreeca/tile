@@ -23,7 +23,7 @@
  * @module
  */
 
-import { app } from "@metreeca/tile";
+import { app } from "@metreeca/tile-data";
 import { type ComponentChildren, createElement } from "preact";
 import "./logo.css";
 

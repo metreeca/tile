@@ -23,7 +23,7 @@
  * @module
  */
 
-import { keys } from "@metreeca/tile";
+import { keys } from "@metreeca/tile-cell";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";

@@ -16,30 +16,8 @@
 
 import { describe, expect, it } from "vitest";
 
-import { classes, host, keys } from "./index.js";
+import { classes, keys } from "./index.js";
 
-
-describe("host", () => {
-
-	it("creates the hosting element", () => {
-
-		const element = host("tile-created");
-
-		expect(element.tagName.toLowerCase()).toBe("tile-created");
-		expect(element.parentElement).toBe(document.body);
-
-	});
-
-	it("hands out an existing hosting element", () => {
-
-		const element = host("tile-existing");
-
-		expect(host("tile-existing")).toBe(element);
-		expect(document.querySelectorAll("tile-existing")).toHaveLength(1);
-
-	});
-
-});
 
 describe("classes", () => {
 

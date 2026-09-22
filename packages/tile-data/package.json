@@ -28,6 +28,10 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
     "./*": {
       "@metreeca/source": "./src/*.ts",
       "default": "./dist/*.js"
@@ -42,8 +46,8 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "clean": "rm -rf dist docs node_modules",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json",
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "dependencies": {

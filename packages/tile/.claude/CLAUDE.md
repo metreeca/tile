@@ -229,6 +229,10 @@ above sets out; `--tile--color-warn` alone carries one value for both and keeps 
 - `--tile--color-info`, `--tile--color-pass`, `--tile--color-warn` and `--tile--color-fail`, the four steps of the
   meaning scale below
 
+`--tile--color-focus` carries a literal per scheme alongside them without being an anchor: the focus mark says where
+the keyboard stands, which reads the same whatever an app brands with, so it is **NEVER** derived from an accent. It
+is stated in the same four rules and held to the ring budget of 3:1 against the page **and** against the stripe.
+
 ## The meaning scale
 
 Every meaning a widget carries lands on these four steps, and **NO** widget invents a fifth colour: a meaning the

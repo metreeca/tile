@@ -98,6 +98,14 @@
  * also the fallback read as though the light scheme were merely what happens in the absence of dark. Between them the
  * four rules cover every case, since prefers-color-scheme resolves to light wherever dark is not asked for.
  *
+ * Two roles are stated alongside them rather than among the derivations further down. The field name takes a share of
+ * its own per scheme, a grey being lightened by taking less of the text anchor on a light page and more of it on a
+ * dark one, so one share stated once would lighten the one scheme while darkening the other. The focus mark carries a
+ * literal per scheme, for the reason the status colours do: it says where the keyboard stands, which is the same thing
+ * to say whatever an app brands with, and a mark taking the accent would shift under a rebrand that has nothing to do
+ * with it. It keeps the blue cast of the accent shipped here, a shade quieter, so it reads as a mark rather than as a
+ * rule the page happened to grow.
+ *
  * Only the custom properties follow a pinned subtree. Native controls and scrollbars answer to color-scheme, which
  * index.css states for both attribute values.
  */
@@ -110,6 +118,8 @@
         --tile--background-color: #FFF;
 
         --tile--color-label: color-mix(in oklab, var(--tile--color) 47%, var(--tile--background-color));
+
+        --tile--color-focus: #7E8A95;
 
         --tile--color-subtle: #567;
         --tile--color-strong: #06C;
@@ -136,6 +146,8 @@
 
         --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
 
+        --tile--color-focus: #626C75;
+
         --tile--color-subtle: #89A;
         --tile--color-strong: #4AF;
 
@@ -159,6 +171,8 @@
 
     --tile--color-label: color-mix(in oklab, var(--tile--color) 47%, var(--tile--background-color));
 
+    --tile--color-focus: #7E8A95;
+
     --tile--color-subtle: #567;
     --tile--color-strong: #06C;
 
@@ -179,6 +193,8 @@
     --tile--background-color: #111;
 
     --tile--color-label: color-mix(in oklab, var(--tile--color) 55%, var(--tile--background-color));
+
+    --tile--color-focus: #626C75;
 
     --tile--color-subtle: #89A;
     --tile--color-strong: #4AF;
@@ -320,7 +336,12 @@
     --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
     --tile--color-pressed: oklch(from var(--tile--color-strong) calc(l - 0.2) c h);
     --tile--color-selected: var(--tile--color-strong);
-    --tile--color-focus: color-mix(in oklab, var(--tile--color-subtle) 70%, var(--tile--background-color));
+
+    /*
+     * The three states above answer to the strong accent, so a brand carries them along. The fourth, the focus mark,
+     * is stated per scheme with the anchors instead: it holds a value of its own that a rebrand leaves standing, and
+     * holds 3.53:1 on the page and 3.14:1 on the stripe in the light scheme, 3.52:1 and 3.32:1 in the dark one.
+     */
 
     --tile--background-color-edit: color-mix(in oklab, var(--tile--background-color) 98%, var(--tile--color));
     --tile--background-color-stripe: color-mix(in oklab, var(--tile--background-color) 96%, var(--tile--color));

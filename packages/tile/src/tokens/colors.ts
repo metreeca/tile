@@ -74,6 +74,8 @@
  *
  * **States** — `colorHover` marks what the pointer is over, `colorPressed` what is being acted on, `colorSelected`
  * what an earlier choice left standing, and `colorFocus` what the keyboard has reached, the focus ring holding 3:1.
+ * The first three answer to the strong accent, so they follow a brand; `colorFocus` carries a value of its own per
+ * colour scheme, so that where the keyboard stands is told the same way whatever an app brands with.
  * Each of the first three pairs with a `backgroundColor*` role for a control filling its whole box rather than
  * colouring its text, and the two are never combined on the same element, which would state the emphasis twice. A
  * state is never told in colour alone.

@@ -96,16 +96,14 @@
 /*
  * The three values standing on other tokens, which an initial value cannot carry: the enclosing line takes its colour
  * from the page, and the two marks are assembled from the width, the style and the colour role each one signals. The
- * focus mark is drawn at half again the width of the line, enough to read as a mark rather than as a second border
- * without the weight a doubled line carries. The fraction lands on a whole device pixel wherever the page is drawn at
- * twice the scale, and is snapped or softened by the engine elsewhere.
+ * focus mark is drawn at twice the width, so it reads as a mark rather than as a second border.
  */
 
 :root {
 
     --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
-    --tile--outline-focus: var(--tile--border-style) calc(1.5 * var(--tile--border-width)) var(--tile--color-focus);
+    --tile--outline-focus: var(--tile--border-style) calc(2 * var(--tile--border-width)) var(--tile--color-focus);
     --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-fail);
 
 }

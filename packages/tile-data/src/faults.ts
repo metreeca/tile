@@ -33,9 +33,9 @@
 import { manageState } from "@metreeca/core/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
-import { createFaults, type Faults } from "./faults.pure.js";
+import { createFaults, type Faults } from "./faults.core.js";
 
-export type { Fault } from "./faults.pure.js";
+export type { Fault } from "./faults.core.js";
 
 
 const Queue = createContext<Faults>(createFaults());

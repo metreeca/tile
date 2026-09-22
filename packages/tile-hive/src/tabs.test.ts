@@ -16,7 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { createTabs } from "./tabs.pure.js";
+import { createTabs } from "./tabs.core.js";
 
 
 describe("createTabs", () => {

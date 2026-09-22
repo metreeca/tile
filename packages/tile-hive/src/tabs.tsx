@@ -27,7 +27,7 @@ import { keys } from "@metreeca/tile-cell";
 import { useModel } from "@metreeca/tile-data/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import { createTabs, type Tabs } from "./tabs.pure.js";
+import { createTabs, type Tabs } from "./tabs.core.js";
 import "./tabs.css";
 
 // !!! responsive layout

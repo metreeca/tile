@@ -125,16 +125,19 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
   one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
   **NEVER** reaches it.
-- Behaviour outgrowing a single widget moves to a sibling `*.pure.ts` module as a headless component of its own, leaving
-  the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.pure.ts`.
+- Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
+  the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
 
-A `*.pure.ts` module is a headless component in its own right, **NEVER** an internal appendix of the widget beside it:
-the suffix names what the module does without, which is a rendering layer, and **NEVER** claims anything about side
-effects. It carries **NO** dependency on Preact, is tested without a DOM, and is documented and versioned like any
-other module, since a second binding reaches the same behaviour by importing it. The generated reference carries it
-like any other module, a type declared there being public wherever a published signature names it: TypeDoc drops a
-symbol whose module is excluded, re-exported or not, so excluding these would leave a public type undocumented.
-Internals stay in a `*.core.ts` module, which the published surface never exposes.
+A `*.core.ts` module carries what the module beside it is built on. Where that is behaviour, the module is a headless
+component in its own right and **NEVER** an internal appendix of the widget: it carries **NO** dependency on Preact, is
+tested without a DOM, and is documented and versioned like any other module, since a second binding reaches the same
+behaviour by importing it. The generated reference carries it like any other module, a type declared there being public
+wherever a published signature names it: TypeDoc drops a symbol whose module is excluded, re-exported or not, so
+excluding these would leave a public type undocumented.
+
+`@metreeca/tile` is the exception, its `*.core.ts` modules holding what the design system surface stands on without
+offering it: the package `exports` blocks the `.core` subpaths and `typedoc.json` leaves the modules out of the
+reference, so a consumer meets those types only through the published signatures naming them.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.pack.ts`
 module, likewise left out of the reference by `typedoc.json`: the documented module beside it is the only path a

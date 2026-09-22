@@ -16,7 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { createFaults } from "./faults.pure.js";
+import { createFaults } from "./faults.core.js";
 
 
 describe("createFaults", () => {

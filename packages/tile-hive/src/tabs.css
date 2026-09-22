@@ -25,9 +25,13 @@ tile-tabs {
     & > nav {
 
         display: flex;
-        flex-wrap: wrap;
 
         column-gap: var(--tile--spacing-100);
+
+        /* The strip stands on one line: a label is never broken, and a tab never moves to a line of its own. */
+
+        white-space: nowrap;
+        overflow-y: visible;
 
         border-bottom-style: var(--tile--border-style);
 

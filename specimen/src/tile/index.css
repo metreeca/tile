@@ -1,0 +1,172 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Marks ***********************************************************************************************************/
+
+/* A measure is read off its length alone, so the bar carries the accent and takes its height from the text. */
+
+.bar {
+    display: inline-block;
+    height: var(--tile--scaling-100);
+    background-color: var(--tile--color-strong);
+}
+
+/*
+ * A badge is the filled step a message sits on, drawn in the one colour the design system paints as a fill rather
+ * than stroking, so the ink over it is read where it is actually used.
+ */
+
+.badge {
+    display: inline-block;
+    padding: var(--tile--spacing-025) var(--tile--spacing-050);
+    border-radius: var(--tile--border-radius);
+    background-color: var(--tile--color-warn);
+}
+
+/* A blanket is legible only over something, so the sample lays it across a card carrying text. */
+
+.blanket {
+
+    position: relative;
+
+    & > span {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--tile--border-radius);
+    }
+
+}
+
+/* Leading is read off two lines rather than one, so the sample carries a break the line box shows the effect of. */
+
+.leading {
+    display: inline-block;
+}
+
+/* A box is the patch a size, a radius or an opacity is read off, drawn large enough to take in at a glance. */
+
+.box {
+    display: inline-block;
+    width: var(--tile--scaling-150);
+    height: var(--tile--scaling-150);
+    background-color: var(--tile--color-subtle);
+}
+
+/*
+ * A control colour is only legible in a control, so every one of them is shown in the same bordered field carrying
+ * the same word: what varies between the rows is the token, not the shape around it. The focus row draws a ring of
+ * its own from the focus colour, the field being no native control for the design system rule to reach, and keeps it
+ * flush against the border so the two read as one mark rather than as two.
+ */
+
+.field {
+
+    display: inline-block;
+    padding: var(--tile--spacing-050) var(--tile--spacing-075);
+
+    background-color: var(--tile--background-color-edit);
+
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    border-radius: var(--tile--border-radius);
+
+    &.focused {
+        color: var(--tile--color-enabled);
+        outline: var(--tile--border-style) calc(2 * var(--tile--border-width)) var(--tile--color-focus);
+        outline-offset: 0;
+    }
+
+}
+
+
+/**** Motion **********************************************************************************************************/
+
+/*
+ * A duration and an easing are only legible in motion, so the sample moves under the pointer and states the token it
+ * is timed by through the property it sets. The travel is fixed, leaving the token the only thing that varies.
+ */
+
+.slide {
+    display: inline-block;
+    width: var(--tile--scaling-150);
+    height: var(--tile--scaling-150);
+    background-color: var(--tile--color-strong);
+    border-radius: var(--tile--border-radius);
+    transition-property: translate;
+    transition-duration: var(--tile--duration-normal);
+    transition-timing-function: var(--tile--easing-standard);
+}
+
+/* The travel is stated outright, a distance a sample crosses standing for nothing the scaling ladder sizes. */
+
+tr:hover .slide {
+    translate: 4em;
+}
+
+
+/**** Viewport ********************************************************************************************************/
+
+/*
+ * A viewport flag is only legible as a state, so the mark fills when the threshold is passed. Each rule reads the
+ * token through a style query rather than restating the width, which is the whole point of the family.
+ */
+
+.flag {
+    display: inline-block;
+    width: var(--tile--scaling-150);
+    height: var(--tile--scaling-150);
+    border-radius: var(--tile--border-radius-050);
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    background-color: transparent;
+}
+
+@container style(--tile--viewport-small: on) {
+    .flag.viewport-small {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-medium: on) {
+    .flag.viewport-medium {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-large: on) {
+    .flag.viewport-large {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-xlarge: on) {
+    .flag.viewport-xlarge {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+
+/**** Theming *********************************************************************************************************/
+
+/* A retuned area is boxed, so what the assignments reach is told apart from the page explaining them. */
+
+.themed {
+    padding: var(--tile--spacing-100);
+    background-color: var(--tile--background-color-edit);
+    border-radius: var(--tile--border-radius);
+}

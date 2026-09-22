@@ -1,0 +1,150 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A listing reads as a reference rather than a table of data, so the cells carry no rule. */
+
+.samples {
+
+    & td {
+        border-bottom-style: none;
+        vertical-align: middle;
+    }
+
+    /* The sample column is held to one width across every listing, so the names beside it line up down the page. */
+
+    & > tbody > tr > td:first-child {
+        width: 5em;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /*
+     * A pair shows its mark beside its fill, so the two are read together rather than one through the other. The
+     * row is a flex line rather than two inline boxes: a roundel sits on the text baseline while a card takes its
+     * own, so inline layout would leave the two at different heights.
+     */
+
+    & .pair {
+        display: inline-flex;
+        align-items: center;
+        column-gap: var(--tile--spacing-075);
+    }
+
+    & > tbody > tr > td:last-child {
+        width: 100%;
+        color: var(--tile--color-label);
+    }
+
+}
+
+.roundel {
+    display: inline-block;
+    width: var(--tile--scaling-125);
+    height: var(--tile--scaling-125);
+    border-radius: var(--tile--border-radius-050);
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+}
+
+/*
+ * A card is a patch large enough to read a surface, a fill or a tint off, bordered so it stays visible where the
+ * value it carries resolves to the page colour itself, as a raised surface does on a white page. Its measures are
+ * stated outright, a patch standing for nothing the scaling ladder sizes.
+ */
+
+.card {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3em;
+    height: 1.75em;
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    border-radius: var(--tile--border-radius);
+}
+
+
+/*
+ * A ramp reads as one bordered band split into its steps, each swatch taking an equal share of the line. The step sits
+ * under the swatch rather than inside it, since the ink a label would need flips partway along every ramp.
+ */
+
+.ramp {
+
+    display: flex;
+    padding-left: 0;
+    margin-bottom: var(--tile--spacing-100);
+    list-style: none;
+
+    /* The step margin a list gives its items would drop every step but the first below the line. */
+
+    & > li {
+        flex: 1 1 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    /*
+     * The swatches sit flush and the band is bordered once, on its outer edges only: a hairline per swatch lands on
+     * the subpixel boundaries an equal share of the line leaves behind, and reads as a ragged edge.
+     */
+
+    & > li > span {
+        display: block;
+        height: var(--tile--scaling-200);
+        border-top-style: var(--tile--border-style);
+        border-bottom-style: var(--tile--border-style);
+    }
+
+    & > li:first-child > span {
+        border-left-style: var(--tile--border-style);
+        border-top-left-radius: var(--tile--border-radius);
+        border-bottom-left-radius: var(--tile--border-radius);
+    }
+
+    & > li:last-child > span {
+        border-right-style: var(--tile--border-style);
+        border-top-right-radius: var(--tile--border-radius);
+        border-bottom-right-radius: var(--tile--border-radius);
+    }
+
+    /* The reset hands every element the page background, which a label under a swatch has no use for. */
+
+    & > li > code {
+        display: inline-block;
+        margin-top: var(--tile--spacing-025);
+        font-size: var(--tile--font-size-small);
+        color: var(--tile--color-label);
+        background-color: transparent;
+    }
+
+}
+
+/* A set of slots stands apart, each chip bordered and rounded on its own: they name things, not a progression. */
+
+.ramp.chips {
+
+    gap: var(--tile--spacing-050);
+
+    & > li > span {
+        border-style: var(--tile--border-style);
+        border-radius: var(--tile--border-radius);
+    }
+
+}

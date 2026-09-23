@@ -18,7 +18,7 @@ import { createElement, type FunctionComponent, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Router, type Switch, type Table, useRoute, useRouter } from "./router.js";
+import { Router, Routes, type Switch, type Table, useRoute, useRouter } from "./router.js";
 
 
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
@@ -274,6 +274,137 @@ describe("Router", () => {
 			expect(image()?.hasAttribute("active")).toBe(false);
 
 		});
+
+	});
+
+});
+
+
+describe("Routes", () => {
+
+	function section(routes: Table | Switch): FunctionComponent {
+		return () => createElement(Routes, { routes });
+	}
+
+
+	it("should match the trailing path left over by the enclosing pattern", async () => {
+
+		history.replaceState(null, "", "/users/123");
+
+		mount({
+			"/users/*": createElement(section({
+				"/": createElement("p", {}, "list"),
+				"/{id}": createElement(Here, {})
+			}), {})
+		});
+
+		expect(text()).toBe("/users/123");
+
+	});
+
+	it("should match the root of the section", async () => {
+
+		history.replaceState(null, "", "/users/");
+
+		mount({ "/users/*": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
+
+		expect(text()).toBe("list");
+
+	});
+
+	it("should nest to any depth", async () => {
+
+		history.replaceState(null, "", "/a/b/c");
+
+		mount({
+			"/a/*": createElement(section({
+				"/b/*": createElement(section({ "/c": createElement(Here, {}) }), {})
+			}), {})
+		});
+
+		expect(text()).toBe("/a/b/c");
+
+	});
+
+	it("should hand switches the route relative to the section", async () => {
+
+		history.replaceState(null, "", "/users/123");
+
+		mount({ "/users/*": createElement(section(route => createElement("p", {}, route)), {}) });
+
+		expect(text()).toBe("/123");
+
+	});
+
+	it("should see the whole route below a switch", async () => {
+
+		history.replaceState(null, "", "/users/123");
+
+		mount(() => createElement(section({ "/users/{id}": createElement(Here, {}) }), {}));
+
+		expect(text()).toBe("/users/123");
+
+	});
+
+	it("should redirect relative to the section, replacing the history entry", async () => {
+
+		history.replaceState(null, "", "/users/");
+
+		const length = history.length;
+
+		mount({
+			"/users/*": createElement(section({
+				"/": "/all",
+				"/all": createElement(Here, {})
+			}), {})
+		});
+
+		expect(location.pathname).toBe("/users/all");
+		expect(history.length).toBe(length);
+		expect(text()).toBe("/users/all");
+
+	});
+
+	it("should follow a section redirection reached through a router redirection", async () => {
+
+		history.replaceState(null, "", "/");
+
+		mount({
+			"/": "/users/",
+			"/users/*": createElement(section({
+				"/": "/all",
+				"/all": createElement(Here, {})
+			}), {})
+		});
+
+		expect(location.pathname).toBe("/users/all");
+		expect(text()).toBe("/users/all");
+
+	});
+
+	it("should redirect relative to the section in hash mode", async () => {
+
+		history.replaceState(null, "", "/#/users/");
+
+		mount({
+			"/users/*": createElement(section({
+				"/": "/all",
+				"/all": createElement(Here, {})
+			}), {})
+		}, "hash");
+
+		expect(location.hash).toBe("#/users/all");
+		expect(text()).toBe("/users/all");
+
+	});
+
+	it("should reject a route not handled within the section", async () => {
+
+		history.replaceState(null, "", "/users/123");
+
+		expect(() => mount({
+			"/users/*": createElement(section({ "/": createElement("p", {}) }), {})
+		})).toThrow("unhandled route /123");
 
 	});
 

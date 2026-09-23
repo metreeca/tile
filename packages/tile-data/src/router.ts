@@ -43,6 +43,22 @@ const TargetAttribute = "target";
 const RouteContext = createContext<string>("");
 const RouterContext = createContext<Router>(() => {});
 
+/**
+ * The section a {@link Routes} matches within: the route prefix the enclosing matches consumed, the rest of the route
+ * left over below it, and a reader of the route the location carries right now, which a redirection checks before
+ * moving it, since an enclosing redirection may not have landed yet.
+ */
+const SectionContext = createContext<Readonly<{ base: string, rest: string, read: () => string }>>({
+	base: "", rest: "", read: () => ""
+});
+
+
+/**
+ * Selects what a route renders: `undefined` if the route is not handled, another route to redirect to, or the view
+ * along with the head of the route its pattern consumed before a trailing `/*`, empty where there is none.
+ */
+type Selector = (route: string) => undefined | string | readonly [view: ComponentChildren, head: string];
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -114,7 +130,8 @@ export interface Table {
 	 *   the whole matched route and a trailing `/*` with the matched trailing path; the location is moved along,
 	 *   replacing the current history entry, so going back never lands on the route redirected from
 	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
-	 *   {@link useRoute}, or is selected by a {@link Switch}
+	 *   {@link useRoute}, or is selected by a {@link Switch}; a view mapped to a pattern ending with `/*` routes the
+	 *   trailing path with {@link Routes}
 	 */
 	readonly [pattern: string]: string | VNode;
 
@@ -141,7 +158,8 @@ export interface Table {
  * never ends up on a control the image covers. Enlarging is a visual convenience over content the image already
  * carries, through its alternative text and the browser zoom, so images are not made reachable from the keyboard.
  *
- * A page mounts a single router, as each one takes over the clicks and keys of the whole page.
+ * A page mounts a single router, as each one takes over the clicks and keys of the whole page; a section routing the
+ * trailing path below one of its views does so with {@link Routes}.
  *
  * @param options The router configuration
  *
@@ -177,9 +195,7 @@ export function Router({
 
 }) {
 
-	const select = isFunction(routes)
-		? routes
-		: compile(routes);
+	const select = selector(routes);
 
 	const read = mode === "hash"
 		? () => location.hash.substring(1)
@@ -189,12 +205,12 @@ export function Router({
 
 	const sync = () => setRoute(read()); // renders again only if the route actually changed
 
-	const [target, view] = lookup(route, select);
+	const [target, view, head] = lookup(route, select);
 
 
 	useEffect(() => {
 
-		if ( target !== route ) {
+		if ( target !== route && read() === route ) {
 
 			// a redirection replaces the entry it came from, so going back never lands on it again
 
@@ -203,7 +219,7 @@ export function Router({
 
 		} else {
 
-			// the location already carries the route on show
+			// the location already carries the route on show, or has been moved on since this render
 
 		}
 
@@ -362,7 +378,75 @@ export function Router({
 
 
 	return createElement(RouterContext.Provider, { value: router },
-		createElement(RouteContext.Provider, { value: target }, view)
+		createElement(RouteContext.Provider, { value: target },
+			createElement(SectionContext.Provider, { value: { base: head, rest: target.slice(head.length), read } }, view)
+		)
+	);
+
+}
+
+
+/**
+ * Renders the view for the current route within a section.
+ *
+ * Lets a view mapped to a pattern ending with `/*` route the trailing path on its own, so a section declares its
+ * sub-routes where it is implemented rather than in the table at the top of the app, and keeps working wherever that
+ * table mounts it. Sections nest to any depth, each one matching what the enclosing one left over.
+ *
+ * Patterns and redirections are relative to the section, starting at its root `/`: under `/users/*`, the pattern
+ * `/{id}` matches `/users/123`, and the redirection `/all` moves the location to `/users/all`. A switch is handed the
+ * relative route in the same way. Components below still read the full route with {@link useRoute} and navigate with
+ * {@link useRouter}, so links and navigators keep working unchanged wherever a section is mounted.
+ *
+ * Renders below a {@link Router}, which keeps sole charge of the location, the history and the page clicks. Below a view
+ * selected by a {@link Switch}, or by a pattern not ending with `/*`, the section sees the whole route that view was
+ * selected for.
+ *
+ * @param options The section configuration
+ *
+ * @returns The view for the current route within the section
+ *
+ * @throws {@link !Error Error} If the current route is not handled within the section, or if its redirections loop
+ */
+export function Routes({
+
+	routes
+
+}: {
+
+	/**
+	 * The views for the routes within the section, as a table or a switch.
+	 */
+	routes: Table | Switch
+
+}): ComponentChildren {
+
+	const { base, rest, read } = useContext(SectionContext);
+
+	const router = useRouter();
+
+	const [target, view, head] = lookup(rest, selector(routes));
+
+
+	useEffect(() => {
+
+		if ( target !== rest && read() === `${base}${rest}` ) {
+
+			router(`${base}${target}`, true); // as the router does, a redirection replaces the entry it came from
+
+		} else {
+
+			// the location already carries the route on show, or an enclosing redirection has yet to land on it
+
+		}
+
+	}, [base, target, rest, read, router]);
+
+
+	return createElement(RouteContext.Provider, { value: `${base}${target}` },
+		createElement(SectionContext.Provider, {
+			value: { base: `${base}${head}`, rest: target.slice(head.length), read }
+		}, view)
 	);
 
 }
@@ -395,7 +479,17 @@ export function useRoute(): string {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function compile(table: Table): Switch {
+function selector(routes: Table | Switch): Selector {
+	return isFunction(routes) ? route => {
+
+		const view = routes(route);
+
+		return !isDefined(view) || isString(view) ? view : [view, ""]; // a switch consumes no head
+
+	} : compile(routes);
+}
+
+function compile(table: Table): Selector {
 
 	function pattern(glob: string): RegExp {
 		return new RegExp(glob === "*" ? "^.*$" : `^${glob
@@ -410,44 +504,48 @@ function compile(table: Table): Switch {
 
 	function resolve(
 		route: string, match: null | RegExpExecArray, entry: Table[string]
-	): ReturnType<Switch> {
+	): ReturnType<Selector> {
 		return isNull(match) ? undefined
 			: isString(entry) ? entry.replace(/{(\w*)}|\/\*$/g, (reference, step) => reference === "/*"
 					? match.groups?.$ || ""
 					: step ? match.groups?.[step] || "" : route
 				)
-				: entry;
+				: [entry, route.slice(0, route.length - (match.groups?.$ ?? route).length)]; // the trailing path runs to the end
 	}
 
 
-	return route => Object.entries(table).reduce<ReturnType<Switch>>((view, [glob, entry]) =>
+	return route => Object.entries(table).reduce<ReturnType<Selector>>((view, [glob, entry]) =>
 			view ?? resolve(route, pattern(glob).exec(route), entry), undefined // patterns past the first match are not
 		// compiled
 	);
 
 }
 
-function lookup(route: string, select: Switch): readonly [target: string, view: ComponentChildren] {
+function lookup(
+	route: string, select: Selector
+): readonly [target: string, view: ComponentChildren, head: string] {
 
-	function follow(current: string, trail: readonly string[]): readonly [target: string, view: ComponentChildren] {
+	function follow(
+		current: string, trail: readonly string[]
+	): readonly [target: string, view: ComponentChildren, head: string] {
 
-		const view = select(current);
+		const selected = select(current);
 
-		if ( !isDefined(view) ) {
+		if ( !isDefined(selected) ) {
 
 			throw new Error(`unhandled route ${route}`);
 
-		} else if ( !isString(view) ) {
+		} else if ( !isString(selected) ) {
 
-			return [current, view];
+			return [current, ...selected];
 
-		} else if ( trail.includes(view) ) {
+		} else if ( trail.includes(selected) ) {
 
 			throw new Error(`redirection loop <${trail.join(",")}>`);
 
 		} else {
 
-			return follow(view, [...trail, view]);
+			return follow(selected, [...trail, selected]);
 
 		}
 

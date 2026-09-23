@@ -44,14 +44,14 @@ function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-		<Router>{{
+		<Router routes={{
 
 			"/": "/tile",
 
-			"/tile": Tile,
-			"/tile-cell": TileCell
+			"/tile": <Tile/>,
+			"/tile-cell": <TileCell/>
 
-		}}</Router>
+		}}/>
 
 	</Fetch>;
 

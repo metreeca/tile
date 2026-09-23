@@ -24,6 +24,8 @@
  */
 
 import "@metreeca/tile/index.css";
+import { createFetch } from "@metreeca/http";
+import { mock } from "@metreeca/http/mock";
 import { Tile } from "@metreeca/specimen/tile/index.js";
 import { Fetch } from "@metreeca/tile-data/fetch";
 import { host } from "@metreeca/tile-hive";
@@ -31,13 +33,15 @@ import { render } from "preact";
 import "./index.css";
 
 
-render(<Fetch fetch={mock}>{Tile()}</Fetch>, host("tile-specimen"));
+render(<Specimen/>, host("tile-specimen"));
 
 
-async function mock() {
+function Specimen() {
 
-	await new Promise(resolve => setTimeout(resolve, 2000));
+	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-	return new Response("{}", { headers: { "Content-Type": "application/json" } });
+		<Tile/>
+
+	</Fetch>;
 
 }

@@ -288,6 +288,18 @@ tile-shell {
 
                 overflow: hidden;
 
+                /*
+                 * What the row clips includes whatever paints past a control, and the focus ring does, drawn outside
+                 * the box it marks. The row is given the room a ring takes at the widest offset a control sets it at,
+                 * as padding the same margin gives back, so the ring is painted whole while the row takes the place it
+                 * took before.
+                 */
+
+                --tile-shell-ring-room: calc(var(--tile--spacing-025) + 2 * var(--tile--border-width));
+
+                padding: var(--tile-shell-ring-room);
+                margin: calc(-1 * var(--tile-shell-ring-room));
+
             }
 
         }

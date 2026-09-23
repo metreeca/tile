@@ -44,6 +44,7 @@ repository **NEVER** reimplements them behind the interface.
 - **`npm run build`** - Compile sources and generate docs
 - **`npm run check`** - Run the test suite
 - **`npm run proof`** - Build and serve docs
+- **`npm run watch`** - Serve the specimen page with live reload
 
 # Package Layout
 

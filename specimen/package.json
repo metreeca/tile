@@ -9,7 +9,7 @@
     "clean": "rm -rf dist node_modules",
     "setup": "npm ci",
     "build": "vite build",
-    "serve": "vite --open"
+    "watch": "vite --open"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",

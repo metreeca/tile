@@ -11,7 +11,7 @@
     "build": "npm run build --workspaces && rm -rf docs && npx typedoc",
     "check": "npm run check --workspaces",
     "proof": "npm run build && npx wds --root-dir docs --open",
-    "serve": "npm --prefix specimen run serve"
+    "watch": "npm --prefix specimen run watch"
   },
   "devDependencies": {
     "@web/dev-server": "^1.0.0",

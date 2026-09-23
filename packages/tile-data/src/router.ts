@@ -82,8 +82,8 @@ export interface Switch {
 	 *
 	 * @param route The route to be rendered
 	 *
-	 * @returns The view rendering `route`; another route to redirect to; `undefined` if `route` is not handled, which
-	 *     makes {@link Router} throw
+	 * @returns The view rendering `route`; another route to redirect to, which the location is moved to as a
+	 *     {@link Table} redirection moves it; `undefined` if `route` is not handled, which makes {@link Router} throw
 	 */
 	(route: string): string | ComponentChildren;
 
@@ -110,8 +110,9 @@ export interface Table {
 	 *
 	 * A pattern maps to one of:
 	 *
-	 * - a **redirection**: a route to render instead, where `{step}` is replaced with the matched named step, `{}` with
-	 *   the whole matched route and a trailing `/*` with the matched trailing path
+	 * - a **redirection**: a route to move to instead, where `{step}` is replaced with the matched named step, `{}` with
+	 *   the whole matched route and a trailing `/*` with the matched trailing path; the location is moved along,
+	 *   replacing the current history entry, so going back never lands on the route redirected from
 	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
 	 *   {@link useRoute}, or is selected by a {@link Switch}
 	 */
@@ -187,6 +188,26 @@ export function Router({
 	const [route, setRoute] = useState(read);
 
 	const sync = () => setRoute(read()); // renders again only if the route actually changed
+
+	const [target, view] = lookup(route, select);
+
+
+	useEffect(() => {
+
+		if ( target !== route ) {
+
+			// a redirection replaces the entry it came from, so going back never lands on it again
+
+			history.replaceState(history.state, document.title, mode === "hash" ? `#${target}` : target);
+			sync();
+
+		} else {
+
+			// the location already carries the route on show
+
+		}
+
+	}, [target, route, mode]);
 
 
 	useEffect(() => {
@@ -341,7 +362,7 @@ export function Router({
 
 
 	return createElement(RouterContext.Provider, { value: router },
-		createElement(RouteContext.Provider, { value: route }, lookup(route, select))
+		createElement(RouteContext.Provider, { value: target }, view)
 	);
 
 }
@@ -406,9 +427,9 @@ function compile(table: Table): Switch {
 
 }
 
-function lookup(route: string, select: Switch): ComponentChildren {
+function lookup(route: string, select: Switch): readonly [target: string, view: ComponentChildren] {
 
-	function follow(current: string, trail: readonly string[]): ComponentChildren {
+	function follow(current: string, trail: readonly string[]): readonly [target: string, view: ComponentChildren] {
 
 		const view = select(current);
 
@@ -418,7 +439,7 @@ function lookup(route: string, select: Switch): ComponentChildren {
 
 		} else if ( !isString(view) ) {
 
-			return view;
+			return [current, view];
 
 		} else if ( trail.includes(view) ) {
 
@@ -438,6 +459,5 @@ function lookup(route: string, select: Switch): ComponentChildren {
 
 
 function normalizeTitle(title: Optional<string>): string {
-	return tidy(isDefined(title) ? unique([title, app.name]).filter(Boolean).join(" | ") : document.title
-	);
+	return tidy(isDefined(title) ? unique([title, app.name]).filter(Boolean).join(" | ") : document.title);
 }

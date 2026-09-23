@@ -110,7 +110,31 @@ describe("Router", () => {
 				"/users/{id}/*": createElement(Here, {})
 			});
 
-			expect(text()).toBe("/people/123/about");
+			expect(text()).toBe("/users/123/about");
+
+		});
+
+		it("should move the location to the redirection, replacing the history entry", async () => {
+
+			history.replaceState(null, "", "/old");
+
+			const length = history.length;
+
+			mount({ "/old": "/new", "/new": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/new");
+			expect(history.length).toBe(length);
+
+		});
+
+		it("should move the location hash to the redirection", async () => {
+
+			history.replaceState(null, "", "/#/old");
+
+			mount({ "/old": "/new", "/new": createElement(Here, {}) }, "hash");
+
+			expect(location.hash).toBe("#/new");
+			expect(text()).toBe("/new");
 
 		});
 
@@ -143,6 +167,7 @@ describe("Router", () => {
 			mount(route => route === "/" ? "/home" : createElement("p", {}, route));
 
 			expect(text()).toBe("/home");
+			expect(location.pathname).toBe("/home");
 
 		});
 

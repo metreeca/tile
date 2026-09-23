@@ -20,26 +20,45 @@ import { Faults } from "@metreeca/specimen/tile-cell/faults.js";
 import { Icons } from "@metreeca/specimen/tile-cell/icons.js";
 import { Logos } from "@metreeca/specimen/tile-cell/logos.js";
 import { Notes } from "@metreeca/specimen/tile-cell/notes.js";
-import { app } from "@metreeca/tile-data";
-import { Tabs } from "@metreeca/tile-hive/tabs.js";
+import { Link } from "@metreeca/tile-cell/link.js";
+import { Routes } from "@metreeca/tile-data/router.js";
 
 
-export const TileCellPath = "/tile-cell";
+export const TileCellPath = "/tile-cell/";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function TileCell() {
 
-	return <Page>
+	const sections = {
 
-		<Tabs name={app.name} panels={{
+		Icons: <Icons/>,
+		Logos: <Logos/>,
+		Buttons: <Buttons/>,
+		Notes: <Notes/>,
+		Faults: <Faults/>
 
-			Icons: <Icons/>,
-			Logos: <Logos/>,
-			Buttons: <Buttons/>,
-			Notes: <Notes/>,
-			Faults: <Faults/>
+	};
+
+	const path = (label: string) => label.toLowerCase();
+
+	return <Page
+
+		tray={<>
+
+			{Object.keys(sections).map(label =>
+				<Link key={label} active look="strong" href={`${TileCellPath}${path(label)}`}>{label}</Link>
+			)}
+
+		</>}
+	>
+
+		<Routes routes={{
+
+			"/": `/${path("Icons")}`,
+
+			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
 
 		}}/>
 

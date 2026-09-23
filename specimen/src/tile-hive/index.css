@@ -1,0 +1,44 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Toolbars ********************************************************************************************************/
+
+/* A toolbar lays its controls out in a row, spaced as separate controls rather than as words of one run of text. */
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--tile--spacing-100);
+    row-gap: var(--tile--spacing-050);
+    margin-bottom: var(--tile--spacing-100);
+}
+
+
+/**** Columns *********************************************************************************************************/
+
+/*
+ * Two columns set the same widget in a wide and a narrow box side by side, the narrow one taking a quarter of the room,
+ * so what a widget does when it runs out of room is shown without stating a width. Each column may shrink below what
+ * it holds, which is what leaves a widget short of room rather than the grid widening the column to fit it.
+ */
+
+.columns {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    column-gap: var(--tile--spacing-200);
+    margin-bottom: var(--tile--spacing-100);
+}

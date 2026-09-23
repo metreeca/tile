@@ -14,37 +14,26 @@
  * limitations under the License.
  */
 
-
 import { Page } from "@metreeca/specimen/index.core.js";
-import { Colours } from "@metreeca/specimen/tile/colours.js";
-import { Forms } from "@metreeca/specimen/tile/forms.js";
-import { Palettes } from "@metreeca/specimen/tile/palettes.js";
-import { Scales } from "@metreeca/specimen/tile/scales.js";
-import { Surfaces } from "@metreeca/specimen/tile/surfaces.js";
-import { Tables } from "@metreeca/specimen/tile/tables.js";
-import { Text } from "@metreeca/specimen/tile/text.js";
-import { Theming } from "@metreeca/specimen/tile/theming.js";
+import { Shells } from "@metreeca/specimen/tile-hive/shells.js";
+import { Styles } from "@metreeca/specimen/tile-hive/styles.js";
+import { Tabbed } from "@metreeca/specimen/tile-hive/tabbed.js";
 import { Link } from "@metreeca/tile-cell/link.js";
 import { Routes } from "@metreeca/tile-data/router.js";
 
 
-export const TilePath = "/tile/";
+export const TileHivePath = "/tile-hive/";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function Tile() {
+export function TileHive() {
 
 	const sections = {
 
-		Colours: <Colours/>,
-		Surfaces: <Surfaces/>,
-		Palettes: <Palettes/>,
-		Scales: <Scales/>,
-		Text: <Text/>,
-		Tables: <Tables/>,
-		Forms: <Forms/>,
-		Theming: <Theming/>
+		Shell: <Shells/>,
+		Tabs: <Tabbed/>,
+		Style: <Styles/>
 
 	};
 
@@ -55,7 +44,7 @@ export function Tile() {
 		tray={<>
 
 			{Object.keys(sections).map(label =>
-				<Link key={label} active look="strong" href={`${TilePath}${path(label)}`}>{label}</Link>
+				<Link key={label} active look="strong" href={`${TileHivePath}${path(label)}`}>{label}</Link>
 			)}
 
 		</>}
@@ -63,7 +52,7 @@ export function Tile() {
 
 		<Routes routes={{
 
-			"/": `/${path("Colours")}`,
+			"/": `/${path("Shell")}`,
 
 			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
 

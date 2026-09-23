@@ -15,6 +15,7 @@
  */
 
 import { TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
+import { TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { TilePath } from "@metreeca/specimen/tile/index.js";
 import { Button } from "@metreeca/tile-cell/button.js";
 import { Icon } from "@metreeca/tile-cell/icon";
@@ -104,8 +105,9 @@ export function Page({
 				onClick={() => setWide(!wide)}
 			/>
 
-			<Link active look="strong" href={TilePath}>Design System</Link>
-			<Link active look="strong" href={TileCellPath}>Widgets and Controls</Link>
+			<Link active look="strong" href={`${TilePath}*`}>Design System</Link>
+			<Link active look="strong" href={`${TileCellPath}*`}>Widgets and Controls</Link>
+			<Link active look="strong" href={`${TileHivePath}*`}>Layouts and Containers</Link>
 
 		</>}
 

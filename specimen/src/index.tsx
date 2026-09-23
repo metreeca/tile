@@ -28,6 +28,7 @@ import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
 import { TileCell, TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
+import { TileHive, TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { Tile, TilePath } from "@metreeca/specimen/tile/index.js";
 import { Fetch } from "@metreeca/tile-data/fetch";
 import { Router } from "@metreeca/tile-data/router";
@@ -41,7 +42,6 @@ render(<Specimen/>, host("tile-specimen"));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
@@ -50,8 +50,9 @@ function Specimen() {
 
 			[Root]: TilePath,
 
-			[TilePath]: <Tile/>,
-			[TileCellPath]: <TileCell/>
+			[`${TilePath}*`]: <Tile/>,
+			[`${TileCellPath}*`]: <TileCell/>,
+			[`${TileHivePath}*`]: <TileHive/>
 
 		}}/>
 

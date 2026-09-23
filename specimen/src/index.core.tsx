@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
+import { TilePath } from "@metreeca/specimen/tile/index.js";
 import { Button } from "@metreeca/tile-cell/button.js";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Link } from "@metreeca/tile-cell/link.js";
@@ -25,6 +27,11 @@ import { Style } from "@metreeca/tile-hive/style.js";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
+
+export const Root = "/";
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function Page({
 
@@ -64,7 +71,11 @@ export function Page({
 		main={main}
 		wide={wide}
 
-		logo={<Style css={{ fontSize: "fontSizeLarge" }}><Logo>{app.name}</Logo></Style>}
+		logo={<Style css={{ fontSize: "fontSizeLarge" }}>
+
+			<Logo onClick={Root}>{app.name}</Logo>
+
+		</Style>}
 
 		meta={<>
 
@@ -93,8 +104,8 @@ export function Page({
 				onClick={() => setWide(!wide)}
 			/>
 
-			<Link active look="strong" href="/tile">Design System</Link>
-			<Link active look="strong" href="/tile-cell">Widgets and Controls</Link>
+			<Link active look="strong" href={TilePath}>Design System</Link>
+			<Link active look="strong" href={TileCellPath}>Widgets and Controls</Link>
 
 		</>}
 

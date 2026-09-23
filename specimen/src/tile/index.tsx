@@ -17,16 +17,21 @@
 
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Colours } from "@metreeca/specimen/tile/colours.js";
-import { Text } from "@metreeca/specimen/tile/text.js";
 import { Forms } from "@metreeca/specimen/tile/forms.js";
 import { Palettes } from "@metreeca/specimen/tile/palettes.js";
 import { Scales } from "@metreeca/specimen/tile/scales.js";
 import { Surfaces } from "@metreeca/specimen/tile/surfaces.js";
 import { Tables } from "@metreeca/specimen/tile/tables.js";
+import { Text } from "@metreeca/specimen/tile/text.js";
 import { Theming } from "@metreeca/specimen/tile/theming.js";
 import { app } from "@metreeca/tile-data";
 import { Tabs } from "@metreeca/tile-hive/tabs.js";
 
+
+export const TilePath = "/tile";
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function Tile() {
 

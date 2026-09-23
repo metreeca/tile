@@ -48,13 +48,14 @@
   "scripts": {
     "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
     "build": "tsc -b tsconfig.build.json",
-    "check": "npx vitest --typecheck --passWithNoTests run"
+    "check": "npx vitest --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
     "@metreeca/core": "^0.10.0",
     "@metreeca/http": "^0.2.0"
   },
   "devDependencies": {
+    "happy-dom": "^20.0.0",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vitest": "^5.0.1"

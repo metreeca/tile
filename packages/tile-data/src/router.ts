@@ -31,8 +31,8 @@ const ActiveAttribute="active";
 const NativeAttribute="native";
 const TargetAttribute="target";
 
-const Route=createContext<string>("");
-const Navigator=createContext<Router>(() => {});
+const RouteContext=createContext<string>("");
+const RouterContext=createContext<Router>(() => {});
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,70 +144,77 @@ export function Router({
 
 }) {
 
-	const table=useMemo(() => {
-
-		return children instanceof Function ? children : compile(children);
-
-	}, [children]);
+	const select=useMemo(() => children instanceof Function ? children : compile(children), [children]);
 
 
 	const update=useReducer<number, void | Event>(v => v + 1, 0)[1]; // dispatched bare or as a popstate listener
 
-	const click=useCallback((e: MouseEvent) => {
+	const click=useCallback((event: MouseEvent) => {
 
-		if ( !(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) ) { // only plain events
+		const plain=!(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented);
 
-			const origin=e.target as Element;
+		const origin=event.target instanceof Element ? event.target : undefined;
 
-			const anchor=origin.closest("a");
-			const image=origin.closest("img");
+		const anchor=origin?.closest("a");
+		const image=origin?.closest("img");
 
-			const native=anchor?.getAttribute(NativeAttribute);
-			const target=anchor?.getAttribute(TargetAttribute);
+		if ( plain && anchor
+			&& !anchor.getAttribute("href")?.startsWith("#")
+			&& !anchor.hasAttribute(NativeAttribute)
+			&& (anchor.getAttribute(TargetAttribute) ?? "_self") === "_self"
+		) {
 
-			if ( anchor && !anchor.getAttribute("href")?.startsWith("#")
-				&& native === null // only non-native anchors
-				&& (target === null || target === "_self") // only local anchors
-			) {
+			event.preventDefault();
+			follow(anchor.href);
 
-				e.preventDefault();
+		} else if ( plain && image ) {
 
-				const href=anchor.href;
-				const file="file:///";
+			toggle(image);
 
-				const route=href.startsWith(app.root) ? href.substring(app.root.length - 1)
-					: href.startsWith(file) ? href.substring(file.length - 1)
-						: "";
+		} else {
 
-				if ( route ) { // internal routes
+			// modified, already handled and unrelated clicks keep their default behaviour
 
-					try {
+		}
 
-						history.pushState(undefined, document.title, store(route));
 
-					} finally {
+		function follow(href: string): void {
 
-						update();
+			const file="file:///";
 
-					}
+			const route=href.startsWith(app.root) ? href.substring(app.root.length - 1)
+				: href.startsWith(file) ? href.substring(file.length - 1)
+					: "";
 
-				} else { // external links
+			if ( route ) {
 
-					window.open(href, "_blank");
+				try {
 
-				}
+					history.pushState(undefined, document.title, store(route));
 
-			} else if ( image ) { // drive image active visualization
+				} finally {
 
-				if ( image.getAttribute(ActiveAttribute) ) {
-
-					image.removeAttribute(ActiveAttribute);
-
-				} else {
-
-					image.setAttribute(ActiveAttribute, "true");
+					update();
 
 				}
+
+			} else {
+
+				window.open(href, "_blank");
+
+			}
+
+		}
+
+		function toggle(image: HTMLImageElement): void {
+
+			if ( image.getAttribute(ActiveAttribute) ) {
+
+				image.removeAttribute(ActiveAttribute);
+
+			} else {
+
+				image.setAttribute(ActiveAttribute, "true");
 
 			}
 
@@ -235,27 +242,29 @@ export function Router({
 			? { route: entry, title: undefined, state: undefined }
 			: entry;
 
-		const $route=normalizeRoute(route, store);
-		const _$title=normalizeTitle(title);
-		const $state=normalizeState(state);
+		const $route=route === undefined ? location.href : store(route);
+		const $title=normalizeTitle(title);
+		const $state=state === undefined ? history.state : state === null ? undefined : state;
 
 		const modified=$route !== location.href || $state !== history.state;
 
+		document.title=$title;
+
 		try {
 
-			if ( replace || $route === location.href ) {
-
-				history.replaceState($state, document.title=_$title, $route);
-
-			} else {
-
-				history.pushState($state, document.title=_$title, $route);
-
-			}
+			history[replace || $route === location.href ? "replaceState" : "pushState"]($state, $title, $route);
 
 		} finally {
 
-			if ( modified ) { update(); }
+			if ( modified ) {
+
+				update();
+
+			} else {
+
+				// nothing changed: skip rendering
+
+			}
 
 		}
 
@@ -264,8 +273,8 @@ export function Router({
 
 	const route=store();
 
-	return createElement(Navigator.Provider, { value: router },
-		createElement(Route.Provider, { value: route }, lookup(route, table))
+	return createElement(RouterContext.Provider, { value: router },
+		createElement(RouteContext.Provider, { value: route }, lookup(route, select))
 	);
 
 }
@@ -280,7 +289,7 @@ export function Router({
  *     string outside any such context
  */
 export function useRoute(): string {
-	return useContext(Route);
+	return useContext(RouteContext);
 }
 
 /**
@@ -293,7 +302,7 @@ export function useRoute(): string {
  *     context
  */
 export function useRouter(): Router {
-	return useContext(Navigator);
+	return useContext(RouterContext);
 }
 
 
@@ -304,18 +313,10 @@ export function useRouter(): Router {
  *
  * @return a function managing routes as relative-relative paths including search and hash
  */
-export function path(route?: string) {
-
-	if ( route === undefined ) {
-
-		return location.pathname;
-
-	} else {
-
-		return route.startsWith("/") ? route : `${location.pathname}${location.search}${location.hash}`;
-
-	}
-
+export function path(route?: string): string {
+	return route === undefined ? location.pathname
+		: route.startsWith("/") ? route
+			: `${location.pathname}${location.search}${location.hash}`;
 }
 
 /**
@@ -323,18 +324,10 @@ export function path(route?: string) {
  *
  * @return a function managing routes as hashes
  */
-export function hash(route?: string) {
-
-	if ( route === undefined ) {
-
-		return location.hash.substring(1);
-
-	} else {
-
-		return route.startsWith("#") ? route : `${location.search}${location.hash}`;
-
-	}
-
+export function hash(route?: string): string {
+	return route === undefined ? location.hash.substring(1)
+		: route.startsWith("#") ? route
+			: `${location.search}${location.hash}`;
 }
 
 
@@ -352,11 +345,9 @@ export function active(route: string): { href: string, [ActiveAttribute]?: "" } 
 
 	const href=wild ? route.substring(0, route.length - 1) : route;
 
-	function matches(target: string, current: string) {
-		return wild ? current.startsWith(target) : current === target;
-	}
+	const current=useContext(RouteContext);
 
-	return { href: href, [ActiveAttribute]: matches(href, useContext(Route)) ? "" : undefined };
+	return { href, [ActiveAttribute]: (wild ? current.startsWith(href) : current === href) ? "" : undefined };
 
 }
 
@@ -381,84 +372,64 @@ export function title(title: string): void {
 
 function compile(table: Table): Switch {
 
-	function pattern(glob: string): string { // convert a glob pattern to a regular expression
-		return glob === "*" ? "^.*$" : `^${glob
+	function pattern(glob: string): RegExp {
+		return new RegExp(glob === "*" ? "^.*$" : `^${glob
 
 			.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") // escape special regex characters
-			.replace(/\\{(\w+)\\}/g, "(?<$1>[^/]+)") // convert glob named parameters
-			.replace(/\\{\\}/g, "(?:[^/]+)") // convert glob anonymous parameters
-			.replace(/\/\\\*$/, "(?<$>/.*)") // convert glob trailing path
+			.replace(/\\{(\w+)\\}/g, "(?<$1>[^/]+)") // named steps
+			.replace(/\\{\\}/g, "(?:[^/]+)") // anonymous steps
+			.replace(/\/\\\*$/, "(?<$>/.*)") // trailing path
 
-		}([?#].*)?$`; // ignore trailing query/hash
+		}([?#].*)?$`); // ignore trailing query/hash
+	}
+
+	function resolve(
+		route: string, match: null | RegExpExecArray, entry: string | FunctionComponent
+	): ReturnType<Switch> {
+		return match === null ? undefined
+			: isString(entry) ? entry.replace(/{(\w*)}|\/\*$/g, (reference, step) => reference === "/*"
+				? match.groups?.$ || ""
+				: step ? match.groups?.[step] || "" : route
+			)
+				: createElement(entry, { ...match.groups });
 	}
 
 
-	const entries: [string, string | FunctionComponent][]=Object
-		.entries(table)
-		.map(([glob, entry]) => [pattern(glob), entry]);
+	const rules=Object.entries(table).map(([glob, entry]) => ({ pattern: pattern(glob), entry }));
 
-
-	return route => {
-
-		for (const [pattern, entry] of entries) {
-
-			const match=new RegExp(pattern).exec(route);
-
-			if ( match ) {
-				if ( typeof entry === "string" ) {
-
-					return entry.replace(/{(\w*)}|\/\*$/g, ($0, $1) => // replace wildcard references
-						$0 === "/*" ? match?.groups?.$ || ""
-							: $1 ? match?.groups?.[$1] || ""
-								: route
-					);
-
-				} else {
-
-					return createElement(entry, { ...match?.groups });
-
-				}
-			}
-
-		}
-
-		return undefined;
-
-	};
+	return route => rules.reduce<ReturnType<Switch>>((view, { pattern, entry }) =>
+		view ?? resolve(route, pattern.exec(route), entry), undefined
+	);
 
 }
 
-function lookup(route: string, table: Switch) {
+function lookup(route: string, select: Switch): ComponentChildren {
 
-	const redirects=new Set([route]);
+	function follow(current: string, trail: readonly string[]): ComponentChildren {
 
-	var current=route;
+		const view=select(current);
 
-	while ( true ) {
-
-		const component=table(current);
-
-		if ( component === undefined ) {
+		if ( view === undefined ) {
 
 			throw new Error(`unhandled route ${route}`);
 
-		} else if ( typeof component === "string" ) {
+		} else if ( !isString(view) ) {
 
-			if ( redirects.has(component) ) {
+			return view;
 
-				throw new Error(`redirection loop <${Array.from(redirects)}>`);
+		} else if ( trail.includes(view) ) {
 
-			}
-
-			redirects.add(current=component);
+			throw new Error(`redirection loop <${trail.join(",")}>`);
 
 		} else {
 
-			return component;
+			return follow(view, [...trail, view]);
 
 		}
 
 	}
+
+	return follow(route, [route]);
 
 }
 
@@ -466,20 +437,8 @@ function lookup(route: string, table: Switch) {
 function normalizeTitle(title: Optional<string>): string {
 	return tidy((title === undefined) ? document.title
 		: title === app.name ? app.name
-			: title && app.name ? `${title} | ${(app.name)}`
+			: title && app.name ? `${title} | ${app.name}`
 				: title ? title
 					: app.name ?? ""
 	);
-}
-
-function normalizeRoute(route: Optional<string>, store: Store): string {
-	return route === undefined ? location.href
-		: route === null ? location.origin
-			: store(route);
-}
-
-function normalizeState(state: unknown): unknown {
-	return state === undefined ? history.state
-		: state === null ? undefined
-			: state;
 }

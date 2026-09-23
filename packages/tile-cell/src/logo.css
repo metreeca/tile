@@ -65,7 +65,9 @@ tile-logo {
      * compensation, below any ladder and answering to the eye rather than to a measure.
      */
 
-    & > img {
+    & > img,
+    & > a > img,
+    & > button > img {
 
         flex: none; /* The mark holds its square whatever the wording beside it asks for. */
 
@@ -81,6 +83,51 @@ tile-logo {
          */
 
         translate: 0 calc((var(--tile-logo-mark) - 1cap) / 2);
+
+    }
+
+    /*
+     * A logo taking activations holds the lockup in a link or a button, which takes the row over from the element so
+     * the mark and the wording stand in it as they stand without it. The cursor and the hover colour are the ones the
+     * design system gives every link and button. The tracking and the leading are handed down explicitly, since the
+     * platform sets its own on a control where the reset leaves them alone.
+     */
+
+    & > a,
+    & > button {
+
+        display: grid;
+        grid-auto-flow: column;
+        align-items: baseline;
+
+        column-gap: var(--tile--spacing-050);
+
+        letter-spacing: inherit;
+        line-height: inherit;
+
+    }
+
+    /*
+     * A link keeps the ink and the weight the lockup has at rest rather than the ones running text marks a link with,
+     * so the logo reads the same whatever it does. It is never underlined, which would run under the wording and leave
+     * the mark out, and is marked for the keyboard by the ring a button carries instead. The hover colour is restated,
+     * since this sheet stands outside the design system layer and the ink stated here would otherwise hold over it.
+     */
+
+    & > a {
+
+        font-weight: inherit;
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
+        &:focus-visible {
+            outline: var(--tile--outline-focus);
+            outline-offset: var(--tile--border-width);
+        }
 
     }
 

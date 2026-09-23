@@ -25,6 +25,8 @@ import React, { ReactNode } from "react";
 
 
 // !!! the Tile prefix is dropped on migration, but `Link` clashes with the lucide-preact icon: rename by role
+// !!! a value that is neither an entry nor an id leaves the anchor without an href, so a filter reachable by pointer
+//     takes neither focus nor keys: on migration render a button where there is nothing to link to
 
 export function TileLink({
 

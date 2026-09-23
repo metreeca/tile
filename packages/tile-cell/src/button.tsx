@@ -32,10 +32,11 @@ import "./button.css";
  *
  * Shows a glyph, a label, or a glyph followed by a label, on a native control, so the button role, the activation by
  * `Enter` and `Space`, the single tab stop, the focus ring and the greyed disabled state come with it rather than
- * having to be asked for. A button states a label, a name, or both: a glyph standing alone is named by `name`, which
- * the type requires; a hint offered on top of these speaks to a resting pointer alone and names nothing.
+ * having to be asked for. A button states a label, a name or a hint, and the type requires one of them: a glyph
+ * standing alone is named by `name` or, failing that, by `title`; a hint offered beside a label or a name speaks to a
+ * resting pointer alone and names nothing.
  *
- * The glyph is kept out of the accessibility tree, leaving the label or `name` to name the control on its own, and
+ * The glyph is kept out of the accessibility tree, leaving the label, `name` or `title` to name the control, and
  * the control is drawn at least as large as the smallest target a pointer is asked to hit, label or no label.
  *
  * @param options The widget configuration
@@ -63,9 +64,9 @@ export function Button({
 }: {
 
 	/**
-	 * The accessible name, required where a glyph stands alone and no text names the button; where a label is shown as
-	 * well, it must include the text of that label, so that a reader asking for the control by what they see reaches
-	 * it.
+	 * The accessible name, required where a glyph stands alone and no `title` names the button; where a label is shown
+	 * as well, it must include the text of that label, so that a reader asking for the control by what they see
+	 * reaches it.
 	 */
 	name?: string
 
@@ -82,8 +83,8 @@ export function Button({
 	icon?: ComponentChildren
 
 	/**
-	 * The text the button shows, naming it unless `name` states otherwise; omitted only where `name` names a glyph
-	 * standing alone.
+	 * The text the button shows, naming it unless `name` states otherwise; omitted only where `name` or `title` names a
+	 * glyph standing alone.
 	 */
 	label?: string
 
@@ -91,9 +92,10 @@ export function Button({
 	 * The hint the platform shows on resting the pointer on the button, such as the shortcut it answers to or what a
 	 * glyph stands for at greater length than its name; no hint if omitted.
 	 *
-	 * It names nothing, the label or `name` having named the button already, and it reaches neither a reader who
-	 * never rests the pointer nor one on a touch screen, so whatever a reader has to take in to use the control
-	 * belongs in the label or beside it rather than here.
+	 * Beside a label or a `name` it names nothing. On a glyph standing alone with no `name` it names the button, and is
+	 * then spoken as a name rather than as an aside, so it states what the button does before any shortcut. Either
+	 * way it reaches neither a reader who never rests the pointer nor one on a touch screen, so whatever a reader has
+	 * to take in to use the control belongs in the label or beside it rather than here.
 	 */
 	title?: string
 
@@ -135,7 +137,19 @@ export function Button({
 	 */
 	onClick?: (event: TargetedMouseEvent<HTMLButtonElement>) => void
 
-} & ({ label: string } | { name: string })) {
+} & ({
+
+	name: string
+
+} | {
+
+	label: string
+
+} | {
+
+	title: string
+
+})) {
 
 	/*
 	 * The element states what it carries, a stylesheet having no way to tell a label from a glyph standing alone, and

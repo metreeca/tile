@@ -207,6 +207,7 @@ export function Page({
             </header>
 
             <section>{tray}</section>
+
             <footer>{info}</footer>
 
         </aside>}
@@ -235,6 +236,7 @@ export function Page({
 			</span>}
 
 			<section>{children}</section>
+
 			<footer>{foot}</footer>
 
 		</main>

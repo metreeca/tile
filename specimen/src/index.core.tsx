@@ -19,6 +19,7 @@ import { Icon } from "@metreeca/tile-cell/icon";
 import { Logo } from "@metreeca/tile-cell/logo.js";
 import { app } from "@metreeca/tile-data";
 import { useFetch } from "@metreeca/tile-data/fetch.js";
+import { active } from "@metreeca/tile-data/router.js";
 import { Shell } from "@metreeca/tile-hive/shell.js";
 import { Style } from "@metreeca/tile-hive/style.js";
 import type { ComponentChildren } from "preact";
@@ -91,6 +92,9 @@ export function Page({
 				title={wide ? "Cap the measure" : "Take the width"}
 				onClick={() => setWide(!wide)}
 			/>
+
+			<a {...active("/tile")}>tile</a>
+			<a {...active("/tile-cell")}>tile-cell</a>
 
 		</>}
 

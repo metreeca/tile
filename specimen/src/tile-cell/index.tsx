@@ -16,33 +16,26 @@
 
 
 import { Page } from "@metreeca/specimen/index.core.js";
-import { Colours } from "@metreeca/specimen/tile/colours.js";
-import { Text } from "@metreeca/specimen/tile/text.js";
-import { Forms } from "@metreeca/specimen/tile/forms.js";
-import { Palettes } from "@metreeca/specimen/tile/palettes.js";
-import { Scales } from "@metreeca/specimen/tile/scales.js";
-import { Surfaces } from "@metreeca/specimen/tile/surfaces.js";
-import { Tables } from "@metreeca/specimen/tile/tables.js";
-import { Theming } from "@metreeca/specimen/tile/theming.js";
+import { Buttons } from "@metreeca/specimen/tile-cell/buttons.js";
+import { Faults } from "@metreeca/specimen/tile-cell/faults.js";
+import { Icons } from "@metreeca/specimen/tile-cell/icons.js";
+import { Logos } from "@metreeca/specimen/tile-cell/logos.js";
+import { Notes } from "@metreeca/specimen/tile-cell/notes.js";
 import { app } from "@metreeca/tile-data";
 import { Tabs } from "@metreeca/tile-hive/tabs.js";
 
 
-export function Tile() {
+export function TileCell() {
 
 	return <Page>
 
 		<Tabs name={app.name} panels={{
 
-			Colours: <Colours/>,
-			Surfaces: <Surfaces/>,
-			Palettes: <Palettes/>,
-			Scales: <Scales/>,
-			Text: <Text/>,
-			Tables: <Tables/>,
-			Charts: undefined,
-			Forms: <Forms/>,
-			Theming: <Theming/>
+			Icons: <Icons/>,
+			Logos: <Logos/>,
+			Buttons: <Buttons/>,
+			Notes: <Notes/>,
+			Faults: <Faults/>
 
 		}}/>
 

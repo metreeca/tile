@@ -26,8 +26,10 @@
 import "@metreeca/tile/index.css";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
+import { TileCell } from "@metreeca/specimen/tile-cell/index.js";
 import { Tile } from "@metreeca/specimen/tile/index.js";
 import { Fetch } from "@metreeca/tile-data/fetch";
+import { Router } from "@metreeca/tile-data/router";
 import { host } from "@metreeca/tile-hive";
 import { render } from "preact";
 import "./index.css";
@@ -42,7 +44,14 @@ function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-		<Tile/>
+		<Router>{{
+
+			"/": "/tile",
+
+			"/tile": Tile,
+			"/tile-cell": TileCell
+
+		}}</Router>
 
 	</Fetch>;
 

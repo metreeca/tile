@@ -1,0 +1,74 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Marks ***********************************************************************************************************/
+
+/* A blanket is legible only over something, so the sample lays it across a card carrying text. */
+
+.blanket {
+
+    position: relative;
+
+    & > span {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--tile--border-radius-025);
+    }
+
+}
+
+
+/**** Viewport ********************************************************************************************************/
+
+/*
+ * A viewport flag is only legible as a state, so the mark fills when the threshold is passed. Each rule reads the
+ * token through a style query rather than restating the width, which is the whole point of the family.
+ */
+
+.flag {
+    display: inline-block;
+    width: var(--tile--scaling-150);
+    height: var(--tile--scaling-150);
+    border-radius: 50%; /* A roundel is a share of its own box, so the mark states the shape rather than a step. */
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    background-color: transparent;
+}
+
+@container style(--tile--viewport-small: on) {
+    .flag.viewport-small {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-medium: on) {
+    .flag.viewport-medium {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-large: on) {
+    .flag.viewport-large {
+        background-color: var(--tile--color-strong);
+    }
+}
+
+@container style(--tile--viewport-xlarge: on) {
+    .flag.viewport-xlarge {
+        background-color: var(--tile--color-strong);
+    }
+}

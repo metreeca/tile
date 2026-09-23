@@ -1,0 +1,56 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Marks ***********************************************************************************************************/
+
+/* A measure is read off its length alone, so the bar carries the accent and takes its height from the text. */
+
+.bar {
+    display: inline-block;
+    height: var(--tile--scaling-100);
+    background-color: var(--tile--color-strong);
+}
+
+/* Leading is read off two lines rather than one, so the sample carries a break the line box shows the effect of. */
+
+.leading {
+    display: inline-block;
+}
+
+
+/**** Motion **********************************************************************************************************/
+
+/*
+ * A duration and an easing are only legible in motion, so the sample moves under the pointer and states the token it
+ * is timed by through the property it sets. The travel is fixed, leaving the token the only thing that varies.
+ */
+
+.slide {
+    display: inline-block;
+    width: var(--tile--scaling-150);
+    height: var(--tile--scaling-150);
+    background-color: var(--tile--color-strong);
+    border-radius: var(--tile--border-radius-025);
+    transition-property: translate;
+    transition-duration: var(--tile--duration-normal);
+    transition-timing-function: var(--tile--easing-standard);
+}
+
+/* The travel is stated outright, a distance a sample crosses standing for nothing the scaling ladder sizes. */
+
+tr:hover .slide {
+    translate: 4em;
+}

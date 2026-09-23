@@ -23,177 +23,21 @@
  * @module
  */
 
-import { Colours, Forms, Palettes, Scales, Surfaces, Tables, Text, Theming } from "@metreeca/specimen/tile";
-import { Icons, Widgets } from "@metreeca/specimen/tile-cell";
 import "@metreeca/tile/index.css";
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { Logo } from "@metreeca/tile-cell/logo";
-import { app } from "@metreeca/tile-data";
-import { Fetch, useFetch } from "@metreeca/tile-data/fetch";
+import { Tile } from "@metreeca/specimen/tile/index.js";
+import { Fetch } from "@metreeca/tile-data/fetch";
 import { host } from "@metreeca/tile-hive";
-import { Page } from "@metreeca/tile-hive/page";
-import { Style } from "@metreeca/tile-hive/style";
-import { Tabs } from "@metreeca/tile-hive/tabs";
-import { type ComponentChild, render } from "preact";
-import { useState } from "preact/hooks";
+import { render } from "preact";
 import "./index.css";
 
 
-/**
- * What the sampler shows, keyed by the label the section is chosen by; a section with nothing to show yet is given no
- * content, so its label stands in the strip as a disabled tab.
- */
-const panels: Readonly<Record<string, ComponentChild>> = {
-
-	Colours: <Colours/>,
-	Surfaces: <Surfaces/>,
-	Palettes: <Palettes/>,
-	Scales: <Scales/>,
-	Icons: <Icons/>,
-	Text: <Text/>,
-	Tables: <Tables/>,
-	Charts: undefined,
-	Forms: <Forms/>,
-	Widgets: <Widgets/>,
-	Theming: <Theming/>
-
-};
+render(<Fetch fetch={mock}>{Tile()}</Fetch>, host("tile-specimen"));
 
 
-/**
- * Stands in for the network, so waiting is shown with no server to reach: every exchange takes two seconds and comes
- * back empty.
- */
-async function stall() {
+async function mock() {
 
 	await new Promise(resolve => setTimeout(resolve, 2000));
 
 	return new Response("{}", { headers: { "Content-Type": "application/json" } });
-
-}
-
-
-render(<Fetch fetch={stall}><Specimen/></Fetch>, host("tile-specimen"));
-
-
-function Specimen() {
-
-	const fetch = useFetch();
-
-	const [lock, setLock] = useState(false);
-	const [main, setMain] = useState(false);
-	const [wide, setWide] = useState(false);
-
-	const [user, setUser] = useState<string>();
-
-	const tray = lock ? "Release the tray" : "Lock the tray";
-	const side = main ? "Show the tray" : "Hide the tray";
-	const measure = wide ? "Cap the measure" : "Take the width";
-
-	function edit() {
-
-		setLock(true);
-
-		setTimeout(() => setLock(false), 1000);
-
-	}
-
-
-	return <Page
-
-		lock={lock}
-		main={main}
-		wide={wide}
-
-		logo={<Style css={{ fontSize: "fontSizeLarge" }}><Logo>{app.name}</Logo></Style>}
-
-		meta={<>
-
-			<Button
-				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
-				look="subtle"
-				name={tray}
-				title={tray}
-				onClick={edit}
-			/>
-
-		</>}
-
-		head={<>
-
-			<Button
-				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
-				look="subtle"
-				name={side}
-				title={side}
-				onClick={() => setMain(!main)}
-			/>
-
-			<Button
-				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
-				look="subtle"
-				name={measure}
-				title={measure}
-				onClick={() => setWide(!wide)}
-			/>
-
-		</>}
-
-		menu={<>
-
-			<small>v{VERSION}</small>
-
-			<Button
-				icon={<Icon.Search/>}
-				look="subtle"
-				name="Run an exchange"
-				title="Run an exchange"
-				onClick={() => { void fetch(app.base); }}
-			/>
-
-		</>}
-
-		tray={<>
-
-			<h1>Sections</h1>
-
-			{Object.keys(panels).map(label => <h2 key={label}>{label}</h2>)}
-
-		</>}
-
-		info={user
-
-			? <>
-
-				<small>{user}</small>
-
-				<Button
-					icon={<Icon.LogOut/>}
-					look="subtle"
-					name="Sign out"
-					title="Sign out"
-					onClick={() => setUser(undefined)}
-				/>
-
-			</>
-
-			: <Button
-				icon={<Icon.LogIn/>}
-				look="subtle"
-				name="Sign in"
-				title="Sign in"
-				onClick={() => setUser("user@example.com")}
-			/>
-
-		}
-
-		foot={<small>{app.copy}</small>}
-
-	>
-
-		<Tabs name={app.name} panels={panels}/>
-
-	</Page>;
 
 }

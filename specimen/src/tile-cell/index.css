@@ -14,47 +14,6 @@
  * limitations under the License.
  */
 
-/**** Marks ***********************************************************************************************************/
-
-/* A sampler of marks flows in rows, each glyph reading beside the name it answers to. */
-
-.glyphs {
-
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: var(--tile--spacing-150);
-    row-gap: var(--tile--spacing-050);
-    margin-bottom: var(--tile--spacing-100);
-
-    & > span {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--tile--spacing-025);
-    }
-
-}
-
-/* The areas read as a two-column listing, the roles of each sitting beside the area they belong to. */
-
-.areas {
-
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    column-gap: var(--tile--spacing-150);
-    align-items: baseline;
-
-    & > dt {
-        margin-bottom: 0;
-    }
-
-    & > dd.glyphs {
-        margin-bottom: var(--tile--spacing-050);
-    }
-
-}
-
-
 /**** Controls ********************************************************************************************************/
 
 /*
@@ -69,15 +28,6 @@
     column-gap: var(--tile--spacing-150);
     row-gap: var(--tile--spacing-050);
     margin-bottom: var(--tile--spacing-100);
-}
-
-/*
- * The samples carry fills of their own, which a stripe behind them would read as a second, weaker step of, so the
- * rows are left on the page colour and the table is read by its columns alone.
- */
-
-.buttons > tbody > tr > td {
-    background-color: transparent;
 }
 
 

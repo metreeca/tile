@@ -15,14 +15,22 @@
  */
 
 /**
- * Router context.
-
+ * Client-side routing.
+ *
+ * Maps the browser location to the view a page renders, keeping the two in step: {@link Router} renders the view for
+ * the current route and renders it again as the route changes, whether a component navigates, a local link is
+ * followed or the browser moves through its history. Components below it read the current route and navigate without
+ * being handed either, and links mark themselves as active when they point at the current route.
+ *
+ * Routes are drawn from the location by a {@link Store}, so the same routing works over the location path or the
+ * location hash.
+ *
  * @module
  */
 
-import { isString, Optional } from "@metreeca/core";
+import { isDefined, isFunction, isNull, isString, Optional } from "@metreeca/core";
 import { tidy } from "@metreeca/core/strings";
-import { type ComponentChildren, createContext, createElement, type FunctionComponent } from "preact";
+import { type ComponentChildren, createContext, createElement, type FunctionComponent, type VNode } from "preact";
 import { useCallback, useContext, useEffect, useMemo, useReducer } from "preact/hooks";
 import { app } from "./index.js";
 
@@ -39,22 +47,25 @@ const RouterContext=createContext<Router>(() => {});
 
 /**
  * Route store.
+ *
+ * Decides which part of the browser location carries the route, translating in both directions between the location
+ * and the routes a {@link Router} matches and navigates to. {@link path} and {@link hash} cover the common layouts.
  */
 export interface Store {
 
 	/**
-	 * Converts browser location to a route.
+	 * Reads the current route.
 	 *
-	 * @returns the current route as extracted from the current browser location
+	 * @returns The route carried by the current browser location
 	 */
 	(): string;
 
 	/**
 	 * Converts a route to a browser location.
 	 *
-	 * @param route the route to be converted
+	 * @param route The route to be converted
 	 *
-	 * @returns a root-relative string representing `route`
+	 * @returns The location, relative to the current one, that carries `route`
 	 */
 	(route: string): string;
 
@@ -62,15 +73,18 @@ export interface Store {
 
 /**
  * Routing switch.
+ *
+ * Decides in code what a route renders, where a {@link Table} of patterns is not expressive enough.
  */
 export interface Switch {
 
 	/**
-	 * Retrieves a component responsible for rendering a route.
+	 * Selects the view for a route.
 	 *
-	 * @param route the route to be rendered
+	 * @param route The route to be rendered
 	 *
-	 * @returns a a rendering of `route` or a new route if a redirection is required
+	 * @returns The view rendering `route`; another route to redirect to; `undefined` if `route` is not handled, which
+	 *     {@link Router} rejects
 	 */
 	(route: string): undefined | string | ComponentChildren;
 
@@ -78,45 +92,54 @@ export interface Switch {
 
 /**
  * Routing table.
+ *
+ * Declares what each route renders as a map from route patterns to views or redirections. A route is handled by the
+ * first pattern it matches, in table order, so specific patterns go before the general ones they overlap; the query
+ * and the hash of a route never take part in matching.
  */
 export interface Table {
 
 	/**
-	 * Maps glob patterns either to components or redirection patterns.
+	 * The view or redirection for the routes matching a pattern.
 	 *
-	 * Patterns may include the following wildcards, where `step` is a sequence of word chars:
+	 * A pattern is matched against the whole route and may include the following wildcards, where `step` is a
+	 * sequence of word characters; a lone `*` matches any route:
 	 *
-	 * - `{step}` matches a non empty named path step
+	 * - `{step}` matches a non-empty named path step
 	 * - `{}` matches a non-empty anonymous path step
-	 * - `/*` matches a trailing path
+	 * - `/*` at the end matches a trailing path, possibly empty
 	 *
-	 * Redirection patterns may refer to wildcards in the matched route pattern as:
+	 * A pattern maps to one of:
 	 *
-	 * - `{step}` replaced with the matched non empty named path step
-	 * - `{}` replaced with the whole matched route
-	 * - `/*` replaced with the matched trailing path
-	 *
-	 * Named path step in the matched route pattern are also included in the `props` argument of the component as:
-	 *
-	 * - `step` the matched non empty named path step
-	 * - `$` the matched trailing path
+	 * - a **redirection**: a route to render instead, where `{step}` is replaced with the matched named step, `{}` with
+	 *   the whole matched route and a trailing `/*` with the matched trailing path
+	 * - a **component**: rendered with the matched named steps as props, under their own names, and the matched
+	 *   trailing path as `$`
+	 * - an **element**: rendered as it is, without the matched steps; map the pattern to a component where the view
+	 *   needs them
 	 */
-	readonly [pattern: string]: string | FunctionComponent;
+	readonly [pattern: string]: string | FunctionComponent | VNode;
 
 }
 
 
 /**
  * Route navigator.
+ *
+ * Moves the page to another route, updating the browser location, the document title and the history state together.
  */
 export interface Router {
 
 	/**
 	 * Navigates to a route.
 	 *
+	 * The document title is set as {@link title} sets it. The enclosing {@link Router} renders again only if the route
+	 * or the history state actually changes.
+	 *
 	 * @param route The route to navigate to, or the route, document title and history state to navigate to; an omitted
-	 *     field keeps the current value
-	 * @param replace true if the current history entry is to be replaced rather than followed by a new one
+	 *     field keeps the current value, and a `null` state clears it
+	 * @param replace True if the current history entry is to be replaced rather than followed by a new one; navigating
+	 *     to the current route always replaces it
 	 */
 	(route: string | { route?: string, title?: string, state?: unknown }, replace?: boolean): void;
 
@@ -125,26 +148,52 @@ export interface Router {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Renders the view for the current route.
+ *
+ * Provides the current route and a navigator to the components below it, through {@link useRoute} and
+ * {@link useRouter}, and renders again whenever the route changes, whether through navigation or browser history.
+ *
+ * Takes over plain clicks anywhere in the page, leaving clicks with a modifier key or already handled to the browser:
+ *
+ * - a link to the same site is followed without reloading the page, unless it points at a fragment of the current
+ *   page, targets another browsing context or is marked with {@link native}
+ * - a link to another site opens in a new browsing context
+ * - an image toggles its `active` attribute, so a stylesheet can enlarge it
+ *
+ * A page mounts a single router, as each one takes over the clicks of the whole page.
+ *
+ * @param options The router configuration
+ *
+ * @returns The view for the current route
+ *
+ * @throws {@link !Error Error} If the current route is not handled, or if its redirections loop
+ */
 export function Router({
 
 	store=path,
-
-	children
+	routes
 
 }: {
 
 	/**
-	 * The route store
+	 * The store drawing routes from the browser location.
 	 *
-	 * @default {@link path}
+	 * @defaultValue {@link path}
 	 */
 	store?: Store
 
-	children: Table | Switch
+	/**
+	 * The views for the routes, as a table or a switch.
+	 *
+	 * A table is prepared once for as long as the same object is passed: declare it outside the rendering component, so
+	 * a new one is not prepared on every render.
+	 */
+	routes: Table | Switch
 
 }) {
 
-	const select=useMemo(() => children instanceof Function ? children : compile(children), [children]);
+	const select=useMemo(() => isFunction(routes) ? routes : compile(routes), [routes]);
 
 
 	const update=useReducer<number, void | Event>(v => v + 1, 0)[1]; // dispatched bare or as a popstate listener
@@ -242,9 +291,9 @@ export function Router({
 			? { route: entry, title: undefined, state: undefined }
 			: entry;
 
-		const $route=route === undefined ? location.href : store(route);
+		const $route=isDefined(route) ? store(route) : location.href;
 		const $title=normalizeTitle(title);
-		const $state=state === undefined ? history.state : state === null ? undefined : state;
+		const $state=!isDefined(state) ? history.state : isNull(state) ? undefined : state;
 
 		const modified=$route !== location.href || $state !== history.state;
 
@@ -285,8 +334,8 @@ export function Router({
  *
  * Renders the component again whenever the route changes, whether through navigation or browser history.
  *
- * @returns The current route as extracted by the store of the innermost enclosing {@link Router} context; an empty
- *     string outside any such context
+ * @returns The current route, as drawn by the store of the innermost enclosing {@link Router}; an empty string outside
+ *     any router
  */
 export function useRoute(): string {
 	return useContext(RouteContext);
@@ -295,11 +344,10 @@ export function useRoute(): string {
 /**
  * Retrieves the route navigator.
  *
- * The navigator stands for as long as the {@link Router} context offering it keeps its store, so a component
- * reading it renders again only as its own state requires, and a handler may keep it across navigations.
+ * The navigator stays the same for as long as the {@link Router} providing it keeps its store, so a component reading
+ * it renders again only as its own state requires, and a handler may keep it across navigations.
  *
- * @returns The navigator offered by the innermost enclosing {@link Router} context; a no-op outside any such
- *     context
+ * @returns The navigator provided by the innermost enclosing {@link Router}; a no-op outside any router
  */
 export function useRouter(): Router {
 	return useContext(RouterContext);
@@ -309,35 +357,48 @@ export function useRouter(): Router {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * The path {@link Store route store}.
+ * Carries routes in the location path.
  *
- * @return a function managing routes as relative-relative paths including search and hash
+ * The {@link Store route store} for sites served with a fallback to the app page, so every path reaches it: routes
+ * are read as root-relative paths such as `/users/123`, and a navigator also accepts routes relative to the current
+ * one, such as `../posts`.
+ *
+ * @param route The route to be converted to a location; the current route is read if omitted
+ *
+ * @returns The current location path, without query and hash, if `route` is omitted; the location carrying `route`
+ *     otherwise, a relative route resolving against the current location as a link would
  */
 export function path(route?: string): string {
-	return route === undefined ? location.pathname
-		: route.startsWith("/") ? route
-			: `${location.pathname}${location.search}${location.hash}`;
+	return !isDefined(route) ? location.pathname : route;
 }
 
 /**
- * The hash {@link Store route store}.
+ * Carries routes in the location hash.
  *
- * @return a function managing routes as hashes
+ * The {@link Store route store} for sites serving the app page at a single location: routes live in the fragment,
+ * so navigation never reaches the server.
+ *
+ * @param route The route to be converted to a location; the current route is read if omitted
+ *
+ * @returns The current location hash, without the leading `#`, if `route` is omitted; the fragment carrying `route`
+ *     otherwise, so that reading the route back from it yields `route`
  */
 export function hash(route?: string): string {
-	return route === undefined ? location.hash.substring(1)
-		: route.startsWith("#") ? route
-			: `${location.search}${location.hash}`;
+	return !isDefined(route) ? location.hash.substring(1) : `#${route}`;
 }
 
 
 /**
- * Creates an attribute spread for active links.
+ * Links to a route, marking the link while the route is current.
  *
- * @param route the target link route; may include a trailing `*` to match nested routes
+ * Spread over an anchor, so navigation menus and tabs can style the entry for the current route through its `active`
+ * attribute. Reads the current route as {@link useRoute} does, so it is subject to the same rules as a hook: call it
+ * while rendering, below the {@link Router}.
  *
- * @return an attribute spread including an `href` attribute for `route` and an optional `active` boolean
- * attribute if `route` matches the current route
+ * @param route The route to link to; a trailing `*` marks the link for every route nested under it as well, so
+ *     `/users/*` links to `/users/` and is marked for `/users/123`, though not for `/users`
+ *
+ * @returns An attribute spread linking to `route`, with an empty `active` attribute if the link is marked
  */
 export function active(route: string): { href: string, [ActiveAttribute]?: "" } {
 
@@ -352,17 +413,28 @@ export function active(route: string): { href: string, [ActiveAttribute]?: "" } 
 }
 
 /**
- * Creates an attribute spread for native links.
+ * Links to a location, leaving the link to the browser.
  *
- * @param route the target link route
+ * Spread over an anchor whose clicks the {@link Router} is not to take over, such as a link to a page of the same
+ * site served outside the app or to a download.
  *
- * @return an attribute spread including an `href` attribute for `route` and an `native` boolean attribute
+ * @param route The location to link to
+ *
+ * @returns An attribute spread linking to `route`, with an empty `native` attribute
  */
 export function native(route: string): { href: string, [NativeAttribute]?: "" } {
 	return { href: route, [NativeAttribute]: "" };
 }
 
 
+/**
+ * Sets the document title.
+ *
+ * Tidies whitespace and qualifies the title with the {@link app} name, as `Title | App`, so every page names the app
+ * alongside itself; an empty title, or one equal to the app name, leaves the app name alone.
+ *
+ * @param title The title of the current page
+ */
 export function title(title: string): void {
 	document.title=normalizeTitle(title);
 }
@@ -384,14 +456,15 @@ function compile(table: Table): Switch {
 	}
 
 	function resolve(
-		route: string, match: null | RegExpExecArray, entry: string | FunctionComponent
+		route: string, match: null | RegExpExecArray, entry: Table[string]
 	): ReturnType<Switch> {
-		return match === null ? undefined
+		return isNull(match) ? undefined
 			: isString(entry) ? entry.replace(/{(\w*)}|\/\*$/g, (reference, step) => reference === "/*"
 				? match.groups?.$ || ""
 				: step ? match.groups?.[step] || "" : route
 			)
-				: createElement(entry, { ...match.groups });
+				: isFunction(entry) ? createElement(entry, { ...match.groups })
+					: entry;
 	}
 
 
@@ -409,7 +482,7 @@ function lookup(route: string, select: Switch): ComponentChildren {
 
 		const view=select(current);
 
-		if ( view === undefined ) {
+		if ( !isDefined(view) ) {
 
 			throw new Error(`unhandled route ${route}`);
 
@@ -435,7 +508,7 @@ function lookup(route: string, select: Switch): ComponentChildren {
 
 
 function normalizeTitle(title: Optional<string>): string {
-	return tidy((title === undefined) ? document.title
+	return tidy(!isDefined(title) ? document.title
 		: title === app.name ? app.name
 			: title && app.name ? `${title} | ${app.name}`
 				: title ? title

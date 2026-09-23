@@ -18,14 +18,14 @@ import { createElement, type FunctionComponent, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { active, native, path, Router, type Switch, type Table, title, useRoute, useRouter } from "./router.js";
+import { active, hash, native, path, Router, type Switch, type Table, title, useRoute, useRouter } from "./router.js";
 
 
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
 
 
-function mount(children: Table | Switch): void {
-	act(() => render(createElement(Router, { children }), document.body));
+function mount(routes: Table | Switch): void {
+	act(() => render(createElement(Router, { routes }), document.body));
 }
 
 function text(): string {
@@ -52,6 +52,17 @@ describe("Router", () => {
 			mount({
 				"/": () => createElement("p", {}, "home"),
 				"/other": () => createElement("p", {}, "other")
+			});
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should render the element matching the current route as it is", async () => {
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/other": createElement("p", {}, "other")
 			});
 
 			expect(text()).toBe("home");
@@ -100,7 +111,7 @@ describe("Router", () => {
 
 			act(() => render(createElement(Router, {
 				store,
-				children: { "/": () => createElement("p", {}, "home") }
+				routes: { "/": () => createElement("p", {}, "home") }
 			}), document.body));
 
 			expect(text()).toBe("home");
@@ -387,6 +398,36 @@ describe("path", () => {
 	it("should convert absolute routes to themselves", async () => {
 
 		expect(path("/a/b")).toBe("/a/b");
+
+	});
+
+	it("should resolve relative routes against the current location", async () => {
+
+		history.replaceState(null, "", "/a/b?q=1#h");
+
+		history.pushState(null, "", path("c"));
+
+		expect(path()).toBe("/a/c");
+
+	});
+
+});
+
+describe("hash", () => {
+
+	it("should extract the route from the location hash", async () => {
+
+		history.replaceState(null, "", "/?q=1#/a/b");
+
+		expect(hash()).toBe("/a/b");
+
+	});
+
+	it("should convert routes to locations carrying them", async () => {
+
+		history.pushState(null, "", hash("/a/b"));
+
+		expect(hash()).toBe("/a/b");
 
 	});
 

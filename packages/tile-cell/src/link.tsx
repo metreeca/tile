@@ -73,6 +73,7 @@ export function Link({
 	 */
 	native?: boolean
 
+
 	/**
 	 * How loud the link appears: `subtle` reads as the text around it, told apart only by the link colour, `normal`
 	 * adds an underline, and `strong` stands as a label of its own, smaller and heavier in the text colour with no
@@ -83,11 +84,13 @@ export function Link({
 	 */
 	look?: "subtle" | "normal" | "strong"
 
+
 	/**
-	 * The route the link points at; a trailing `*` extends the marking of an `active` link to every route nested under
+	 * The route the link points at; a trailing `/*` extends the marking of an `active` link to every route nested under
 	 * it, so `/users/*` links to `/users/` and is marked for `/users/123`, though not for `/users`.
 	 */
 	href: string
+
 
 	/**
 	 * The content the link shows, naming it; a glyph standing alone carries a label of its own, so that the link has a
@@ -99,11 +102,10 @@ export function Link({
 
 	const route = useRoute();
 
-	const wild = href.endsWith("*");
+	const wild = href.endsWith("/*");
+	const head = wild ? href.slice(0, -1) : href;
 
-	const $href = wild ? href.slice(0, -1) : href;
-
-	const current = active && (wild ? route.startsWith($href) : route === $href);
+	const current = active && (wild ? route.startsWith(head) : route === head);
 
 	/*
 	 * The `active` and `native` attributes are stated empty, as boolean attributes are: the former is what a
@@ -119,7 +121,7 @@ export function Link({
 
 	return createElement("tile-link", { look }, createElement("a", {
 
-		href: $href,
+		href: head,
 
 		active: current ? "" : undefined,
 		native: native ? "" : undefined,

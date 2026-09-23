@@ -60,6 +60,17 @@ describe("Link", () => {
 
 	});
 
+	it("should take a trailing star as a wildcard only after a slash", async () => {
+
+		history.replaceState(null, "", "/ab");
+
+		mount({ active: true, href: "/a*" });
+
+		expect(anchors()).toEqual(["/a*"]);
+		expect(anchors("a[active]")).toEqual([]);
+
+	});
+
 	describe("active", () => {
 
 		it("should mark active links to the current route", async () => {

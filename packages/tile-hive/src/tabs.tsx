@@ -235,7 +235,7 @@ export function Tabs({
 				 * a widget handed arbitrary content cannot tell without walking the DOM, and one taken where the
 				 * content is reachable already lands the reader on the whole area on the way past. What a stop would
 				 * have been good for, scrolling a panel by key, is handed by the browser to whichever box actually
-				 * scrolls and holds nothing focusable, which inside a page frame is the body of the content column
+				 * scrolls and holds nothing focusable, which inside a shell is the body of the content column
 				 * rather than the panel within it.
 				 */
 

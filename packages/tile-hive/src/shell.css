@@ -24,13 +24,13 @@
  * it is stated in rem and holds still while the text around it changes.
  */
 
-tile-page {
+tile-shell {
 
     /*
      * The geometry the two columns are laid out on. These are properties of this layout rather than design system
      * tokens: a column width is what this arrangement happens to need and not a value the interface is themed by, so
      * a single dash keeps them apart from the `--tile--` contract and out of the token suite. A consumer retunes one
-     * page by restating them on it, rather than every page in the app.
+     * shell by restating them on it, rather than every shell in the app.
      *
      * The reading measure is where it is because a comfortable line runs 65 to 75 characters, which is the same
      * reasoning the viewport ladder is stated in text units for.
@@ -41,11 +41,11 @@ tile-page {
      * gutter of its own with it and step out of the line.
      */
 
-    --tile-page-tray-width: 15rem;
-    --tile-page-main-width: 75rem;
+    --tile-shell-tray-width: 15rem;
+    --tile-shell-main-width: 75rem;
 
-    --tile-page-tray-gutter: 1.1rem;
-    --tile-page-main-gutter: 1.5rem;
+    --tile-shell-tray-gutter: 1.1rem;
+    --tile-shell-main-gutter: 1.5rem;
 
     /*
      * The inset every part of the content column is held to, which is the reading measure stated as air rather than
@@ -59,9 +59,9 @@ tile-page {
      * this is a measure of whatever part reads it and not of the frame it is declared on.
      */
 
-    --tile-page-main-inset: max(
-        var(--tile-page-main-gutter),
-        calc((100% - var(--tile-page-main-width)) / 2)
+    --tile-shell-main-inset: max(
+        var(--tile-shell-main-gutter),
+        calc((100% - var(--tile-shell-main-width)) / 2)
     );
 
     /*
@@ -75,11 +75,11 @@ tile-page {
      * over the body rather than floating between the two.
      */
 
-    --tile-page-head-inset-top: 0.75rem;
-    --tile-page-head-inset-bottom: 0.5rem;
+    --tile-shell-head-inset-top: 0.75rem;
+    --tile-shell-head-inset-bottom: 0.5rem;
 
-    --tile-page-foot-inset-top: 0.25rem;
-    --tile-page-foot-inset-bottom: 0.5rem;
+    --tile-shell-foot-inset-top: 0.25rem;
+    --tile-shell-foot-inset-bottom: 0.5rem;
 
     /*
      * The band each bar lays over the body it borders, so content leaving the column reads as passing under the bar
@@ -101,9 +101,9 @@ tile-page {
      * directions.
      */
 
-    --tile-page-shade-depth: 1.5rem;
+    --tile-shell-shade-depth: 1.5rem;
 
-    --tile-page-shade-ramp:
+    --tile-shell-shade-ramp:
         rgb(0 0 0 / 100%) 0%,
         rgb(0 0 0 / 99%) 10%,
         rgb(0 0 0 / 94%) 20%,
@@ -133,7 +133,7 @@ tile-page {
      * a bar holding a control is as tall as the control needs and the frame stays out of the argument.
      */
 
-    grid-template-columns: var(--tile-page-tray-width) 1fr;
+    grid-template-columns: var(--tile-shell-tray-width) 1fr;
     grid-template-rows: auto 1fr auto;
 
     /*
@@ -256,7 +256,7 @@ tile-page {
             position: absolute;
             left: 0;
             right: 0;
-            height: var(--tile-page-shade-depth);
+            height: var(--tile-shell-shade-depth);
 
             pointer-events: none;
 
@@ -266,14 +266,14 @@ tile-page {
 
             grid-row: 1;
 
-            padding-top: var(--tile-page-head-inset-top);
-            padding-bottom: var(--tile-page-head-inset-bottom);
+            padding-top: var(--tile-shell-head-inset-top);
+            padding-bottom: var(--tile-shell-head-inset-bottom);
 
             /* The band hangs below the bar, solid where the body meets it and gone a band later. */
 
             &::after {
                 top: 100%;
-                mask-image: linear-gradient(to bottom, var(--tile-page-shade-ramp));
+                mask-image: linear-gradient(to bottom, var(--tile-shell-shade-ramp));
             }
 
             /* Each end of the header is a row of its own, so a control sits beside its label rather than under it. */
@@ -306,8 +306,8 @@ tile-page {
              * moved something under a bar.
              */
 
-            padding-top: var(--tile-page-shade-depth);
-            padding-bottom: var(--tile-page-shade-depth);
+            padding-top: var(--tile-shell-shade-depth);
+            padding-bottom: var(--tile-shell-shade-depth);
 
         }
 
@@ -315,14 +315,14 @@ tile-page {
 
             grid-row: 3;
 
-            padding-top: var(--tile-page-foot-inset-top);
-            padding-bottom: var(--tile-page-foot-inset-bottom);
+            padding-top: var(--tile-shell-foot-inset-top);
+            padding-bottom: var(--tile-shell-foot-inset-bottom);
 
             /* The band hangs above the bar, solid where the body meets it and gone a band earlier. */
 
             &::before {
                 bottom: 100%;
-                mask-image: linear-gradient(to top, var(--tile-page-shade-ramp));
+                mask-image: linear-gradient(to top, var(--tile-shell-shade-ramp));
             }
 
             /* The first thing in the footer takes the left and pushes whatever follows to the right. */
@@ -354,8 +354,8 @@ tile-page {
         border-right-style: var(--tile--border-style);
 
         & > * {
-            padding-left: var(--tile-page-tray-gutter);
-            padding-right: var(--tile-page-tray-gutter);
+            padding-left: var(--tile-shell-tray-gutter);
+            padding-right: var(--tile-shell-tray-gutter);
         }
 
         & > section {
@@ -440,8 +440,8 @@ tile-page {
          */
 
         & > * {
-            padding-left: var(--tile-page-main-inset);
-            padding-right: var(--tile-page-main-inset);
+            padding-left: var(--tile-shell-main-inset);
+            padding-right: var(--tile-shell-main-inset);
         }
 
         /*
@@ -503,8 +503,8 @@ tile-page {
             align-items: center;
             justify-content: flex-end;
 
-            padding-top: var(--tile-page-head-inset-top);
-            padding-bottom: var(--tile-page-head-inset-bottom);
+            padding-top: var(--tile-shell-head-inset-top);
+            padding-bottom: var(--tile-shell-head-inset-bottom);
 
             pointer-events: none;
 
@@ -519,7 +519,7 @@ tile-page {
              */
 
             & svg {
-                animation: tile-page-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+                animation: tile-shell-turn calc(2 * var(--tile--duration-slow)) linear infinite;
             }
 
         }
@@ -529,12 +529,12 @@ tile-page {
     /* Content a window never has too much room for takes the whole of it, the measure being no help to a grid. */
 
     &[wide] {
-        --tile-page-main-inset: var(--tile-page-main-gutter);
+        --tile-shell-main-inset: var(--tile-shell-main-gutter);
     }
 
 }
 
-@keyframes tile-page-turn {
+@keyframes tile-shell-turn {
 
     to {
         rotate: 1turn;

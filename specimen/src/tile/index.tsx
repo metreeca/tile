@@ -15,7 +15,7 @@
  */
 
 
-import { Specimen } from "@metreeca/specimen/index.core.js";
+import { Page } from "@metreeca/specimen/index.core.js";
 import { Buttons } from "@metreeca/specimen/tile-cell/buttons.js";
 import { Faults } from "@metreeca/specimen/tile-cell/faults.js";
 import { Icons } from "@metreeca/specimen/tile-cell/icons.js";
@@ -35,7 +35,7 @@ import { Tabs } from "@metreeca/tile-hive/tabs.js";
 
 export function Tile() {
 
-	return <Specimen>
+	return <Page>
 
 		<Tabs name={app.name} panels={{
 
@@ -56,6 +56,6 @@ export function Tile() {
 
 		}}/>
 
-	</Specimen>;
+	</Page>;
 
 }

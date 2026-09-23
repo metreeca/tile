@@ -19,13 +19,13 @@ import { Icon } from "@metreeca/tile-cell/icon";
 import { Logo } from "@metreeca/tile-cell/logo.js";
 import { app } from "@metreeca/tile-data";
 import { useFetch } from "@metreeca/tile-data/fetch.js";
-import { Page } from "@metreeca/tile-hive/page.js";
+import { Shell } from "@metreeca/tile-hive/shell.js";
 import { Style } from "@metreeca/tile-hive/style.js";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
 
-export function Specimen({
+export function Page({
 
 	tray,
 
@@ -57,7 +57,7 @@ export function Specimen({
 	}
 
 
-	return <Page
+	return <Shell
 
 		lock={lock}
 		main={main}
@@ -142,6 +142,6 @@ export function Specimen({
 
 		{children}
 
-	</Page>;
+	</Shell>;
 
 }

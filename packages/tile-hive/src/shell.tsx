@@ -15,7 +15,7 @@
  */
 
 /**
- * Page.
+ * Shell.
  *
  * Offers the frame a whole screen is laid out in: a tray of standing controls beside the content of the moment, each
  * with a header and a footer of its own, so an app states what goes in the slots rather than arranging them.
@@ -28,17 +28,17 @@ import { Icon } from "@metreeca/tile-cell/icon";
 import { useFetching } from "@metreeca/tile-data/fetch";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
-import "./page.css";
+import "./shell.css";
 
 /**
- * Creates a page.
+ * Creates a shell.
  *
  * Lays a screen out as two scrolling columns, the tray and the content, each carrying a header that stays in view as
  * the column scrolls and a footer beneath what it holds; a screen with no use for the tray is laid out on the content
  * column alone. Every slot is optional and one left out takes no room, so a screen with no tray footer closes up
  * rather than holding a gap for it.
  *
- * Waiting is stated by the page itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
+ * Waiting is stated by the shell itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark at the end of the
  * content header, in place of whatever navigation sits there. Nothing else moves while it stands: a screen with no
  * content header is not given one for the duration, and a header that stands keeps the height it had. No call site
@@ -63,9 +63,9 @@ import "./page.css";
  *
  * @param options The widget configuration
  *
- * @returns The page
+ * @returns The shell
  */
-export function Page({
+export function Shell({
 
 	lock = false,
 	main = false,
@@ -78,7 +78,6 @@ export function Page({
 
 	done,
 	back,
-
 	head,
 	menu,
 	foot,
@@ -110,6 +109,7 @@ export function Page({
 	 */
 	wide?: boolean
 
+
 	/**
 	 * The mark the app is recognised by, standing at the head of the tray.
 	 */
@@ -131,6 +131,7 @@ export function Page({
 	 * What stands at the foot of the tray, such as the reader signed in and the way out.
 	 */
 	info?: ComponentChildren
+
 
 	/**
 	 * The way out of the content of the moment, standing at the head of the content column in place of `head` and
@@ -162,6 +163,7 @@ export function Page({
 	 */
 	foot?: ComponentChildren
 
+
 	/**
 	 * The content of the moment, filling the body of the content column.
 	 */
@@ -187,7 +189,7 @@ export function Page({
 	 * stylesheet to read the attribute the markup already owes.
 	 */
 
-	return createElement("tile-page", {
+	return createElement("tile-shell", {
 
 		"aria-busy": fetching,
 

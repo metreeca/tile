@@ -20,8 +20,8 @@
  * touching any other.
  */
 
-tile-page {
+tile-shell {
 
-    --tile-page-tray-width: 15rem;
+    --tile-shell-tray-width: 15rem;
 
 }

@@ -18,14 +18,14 @@ import { createElement, type FunctionComponent, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { active, hash, native, path, Router, type Switch, type Table, title, useRoute, useRouter } from "./router.js";
+import { Router, type Switch, type Table, useRoute, useRouter } from "./router.js";
 
 
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
 
 
-function mount(routes: Table | Switch): void {
-	act(() => render(createElement(Router, { routes }), document.body));
+function mount(routes: Table | Switch, mode?: "path" | "hash"): void {
+	act(() => render(createElement(Router, { mode, routes }), document.body));
 }
 
 function text(): string {
@@ -47,17 +47,6 @@ describe("Router", () => {
 
 	describe("tables", () => {
 
-		it("should render the component matching the current route", async () => {
-
-			mount({
-				"/": () => createElement("p", {}, "home"),
-				"/other": () => createElement("p", {}, "other")
-			});
-
-			expect(text()).toBe("home");
-
-		});
-
 		it("should render the element matching the current route as it is", async () => {
 
 			mount({
@@ -69,16 +58,13 @@ describe("Router", () => {
 
 		});
 
-		it("should pass named steps and the trailing path as props", async () => {
+		it("should match named steps and trailing paths", async () => {
 
 			history.replaceState(null, "", "/users/123/posts/7");
 
-			const User: FunctionComponent<{ id?: string, $?: string }> = ({ id, $ }) =>
-				createElement("p", {}, `${id} ${$}`);
+			mount({ "/users/{id}/*": createElement("p", {}, "matched") });
 
-			mount({ "/users/{id}/*": User });
-
-			expect(text()).toBe("123 /posts/7");
+			expect(text()).toBe("matched");
 
 		});
 
@@ -86,7 +72,7 @@ describe("Router", () => {
 
 			history.replaceState(null, "", "/any");
 
-			mount({ "/{}": () => createElement("p", {}, "matched") });
+			mount({ "/{}": createElement("p", {}, "matched") });
 
 			expect(text()).toBe("matched");
 
@@ -97,8 +83,8 @@ describe("Router", () => {
 			history.replaceState(null, "", "/users/new");
 
 			mount({
-				"/users/new": () => createElement("p", {}, "form"),
-				"/users/{id}": () => createElement("p", {}, "user")
+				"/users/new": createElement("p", {}, "form"),
+				"/users/{id}": createElement("p", {}, "user")
 			});
 
 			expect(text()).toBe("form");
@@ -107,12 +93,9 @@ describe("Router", () => {
 
 		it("should ignore the query and the hash", async () => {
 
-			const store = (route?: string) => route ?? "/?q=1#h";
+			history.replaceState(null, "", "/#/?q=1#h");
 
-			act(() => render(createElement(Router, {
-				store,
-				routes: { "/": () => createElement("p", {}, "home") }
-			}), document.body));
+			mount({ "/": createElement("p", {}, "home") }, "hash");
 
 			expect(text()).toBe("home");
 
@@ -124,16 +107,16 @@ describe("Router", () => {
 
 			mount({
 				"/people/{id}/*": "/users/{id}/*",
-				"/users/{id}/*": ({ id, $ }: { id?: string, $?: string }) => createElement("p", {}, `${id} ${$}`)
+				"/users/{id}/*": createElement(Here, {})
 			});
 
-			expect(text()).toBe("123 /about");
+			expect(text()).toBe("/people/123/about");
 
 		});
 
 		it("should reject an unhandled route", async () => {
 
-			expect(() => mount({ "/other": () => null })).toThrow("unhandled route /");
+			expect(() => mount({ "/other": createElement("p", {}) })).toThrow("unhandled route /");
 
 		});
 
@@ -169,7 +152,7 @@ describe("Router", () => {
 
 		it("should render again on browser history navigation", async () => {
 
-			mount({ "/*": Here });
+			mount({ "/*": createElement(Here, {}) });
 
 			act(() => {
 				history.replaceState(null, "", "/other");
@@ -183,14 +166,87 @@ describe("Router", () => {
 		it("should route clicks on local anchors through history", async () => {
 
 			mount({
-				"/": () => createElement("a", { href: "/other" }, "link"),
-				"/other": () => createElement("p", {}, "other")
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement("p", {}, "other")
 			});
 
 			act(() => document.querySelector("a")?.click());
 
 			expect(location.pathname).toBe("/other");
 			expect(text()).toBe("other");
+
+		});
+
+	});
+
+	describe("images", () => {
+
+		function image(): HTMLImageElement | null {
+			return document.querySelector("img");
+		}
+
+		function key(key: string): KeyboardEvent {
+			const event = new KeyboardEvent("keydown", { key, cancelable: true });
+			act(() => window.dispatchEvent(event));
+			return event;
+		}
+
+
+		it("should enlarge an image on a plain click", async () => {
+
+			mount({ "/": createElement("img", { src: "a.png", alt: "a" }) });
+
+			act(() => image()?.click());
+
+			expect(image()?.hasAttribute("active")).toBe(true);
+
+		});
+
+		it("should restore an enlarged image on a plain click", async () => {
+
+			mount({ "/": createElement("img", { src: "a.png", alt: "a" }) });
+
+			act(() => image()?.click());
+			act(() => image()?.click());
+
+			expect(image()?.hasAttribute("active")).toBe(false);
+
+		});
+
+		it("should restore an enlarged image on Escape, claiming the key", async () => {
+
+			mount({ "/": createElement("img", { src: "a.png", alt: "a" }) });
+
+			act(() => image()?.click());
+
+			const event = key("Escape");
+
+			expect(image()?.hasAttribute("active")).toBe(false);
+			expect(event.defaultPrevented).toBe(true);
+
+		});
+
+		it("should leave Escape alone when no image is enlarged", async () => {
+
+			mount({ "/": createElement("img", { src: "a.png", alt: "a" }) });
+
+			expect(key("Escape").defaultPrevented).toBe(false);
+
+		});
+
+		it("should restore an enlarged image when the focus moves behind it", async () => {
+
+			mount({
+				"/": createElement("p", {},
+					createElement("img", { src: "a.png", alt: "a" }),
+					createElement("button", {}, "behind")
+				)
+			});
+
+			act(() => image()?.click());
+			act(() => document.querySelector("button")?.focus());
+
+			expect(image()?.hasAttribute("active")).toBe(false);
 
 		});
 
@@ -213,7 +269,7 @@ describe("useRoute", () => {
 
 		history.replaceState(null, "", "/current");
 
-		mount({ "/*": Here });
+		mount({ "/*": createElement(Here, {}) });
 
 		expect(text()).toBe("/current");
 
@@ -230,7 +286,7 @@ describe("useRouter", () => {
 
 		const Probe: FunctionComponent = () => {
 			navigators(useRouter());
-			return createElement(Here, {});
+			return createElement("output", {}, useRoute()); // reads the route, so it renders again on navigation
 		};
 
 		return { navigators, Probe };
@@ -257,7 +313,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": Probe });
+		mount({ "/*": createElement(Probe, {}) });
 
 		const length = history.length;
 
@@ -273,7 +329,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": Probe });
+		mount({ "/*": createElement(Probe, {}) });
 
 		const length = history.length;
 
@@ -289,7 +345,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": Probe });
+		mount({ "/*": createElement(Probe, {}) });
 
 		navigate(navigators, { route: "/other", title: " Other  Page ", state: { key: "value" } });
 
@@ -303,7 +359,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": Probe });
+		mount({ "/*": createElement(Probe, {}) });
 
 		navigate(navigators, { title: "Title" });
 
@@ -316,7 +372,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": Probe });
+		mount({ "/*": createElement(Probe, {}) });
 
 		navigate(navigators, "/other");
 
@@ -330,125 +386,95 @@ describe("useRouter", () => {
 });
 
 
-describe("active", () => {
+describe("modes", () => {
 
-	function links(...routes: string[]): Table {
-		return {
-			"/*": () => createElement("nav", {}, routes.map(route =>
-				createElement("a", { key: route, ...active(route) }, route)
-			))
-		};
-	}
+	const Nav = ({ route }: { route: string }) => {
+		const router = useRouter();
+		return createElement("button", { onClick: () => router(route) }, useRoute());
+	};
 
-	function marked(): string[] {
-		return Array.from(document.querySelectorAll("a[active]"), anchor => anchor.getAttribute("href") ?? "");
+	function click(): void {
+		act(() => document.querySelector("button")?.click());
 	}
 
 
-	it("should mark links to the current route", async () => {
+	describe("path", () => {
 
-		history.replaceState(null, "", "/a");
+		it("should be the default mode", async () => {
 
-		mount(links("/a", "/b"));
+			history.replaceState(null, "", "/a/b#/c");
 
-		expect(marked()).toEqual(["/a"]);
+			mount({ "/*": createElement(Here, {}) });
 
-	});
+			expect(text()).toBe("/a/b");
 
-	it("should mark wildcard links to enclosing routes", async () => {
+		});
 
-		history.replaceState(null, "", "/a/b");
+		it("should draw routes from the location path", async () => {
 
-		mount(links("/a/*", "/a", "/b/*"));
+			history.replaceState(null, "", "/a/b?q=1#h");
 
-		expect(marked()).toEqual(["/a/"]);
+			mount({ "/*": createElement(Here, {}) }, "path");
 
-	});
+			expect(text()).toBe("/a/b");
 
-	it("should strip the wildcard from the link", async () => {
+		});
 
-		mount(links("/*"));
+		it("should navigate to absolute routes", async () => {
 
-		expect(document.querySelector("a")?.getAttribute("href")).toBe("/");
+			history.replaceState(null, "", "/a/b");
 
-	});
+			mount({ "/*": createElement(Nav, { route: "/c/d" }) }, "path");
 
-});
+			click();
 
-describe("native", () => {
+			expect(location.pathname).toBe("/c/d");
+			expect(text()).toBe("/c/d");
 
-	it("should mark links as native", async () => {
+		});
 
-		expect(native("/other")).toEqual({ href: "/other", native: "" });
+		it("should resolve relative routes against the current location", async () => {
 
-	});
+			history.replaceState(null, "", "/a/b?q=1#h");
 
-});
+			mount({ "/*": createElement(Nav, { route: "c" }) }, "path");
 
-describe("path", () => {
+			click();
 
-	it("should extract the route from the location path", async () => {
+			expect(location.pathname).toBe("/a/c");
+			expect(text()).toBe("/a/c");
 
-		history.replaceState(null, "", "/a/b?q=1#h");
-
-		expect(path()).toBe("/a/b");
-
-	});
-
-	it("should convert absolute routes to themselves", async () => {
-
-		expect(path("/a/b")).toBe("/a/b");
+		});
 
 	});
 
-	it("should resolve relative routes against the current location", async () => {
+	describe("hash", () => {
 
-		history.replaceState(null, "", "/a/b?q=1#h");
+		it("should draw routes from the location hash", async () => {
 
-		history.pushState(null, "", path("c"));
+			history.replaceState(null, "", "/x?q=1#/a/b");
 
-		expect(path()).toBe("/a/c");
+			mount({ "/*": createElement(Here, {}) }, "hash");
 
-	});
+			expect(text()).toBe("/a/b");
 
-});
+		});
 
-describe("hash", () => {
+		it("should navigate by carrying routes in the location hash", async () => {
 
-	it("should extract the route from the location hash", async () => {
+			history.replaceState(null, "", "/x#/a/b");
 
-		history.replaceState(null, "", "/?q=1#/a/b");
+			mount({ "/*": createElement(Nav, { route: "/c/d" }) }, "hash");
 
-		expect(hash()).toBe("/a/b");
+			click();
 
-	});
+			expect(location.pathname).toBe("/x");
+			expect(location.hash).toBe("#/c/d");
+			expect(text()).toBe("/c/d");
 
-	it("should convert routes to locations carrying them", async () => {
-
-		history.pushState(null, "", hash("/a/b"));
-
-		expect(hash()).toBe("/a/b");
+		});
 
 	});
 
 });
 
-describe("title", () => {
-
-	it("should set the document title", async () => {
-
-		title("Title");
-
-		expect(document.title).toBe("Title");
-
-	});
-
-	it("should tidy whitespace", async () => {
-
-		title("  Some   Title ");
-
-		expect(document.title).toBe("Some Title");
-
-	});
-
-});

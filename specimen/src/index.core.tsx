@@ -16,10 +16,10 @@
 
 import { Button } from "@metreeca/tile-cell/button.js";
 import { Icon } from "@metreeca/tile-cell/icon";
+import { Link } from "@metreeca/tile-cell/link.js";
 import { Logo } from "@metreeca/tile-cell/logo.js";
 import { app } from "@metreeca/tile-data";
 import { useFetch } from "@metreeca/tile-data/fetch.js";
-import { active } from "@metreeca/tile-data/router.js";
 import { Shell } from "@metreeca/tile-hive/shell.js";
 import { Style } from "@metreeca/tile-hive/style.js";
 import type { ComponentChildren } from "preact";
@@ -93,8 +93,8 @@ export function Page({
 				onClick={() => setWide(!wide)}
 			/>
 
-			<a {...active("/tile")}>tile</a>
-			<a {...active("/tile-cell")}>tile-cell</a>
+			<Link active look="strong" href="/tile">Design System</Link>
+			<Link active look="strong" href="/tile-cell">Widgets and Controls</Link>
 
 		</>}
 

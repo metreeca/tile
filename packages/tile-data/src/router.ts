@@ -20,56 +20,55 @@
  * Maps the browser location to the view a page renders, keeping the two in step: {@link Router} renders the view for
  * the current route and renders it again as the route changes, whether a component navigates, a local link is
  * followed or the browser moves through its history. Components below it read the current route and navigate without
- * being handed either, and links mark themselves as active when they point at the current route.
+ * being handed either.
  *
- * Routes are drawn from the location by a {@link Store}, so the same routing works over the location path or the
- * location hash.
+ * Routes are carried by the location path or by the location hash, as the site serving the page requires, and the same
+ * routing works over either.
  *
  * @module
  */
 
 import { isDefined, isFunction, isNull, isString, Optional } from "@metreeca/core";
+import { unique } from "@metreeca/core/arrays";
 import { tidy } from "@metreeca/core/strings";
-import { type ComponentChildren, createContext, createElement, type FunctionComponent, type VNode } from "preact";
-import { useCallback, useContext, useEffect, useMemo, useReducer } from "preact/hooks";
+import { type ComponentChildren, createContext, createElement, type VNode } from "preact";
+import { useCallback, useContext, useEffect, useState } from "preact/hooks";
 import { app } from "./index.js";
 
 
-const ActiveAttribute="active";
-const NativeAttribute="native";
-const TargetAttribute="target";
+const ActiveAttribute = "active";
+const NativeAttribute = "native";
+const TargetAttribute = "target";
 
-const RouteContext=createContext<string>("");
-const RouterContext=createContext<Router>(() => {});
+const RouteContext = createContext<string>("");
+const RouterContext = createContext<Router>(() => {});
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Route store.
+ * Route navigator.
  *
- * Decides which part of the browser location carries the route, translating in both directions between the location
- * and the routes a {@link Router} matches and navigates to. {@link path} and {@link hash} cover the common layouts.
+ * Moves the page to another route, updating the browser location, the document title and the history state together.
  */
-export interface Store {
+export interface Router {
 
 	/**
-	 * Reads the current route.
+	 * Navigates to a route.
 	 *
-	 * @returns The route carried by the current browser location
+	 * The document title is tidied and qualified with the {@link app} name, as `Title | App`, so every page names the
+	 * app alongside itself; an empty title, or one equal to the app name, leaves the app name alone. Passing a title
+	 * alone sets it without navigating. The enclosing {@link Router} renders again only if the route actually changes.
+	 *
+	 * @param route The route to navigate to, or the route, document title and history state to navigate to; an omitted
+	 *     field keeps the current value, and a `null` state clears it
+	 * @param replace True if the current history entry is to be replaced rather than followed by a new one; navigating
+	 *     to the current route always replaces it
 	 */
-	(): string;
-
-	/**
-	 * Converts a route to a browser location.
-	 *
-	 * @param route The route to be converted
-	 *
-	 * @returns The location, relative to the current one, that carries `route`
-	 */
-	(route: string): string;
+	(route: string | { route?: string, title?: string, state?: unknown }, replace?: boolean): void;
 
 }
+
 
 /**
  * Routing switch.
@@ -84,9 +83,9 @@ export interface Switch {
 	 * @param route The route to be rendered
 	 *
 	 * @returns The view rendering `route`; another route to redirect to; `undefined` if `route` is not handled, which
-	 *     {@link Router} rejects
+	 *     makes {@link Router} throw
 	 */
-	(route: string): undefined | string | ComponentChildren;
+	(route: string): string | ComponentChildren;
 
 }
 
@@ -113,35 +112,10 @@ export interface Table {
 	 *
 	 * - a **redirection**: a route to render instead, where `{step}` is replaced with the matched named step, `{}` with
 	 *   the whole matched route and a trailing `/*` with the matched trailing path
-	 * - a **component**: rendered with the matched named steps as props, under their own names, and the matched
-	 *   trailing path as `$`
-	 * - an **element**: rendered as it is, without the matched steps; map the pattern to a component where the view
-	 *   needs them
+	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
+	 *   {@link useRoute}, or is selected by a {@link Switch}
 	 */
-	readonly [pattern: string]: string | FunctionComponent | VNode;
-
-}
-
-
-/**
- * Route navigator.
- *
- * Moves the page to another route, updating the browser location, the document title and the history state together.
- */
-export interface Router {
-
-	/**
-	 * Navigates to a route.
-	 *
-	 * The document title is set as {@link title} sets it. The enclosing {@link Router} renders again only if the route
-	 * or the history state actually changes.
-	 *
-	 * @param route The route to navigate to, or the route, document title and history state to navigate to; an omitted
-	 *     field keeps the current value, and a `null` state clears it
-	 * @param replace True if the current history entry is to be replaced rather than followed by a new one; navigating
-	 *     to the current route always replaces it
-	 */
-	(route: string | { route?: string, title?: string, state?: unknown }, replace?: boolean): void;
+	readonly [pattern: string]: string | VNode;
 
 }
 
@@ -157,11 +131,16 @@ export interface Router {
  * Takes over plain clicks anywhere in the page, leaving clicks with a modifier key or already handled to the browser:
  *
  * - a link to the same site is followed without reloading the page, unless it points at a fragment of the current
- *   page, targets another browsing context or is marked with {@link native}
+ *   page, targets another browsing context or carries a `native` attribute
  * - a link to another site opens in a new browsing context
- * - an image toggles its `active` attribute, so a stylesheet can enlarge it
+ * - an image toggles its `active` attribute, which the `@metreeca/tile` stylesheet reads to show it over the whole
+ *   viewport
  *
- * A page mounts a single router, as each one takes over the clicks of the whole page.
+ * An enlarged image is restored by another click on it, by `Escape`, or as soon as the focus moves, so a keyboard user
+ * never ends up on a control the image covers. Enlarging is a visual convenience over content the image already
+ * carries, through its alternative text and the browser zoom, so images are not made reachable from the keyboard.
+ *
+ * A page mounts a single router, as each one takes over the clicks and keys of the whole page.
  *
  * @param options The router configuration
  *
@@ -171,133 +150,182 @@ export interface Router {
  */
 export function Router({
 
-	store=path,
+	mode = "path",
+
 	routes
 
 }: {
 
 	/**
-	 * The store drawing routes from the browser location.
+	 * The part of the browser location carrying the route:
 	 *
-	 * @defaultValue {@link path}
+	 * - `path`, for sites served with a fallback to the app page, so every path reaches it: routes are read as
+	 *   root-relative paths such as `/users/123`, and a navigator also accepts routes relative to the current one, such
+	 *   as `../posts`, resolving them as a link would
+	 * - `hash`, for sites serving the app page at a single location: routes live in the fragment, as in `#/users/123`,
+	 *   so navigation never reaches the server
+	 *
+	 * @defaultValue `"path"`
 	 */
-	store?: Store
+	mode?: "path" | "hash"
 
 	/**
 	 * The views for the routes, as a table or a switch.
-	 *
-	 * A table is prepared once for as long as the same object is passed: declare it outside the rendering component, so
-	 * a new one is not prepared on every render.
 	 */
 	routes: Table | Switch
 
 }) {
 
-	const select=useMemo(() => isFunction(routes) ? routes : compile(routes), [routes]);
+	const select = isFunction(routes)
+		? routes
+		: compile(routes);
 
+	const read = mode === "hash"
+		? () => location.hash.substring(1)
+		: () => location.pathname;
 
-	const update=useReducer<number, void | Event>(v => v + 1, 0)[1]; // dispatched bare or as a popstate listener
+	const [route, setRoute] = useState(read);
 
-	const click=useCallback((event: MouseEvent) => {
-
-		const plain=!(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented);
-
-		const origin=event.target instanceof Element ? event.target : undefined;
-
-		const anchor=origin?.closest("a");
-		const image=origin?.closest("img");
-
-		if ( plain && anchor
-			&& !anchor.getAttribute("href")?.startsWith("#")
-			&& !anchor.hasAttribute(NativeAttribute)
-			&& (anchor.getAttribute(TargetAttribute) ?? "_self") === "_self"
-		) {
-
-			event.preventDefault();
-			follow(anchor.href);
-
-		} else if ( plain && image ) {
-
-			toggle(image);
-
-		} else {
-
-			// modified, already handled and unrelated clicks keep their default behaviour
-
-		}
-
-
-		function follow(href: string): void {
-
-			const file="file:///";
-
-			const route=href.startsWith(app.root) ? href.substring(app.root.length - 1)
-				: href.startsWith(file) ? href.substring(file.length - 1)
-					: "";
-
-			if ( route ) {
-
-				try {
-
-					history.pushState(undefined, document.title, store(route));
-
-				} finally {
-
-					update();
-
-				}
-
-			} else {
-
-				window.open(href, "_blank");
-
-			}
-
-		}
-
-		function toggle(image: HTMLImageElement): void {
-
-			if ( image.getAttribute(ActiveAttribute) ) {
-
-				image.removeAttribute(ActiveAttribute);
-
-			} else {
-
-				image.setAttribute(ActiveAttribute, "true");
-
-			}
-
-		}
-
-	}, [store]);
+	const sync = () => setRoute(read()); // renders again only if the route actually changed
 
 
 	useEffect(() => {
 
-		window.addEventListener("popstate", update);
+		function click(event: MouseEvent): void {
+
+			const plain = isPlain(event);
+			const origin = event.target instanceof Element ? event.target : undefined;
+
+			const anchor = origin?.closest("a");
+			const image = origin?.closest("img");
+
+			if ( plain && anchor
+				&& !anchor.getAttribute("href")?.startsWith("#")
+				&& !anchor.hasAttribute(NativeAttribute)
+				&& (anchor.getAttribute(TargetAttribute) ?? "_self") === "_self"
+			) {
+
+				event.preventDefault();
+				follow(anchor.href);
+
+			} else if ( plain && image ) {
+
+				toggle(image);
+
+			} else {
+
+				// modified, already handled and unrelated clicks keep their default behaviour
+
+			}
+
+
+			function isPlain(event: MouseEvent) {
+				return !event.altKey
+					&& !event.ctrlKey
+					&& !event.metaKey
+					&& !event.shiftKey
+					&& !event.defaultPrevented;
+			}
+
+			function follow(href: string): void {
+
+				const route = href.startsWith(app.root) ? href.substring(app.root.length-1) : "";
+
+				if ( route ) {
+
+					try {
+
+						history.pushState(undefined, document.title, mode === "hash" ? `#${route}` : route);
+
+					} finally {
+
+						sync();
+
+					}
+
+				} else {
+
+					window.open(href, "_blank");
+
+				}
+
+			}
+
+			function toggle(image: HTMLImageElement): void {
+
+				if ( image.getAttribute(ActiveAttribute) ) {
+
+					image.removeAttribute(ActiveAttribute);
+
+				} else {
+
+					image.setAttribute(ActiveAttribute, "true");
+
+				}
+
+			}
+
+		}
+
+		function keydown(event: KeyboardEvent): void {
+
+			const images = enlarged();
+
+			if ( event.key === "Escape" && images.length > 0 ) {
+
+				event.preventDefault();
+				restore(images);
+
+			} else {
+
+				// keys the router has no use for keep their default behaviour
+
+			}
+
+		}
+
+		function focusin(): void {
+			restore(enlarged()); // the focus never lands on a control hidden behind an enlarged image
+		}
+
+
+		function enlarged(): NodeListOf<HTMLImageElement> {
+			return document.querySelectorAll(`img[${ActiveAttribute}]`);
+		}
+
+		function restore(images: NodeListOf<HTMLImageElement>): void {
+			images.forEach(image => image.removeAttribute(ActiveAttribute)); // DOM side effect, nothing to collect
+		}
+
+
+		sync(); // catches up with a location changed before the listeners were in place, or read in another mode
+
+		window.addEventListener("popstate", sync);
 		window.addEventListener("click", click);
+		window.addEventListener("keydown", keydown);
+		window.addEventListener("focusin", focusin);
 
 		return () => {
-			window.removeEventListener("popstate", update);
+			window.removeEventListener("popstate", sync);
 			window.removeEventListener("click", click);
+			window.removeEventListener("keydown", keydown);
+			window.removeEventListener("focusin", focusin);
 		};
 
-	}, [update, click]);
+	}, [mode]);
 
 
-	const router=useCallback<Router>((entry, replace) => {
+	const router = useCallback<Router>((entry, replace) => {
 
-		const { route, title, state }=isString(entry)
+		const { route, title, state } = isString(entry)
 			? { route: entry, title: undefined, state: undefined }
 			: entry;
 
-		const $route=isDefined(route) ? store(route) : location.href;
-		const $title=normalizeTitle(title);
-		const $state=!isDefined(state) ? history.state : isNull(state) ? undefined : state;
+		const $route = !isDefined(route) ? location.href : mode === "hash" ? `#${route}` : route;
+		const $title = normalizeTitle(title);
+		const $state = !isDefined(state) ? history.state : isNull(state) ? undefined : state;
 
-		const modified=$route !== location.href || $state !== history.state;
-
-		document.title=$title;
+		document.title = $title;
 
 		try {
 
@@ -305,22 +333,12 @@ export function Router({
 
 		} finally {
 
-			if ( modified ) {
-
-				update();
-
-			} else {
-
-				// nothing changed: skip rendering
-
-			}
+			sync();
 
 		}
 
-	}, [store]);
+	}, [mode]);
 
-
-	const route=store();
 
 	return createElement(RouterContext.Provider, { value: router },
 		createElement(RouteContext.Provider, { value: route }, lookup(route, select))
@@ -330,21 +348,9 @@ export function Router({
 
 
 /**
- * Retrieves the current route.
- *
- * Renders the component again whenever the route changes, whether through navigation or browser history.
- *
- * @returns The current route, as drawn by the store of the innermost enclosing {@link Router}; an empty string outside
- *     any router
- */
-export function useRoute(): string {
-	return useContext(RouteContext);
-}
-
-/**
  * Retrieves the route navigator.
  *
- * The navigator stays the same for as long as the {@link Router} providing it keeps its store, so a component reading
+ * The navigator stays the same for as long as the {@link Router} providing it keeps its mode, so a component reading
  * it renders again only as its own state requires, and a handler may keep it across navigations.
  *
  * @returns The navigator provided by the innermost enclosing {@link Router}; a no-op outside any router
@@ -353,90 +359,16 @@ export function useRouter(): Router {
 	return useContext(RouterContext);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /**
- * Carries routes in the location path.
+ * Retrieves the current route.
  *
- * The {@link Store route store} for sites served with a fallback to the app page, so every path reaches it: routes
- * are read as root-relative paths such as `/users/123`, and a navigator also accepts routes relative to the current
- * one, such as `../posts`.
+ * Renders the component again whenever the route changes, whether through navigation or browser history.
  *
- * @param route The route to be converted to a location; the current route is read if omitted
- *
- * @returns The current location path, without query and hash, if `route` is omitted; the location carrying `route`
- *     otherwise, a relative route resolving against the current location as a link would
+ * @returns The current route, as carried by the location in the mode of the innermost enclosing {@link Router}; an
+ *     empty string outside any router
  */
-export function path(route?: string): string {
-	return !isDefined(route) ? location.pathname : route;
-}
-
-/**
- * Carries routes in the location hash.
- *
- * The {@link Store route store} for sites serving the app page at a single location: routes live in the fragment,
- * so navigation never reaches the server.
- *
- * @param route The route to be converted to a location; the current route is read if omitted
- *
- * @returns The current location hash, without the leading `#`, if `route` is omitted; the fragment carrying `route`
- *     otherwise, so that reading the route back from it yields `route`
- */
-export function hash(route?: string): string {
-	return !isDefined(route) ? location.hash.substring(1) : `#${route}`;
-}
-
-
-/**
- * Links to a route, marking the link while the route is current.
- *
- * Spread over an anchor, so navigation menus and tabs can style the entry for the current route through its `active`
- * attribute. Reads the current route as {@link useRoute} does, so it is subject to the same rules as a hook: call it
- * while rendering, below the {@link Router}.
- *
- * @param route The route to link to; a trailing `*` marks the link for every route nested under it as well, so
- *     `/users/*` links to `/users/` and is marked for `/users/123`, though not for `/users`
- *
- * @returns An attribute spread linking to `route`, with an empty `active` attribute if the link is marked
- */
-export function active(route: string): { href: string, [ActiveAttribute]?: "" } {
-
-	const wild=route.endsWith("*");
-
-	const href=wild ? route.substring(0, route.length - 1) : route;
-
-	const current=useContext(RouteContext);
-
-	return { href, [ActiveAttribute]: (wild ? current.startsWith(href) : current === href) ? "" : undefined };
-
-}
-
-/**
- * Links to a location, leaving the link to the browser.
- *
- * Spread over an anchor whose clicks the {@link Router} is not to take over, such as a link to a page of the same
- * site served outside the app or to a download.
- *
- * @param route The location to link to
- *
- * @returns An attribute spread linking to `route`, with an empty `native` attribute
- */
-export function native(route: string): { href: string, [NativeAttribute]?: "" } {
-	return { href: route, [NativeAttribute]: "" };
-}
-
-
-/**
- * Sets the document title.
- *
- * Tidies whitespace and qualifies the title with the {@link app} name, as `Title | App`, so every page names the app
- * alongside itself; an empty title, or one equal to the app name, leaves the app name alone.
- *
- * @param title The title of the current page
- */
-export function title(title: string): void {
-	document.title=normalizeTitle(title);
+export function useRoute(): string {
+	return useContext(RouteContext);
 }
 
 
@@ -460,18 +392,16 @@ function compile(table: Table): Switch {
 	): ReturnType<Switch> {
 		return isNull(match) ? undefined
 			: isString(entry) ? entry.replace(/{(\w*)}|\/\*$/g, (reference, step) => reference === "/*"
-				? match.groups?.$ || ""
-				: step ? match.groups?.[step] || "" : route
-			)
-				: isFunction(entry) ? createElement(entry, { ...match.groups })
-					: entry;
+					? match.groups?.$ || ""
+					: step ? match.groups?.[step] || "" : route
+				)
+				: entry;
 	}
 
 
-	const rules=Object.entries(table).map(([glob, entry]) => ({ pattern: pattern(glob), entry }));
-
-	return route => rules.reduce<ReturnType<Switch>>((view, { pattern, entry }) =>
-		view ?? resolve(route, pattern.exec(route), entry), undefined
+	return route => Object.entries(table).reduce<ReturnType<Switch>>((view, [glob, entry]) =>
+			view ?? resolve(route, pattern(glob).exec(route), entry), undefined // patterns past the first match are not
+		// compiled
 	);
 
 }
@@ -480,7 +410,7 @@ function lookup(route: string, select: Switch): ComponentChildren {
 
 	function follow(current: string, trail: readonly string[]): ComponentChildren {
 
-		const view=select(current);
+		const view = select(current);
 
 		if ( !isDefined(view) ) {
 
@@ -508,10 +438,6 @@ function lookup(route: string, select: Switch): ComponentChildren {
 
 
 function normalizeTitle(title: Optional<string>): string {
-	return tidy(!isDefined(title) ? document.title
-		: title === app.name ? app.name
-			: title && app.name ? `${title} | ${app.name}`
-				: title ? title
-					: app.name ?? ""
+	return tidy(isDefined(title) ? unique([title, app.name]).filter(Boolean).join(" | ") : document.title
 	);
 }

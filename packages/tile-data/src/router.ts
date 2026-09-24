@@ -312,9 +312,17 @@ export function Router({
 			? { route: entry, title: undefined, state: undefined }
 			: entry;
 
-		const $route = normalizeRoute(route);
-		const $title = normalizeTitle(title);
-		const $state = normalizeState(state);
+		const $route = route === undefined
+			? location.href
+			: new URL(mode === "hash" ? `#${route}` : route, location.href).href;
+
+		const $title = title === undefined
+			? document.title
+			: unique([tidy(title), app.name]).filter(Boolean).join(" | ");
+
+		const $state = state === undefined
+			? history.state
+			: state;
 
 		document.title = $title;
 
@@ -326,19 +334,6 @@ export function Router({
 
 			sync();
 
-		}
-
-
-		function normalizeRoute(route: Optional<string>): string {
-			return isDefined(route) ? new URL(mode === "hash" ? `#${route}` : route, location.href).href : location.href;
-		}
-
-		function normalizeTitle(title: Optional<string>): string {
-			return isDefined(title) ? unique([tidy(title), app.name]).filter(Boolean).join(" | ") : document.title;
-		}
-
-		function normalizeState(state: unknown): unknown {
-			return isDefined(state) ? state : history.state; // null clears the state
 		}
 
 	}, [mode]);

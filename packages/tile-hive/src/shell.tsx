@@ -80,6 +80,7 @@ export function Shell({
 	back,
 	head,
 	menu,
+	copy,
 	foot,
 
 	children
@@ -111,12 +112,13 @@ export function Shell({
 
 
 	/**
-	 * The mark the app is recognised by, standing at the head of the tray.
+	 * The mark the app is recognised by, standing at the top of the tray, in view however the tray scrolls.
 	 */
 	logo?: ComponentChildren
 
 	/**
-	 * What stands opposite the mark at the head of the tray, such as the release on show or a standing control.
+	 * What stands opposite the mark at the top of the tray, in view however the tray scrolls, such as the release on
+	 * show or a standing control.
 	 */
 	meta?: ComponentChildren
 
@@ -128,13 +130,14 @@ export function Shell({
 	tray?: ComponentChildren
 
 	/**
-	 * What stands at the foot of the tray, such as the reader signed in and the way out.
+	 * What stands at the bottom of the tray, in view however the tray scrolls, such as the reader signed in and the
+	 * way out.
 	 */
 	info?: ComponentChildren
 
 
 	/**
-	 * The way out of the content of the moment, standing at the head of the content column in place of `head` and
+	 * The way out of the content of the moment, standing at the top of the shell in place of `head` and
 	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
 	 * they simply arrived at.
 	 */
@@ -147,8 +150,9 @@ export function Shell({
 	back?: ComponentChildren
 
 	/**
-	 * What the content of the moment is called. It heads the content column unless `done` stands there instead, and
-	 * names the content landmark either way, so a reader arriving at it hears which screen they are on.
+	 * What the content of the moment is called. It stands at the top of the shell, in view however the content
+	 * scrolls, unless `done` stands there instead, and names the content landmark either way, so a reader arriving at
+	 * it hears which screen they are on.
 	 */
 	head?: ComponentChildren
 
@@ -159,7 +163,14 @@ export function Shell({
 	menu?: ComponentChildren
 
 	/**
-	 * What stands at the foot of the content, such as the copyright and the terms.
+	 * What closes the content itself, such as a copyright notice. It scrolls with the content rather than standing
+	 * in a bar: where the content is short it rests at the bottom of the shell, just above `foot` if one stands,
+	 * and where the content runs longer it follows on after it.
+	 */
+	copy?: ComponentChildren
+
+	/**
+	 * What stands at the bottom of the shell, in view however the content scrolls, such as the terms.
 	 */
 	foot?: ComponentChildren
 
@@ -237,7 +248,10 @@ export function Shell({
 				<Button icon={<Icon.RefreshCw/>} look="subtle" name="Waiting"/>
 			</span>}
 
-			<section>{children}</section>
+			<section>
+				<div>{children}</div>
+				{copy && <footer>{copy}</footer>}
+			</section>
 
 			<footer>{foot}</footer>
 

@@ -33,7 +33,8 @@ export function TileHive() {
 
 		Shell: <Shells/>,
 		Tabs: <Tabbed/>,
-		Style: <Styles/>
+		Style: <Styles/>,
+		Empty: <></>
 
 	};
 

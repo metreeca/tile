@@ -196,7 +196,8 @@ tile-shell {
          * `inert` takes out of reach as a whole.
          *
          * Each part names the row it belongs to rather than falling into the next free one, so a bar the screen gave
-         * nothing to show is left out without the body of that column riding up into the row it held.
+         * nothing to show is left out without the parts after it shifting up a row. The body alone reaches into the
+         * row a missing bar held, as stated below.
          */
 
         display: grid;
@@ -329,6 +330,25 @@ tile-shell {
 
             padding-top: var(--tile-shell-shade-depth);
             padding-bottom: var(--tile-shell-shade-depth);
+
+            /*
+             * A bar left out hands its row to the body of the same column. The row itself stands as long as the
+             * other column fills it, so a body held to the middle row would stop short of the frame edge and leave
+             * a band of empty page where the missing bar would have been.
+             *
+             * With no bar there is no band to keep clear, so the body takes the inset the missing bar would have
+             * read instead, and what it holds at that end lines up with the bar standing in the other column.
+             */
+
+            &:is(header:empty ~ *) {
+                grid-row-start: 1;
+                padding-top: var(--tile-shell-head-inset-top);
+            }
+
+            &:has(+ footer:empty) {
+                grid-row-end: -1;
+                padding-bottom: var(--tile-shell-foot-inset-bottom);
+            }
 
         }
 
@@ -474,6 +494,29 @@ tile-shell {
 
         & > header > span[inert] {
             visibility: hidden;
+        }
+
+        /*
+         * The body stacks the content over the notice closing it, and the notice takes whatever room the content
+         * leaves: short content leaves it resting at the bottom of the column, just above the footer or at the edge
+         * of the frame where no footer stands, and long content pushes it down to follow on after it. Either way it
+         * is part of what scrolls, so it never covers the content the way a bar would.
+         *
+         * The content is held in a box of its own, so what it holds keeps the block flow it was written for rather
+         * than being laid out as a column of flex items.
+         */
+
+        & > section {
+
+            display: flex;
+            flex-direction: column;
+
+            row-gap: var(--tile--spacing-100);
+
+            & > footer {
+                margin-top: auto;
+            }
+
         }
 
         /*

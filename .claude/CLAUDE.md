@@ -131,14 +131,15 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
 
 A `*.core.ts` module carries what the module beside it is built on. Where that is behaviour, the module is a headless
 component in its own right and **NEVER** an internal appendix of the widget: it carries **NO** dependency on Preact, is
-tested without a DOM, and is documented and versioned like any other module, since a second binding reaches the same
-behaviour by importing it. The generated reference carries it like any other module, a type declared there being public
-wherever a published signature names it: TypeDoc drops a symbol whose module is excluded, re-exported or not, so
-excluding these would leave a public type undocumented.
+tested without a DOM, and is documented and versioned like any other module.
+
+A `*.core.ts` module is **NEVER** exported: every package `exports` blocks the `.core` subpaths with a `"./*.core": null`
+entry, so a consumer meets its types only through the published signatures naming them. The generated reference still
+carries it like any other module, a type declared there being public wherever a published signature names it: TypeDoc
+drops a symbol whose module is excluded, re-exported or not, so excluding these would leave a public type undocumented.
 
 `@metreeca/tile` is the exception, its `*.core.ts` modules holding what the design system surface stands on without
-offering it: the package `exports` blocks the `.core` subpaths and `typedoc.json` leaves the modules out of the
-reference, so a consumer meets those types only through the published signatures naming them.
+offering it: `typedoc.json` leaves the modules out of the reference as well.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
 module, another exception left out of the reference by `typedoc.json`, which names each such module: the documented

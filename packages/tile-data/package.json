@@ -32,6 +32,7 @@
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./*.core": null,
     "./*": {
       "@metreeca/source": "./src/*.ts",
       "default": "./dist/*.js"

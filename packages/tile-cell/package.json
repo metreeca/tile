@@ -34,11 +34,13 @@
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./*.core": null,
+    "./icon": {
+      "@metreeca/source": "./src/icon.ts",
+      "default": "./dist/icon.js"
+    },
     "./*": {
-      "@metreeca/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
+      "@metreeca/source": "./src/*.tsx",
       "default": "./dist/*.js"
     },
     "./*.css": {

@@ -1,0 +1,264 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* The strip is a row of tabs closed by a rule, with the section on show underneath. */
+
+tile-tabs {
+
+    display: block;
+
+    padding-bottom: var(--tile--spacing-250);
+
+    & > nav {
+
+        display: flex;
+
+        column-gap: var(--tile--spacing-100);
+
+        /* The strip stands on one line: a label is never broken, and a tab never moves to a line of its own. */
+
+        white-space: nowrap;
+        overflow-y: visible;
+
+        border-bottom-style: var(--tile--border-style);
+
+        & > label {
+
+            padding-bottom: var(--tile--spacing-050);
+            margin-bottom: calc(-1 * var(--tile--border-width)); /* The mark sits on the rule, not above it. */
+            cursor: pointer;
+
+            font-size: var(--tile--font-size-small);
+            font-weight: var(--tile--font-weight-heavy);
+            color: var(--tile--color-label);
+
+            background-color: transparent; /* The reset hands down an opaque page, which would mask the rule. */
+
+            border-bottom-style: var(--tile--border-style);
+            border-bottom-color: transparent;
+
+            /*
+             * The mark and the label are eased rather than switched, so the eye follows the strip to whichever tab
+             * took over. The fast step is what a pointer change owes, and a reader who asked for less motion gets
+             * none of it, the duration collapsing to zero on its own.
+             */
+
+            transition-property: color, border-bottom-color;
+            transition-duration: var(--tile--duration-fast);
+            transition-timing-function: var(--tile--easing-standard);
+
+            &:hover {
+                color: var(--tile--color-hover);
+            }
+
+            /* A tab that cannot be chosen is greyed, the pointer and `aria-disabled` saying so alongside the colour. */
+
+            &[aria-disabled="true"] {
+                color: var(--tile--color-disabled);
+                cursor: default;
+            }
+
+            /*
+             * A tab carries no box of its own, so the mark is drawn around the label, held clear of the word by the
+             * offset so the two are not read as one. The colour the strip marks its choice with is left to the rule
+             * below, which a focused tab never restates: the ring says where the keyboard stands, the rule says
+             * which panel is on show.
+             */
+
+            &:focus-visible {
+                outline: var(--tile--outline-focus);
+                outline-offset: var(--tile--border-width);
+            }
+
+            /* Three times the rule, to read as a highlight. Weight is left alone, since it would reflow the strip. */
+
+            &[aria-selected="true"] {
+                color: var(--tile--color);
+                border-bottom-width: calc(3 * var(--tile--border-width));
+                border-bottom-color: var(--tile--color-strong);
+                margin-bottom: calc(-3 * var(--tile--border-width));
+            }
+
+        }
+
+    }
+
+    /*
+     * Where the labels would not fit on one line, the strip gives way to the menu. It keeps its place in the
+     * document all the same, closed to nothing and taken off show, so what it holds leaves the accessibility tree
+     * and the tab order while the measurement deciding when the labels fit again still stands: the box is as wide
+     * as it ever was, which is all the measurement asks of it.
+     *
+     * It is closed rather than lifted out of the flow, since a box taken out of the flow is a positioned box, and a
+     * positioned box paints over the band a page hangs from its header.
+     */
+
+    &[collapsed] > nav {
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        border-bottom-style: none; /* Closed to nothing means nothing, and a rule would hold the box a pixel open. */
+    }
+
+    /*
+     * The bar the menu stands in carries the rule the strip carried, across the whole width, so the section below is
+     * set off exactly as before. The bar is a flex line rather than a line of text, so nothing of the menu is left
+     * hanging over the rule by the descender an inline box reserves.
+     *
+     * The bar holds the gap down to the rule, wide enough for the ring the menu is marked with to fall short of it.
+     * The mark reads as belonging to the control rather than to the rule, which is what a reader expects of a boxed
+     * control, and the rule goes on saying only what it said before: where the section below begins.
+     */
+
+    & > span {
+
+        display: flex;
+
+        padding-bottom: var(--tile--spacing-050);
+
+        border-bottom-style: var(--tile--border-style);
+
+        /*
+         * The menu takes the width of its labels, so the ring left on it after a choice wraps the control rather
+         * than the whole bar; it gives that width up where the labels outrun the room, the platform clipping what
+         * is left.
+         */
+
+        & > select {
+
+            /*
+             * The menu is marked around the box its own label makes, the radius rounding the corners the ring is
+             * drawn around and the offset holding it clear of the word. The room the ring asks for is taken outside
+             * the box rather than as padding within it, so the box stays the width of the label: the menu goes on
+             * starting where the first tab of the strip started, and the section below lines up with both.
+             */
+
+            border-radius: var(--tile--border-radius-025);
+
+            cursor: pointer;
+
+            font-size: var(--tile--font-size-small);
+            font-weight: var(--tile--font-weight-heavy);
+            color: var(--tile--color);
+
+            background-color: transparent; /* The page shows through, so the bar reads as the strip it stands in for. */
+
+            /*
+             * The mark stands wherever the platform calls the focus worth showing, which for a menu takes in a
+             * pointer choice: the arrow keys work it from there, so the mark is owed. A tab, which the same gesture
+             * leaves unmarked, takes no keys of its own until the strip is entered.
+             *
+             * What is owed is the ring the design system marks a control with, which follows the contour the radius
+             * above gives it, rounded corners included, and stops short of the rule below.
+             */
+
+            &:focus-visible {
+                outline: var(--tile--outline-focus);
+                outline-offset: var(--tile--spacing-025);
+            }
+
+            /*
+             * The list is drawn by the platform, on a surface of its own that the inherited page colours would not
+             * stand against. Each entry is handed the page colours outright, so it stays readable wherever it is
+             * drawn.
+             */
+
+            & > option {
+
+                color: var(--tile--color);
+                background-color: var(--tile--background-color);
+
+                &:disabled {
+                    color: var(--tile--color-disabled);
+                }
+
+            }
+
+        }
+
+    }
+
+    /*
+     * How loud the tabs appear is told in the rule closing them off, and never in colour. The quiet step keeps none,
+     * the labels reading as part of what surrounds them where the ordinary step sets the panel on show apart from
+     * them. The strip and the bar standing in for it drop the rule alike, so the two go on looking the same, and the
+     * mark the chosen tab wears stays either way: it is what the strip says its choice with rather than part of the
+     * rule.
+     */
+
+    &[look="subtle"] {
+
+        & > nav,
+        & > span {
+            border-bottom-style: none;
+        }
+
+        /*
+         * With no rule to stand clear of, the label closes the room below it to the step below, which is what draws
+         * the mark the chosen tab wears up against the word it marks.
+         */
+
+        & > nav > label {
+            padding-bottom: var(--tile--spacing-025);
+        }
+
+    }
+
+    & > div {
+
+        padding-top: var(--tile--spacing-150);
+
+        /*
+         * A panel takes no stop of its own, so it reaches the keyboard only where it is the box that scrolls and the
+         * browser hands it one on that account. It is a box either way, so the ring is drawn on its contour, the
+         * padding setting it clear of what it holds.
+         */
+
+        &:focus-visible {
+            outline: var(--tile--outline-focus);
+            outline-offset: 0;
+        }
+
+    }
+
+}
+
+
+/*
+ * Tabs stating no look of their own take the one the area around them is written in, read off the `--tile--look`
+ * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every widget
+ * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
+ * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
+ * rule here holds itself to tabs carrying none.
+ *
+ * Only the quiet step is restated, the ordinary one being what the rules above already draw; an area written loud
+ * lands there too, there being no step above it here. The declarations are the ones the attribute rules carry,
+ * restated rather than shared: a style query is a conditional group and takes rules of its own, so the two forms of
+ * the same step cannot be written as one selector.
+ */
+
+@container style(--tile--look: subtle) {
+
+    tile-tabs:not([look]) > nav,
+    tile-tabs:not([look]) > span {
+        border-bottom-style: none;
+    }
+
+    tile-tabs:not([look]) > nav > label {
+        padding-bottom: var(--tile--spacing-025);
+    }
+
+}

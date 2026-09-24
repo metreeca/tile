@@ -1,0 +1,62 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+p {
+
+    margin-bottom: var(--tile--spacing-100);
+
+    &:has(img:only-child) {
+        margin: 0;
+    }
+
+}
+
+blockquote {
+
+    padding: var(--tile--spacing-050);
+    margin-bottom: var(--tile--spacing-100);
+    background-color: var(--tile--background-color-stripe);
+
+    & > p {
+        margin-bottom: 0.1em; /* An optical nudge between quoted paragraphs, below the spacing scale. */
+    }
+
+}
+
+/*
+ * A preformatted block is set apart on the stripe, as a quotation is, and keeps the lines it was given: what runs past
+ * the measure is scrolled rather than folded, the breaks being the author's.
+ */
+
+pre {
+    padding: var(--tile--spacing-050);
+    margin-bottom: var(--tile--spacing-100);
+    overflow-x: auto;
+    background-color: var(--tile--background-color-stripe);
+}
+
+hr {
+
+    margin: var(--tile--spacing-150) 0;
+    border-bottom-style: var(--tile--border-style);
+    border-bottom-width: var(--tile--border-width);
+    border-bottom-color: var(--tile--border-color);
+
+    &:first-child, &:last-child {
+        display: none;
+    }
+
+}

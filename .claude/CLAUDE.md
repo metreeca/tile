@@ -14,7 +14,7 @@
 Metreeca Tile is the user interface layer of the Metreeca model-driven stack: it turns the shapes and queries the rest
 of the stack already speaks into what an interface shows, narrows and writes back. The monorepo collects the headless
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
-`packages/tile-react/`).
+`packages/tile-cell/`).
 
 Resource shapes come from `@metreeca/blue` and queries from `@metreeca/qest`: this repository **NEVER** defines a
 parallel model of its own, and a control offered for a property is decided by the shape describing it rather than by a
@@ -25,13 +25,13 @@ repository **NEVER** reimplements them behind the interface.
 
 # References
 
-- [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, supplying the state primitives
+- [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
-  supplying the query model the state components expose
+  providing the query model the state components expose
 - [@metreeca/blue](https://github.com/metreeca/blue) - Declarative blueprints for model-driven linked data processing,
-  supplying the shapes that decide what an interface offers
-- [@metreeca/keep](https://github.com/metreeca/keep) - Model-driven storage API, supplying the store the interface
+  providing the shapes that decide what an interface offers
+- [@metreeca/keep](https://github.com/metreeca/keep) - Model-driven storage API, providing the store the interface
   reads from and writes to
 - [@metreeca/gate](https://github.com/metreeca/gate) - Zero-code model-driven endpoints for linked data resources, the
   server counterpart this layer talks to
@@ -44,19 +44,110 @@ repository **NEVER** reimplements them behind the interface.
 - **`npm run build`** - Compile sources and generate docs
 - **`npm run check`** - Run the test suite
 - **`npm run proof`** - Build and serve docs
+- **`npm run watch`** - Serve the specimen page with live reload
 
 # Package Layout
 
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
-immediately under `packages/` (for example `packages/tile-state`).
+immediately under `packages/` (for example `packages/tile-lens`).
 
-Headless packages carry **NO** dependency on a rendering framework: React, and any other rendering layer added later,
-appears **ONLY** in its own binding package (`tile-react`). A binding package adds observation and rendering over state
-it never redefines: behaviour lives in `tile-state`, so a second binding reaches the same behaviour without restating
-it.
+A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
+those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
+stale sibling up to date first, whatever order the workspaces are visited in. A package added here declares a
+reference for every `@metreeca/tile*` dependency it takes, or it compiles against whatever its sibling last left
+behind. The build is incremental, its cache being the `tsconfig.build.tsbuildinfo` each package's `clean` removes
+alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build
+emits nothing.
 
-Packages are named after what they contribute, not after the library they contribute it with: `tile-react`, not
+Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
+appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
+`tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
+the views and forms built over them). A binding package adds observation and rendering over state it never redefines:
+behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour
+without restating it.
+
+Packages are named after what they contribute, not after the library they contribute it with: `tile-data`, not
 `tile-hooks`.
+
+# Package Summaries
+
+Every package states its summary in three places, which **MUST** be kept aligned:
+
+- `packages/<package>/package.json` `description` - `<summary> for @metreeca/tile interfaces.`
+- `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
+  project repository
+- the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
+  that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
+
+The suffix names the family a package belongs to, so `@metreeca/tile` itself names the project instead, as
+`<summary> for Metreeca Tile interfaces.`, rather than pointing at itself.
+
+A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
+without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the
+surface the package's own modules are built out of, as `tile-cell` does for the props a widget declares. A package
+with no such surface declares no root entry point, and its `package.json` `exports` carries no `"."` entry either. A
+root entry point **NEVER** re-exports the modules beside it: a screen takes the widgets it renders from their own
+modules, and nothing else along with them.
+
+Revising one **ALWAYS** means revising the others.
+
+A package `README.md` **Usage** section opens with a note pointing at the API reference, then carries the real thing:
+what a consumer has to know to put the package to work, stubbed as `{TBD: usage overview and examples}` until written.
+The note links the root of the package reference,
+`https://metreeca.github.io/tile/modules/_metreeca_<package>.html`, and **NEVER** the site root, a module page, or a
+table of them: the catalogue grows with every module added, and the generated navigation already carries it. Usage
+samples for a single module belong to that module's own documentation. The section **NEVER** stands in for the
+generated index.
+
+# Skills
+
+These skills carry the conventions this repository is held to, whether they sit in `.claude/skills/` or have since
+moved to the personal set. Each states the model it governs and what it takes precedence over, so the routing survives
+the move:
+
+| Skill              | When to activate                                                            |
+|--------------------|-----------------------------------------------------------------------------|
+| `preact-developer` | Writing or reviewing a widget, a hook or a custom element                   |
+| `css-developer`    | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
+| `a11y-developer`   | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
+
+# Component State
+
+A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
+`@metreeca/tile-data/model`, reading data and transitions straight off the model:
+
+```tsx
+const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));
+```
+
+- A transition renders the component again on its own, so a handler just calls it; a transition changing nothing
+  renders nothing, and a zero-argument one is passed straight as a handler.
+- A transition starts from the state the render read and notifies asynchronously: two calls in one handler land where
+  one does, and the data read alongside keeps the earlier value until the next render.
+- The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
+  **NEVER** reaches it.
+- Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
+  the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
+
+A `*.core.ts` module carries what the module beside it is built on. Where that is behaviour, the module is a headless
+component in its own right and **NEVER** an internal appendix of the widget: it carries **NO** dependency on Preact, is
+tested without a DOM, and is documented and versioned like any other module, since a second binding reaches the same
+behaviour by importing it. The generated reference carries it like any other module, a type declared there being public
+wherever a published signature names it: TypeDoc drops a symbol whose module is excluded, re-exported or not, so
+excluding these would leave a public type undocumented.
+
+`@metreeca/tile` is the exception, its `*.core.ts` modules holding what the design system surface stands on without
+offering it: the package `exports` blocks the `.core` subpaths and `typedoc.json` leaves the modules out of the
+reference, so a consumer meets those types only through the published signatures naming them.
+
+A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.pack.ts`
+module, likewise left out of the reference by `typedoc.json`: the documented module beside it is the only path a
+consumer imports, and carries the comment the catalogue is described by. `icon.ts` documents the `Icon` namespace it
+hands out, `icon.pack.ts` names the glyph each role stands for.
+
+A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
+imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported
+component, which the module path already places: `Tabs` in `tabs.tsx`, rendering `<tile-tabs>` styled by `tabs.css`.
 
 # Shared Utilities
 

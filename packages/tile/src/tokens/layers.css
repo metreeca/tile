@@ -1,0 +1,58 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The stacking order two things overlapping the page are settled by, from the page upwards. A value is compared only
+ * against its siblings in the same stacking context, so a dropdown opened inside a modal keeps the dropdown step and
+ * still paints above the modal. The steps are spaced by a hundred, leaving room for a thing an app slots between two
+ * of them.
+ */
+
+@property --tile--z-index-sticky {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 100;
+}
+
+@property --tile--z-index-dropdown {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 200;
+}
+
+@property --tile--z-index-blanket {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 300;
+}
+
+@property --tile--z-index-modal {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 400;
+}
+
+@property --tile--z-index-toast {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 500;
+}
+
+@property --tile--z-index-tooltip {
+    syntax: "<integer>";
+    inherits: true;
+    initial-value: 600;
+}

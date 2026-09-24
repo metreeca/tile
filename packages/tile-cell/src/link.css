@@ -1,0 +1,134 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A link starts from the colour and the hover the design system gives any anchor, and this sheet says how loud it
+ * appears on top of that. The ordinary step reads as the text around it, underlined so that it is told from that text
+ * wherever colour does not reach.
+ */
+
+tile-link {
+
+    & > a {
+        font-weight: inherit;
+        text-decoration-line: underline;
+        text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
+    }
+
+    /*
+     * The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it, and
+     * sets it in the condensed face headings take, so it still reads as a link where nothing else marks it.
+     */
+
+    &[look="subtle"] > a {
+        font-family: var(--tile--font-family-heading);
+        color: inherit;
+        text-decoration-line: none;
+    }
+
+    /*
+     * The loud step stands as a label of its own, set as a tab label is, in the text colour rather than the link one:
+     * it is read as an entry of a menu rather than as a passage of the text.
+     */
+
+    &[look="strong"] > a {
+
+        font-size: var(--tile--font-size-small);
+        font-weight: var(--tile--font-weight-heavy);
+        color: var(--tile--color);
+
+        text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
+    }
+
+}
+
+
+/*
+ * Links stating no look of their own take the one the area around them is written in, read off the `--tile--look`
+ * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every widget
+ * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
+ * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
+ * rule here holds itself to links carrying none.
+ *
+ * Only the quiet and the loud steps are restated, the ordinary one being what the rules above already draw. The
+ * declarations are the ones the attribute rules carry, restated rather than shared: a style query is a conditional
+ * group and takes rules of its own, so the two forms of the same step cannot be written as one selector.
+ */
+
+@container style(--tile--look: subtle) {
+
+    tile-link:not([look]) > a {
+        font-family: var(--tile--font-family-heading);
+        color: inherit;
+        text-decoration-line: none;
+    }
+
+}
+
+@container style(--tile--look: strong) {
+
+    tile-link:not([look]) > a {
+
+        font-size: var(--tile--font-size-small);
+        font-weight: var(--tile--font-weight-heavy);
+        color: var(--tile--color);
+
+        text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
+    }
+
+}
+
+
+/*
+ * The current entry is marked by a rule three times the width of a line in the accent colour, as the chosen tab is,
+ * whatever the look: the ink is left as the look sets it, so the mark alone says where the reader stands. It comes
+ * after the looks, which it matches with equal specificity, so that it outlasts a look dropping the underline.
+ */
+
+tile-link > a[active] {
+    text-decoration-line: underline;
+    text-decoration-color: var(--tile--color-strong);
+    text-decoration-thickness: calc(3 * var(--tile--border-width));
+}
+
+/*
+ * The quiet step keeps the mark as quiet as the link, thinner and drawn closer to the text it sits under. Both forms
+ * of the step are restated, as for the looks above.
+ */
+
+tile-link[look="subtle"] > a[active] {
+    text-decoration-thickness: calc(2 * var(--tile--border-width));
+    text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+}
+
+@container style(--tile--look: subtle) {
+
+    tile-link:not([look]) > a[active] {
+        text-decoration-thickness: calc(2 * var(--tile--border-width));
+        text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+    }
+
+}

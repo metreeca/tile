@@ -1,0 +1,6 @@
+{
+  "intentionallyNotExported": [
+    "index.core.ts:Alias",
+    "index.core.ts:Literal"
+  ]
+}

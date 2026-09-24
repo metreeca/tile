@@ -1,0 +1,80 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The token modules come first, the anchors ahead of what derives from them, then the base rules by increasing
+ * structural complexity, so a composite takes precedence over the plain elements it is built from. Every one of them
+ * is imported into the tile layer. A rule an app or a component writes outside a layer therefore wins whatever order
+ * the two stylesheets reach the document in, and whichever selector is the more specific.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Mono&family=Roboto:wght@300;400;700&display=swap");
+
+@import "./tokens/typography.css" layer(tile);
+@import "./tokens/spacings.css" layer(tile);
+@import "./tokens/scalings.css" layer(tile);
+@import "./tokens/colors.css" layer(tile);
+@import "./tokens/borders.css" layer(tile);
+@import "./tokens/elevations.css" layer(tile);
+@import "./tokens/palettes.css" layer(tile);
+@import "./tokens/layers.css" layer(tile);
+@import "./tokens/motions.css" layer(tile);
+@import "./tokens/opacities.css" layer(tile);
+@import "./tokens/viewports.css" layer(tile);
+@import "./tokens/visuals.css" layer(tile);
+
+@import "./markup/reset.css" layer(tile);
+
+@import "./markup/headings.css" layer(tile);
+@import "./markup/inlines.css" layer(tile);
+@import "./markup/blocks.css" layer(tile);
+@import "./markup/lists.css" layer(tile);
+@import "./markup/tables.css" layer(tile);
+@import "./markup/forms.css" layer(tile);
+
+/* The page defaults: every token value is stated once by the module registering it, so this file only reads them. */
+
+@layer tile {
+
+    :root {
+
+        color-scheme: light dark;
+
+        color: var(--tile--color);
+        background-color: var(--tile--background-color);
+
+        font-family: var(--tile--font-family);
+        font-size: var(--tile--font-size);
+        font-weight: var(--tile--font-weight);
+        line-height: var(--tile--line-height);
+
+    }
+
+    /*
+     * A pinned scheme carries the native widgets with it: color-scheme is what a form control, a scrollbar and a
+     * caret answer to, and the tokens have no reach there. Stated for any element, not only the root, so an island
+     * that pins a scheme is not left with the controls of the page around it.
+     */
+
+    [data-theme="light"] {
+        color-scheme: light;
+    }
+
+    [data-theme="dark"] {
+        color-scheme: dark;
+    }
+
+}

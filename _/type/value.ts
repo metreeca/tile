@@ -1,0 +1,138 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { isBoolean, toBooleanString } from "@metreeca/core/boolean";
+import { Data, isData, toDataString } from "@metreeca/core/data";
+import { date, isDate, toDateString } from "@metreeca/core/date";
+import { dateTime, isDateTime, toDateTimeString } from "@metreeca/core/dateTime";
+import { isDuration, toDurationString } from "@metreeca/core/duration";
+import { isEntry, toEntryString } from "@metreeca/core/entry";
+import { Frame, isFrame, toFrameString } from "@metreeca/core/frame";
+import { equals, isArray } from "@metreeca/core/index";
+import { isNumber, toNumberString } from "@metreeca/core/number";
+import { isPeriod, toPeriodString } from "@metreeca/core/period";
+import { isString } from "@metreeca/core/string";
+import { isText, Text, toTextString } from "@metreeca/core/text";
+import { isTime, time, toTimeString } from "@metreeca/core/time";
+import { isYear, toYearString, year } from "@metreeca/core/year";
+
+
+export type Value=null | boolean | number | string | Text | Data | Frame
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function isValue(value: unknown): value is Value {
+	return value === null
+		|| isBoolean(value)
+		|| isNumber(value)
+		|| isString(value)
+		|| isFrame(value)
+		|| isText(value); // as a last resort to avoid expensive checks
+}
+
+export function asValue(value: unknown): undefined | Value {
+	return isValue(value) ? value : undefined;
+}
+
+
+export function toValueString(value: Value, {
+
+	locales,
+
+	asNumber,
+	asDateTime
+
+}: {
+
+	locales?: Intl.LocalesArgument
+
+	asNumber?: Intl.NumberFormatOptions
+	asDateTime?: Intl.DateTimeFormatOptions
+
+}={
+
+	locales: navigator.languages
+
+}): string {
+
+	return value === null ? "null"
+
+		: isBoolean(value) ? toBooleanString(value, { locales })
+			: isNumber(value) ? toNumberString(value, { locales, ...asNumber })
+
+				: isDateTime(value) ? toDateTimeString(dateTime.parse(value) ?? new Date(), { locales, ...asDateTime })
+					: isDate(value) ? toDateString(date.parse(value) ?? new Date(), { locales, ...asDateTime })
+						: isTime(value) ? toTimeString(time.parse(value) ?? new Date(), { locales, ...asDateTime })
+							: isYear(value) ? toYearString(year.parse(value) ?? new Date(), { locales, ...asDateTime })
+
+								: isPeriod(value) ? toPeriodString(value, { locales })
+									: isDuration(value) ? toDurationString(value, { locales })
+
+								: isString(value) ? value
+									: isText(value) ? toTextString(value, { locales })
+										: isData(value) ? toDataString(value)
+
+													: isEntry(value) ? toEntryString(value, { locales })
+														: toFrameString(value, { locales });
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function matches(x: unknown, y: unknown): boolean {
+	return isArray(x) && isArray(y) ? x.length === y.length && x.every((v, i) => matches(v, y[i]))
+		: isEntry(x) && isEntry(y) ? x.id === y.id
+			: isText(x) && isText(y) ? equals(x, y)
+				: isPeriod(x) && isPeriod(y) ? equals(x, y)
+					: isDuration(x) && isDuration(y) ? equals(x, y)
+						: x === y;
+}
+
+export function evaluate(value: unknown, expression: string): undefined | Value {
+
+	let _value=value;
+	let _expression=expression;
+
+	while ( true ) {
+
+		if ( _expression === "" && isValue(_value) ) {
+
+			return _value;
+
+		} else if ( isFrame(_value) ) {
+
+			if ( !_expression.match(/\w+/) ) {
+				throw new Error(";( complex expressions to be implemented"); // !!!
+			}
+
+			_value=_value[_expression];
+			_expression="";
+
+		} else if ( isArray(_value) ) {
+
+			_value=_value[0];
+			// !!! expression?
+
+		} else {
+
+			return undefined;
+
+		}
+
+	}
+
+}

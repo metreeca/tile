@@ -1,0 +1,108 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Each brand face stands ahead of a generic stack covering it until it loads. The faces themselves are fetched by
+ * index.css, which is also where the page takes the family, the size, the weight and the line height it reads here.
+ */
+
+@property --tile--font-family {
+    syntax: "*";
+    inherits: true;
+    initial-value: Roboto, Helvetica, Arial, sans-serif;
+}
+
+@property --tile--font-family-heading {
+    syntax: "*";
+    inherits: true;
+    initial-value: "Roboto Condensed", Helvetica, Arial, sans-serif;
+}
+
+@property --tile--font-family-mono {
+    syntax: "*";
+    inherits: true;
+    initial-value: "Roboto Mono", Courier, monospace;
+}
+
+/*
+ * The base size is absolute, so a page holds its rhythm wherever it is embedded, while the two variants are relative
+ * and take the size of whatever they sit in along.
+ */
+
+@property --tile--font-size {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.125rem;
+}
+
+@property --tile--font-size-small {
+    syntax: "*";
+    inherits: true;
+    initial-value: 90%;
+}
+
+@property --tile--font-size-large {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.25em;
+}
+
+/*
+ * The heading size is relative and level-independent: the hierarchy below the first level is carried by the face, the
+ * weight and the space around a heading rather than by a ladder of sizes, so a deep outline stays readable in a
+ * column. An app wanting a ladder overrides this token per level.
+ */
+
+@property --tile--font-size-heading {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+/*
+ * Tracking ships neutral, so the brand face decides it. It is stated as a token all the same, since an app supplying
+ * a condensed or a wide face has no other way to correct a heading without restating the rule.
+ */
+
+@property --tile--letter-spacing-heading {
+    syntax: "*";
+    inherits: true;
+    initial-value: normal;
+}
+
+@property --tile--line-height {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1.2;
+}
+
+@property --tile--font-weight {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 300;
+}
+
+@property --tile--font-weight-strong {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 400;
+}
+
+@property --tile--font-weight-heavy {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 700;
+}

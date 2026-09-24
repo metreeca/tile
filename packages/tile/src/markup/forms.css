@@ -1,0 +1,109 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The focus is marked by a drawn outline. It follows whatever contour the control already carries, its rounded
+ * corners included, and it survives a forced-colours pass, which a shadow does not: a page rendered in the system
+ * palette keeps the mark. The reset takes the platform ring away, so a control reaching the keyboard owes the mark,
+ * and one styled into a box of its own is marked around that box.
+ *
+ * The offset is stated wherever a mark is, the outline shorthand not carrying it. A control standing free is marked
+ * outside its edge, and a control already enclosed by a border is marked just inside it, so the two lines are read
+ * as one edge rather than as a doubled one.
+ */
+
+button, select {
+
+    &:focus-visible {
+        outline: var(--tile--outline-focus);
+        outline-offset: var(--tile--border-width);
+    }
+
+}
+
+input {
+
+    border-style: var(--tile--border-style);
+    border-radius: var(--tile--border-radius-025);
+
+    &:invalid {
+        color: var(--tile--color-fail);
+        outline: var(--tile--outline-invalid);
+        outline-offset: 0;
+    }
+
+    /*
+     * Both marks are outlines, and a field carries both states at once as soon as an invalid value is being typed
+     * into it, so the focus mark is written after the invalid one and takes the single outline on offer for as long
+     * as the field holds the keyboard. What the value is worth goes on being said in colour, which the focus mark
+     * leaves standing.
+     */
+
+    &:focus {
+
+        outline: var(--tile--outline-focus);
+        outline-offset: calc(-2 * var(--tile--border-width));
+
+        /*
+         * A box too small to be marked from within is marked from without: an inset ring on a tick box would close
+         * over what it encloses.
+         */
+
+        &[type=checkbox],
+        &[type=radio] {
+            outline-offset: var(--tile--border-width);
+        }
+
+    }
+
+}
+
+button {
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    grid-column-gap: var(--tile--spacing-050);
+
+    border-radius: var(--tile--border-radius-025);
+    background-color: transparent;
+
+    white-space: nowrap;
+
+    &:disabled {
+        color: var(--tile--color-disabled);
+        pointer-events: none;
+    }
+
+    &:enabled {
+
+        cursor: pointer;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
+        &:active {
+            color: var(--tile--color-focus);
+        }
+
+    }
+
+}
+
+*::placeholder {
+    color: var(--tile--color-placeholder);
+}

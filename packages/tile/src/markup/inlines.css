@@ -1,0 +1,105 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+a, a:visited {
+
+    text-decoration: none;
+    text-decoration-thickness: 1px;
+
+    font-weight: var(--tile--font-weight-strong);
+    color: var(--tile--color-enabled);
+
+    cursor: pointer;
+
+    &:focus-visible {
+        text-decoration: underline;
+    }
+
+    &:hover {
+        color: var(--tile--color-hover);
+    }
+
+    &:active {
+        text-decoration: underline;
+        color: var(--tile--color-focus);
+    }
+
+}
+
+em {
+    font-style: italic;
+}
+
+strong {
+    font-weight: var(--tile--font-weight-strong);
+}
+
+code {
+
+    font-family: var(--tile--font-family-mono);
+
+    /* A code span names one thing, so it is read as one word rather than folded at a hyphen or a space. */
+
+    white-space: nowrap;
+
+    /* Optical nudges: the mono face reads larger and thinner than the text around it at the same size and weight. */
+
+    font-size: 80%;
+    font-weight: var(--tile--font-weight-strong);
+
+}
+
+small {
+    font-size: var(--tile--font-size-small);
+    color: var(--tile--color-label);
+}
+
+/*
+ * An image carrying the `active` attribute is lifted out of the text and shown over most of the viewport, fitted
+ * without cropping on a rounded panel in the page background. A margin of the blanket a modal dims the page with is
+ * left around the panel. Setting and clearing the attribute is left to whoever renders the page, as the Tile router
+ * does on a click, restoring the image on `Escape` or as soon as the focus moves.
+ */
+
+img:not(a img) {
+    cursor: zoom-in; /* A click on an image outside a link enlarges it. */
+}
+
+img[active] {
+
+    position: fixed;
+    inset: var(--tile--spacing-200);
+    z-index: var(--tile--z-index-modal);
+
+    width: calc(100% - 2 * var(--tile--spacing-200));
+    height: calc(100% - 2 * var(--tile--spacing-200));
+    max-width: none;
+    max-height: none;
+
+    margin: 0;
+    padding: var(--tile--spacing-100);
+    border-radius: var(--tile--border-radius-050);
+
+    object-fit: contain;
+    background-color: var(--tile--background-color);
+
+    /* A spread past any viewport, so the blanket covers the whole page around the panel. */
+
+    box-shadow: 0 0 0 100vmax var(--tile--background-color-blanket);
+
+    cursor: zoom-out;
+
+}

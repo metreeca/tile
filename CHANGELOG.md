@@ -6,3 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/commits/main)
+
+### Added
+
+- `@metreeca/tile`: elevation tokens, pairing a surface with the shadow that lifts it, plus the blanket dimming
+  what a modal covers
+- `@metreeca/tile`: layering tokens settling the stacking order of things overlapping the page
+- `@metreeca/tile`: motion tokens, the durations collapsing under `prefers-reduced-motion`
+- `@metreeca/tile`: opacity tokens for a thing present but not available
+- `@metreeca/tile`: status anchors for a success, a caution and an aside, each with a notice tint, alongside the
+  failure colour already carried
+- `@metreeca/tile`: pressed and selected state roles, and the fills a control colouring its whole box takes
+- `@metreeca/tile`: a heading size token and heading tracking
+- `@metreeca/tile`: viewport tokens carrying the result of each breakpoint query, so a stylesheet branches on a
+  breakpoint by name through a style query instead of repeating its width, which CSS gives it no other way to do
+- `@metreeca/tile`: `data-theme` pins a colour scheme on the root element or on any subtree, which a
+  `prefers-color-scheme` query cannot express
+- `@metreeca/tile`: `css.var()` gives the reference a token is read through, for an inline style, a presentation
+  attribute or anywhere else a CSS value is written by hand rather than by a rule
+- `@metreeca/tile`: base rules for a preformatted block, set apart on the stripe as a quotation is and scrolled
+  where it runs past the measure
+- `@metreeca/tile`: a code span is read as one word, rather than folded at a hyphen or a space
+- `@metreeca/tile-hive`: `host()` fits the root it creates to whatever holds it, so a frame rendered into it fills
+  the window rather than standing as tall as its content; a root the document already carries is left as it stands
+
+### Changed
+
+- `@metreeca/tile`: the radius ladder carries lengths, on the steps and in the `em` the spacing ladder is stated in,
+  so a box rounds by the same amount whatever size it is given; `borderRadius025` to `borderRadius100` keep their
+  names and change value from a share of the box to `0.25em`, `0.5em`, `0.75em` and `1em`
+- `@metreeca/tile`: a roundel, an avatar or a pill is a share of its own box rather than a step on a ladder, and is
+  stated by the component drawing it
+
+### Removed
+
+- `@metreeca/tile`: `borderRadius` is dropped, the ladder starting at `borderRadius025` with the same value it
+  carried; a box names the step it rounds on, as it names the step it is spaced on

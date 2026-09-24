@@ -1,0 +1,66 @@
+{
+  "name": "@metreeca/tile-data",
+  "version": "0.1.0",
+  "description": "Preact contexts and hooks for @metreeca/tile interfaces.",
+  "keywords": [
+    "typescript",
+    "preact",
+    "json-ld",
+    "model-driven",
+    "ui"
+  ],
+  "homepage": "https://metreeca.github.io/tile/",
+  "bugs": {
+    "url": "https://github.com/metreeca/tile/issues",
+    "email": "info@metreeca.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Metreeca",
+    "email": "info@metreeca.com",
+    "url": "https://www.metreeca.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metreeca/tile.git",
+    "directory": "packages/tile-data"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "@metreeca/source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "@metreeca/source": "./src/*.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json",
+    "check": "npx vitest --typecheck --passWithNoTests --environment happy-dom run"
+  },
+  "dependencies": {
+    "@metreeca/core": "^0.11.0",
+    "@metreeca/http": "^0.3.0"
+  },
+  "devDependencies": {
+    "happy-dom": "^20.0.0",
+    "preact": "^10.29.8",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
+  },
+  "peerDependencies": {
+    "preact": "^10.27.2"
+  }
+}

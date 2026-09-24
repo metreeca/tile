@@ -1,0 +1,64 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The spacing ladder sets a thing apart from what surrounds it, on a margin, a padding or a gap. Every step is stated
+ * in em, so a subtree given a size of its own takes the rhythm along; the number is the multiple of the text size the
+ * step carries. A step sizing a thing against the text rather than spacing it from its neighbour belongs to the
+ * scaling ladder instead.
+ */
+
+@property --tile--spacing-025 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.25em;
+}
+
+@property --tile--spacing-050 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.5em;
+}
+
+@property --tile--spacing-075 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.75em;
+}
+
+@property --tile--spacing-100 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+@property --tile--spacing-150 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1.5em;
+}
+
+@property --tile--spacing-200 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2em;
+}
+
+@property --tile--spacing-250 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 2.5em;
+}

@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules",
+    "setup": "npm ci",
+    "build": "vite build",
+    "watch": "vite --open"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "preact": "^10.29.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0"
+  }
+}

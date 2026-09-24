@@ -1,0 +1,564 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The frame is the tray beside the content, each a scrolling column with a header and a footer of its own. A screen
+ * standing on its content alone is the same frame with the tray column left out of it.
+ *
+ * The frame settles almost no type: it states no family, no weight beyond the one that tells a tray heading from its
+ * sub-entry, and no size beyond the tray entries being set a little below the text around them, so everything in it is
+ * set in whatever the app is written in and a bar reads as part of the page rather than as a band with a voice of its
+ * own. Every measure it does state is a measure of the column, so it is stated in rem and holds still while the text
+ * around it changes.
+ */
+
+tile-shell {
+
+    /*
+     * The geometry the two columns are laid out on. These are properties of this layout rather than design system
+     * tokens: a column width is what this arrangement happens to need and not a value the interface is themed by, so
+     * a single dash keeps them apart from the `--tile--` contract and out of the token suite. A consumer retunes one
+     * shell by restating them on it, rather than every shell in the app.
+     *
+     * The reading measure is where it is because a comfortable line runs 65 to 75 characters, which is the same
+     * reasoning the viewport ladder is stated in text units for.
+     *
+     * The gutters are here, and in rem, for the same reason the widths are: a column is inset by the same amount
+     * from top to bottom, so the header, the body and the footer line up down the edge whatever each is set in. The
+     * spacing ladder cannot promise that, being stated in em on purpose: a row given a size of its own would take a
+     * gutter of its own with it and step out of the line.
+     */
+
+    --tile-shell-tray-width: 15rem;
+    --tile-shell-main-width: 75rem;
+
+    --tile-shell-tray-gutter: 1.1rem;
+    --tile-shell-main-gutter: 1.5rem;
+
+    /*
+     * The inset every part of the content column is held to, which is the reading measure stated as air rather than
+     * as a width: each part takes the whole of the column and pushes its own content into the middle of it, instead
+     * of the part itself being narrowed and centred. The two look alike and behave differently where it counts, the
+     * body being the box that scrolls: narrowed, it carries its scrollbar in from the edge of the window and leaves
+     * it floating beside the text; full width, the bar stands where a reader looks for it and the text is still held
+     * to the measure.
+     *
+     * A percentage in a custom property is resolved where the property is read rather than where it is stated, so
+     * this is a measure of whatever part reads it and not of the frame it is declared on.
+     */
+
+    --tile-shell-main-inset: max(
+        var(--tile-shell-main-gutter),
+        calc((100% - var(--tile-shell-main-width)) / 2)
+    );
+
+    /*
+     * The air above and below what a bar holds. A bar takes its height from these and from whatever it was given to
+     * show, rather than being held to a height of its own: a bar told how tall to be either crops a taller control
+     * or keeps a band of empty page around a shorter one, and which of the two it does depends on the size the app
+     * writes in, which is the thing the frame does not settle.
+     *
+     * Each edge stands on its own, so the gap that tells a bar from the body it borders is set apart from the one
+     * that tells it from the edge of the frame. The header leaves the wider gap beneath it, the heading standing
+     * over the body rather than floating between the two.
+     */
+
+    --tile-shell-head-inset-top: 0.75rem;
+    --tile-shell-head-inset-bottom: 0.5rem;
+
+    --tile-shell-foot-inset-top: 0.25rem;
+    --tile-shell-foot-inset-bottom: 0.5rem;
+
+    /*
+     * The band each bar lays over the body it borders, so content leaving the column reads as passing under the bar
+     * rather than as stopping at an edge. It is a measure of the column like the gutters, so it is stated in rem and
+     * holds still while the text around it changes.
+     *
+     * The band carries no colour of its own: it fades out of whatever the column it hangs in is painted with, which
+     * the reset already hands it, so the tray fades out of its sunken surface and the content out of the page with
+     * nothing said twice.
+     *
+     * What is stated is the depth and the fall from solid to clear across it. The fall is eased rather than
+     * straight: a ramp running evenly arrives at each end at a rate of its own, and both the start and the finish
+     * then show as a line, which is the one thing a band is there to avoid. The stops trace a curve leaving and
+     * arriving flat in its rate as well as in its value, so the band settles into the bar at one end and into the
+     * page at the other with nothing to mark either.
+     *
+     * The stops stand for opaque and clear rather than for a colour, a mask reading the alpha of its gradient
+     * alone, which is why they are literals and read no token. The two bars read the one list, in opposite
+     * directions.
+     */
+
+    --tile-shell-shade-depth: 1.5rem;
+
+    --tile-shell-shade-ramp:
+        rgb(0 0 0 / 100%) 0%,
+        rgb(0 0 0 / 99%) 10%,
+        rgb(0 0 0 / 94%) 20%,
+        rgb(0 0 0 / 84%) 30%,
+        rgb(0 0 0 / 68%) 40%,
+        rgb(0 0 0 / 50%) 50%,
+        rgb(0 0 0 / 32%) 60%,
+        rgb(0 0 0 / 16%) 70%,
+        rgb(0 0 0 / 6%) 80%,
+        rgb(0 0 0 / 1%) 90%,
+        rgb(0 0 0 / 0%) 100%;
+
+    display: grid;
+
+    /*
+     * The frame fills the box it is given and scrolls its columns rather than the document, being the whole of a
+     * screen rather than something on one. A host that hands it no height of its own leaves it as tall as its
+     * content, which is what the two columns then scroll within.
+     */
+
+    height: 100%;
+
+    /*
+     * Three rows across both columns: a bar, the body that takes what is left, and a bar. The two columns share
+     * them, so a header stands exactly as tall as the taller of the two headers and its opposite number stands with
+     * it, whatever either is given to hold. Nothing here states a height: the row is sized by what the bars hold, so
+     * a bar holding a control is as tall as the control needs and the frame stays out of the argument.
+     */
+
+    grid-template-columns: var(--tile-shell-tray-width) 1fr;
+    grid-template-rows: auto 1fr auto;
+
+    /*
+     * A frame showing the content alone is one column wide: the tray column is not merely emptied but taken out of
+     * the track list, so nothing of the room it held is left beside the content.
+     */
+
+    &[main] {
+        grid-template-columns: 1fr;
+    }
+
+    /*
+     * Waiting fades the frame by the loading step: the content is on its way out rather than unavailable, so it
+     * stays worth reading, and stays operable, while it goes. Nothing is blocked here. A gesture that must not be
+     * repeated while an exchange is in flight is the business of the control offering it, which disables itself, and
+     * a rule blocking the pointer alone would in any case leave the keyboard through.
+     */
+
+    &[aria-busy="true"] {
+        opacity: var(--tile--opacity-loading);
+    }
+
+    /*
+     * A locked frame puts the tray out of reach and leaves the content live. Reach itself is settled by `inert` on
+     * the column, which takes the tray out of the tab order and the accessibility tree along with the pointer, so
+     * these rules only have to show it.
+     *
+     * What the tray holds is faded by the locked step, the furthest rung of the design system's ladder of reach: a
+     * disabled control still has to be understood, while nothing in a locked tray is on offer, so it fades past the
+     * step a control fades to and leaves the reader with where it stood rather than with what it says.
+     *
+     * The fade is carried by the three parts rather than by the column, so the surface the tray is painted on and
+     * the edge it is told apart by are left alone: the tray is still the place it was, and it is what the place
+     * holds that is out of reach. Fading the column would take its surface towards the page and lose the very
+     * separation that says there are two columns here.
+     *
+     * The step back is followed rather than snapped to, so a reader who locks the tray sees where it went and a
+     * reader who lets it back in sees it return. The transition stands on the reachable state, which is what makes
+     * it run in both directions, and collapses to nothing with the duration token for a reader who asked for less
+     * motion.
+     */
+
+    & > aside > * {
+        transition-property: opacity;
+        transition-duration: var(--tile--duration-normal);
+        transition-timing-function: var(--tile--easing-standard);
+    }
+
+    &[locked] > aside > * {
+        opacity: var(--tile--opacity-locked);
+    }
+
+    & > * {
+
+        /*
+         * A column takes the whole height of the frame and hands its three parts straight to the rows above, so the
+         * bars of one column and the bars of the other are the same boxes rather than two stacks that happen to
+         * agree. The column keeps a box of its own all the same, which is what the tray is painted on and what
+         * `inert` takes out of reach as a whole.
+         *
+         * Each part names the row it belongs to rather than falling into the next free one, so a bar the screen gave
+         * nothing to show is left out without the body of that column riding up into the row it held.
+         */
+
+        display: grid;
+        grid-row: 1 / -1;
+        grid-template-rows: subgrid;
+
+        /* A bar given nothing to show is left out rather than standing as a band of empty page. */
+
+        & > header:empty,
+        & > footer:empty {
+            display: none;
+        }
+
+        /*
+         * The bars are outside the scroller, so they need nothing to hold them in place as the body moves. Each
+         * centres what it holds on the middle of its own box, and the two columns hand their bars to the same rows,
+         * so what stands in one bar stands level with what stands in the other whatever size either was given.
+         */
+
+        & > header,
+        & > footer {
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+
+            column-gap: var(--tile--spacing-025);
+
+            white-space: nowrap;
+
+            /* The band each bar hangs over the body is placed against the bar, which is what this box is here for. */
+
+            position: relative;
+
+        }
+
+        /*
+         * Each bar hangs a band over the body beside it, fading out of the colour the column is painted in, so text
+         * running past the edge of the body is seen to carry on under the bar rather than to stop at a line.
+         *
+         * The band belongs to the bar and not to the body: a box inside the scroller would travel with what it holds
+         * and leave the reader meeting the fade in the middle of a paragraph, wherever the body happened to stand.
+         * The bars are outside the scroller, so a band hung from one stays where the edge is.
+         *
+         * The colour is the one the reset hands every box, so the band is painted in whatever the column it hangs in
+         * is painted with and the fade is carried by a mask over it rather than by a colour written into it: a
+         * gradient cannot ask what the background is, and a column repainted takes its bands along with it.
+         *
+         * It answers no gesture, the body underneath keeping the pointer and the wheel.
+         */
+
+        & > header::after,
+        & > footer::before {
+
+            content: "";
+
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: var(--tile-shell-shade-depth);
+
+            pointer-events: none;
+
+        }
+
+        & > header {
+
+            grid-row: 1;
+
+            padding-top: var(--tile-shell-head-inset-top);
+            padding-bottom: var(--tile-shell-head-inset-bottom);
+
+            /* The band hangs below the bar, solid where the body meets it and gone a band later. */
+
+            &::after {
+                top: 100%;
+                mask-image: linear-gradient(to bottom, var(--tile-shell-shade-ramp));
+            }
+
+            /* Each end of the header is a row of its own, so a control sits beside its label rather than under it. */
+
+            & > span {
+
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                overflow: hidden;
+
+                /*
+                 * What the row clips includes whatever paints past a control, and the focus ring does, drawn outside
+                 * the box it marks. The row is given the room a ring takes at the widest offset a control sets it at,
+                 * as padding the same margin gives back, so the ring is painted whole while the row takes the place it
+                 * took before.
+                 */
+
+                --tile-shell-ring-room: calc(var(--tile--spacing-025) + 2 * var(--tile--border-width));
+
+                padding: var(--tile-shell-ring-room);
+                margin: calc(-1 * var(--tile-shell-ring-room));
+
+                /*
+                 * A button brings the air around its glyph along with it, so a run of buttons stands as it is and every
+                 * other pair of neighbours, such as two links or a button and a link, is set apart.
+                 */
+
+                & > :not(tile-button) + *,
+                & > * + :not(tile-button) {
+                    margin-left: var(--tile--spacing-050);
+                }
+
+            }
+
+        }
+
+        & > section {
+
+            grid-row: 2;
+
+            /* The body is the only part that scrolls, which is what leaves the bars standing without being told to. */
+
+            overflow: auto;
+
+            /*
+             * The body keeps a band of its own clear at each end, so a column with nothing to scroll is read plainly:
+             * what it holds starts below the band and ends above it, and the fade is met only once the reader has
+             * moved something under a bar.
+             */
+
+            padding-top: var(--tile-shell-shade-depth);
+            padding-bottom: var(--tile-shell-shade-depth);
+
+        }
+
+        & > footer {
+
+            grid-row: 3;
+
+            padding-top: var(--tile-shell-foot-inset-top);
+            padding-bottom: var(--tile-shell-foot-inset-bottom);
+
+            /* The band hangs above the bar, solid where the body meets it and gone a band earlier. */
+
+            &::before {
+                bottom: 100%;
+                mask-image: linear-gradient(to top, var(--tile-shell-shade-ramp));
+            }
+
+            /* The first thing in the footer takes the left and pushes whatever follows to the right. */
+
+            & > :first-child {
+                margin-right: auto;
+            }
+
+        }
+
+    }
+
+    & > aside {
+
+        /*
+         * The tray is the surface the content stands in front of, which is what the sunken colour says: it steps
+         * away from the page in whichever direction the scheme leaves room for, so the two columns are told apart
+         * in both. A field colour would say the tray is something to type into, and a lifted one has nowhere to go
+         * on a white page, where a surface separates by line and shadow rather than by tint.
+         *
+         * It is painted directly rather than by retuning `--tile--background-color`, which the sunken colour is
+         * derived from: assigning the token here and reading a colour derived from it in the same rule forms a
+         * custom property cycle and loses both. The reset hands every element `background-color: inherit`, so what
+         * the tray holds takes the painted colour along all the same.
+         */
+
+        background-color: var(--tile--background-color-sunken);
+
+        border-right-style: var(--tile--border-style);
+
+        & > * {
+            padding-left: var(--tile-shell-tray-gutter);
+            padding-right: var(--tile-shell-tray-gutter);
+        }
+
+        & > section {
+
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+
+            row-gap: var(--tile--spacing-025);
+
+            & > hr {
+                margin-block: var(--tile--spacing-075);
+            }
+
+            /*
+             * A heading in the tray names an entry in a list rather than a section of a document, so it drops the
+             * page treatment and is told apart by weight and indent alone, taking the size of the text around it
+             * like everything else in the frame. The third level is a step finer than the tray shows at all.
+             */
+
+            & > h1,
+            & > h2,
+            & > h3 {
+
+                padding: 0;
+                margin: 0;
+
+                font: inherit;
+
+                border-style: none;
+
+                & > a {
+                    font: inherit;
+                }
+
+            }
+
+            & > h1 {
+
+                font-weight: var(--tile--font-weight-heavy);
+
+                & + h1 {
+                    margin-top: var(--tile--spacing-025);
+                }
+
+                & + h2 {
+                    margin-top: var(--tile--spacing-025);
+                }
+
+            }
+
+            & > h2 {
+
+                margin-left: var(--tile--spacing-050);
+
+                & + h1 {
+                    margin-top: var(--tile--spacing-050);
+                }
+
+            }
+
+            & > h3 {
+                display: none;
+            }
+
+        }
+
+    }
+
+    & > main {
+
+        /* The column is the box the mark hangs from, which is what places the mark in the row the header is laid in. */
+
+        position: relative;
+
+        /*
+         * Every part takes the whole of the column and holds what it shows to the reading measure, centred in
+         * whatever room the window leaves beyond it. The measure is stated as air rather than as a width, so the
+         * body scrolls at the edge of the window and its scrollbar stands there with it, where a reader looks for
+         * it, rather than being drawn in beside the text. Every part states its air in padding alone, so a screen
+         * retuning one edge has one place to do it.
+         */
+
+        & > * {
+            padding-left: var(--tile-shell-main-inset);
+            padding-right: var(--tile-shell-main-inset);
+        }
+
+        /*
+         * The navigation the mark stands in for is taken off show as well as out of reach, so the two are never read
+         * as standing one on top of the other. It keeps its place in the bar all the same, which is what holds the
+         * bar at the height it had. Reach is settled by `inert` on the element, and the rule reads the attribute the
+         * markup already owes rather than asking for a class saying the same thing again.
+         */
+
+        & > header > span[inert] {
+            visibility: hidden;
+        }
+
+        /*
+         * The mark hangs over the header row rather than standing in it. A bar the screen gave nothing to show is
+         * left out, and waiting has no business bringing one back: out of flow, the mark neither makes a bar where
+         * there was none nor adds to the height of one that stands, whatever that bar happens to hold. A screen with
+         * no bar at all leaves the row closed up and the mark comes to rest in the band the body already holds clear
+         * at its top.
+         *
+         * Where it comes to rest is settled by giving it the bar's own box rather than by measuring anything off: it
+         * takes the whole of the row, reads the same insets the header reads and the same measure and gutter every
+         * part of the column reads, and lays out what it holds the way the header lays out its ends. What it holds
+         * is the control it stands in for, so the two agree down to the air a glyph is drawn with, and a retuned
+         * button or a retuned bar carries the mark along with no offset left behind to go stale.
+         *
+         * It answers no gesture, the column underneath keeping the pointer and the wheel.
+         */
+
+        & > .busy {
+
+            /*
+             * The mark carries no paint of its own, so it covers only what it draws. The reset hands every box the
+             * colour of the one around it, which on a box taking the whole of the bar would paint the heading out
+             * along with the end it stands at. What the mark does take off show is the navigation alone, which the
+             * rule above already settles.
+             */
+
+            background-color: transparent;
+
+            /*
+             * Both lines are named, where a part standing in the row names the row alone: a line left to `auto` on a
+             * box out of flow falls to the edge of the column rather than to the line after, which would leave the
+             * mark standing over the whole of it.
+             */
+
+            grid-row: 1 / 2;
+
+            /* Both edges are named as well, so the mark takes the whole of the row and reads the inset off it. */
+
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+
+            padding-top: var(--tile-shell-head-inset-top);
+            padding-bottom: var(--tile-shell-head-inset-bottom);
+
+            pointer-events: none;
+
+            /*
+             * The mark turns for as long as the frame is busy, at twice the slowest step, which is the one change
+             * here that covers no distance and so has no step of its own. A reader who asked for less motion gets a
+             * still mark, the duration collapsing to zero with every other, with no rule of its own.
+             *
+             * The glyph is reached as the drawing the mark holds rather than by the name lucide writes on it, which
+             * an app is free to show anywhere for anything: a mark turns here because it stands for waiting, never
+             * because of what it draws.
+             */
+
+            & svg {
+                animation: tile-shell-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+            }
+
+        }
+
+    }
+
+    /* Content a window never has too much room for takes the whole of it, the measure being no help to a grid. */
+
+    &[wide] {
+        --tile-shell-main-inset: var(--tile-shell-main-gutter);
+    }
+
+}
+
+@keyframes tile-shell-turn {
+
+    to {
+        rotate: 1turn;
+    }
+
+}

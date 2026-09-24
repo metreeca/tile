@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@metreeca/specimen/*": [
+        "./src/*"
+      ],
+      "@metreeca/tile*": [
+        "../packages/tile*/src/index.ts"
+      ],
+      "@metreeca/tile-cell/*": [
+        "../packages/tile-cell/src/*"
+      ],
+      "@metreeca/tile-data/*": [
+        "../packages/tile-data/src/*"
+      ],
+      "@metreeca/tile-hive/*": [
+        "../packages/tile-hive/src/*"
+      ]
+    },
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src",
+    "vite.config.ts"
+  ]
+}

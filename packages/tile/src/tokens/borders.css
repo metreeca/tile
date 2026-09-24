@@ -1,0 +1,109 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * What is drawn at the edge of a box: the line that encloses it, the corner that rounds it, the outline that marks it
+ * focused and the one that marks it invalid. The stroke width sits here too, carrying the weight of a drawn line
+ * where the line is a vector glyph rather than a border.
+ *
+ * Nothing here carries a plain default beside its ladder: a box names the step it rounds on, as it names the step it
+ * is spaced on, so one reading serves both.
+ */
+
+@property --tile--border-style {
+    syntax: "*";
+    inherits: true;
+    initial-value: solid;
+}
+
+@property --tile--border-color {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--border-width {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 1px;
+}
+
+/*
+ * The radius ladder rounds a corner by a length, on the steps the spacing ladder carries and stated the same way, in
+ * em, so a subtree given a size of its own rounds to match. A step rounds a box by the same amount whatever size the
+ * box is given, which is what tells one corner from another down a column of boxes of differing heights.
+ *
+ * A shape rather than a corner — a roundel, a swatch, an avatar, a pill — is NOT a step on this ladder: it is a
+ * share of the box, so it follows the size rather than the rhythm, and it is stated by the component drawing it.
+ */
+
+@property --tile--border-radius-025 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.25em;
+}
+
+@property --tile--border-radius-050 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.5em;
+}
+
+@property --tile--border-radius-075 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.75em;
+}
+
+@property --tile--border-radius-100 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 1em;
+}
+
+@property --tile--outline-focus {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--outline-invalid {
+    syntax: "*";
+    inherits: true;
+}
+
+/*
+ * A bare number, in the user units of the vector viewport it applies to, so the weight of a glyph holds at any size.
+ */
+
+@property --tile--stroke-width {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 2;
+}
+
+/*
+ * The three values standing on other tokens, which an initial value cannot carry: the enclosing line takes its colour
+ * from the page, and the two marks are assembled from the width, the style and the colour role each one signals. The
+ * focus mark is drawn at twice the width, so it reads as a mark rather than as a second border.
+ */
+
+:root {
+
+    --tile--border-color: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+
+    --tile--outline-focus: var(--tile--border-style) calc(2 * var(--tile--border-width)) var(--tile--color-focus);
+    --tile--outline-invalid: var(--tile--border-style) var(--tile--border-width) var(--tile--color-fail);
+
+}

@@ -41,32 +41,17 @@ const TargetAttribute = "target";
 
 const RouteContext = createContext<string>("");
 const RouterContext = createContext<Router>(() => {});
-
-/**
- * The section a {@link Routes} matches within: the route prefix the enclosing matches consumed, the rest of the route
- * left over below it, a reader of the route the location carries right now, which a redirection checks before
- * moving it, since an enclosing redirection may not have landed yet, and a claim on the rest of the route, returning
- * its own release, which keeps the enclosing subtree match from falling through.
- */
-const SectionContext = createContext<Readonly<{
-	base: string, rest: string, read: () => string, claim: () => () => void
+const RoutesContext = createContext<Readonly<{
+	origin: string, // the route the location carries, before any redirection
+	base: string, // the route prefix consumed by the enclosing subtree matches
+	claim: () => () => void // claims the rest of the route for a nested Routes, returning the release
 }>>({
-	base: "", rest: "", read: () => "", claim: () => () => {}
+
+	origin: "",
+	base: "",
+	claim: () => () => {}
+
 });
-
-
-/**
- * What a route renders: the view along with the head of the route its pattern consumed, empty where the pattern is not
- * a subtree, and the subtree pattern holding only if a nested {@link Routes} claims the rest of the route, empty where
- * no claim is needed.
- */
-type Match = readonly [view: ComponentChildren, head: string, pending: string];
-
-/**
- * Selects what a route renders, passing over the `skipped` patterns: `undefined` if the route is not handled, another
- * route to redirect to, or the matched view.
- */
-type Selector = (route: string, skipped: readonly string[]) => undefined | string | Match;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,13 +296,8 @@ export function Router({
 
 	return createElement(RouterContext.Provider, { value: router },
 		createElement(RouteContext.Provider, { value: route },
-			createElement(SectionContext.Provider, {
-				value: {
-					base: "",
-					rest: route,
-					read,
-					claim: () => () => {}
-				}
+			createElement(RoutesContext.Provider, {
+				value: { origin: route, base: "", claim: () => () => {} }
 			}, children)
 		)
 	);
@@ -335,8 +315,7 @@ export function Router({
  * declares its sub-routes where it is implemented rather than in the table at the top of the app, and keeps working
  * wherever that table mounts it. Sections nest to any depth, each one matching what the enclosing one left over. A
  * view takes up its subtree only by rendering a nested {@link Routes} along with itself: where none renders, the
- * routes
- * below the subtree fall through to the patterns following it in the enclosing table, such as a catch-all `*`.
+ * routes below the subtree fall through to the patterns following it in the enclosing table, such as a catch-all `*`.
  *
  * Patterns and redirections are relative to the section, starting at its root `/`: under `/users/`, the pattern
  * `/{id}` matches `/users/123`, and the redirection `/all` moves the location to `/users/all`. Components below still
@@ -393,24 +372,18 @@ export function Routes({
 
 }): ComponentChildren {
 
-	const { base, rest, read, claim } = useContext(SectionContext);
+	const { origin, base, claim } = useContext(RoutesContext);
 
+	const rest = useRoute().slice(base.length);
 	const router = useRouter();
 
-	const [rejected, setRejected] = useState<Readonly<{ route: string, patterns: readonly string[] }>>({
-		route: "", patterns: []
-	});
+	const [rejected, setRejected] = useState<Readonly<Record<string, readonly string[]>>>({});
 
-	// nested Routes claiming the rest of the route; a ref, not state, as claims land after render and only the check
-	// below reads them
+	// a ref, not state, as claims land after render and only effects read them
 
 	const claims = useRef(0);
 
-	const select = compile(children);
-
-	const [target, view, head, pending] = lookup(rest, route =>
-		select(route, route === rejected.route ? rejected.patterns : [])
-	);
+	const { route: target, view, head, subtree } = match(children, rest, rejected);
 
 	const register = useCallback(() => {
 
@@ -425,13 +398,9 @@ export function Routes({
 
 	useLayoutEffect(() => {
 
-		if ( pending && claims.current === 0 ) {
+		if ( subtree && claims.current === 0 ) {
 
-			// unclaimed by nested Routes, the rest of the route falls through to the following patterns
-
-			setRejected(({ route, patterns }) => ({
-				route: target, patterns: route === target ? [...patterns, pending] : [pending]
-			}));
+			setRejected(rejected => ({ [target]: [...(rejected[target] ?? []), subtree] }));
 
 		} else {
 
@@ -439,27 +408,29 @@ export function Routes({
 
 		}
 
-	}, [target, pending, view]);
+	}, [target, subtree, view]);
 
 
 	useEffect(() => {
 
-		if ( target !== rest && read() === `${base}${rest}` ) {
+		if ( claims.current === 0 && `${base}${target}` !== origin ) {
 
-			router(`${base}${target}`, true); // as the router does, a redirection replaces the entry it came from
+			// the innermost Routes lands every enclosing redirection at once, replacing the entry it came from
+
+			router(`${base}${target}`, true);
 
 		} else {
 
-			// the location already carries the route on show, or an enclosing redirection has yet to land on it
+			// the location already carries the route on show, or a nested Routes lands it
 
 		}
 
-	}, [base, target, rest, read, router]);
+	}, [origin, base, target, router]);
 
 
 	return createElement(RouteContext.Provider, { value: `${base}${target}` },
-		createElement(SectionContext.Provider, {
-			value: { base: `${base}${head}`, rest: target.slice(head.length), read, claim: register }
+		createElement(RoutesContext.Provider, {
+			value: { origin, base: `${base}${head}`, claim: register }
 		}, view)
 	);
 
@@ -493,7 +464,70 @@ export function useRoute(): string {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function compile(table: Parameters<typeof Routes>[0]["children"]): Selector {
+/**
+ * Resolves a route to its view, following redirections and passing over the rejected subtree patterns.
+ */
+function match(
+	table: Parameters<typeof Routes>[0]["children"],
+	route: string,
+	rejected: Readonly<Record<string, readonly string[]>>
+): Readonly<{ route: string, view: VNode, head: string, subtree: string }> {
+
+	const invalid = Object.keys(table).find(glob => glob !== "*" && !glob.startsWith("/"));
+
+
+	function follow(current: string, trail: readonly string[]): ReturnType<typeof match> {
+
+		const skipped = rejected[current] ?? [];
+
+		const selected = Object.entries(table).reduce<ReturnType<typeof select>>((selected, [glob, entry]) =>
+				selected ?? (skipped.includes(glob) ? undefined : select(glob, entry, current)),
+			undefined // patterns past the first match are not compiled
+		);
+
+		if ( !isDefined(selected) ) {
+
+			throw new Error(`unhandled route ${route}`);
+
+		} else if ( !isString(selected) ) {
+
+			return selected;
+
+		} else if ( trail.includes(selected) ) {
+
+			throw new Error(`redirection loop <${trail.join(",")}>`);
+
+		} else {
+
+			return follow(selected, [...trail, selected]);
+
+		}
+
+	}
+
+	function select(glob: string, entry: string | VNode, route: string): undefined | string | ReturnType<typeof match> {
+
+		const steps = pattern(glob).exec(route);
+		const tail = steps?.groups?.$; // the route below a subtree, undefined for other patterns
+
+		return isNull(steps) ? undefined
+			: isString(entry) ? redirect(entry, route, steps, tail)
+				: {
+					route,
+					view: entry,
+					head: isDefined(tail) ? route.slice(0, -tail.length) : "",
+					subtree: isDefined(tail) && !/^\/(?:[?#]|$)/.test(tail) ? glob : "" // the subtree root needs no claim
+				};
+
+	}
+
+	function redirect(entry: string, route: string, steps: RegExpExecArray, tail: Optional<string>): string {
+
+		const target = entry.replace(/{(\w*)}/g, (_, step) => step ? steps.groups?.[step] || "" : route);
+
+		return isDefined(tail) && target.endsWith("/") ? `${target.slice(0, -1)}${tail}` : target;
+
+	}
 
 	function pattern(glob: string): RegExp {
 
@@ -510,71 +544,16 @@ function compile(table: Parameters<typeof Routes>[0]["children"]): Selector {
 
 	}
 
-	function resolve(
-		glob: string, route: string, match: null | RegExpExecArray, entry: string | VNode
-	): ReturnType<Selector> {
-		return isNull(match) ? undefined
-			: isString(entry) ? redirect(route, match, entry)
-				: view(glob, route, match, entry);
-	}
 
-	function redirect(route: string, match: RegExpExecArray, entry: string): string {
+	if ( isDefined(invalid) ) {
 
-		const tail = match.groups?.$; // the route below a subtree, undefined for other patterns
-		const target = entry.replace(/{(\w*)}/g, (_, step) => step ? match.groups?.[step] || "" : route);
+		throw new Error(`invalid route pattern <${invalid}>`);
 
-		return isDefined(tail) && target.endsWith("/") ? `${target.slice(0, -1)}${tail}` : target;
+	} else {
+
+		return follow(route, [route]);
 
 	}
-
-	function view(glob: string, route: string, match: RegExpExecArray, entry: VNode): Match {
-
-		const tail = match.groups?.$; // the route below a subtree, undefined for other patterns
-
-		return !isDefined(tail) ? [entry, "", ""]
-			: [entry, route.slice(0, -tail.length), /^\/(?:[?#]|$)/.test(tail) ? "" : glob]; // the subtree root needs
-		// no claim
-	}
-
-
-	return (route, skipped) => Object.entries(table).reduce<ReturnType<Selector>>((selected, [glob, entry]) =>
-			selected ?? (skipped.includes(glob) ? undefined : resolve(glob, route, pattern(glob).exec(route), entry)),
-		undefined // patterns past the first match are not compiled
-	);
-
-}
-
-function lookup(
-	route: string, select: (route: string) => ReturnType<Selector>
-): readonly [target: string, view: ComponentChildren, head: string, pending: string] {
-
-	function follow(
-		current: string, trail: readonly string[]
-	): readonly [target: string, view: ComponentChildren, head: string, pending: string] {
-
-		const selected = select(current);
-
-		if ( !isDefined(selected) ) {
-
-			throw new Error(`unhandled route ${route}`);
-
-		} else if ( !isString(selected) ) {
-
-			return [current, ...selected];
-
-		} else if ( trail.includes(selected) ) {
-
-			throw new Error(`redirection loop <${trail.join(",")}>`);
-
-		} else {
-
-			return follow(selected, [...trail, selected]);
-
-		}
-
-	}
-
-	return follow(route, [route]);
 
 }
 

@@ -20,8 +20,8 @@ import { Faults } from "@metreeca/specimen/tile-cell/faults.js";
 import { Icons } from "@metreeca/specimen/tile-cell/icons.js";
 import { Logos } from "@metreeca/specimen/tile-cell/logos.js";
 import { Notes } from "@metreeca/specimen/tile-cell/notes.js";
-import { Link } from "@metreeca/tile-cell/link.js";
-import { Routes } from "@metreeca/tile-data/router.js";
+import { Link } from "@metreeca/tile-cell/link";
+import { Routes } from "@metreeca/tile-data/router";
 
 
 export const TileCellPath = "/tile-cell/";

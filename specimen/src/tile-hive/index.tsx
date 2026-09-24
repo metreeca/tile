@@ -18,8 +18,8 @@ import { Page } from "@metreeca/specimen/index.core.js";
 import { Shells } from "@metreeca/specimen/tile-hive/shells.js";
 import { Styles } from "@metreeca/specimen/tile-hive/styles.js";
 import { Tabbed } from "@metreeca/specimen/tile-hive/tabbed.js";
-import { Link } from "@metreeca/tile-cell/link.js";
-import { Routes } from "@metreeca/tile-data/router.js";
+import { Link } from "@metreeca/tile-cell/link";
+import { Routes } from "@metreeca/tile-data/router";
 
 
 export const TileHivePath = "/tile-hive/";

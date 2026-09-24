@@ -24,8 +24,8 @@ import { Surfaces } from "@metreeca/specimen/tile/surfaces.js";
 import { Tables } from "@metreeca/specimen/tile/tables.js";
 import { Text } from "@metreeca/specimen/tile/text.js";
 import { Theming } from "@metreeca/specimen/tile/theming.js";
-import { Link } from "@metreeca/tile-cell/link.js";
-import { Routes } from "@metreeca/tile-data/router.js";
+import { Link } from "@metreeca/tile-cell/link";
+import { Routes } from "@metreeca/tile-data/router";
 
 
 export const TilePath = "/tile/";

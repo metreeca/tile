@@ -496,7 +496,7 @@ function resolve(table: Table, route: string, section: string, fallback: Optiona
 	} else {
 
 		const rest = route.slice(section.length);
-		const matched = match(table, rest, [rest]);
+		const matched = match(table, rest);
 		const current = `${section}${matched.route}`;
 
 		if ( current !== route ) {
@@ -528,7 +528,36 @@ function resolve(table: Table, route: string, section: string, fallback: Optiona
 /**
  * Matches a section route against a table, following redirections.
  */
-function match(table: Table, route: string, trail: readonly string[]): Match {
+function match(table: Table, route: string): Match {
+
+	let trail: readonly string[] = [route];
+	let selected = select(table, route);
+
+	while ( isString(selected) ) {
+
+		if ( trail.includes(selected) ) {
+
+			throw new Error(`redirection loop <${trail.join(",")}>`);
+
+		} else {
+
+			trail = [...trail, selected];
+			selected = select(table, selected);
+
+		}
+
+	}
+
+	return selected;
+
+}
+
+/**
+ * Selects the first pattern in a table matching a section route.
+ *
+ * @returns the route the matching redirection moves to, or the match for the route itself
+ */
+function select(table: Table, route: string): string | Match {
 
 	const hit = Object.entries(table).flatMap(([glob, entry]) => {
 
@@ -550,17 +579,7 @@ function match(table: Table, route: string, trail: readonly string[]): Match {
 
 	} else {
 
-		const target = redirect(hit.entry, hit.steps, tail);
-
-		if ( trail.includes(target) ) {
-
-			throw new Error(`redirection loop <${trail.join(",")}>`);
-
-		} else {
-
-			return match(table, target, [...trail, target]);
-
-		}
+		return redirect(hit.entry, hit.steps, tail);
 
 	}
 

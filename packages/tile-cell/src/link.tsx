@@ -56,6 +56,7 @@ export function Link({
 	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 
 	href,
+	title,
 
 	onClick,
 
@@ -86,6 +87,17 @@ export function Link({
 	 * it, so `/users/*` links to `/users/` and is marked for `/users/123`, though not for `/users`.
 	 */
 	href: string
+
+	/**
+	 * The hint the platform shows on resting the pointer on the link, such as where it leads at greater length than
+	 * its content says; no hint if omitted.
+	 *
+	 * Beside content that names the link it names nothing. On a glyph standing alone with no label of its own it names
+	 * the link, and is then spoken as a name rather than as an aside. Either way it reaches neither a reader who never
+	 * rests the pointer nor one on a touch screen, so whatever a reader has to take in to follow the link belongs in
+	 * its content rather than here.
+	 */
+	title?: string
 
 
 	/**
@@ -131,6 +143,7 @@ export function Link({
 	return createElement("tile-link", { look }, createElement("a", {
 
 		href: head,
+		title,
 
 		active: current ? "" : undefined,
 

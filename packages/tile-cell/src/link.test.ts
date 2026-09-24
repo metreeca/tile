@@ -129,6 +129,26 @@ describe("Link", () => {
 
 	});
 
+	describe("title", () => {
+
+		it("should state the title on the anchor", async () => {
+
+			mount({ href: "/a", title: "Home" });
+
+			expect(document.querySelector("a")?.getAttribute("title")).toBe("Home");
+
+		});
+
+		it("should leave an unstated title off the anchor", async () => {
+
+			mount({ href: "/a" });
+
+			expect(document.querySelectorAll("a[title]")).toHaveLength(0);
+
+		});
+
+	});
+
 	describe("onClick", () => {
 
 		function click(): void {

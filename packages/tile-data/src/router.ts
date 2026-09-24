@@ -126,9 +126,9 @@ export interface Table {
 	 *
 	 * A pattern maps to one of:
 	 *
-	 * - a **redirection**: a route to move to instead, where `{step}` is replaced with the matched named step, `{}` with
-	 *   the whole matched route and a trailing `/*` with the matched trailing path; the location is moved along,
-	 *   replacing the current history entry, so going back never lands on the route redirected from
+	 * - a **redirection**: a route to move to instead, where `{step}` is replaced with the matched named step, `{}`
+	 * with the whole matched route and a trailing `/*` with the matched trailing path; the location is moved along,
+	 * replacing the current history entry, so going back never lands on the route redirected from
 	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
 	 *   {@link useRoute}, or is selected by a {@link Switch}; a view mapped to a pattern ending with `/*` routes the
 	 *   trailing path with {@link Routes}
@@ -379,7 +379,13 @@ export function Router({
 
 	return createElement(RouterContext.Provider, { value: router },
 		createElement(RouteContext.Provider, { value: target },
-			createElement(SectionContext.Provider, { value: { base: head, rest: target.slice(head.length), read } }, view)
+			createElement(SectionContext.Provider, {
+				value: {
+					base: head,
+					rest: target.slice(head.length),
+					read
+				}
+			}, view)
 		)
 	);
 
@@ -398,9 +404,9 @@ export function Router({
  * relative route in the same way. Components below still read the full route with {@link useRoute} and navigate with
  * {@link useRouter}, so links and navigators keep working unchanged wherever a section is mounted.
  *
- * Renders below a {@link Router}, which keeps sole charge of the location, the history and the page clicks. Below a view
- * selected by a {@link Switch}, or by a pattern not ending with `/*`, the section sees the whole route that view was
- * selected for.
+ * Renders below a {@link Router}, which keeps sole charge of the location, the history and the page clicks. Below a
+ * view selected by a {@link Switch}, or by a pattern not ending with `/*`, the section sees the whole route that view
+ * was selected for.
  *
  * @param options The section configuration
  *
@@ -510,7 +516,8 @@ function compile(table: Table): Selector {
 					? match.groups?.$ || ""
 					: step ? match.groups?.[step] || "" : route
 				)
-				: [entry, route.slice(0, route.length - (match.groups?.$ ?? route).length)]; // the trailing path runs to the end
+				: [entry, route.slice(0, route.length-(match.groups?.$ ?? route).length)]; // the trailing path runs to
+																						   // the end
 	}
 
 

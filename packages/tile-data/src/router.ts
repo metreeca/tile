@@ -62,6 +62,7 @@ const RouterContext = createContext<Readonly<{
 }>>({
 
 	route: "",
+
 	fallback: undefined,
 	navigate: () => {}
 
@@ -311,9 +312,9 @@ export function Router({
 			? { route: entry, title: undefined, state: undefined }
 			: entry;
 
-		const $route = !isDefined(route) ? location.href : mode === "hash" ? `#${route}` : route;
+		const $route = normalizeRoute(route);
 		const $title = normalizeTitle(title);
-		const $state = !isDefined(state) ? history.state : isNull(state) ? undefined : state;
+		const $state = normalizeState(state);
 
 		document.title = $title;
 
@@ -325,6 +326,19 @@ export function Router({
 
 			sync();
 
+		}
+
+
+		function normalizeRoute(route: Optional<string>): string {
+			return isDefined(route) ? new URL(mode === "hash" ? `#${route}` : route, location.href).href : location.href;
+		}
+
+		function normalizeTitle(title: Optional<string>): string {
+			return isDefined(title) ? unique([tidy(title), app.name]).filter(Boolean).join(" | ") : document.title;
+		}
+
+		function normalizeState(state: unknown): unknown {
+			return isDefined(state) ? state : history.state; // null clears the state
 		}
 
 	}, [mode]);
@@ -584,9 +598,4 @@ function pattern(glob: string): RegExp {
 
 	}${subtree ? "(?<$>/.*)" : "(?:[?#].*)?"}$`); // the route below a subtree, or the ignored query and hash
 
-}
-
-
-function normalizeTitle(title: Optional<string>): string {
-	return tidy(isDefined(title) ? unique([title, app.name]).filter(Boolean).join(" | ") : document.title);
 }

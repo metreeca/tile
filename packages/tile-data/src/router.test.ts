@@ -21,6 +21,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Router, Routes, useRoute, useRouter } from "./router.js";
 
 
+vi.hoisted(() => {
+	document.title = "App"; // the app name, read as the module is imported
+});
+
+
 type Routing = Parameters<typeof Routes>[0]["children"];
 
 
@@ -660,6 +665,23 @@ describe("useRouter", () => {
 
 	});
 
+	it("should replace the current history entry when navigating to the current route", async () => {
+
+		history.replaceState(null, "", "/other");
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		const length = history.length;
+
+		navigate(navigators, "/other");
+
+		expect(location.pathname).toBe("/other");
+		expect(history.length).toBe(length);
+
+	});
+
 	it("should set the document title and the history state", async () => {
 
 		const { navigators, Probe } = probe();
@@ -669,8 +691,20 @@ describe("useRouter", () => {
 		navigate(navigators, { route: "/other", title: " Other  Page ", state: { key: "value" } });
 
 		expect(location.pathname).toBe("/other");
-		expect(document.title).toBe("Other Page");
+		expect(document.title).toBe("Other Page | App");
 		expect(history.state).toEqual({ key: "value" });
+
+	});
+
+	it("should leave the app name alone for a blank title", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		navigate(navigators, { title: " " });
+
+		expect(document.title).toBe("App");
 
 	});
 
@@ -683,7 +717,7 @@ describe("useRouter", () => {
 		navigate(navigators, { title: "Title" });
 
 		expect(location.pathname).toBe("/");
-		expect(document.title).toBe("Title");
+		expect(document.title).toBe("Title | App");
 
 	});
 
@@ -790,6 +824,21 @@ describe("modes", () => {
 			expect(location.pathname).toBe("/x");
 			expect(location.hash).toBe("#/c/d");
 			expect(text()).toBe("/c/d");
+
+		});
+
+		it("should replace the current history entry when navigating to the current route", async () => {
+
+			history.replaceState(null, "", "/x#/a/b");
+
+			shell(createElement(Nav, { route: "/a/b" }), "hash");
+
+			const length = history.length;
+
+			click();
+
+			expect(location.hash).toBe("#/a/b");
+			expect(history.length).toBe(length);
 
 		});
 

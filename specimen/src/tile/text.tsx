@@ -20,6 +20,7 @@
  * @module
  */
 
+import logo from "../index.svg";
 import "./index.css";
 
 
@@ -28,7 +29,8 @@ import "./index.css";
  *
  * Shows what plain document markup is given as it stands, with no class on anything: the measure body copy sets, the
  * inline treatments a passage carries, the heading levels an outline is built from, the blocks set apart from the
- * text around them, and the lists and definitions a page is structured with.
+ * text around them, the images a reader enlarges with a click, and the lists and definitions a page is structured
+ * with.
  *
  * @returns The text section
  */
@@ -70,6 +72,15 @@ export function Text() {
 			`const style = css({ colorSubtle: "#345", colorStrong: "#D60", fontFamily: "Inter, sans-serif",`
 			+ ` fontSizeLarge: "1.5em", spacing100: "1.25em", borderRadius025: "0.25em" });`
 		}</code></pre>
+
+		<hr/>
+
+		<h3>Images</h3>
+
+		<p>An image is enlarged over the whole page by a click, and restored by another click, by <kbd>Escape</kbd> or
+			as soon as the focus moves:</p>
+
+		<p><img src={logo} alt="The Metreeca logo" width={96} height={96}/></p>
 
 		<hr/>
 

@@ -28,7 +28,7 @@
  * @module
  */
 
-import { isDefined, isFunction, isNull, isString, Optional } from "@metreeca/core";
+import { isDefined, isNull, isString, Optional } from "@metreeca/core";
 import { unique } from "@metreeca/core/arrays";
 import { tidy } from "@metreeca/core/strings";
 import { type ComponentChildren, createContext, createElement, type VNode } from "preact";
@@ -92,63 +92,6 @@ export interface Router {
 	 *     to the current route always replaces it
 	 */
 	(route: string | { route?: string, title?: string, state?: unknown }, replace?: boolean): void;
-
-}
-
-
-/**
- * Routing switch.
- *
- * Decides in code what a route renders, where a {@link Table} of patterns is not expressive enough.
- */
-export interface Switch {
-
-	/**
-	 * Selects the view for a route.
-	 *
-	 * @param route The route to be rendered
-	 *
-	 * @returns The view rendering `route`; another route to redirect to, which the location is moved to as a
-	 *     {@link Table} redirection moves it; `undefined` if `route` is not handled, which makes {@link Routes} throw
-	 */
-	(route: string): string | ComponentChildren;
-
-}
-
-/**
- * Routing table.
- *
- * Declares what each route renders as a map from route patterns to views or redirections. A route is handled by the
- * first pattern it matches, in table order, so specific patterns go before the general ones they overlap; the query
- * and the hash of a route never take part in matching.
- */
-export interface Table {
-
-	/**
-	 * The view or redirection for the routes matching a pattern.
-	 *
-	 * A pattern is matched against the whole route and may include the following wildcards, where `step` is a
-	 * sequence of word characters:
-	 *
-	 * - `{step}` matches a non-empty named path step
-	 * - `{}` matches a non-empty anonymous path step
-	 * - `/` at the end, except in the root pattern `/`, makes the pattern a **subtree**, matching the route up to it
-	 *   along with every route below it
-	 *
-	 * A lone `*` is a catch-all, matching any route: placed last, it handles whatever the patterns before it leave
-	 * over, in the table at the top of the app and in any section below it alike.
-	 *
-	 * A pattern maps to one of:
-	 *
-	 * - a **redirection**: a route to move to instead, where `{step}` is replaced with the matched named step and `{}`
-	 *   with the whole matched route; a redirection ending with `/` from a subtree carries the route below the subtree
-	 *   along; the location is moved along, replacing the current history entry, so going back never lands on the
-	 *   route redirected from
-	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
-	 *   {@link useRoute}, or is selected by a {@link Switch}; a view mapped to a subtree routes the routes below it
-	 *   with a nested {@link Routes}, and where it nests none they fall through to the patterns that follow
-	 */
-	readonly [pattern: string]: string | VNode;
 
 }
 
@@ -370,7 +313,14 @@ export function Router({
 
 	return createElement(RouterContext.Provider, { value: router },
 		createElement(RouteContext.Provider, { value: route },
-			createElement(SectionContext.Provider, { value: { base: "", rest: route, read, claim: () => () => {} } }, children)
+			createElement(SectionContext.Provider, {
+				value: {
+					base: "",
+					rest: route,
+					read,
+					claim: () => () => {}
+				}
+			}, children)
 		)
 	);
 
@@ -380,30 +330,32 @@ export function Router({
 /**
  * Renders the view for the current route.
  *
- * Selects the view through a {@link Table} or a {@link Switch}, moving the location along any redirection on the way,
- * and renders it wherever the page layout places it.
+ * Selects the view through a table of route patterns, moving the location along any redirection on the way, and
+ * renders it wherever the page layout places it.
  *
  * Within a view mapped to a subtree pattern, routes the routes below the subtree as a section of its own, so a section
  * declares its sub-routes where it is implemented rather than in the table at the top of the app, and keeps working
  * wherever that table mounts it. Sections nest to any depth, each one matching what the enclosing one left over. A
- * view takes up its subtree only by rendering a nested {@link Routes} along with itself: where none renders, the routes
- * below
- * the subtree fall through to the patterns following it in the enclosing table, such as a catch-all `*`.
+ * view takes up its subtree only by rendering a nested {@link Routes} along with itself: where none renders, the
+ * routes
+ * below the subtree fall through to the patterns following it in the enclosing table, such as a catch-all `*`.
  *
  * Patterns and redirections are relative to the section, starting at its root `/`: under `/users/`, the pattern
- * `/{id}` matches `/users/123`, and the redirection `/all` moves the location to `/users/all`. A switch is handed the
- * relative route in the same way. Components below still read the full route with {@link useRoute} and navigate with
- * {@link useRouter}, so links and navigators keep working unchanged wherever a section is mounted.
+ * `/{id}` matches `/users/123`, and the redirection `/all` moves the location to `/users/all`. Components below still
+ * read the full route with {@link useRoute} and navigate with {@link useRouter}, so links and navigators keep working
+ * unchanged wherever a section is mounted.
  *
  * Renders below a {@link Router}, which keeps sole charge of the location, the history and the page clicks. Below a
- * view selected by a {@link Switch}, or by a pattern other than a subtree, the section sees the whole route that view
- * was selected for.
+ * view selected by a pattern other than a subtree, the section sees the whole route that view was selected for.
  *
  * @param options The routes configuration
  *
  * @returns The view for the current route
  *
- * @throws {@link !Error Error} If the current route is not handled, or if its redirections loop
+ * @throws {@link !Error Error} If the table holds a pattern that is neither `*` nor starts with `/`, whatever the
+ *     current route
+ * @throws {@link !Error Error} If the current route, or a route it redirects to, matches no table pattern, or if
+ *     redirections lead back to a route already visited
  */
 export function Routes({
 
@@ -412,9 +364,34 @@ export function Routes({
 }: {
 
 	/**
-	 * The views for the routes, as a table or a switch.
+	 * The views for the routes, as a table mapping route patterns to views or redirections.
+	 *
+	 * A route is
+	 * handled by the first pattern it matches, in table order, so specific patterns go before the general ones they
+	 * overlap; the query and the hash of a route never take part in matching.
+	 *
+	 * A pattern is matched against the whole route and may include the following wildcards, where `step` is a
+	 * sequence of word characters:
+	 *
+	 * - `{step}` matches a non-empty named path step
+	 * - `{}` matches a non-empty anonymous path step
+	 * - `/` at the end, except in the root pattern `/`, makes the pattern a **subtree**, matching the route up to it
+	 *   along with every route below it
+	 *
+	 * A lone `*` is a catch-all, matching any route: placed last, it handles whatever the patterns before it leave
+	 * over, in the table at the top of the app and in any section below it alike.
+	 *
+	 * A pattern maps to one of:
+	 *
+	 * - a **redirection**: a route to move to instead, where `{step}` is replaced with the matched named step and `{}`
+	 *   with the whole matched route; a redirection ending with `/` from a subtree carries the route below the subtree
+	 *   along; the location is moved along, replacing the current history entry, so going back never lands on the
+	 *   route redirected from
+	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
+	 *   {@link useRoute}; a view mapped to a subtree routes the routes below it
+	 *   with a nested {@link Routes}, and where it nests none they fall through to the patterns that follow
 	 */
-	children: Table | Switch
+	children: { readonly [pattern: string]: string | VNode }
 
 }): ComponentChildren {
 
@@ -426,10 +403,12 @@ export function Routes({
 		route: "", patterns: []
 	});
 
-	const claims = useRef(0); // nested Routes claiming the rest of the route, counted apart from rendering as their
-							  // claims land only after this render, and are read by the check below alone
+	// nested Routes claiming the rest of the route; a ref, not state, as claims land after render and only the check
+	// below reads them
 
-	const select = selector(children);
+	const claims = useRef(0);
+
+	const select = compile(children);
 
 	const [target, view, head, pending] = lookup(rest, route =>
 		select(route, route === rejected.route ? rejected.patterns : [])
@@ -450,8 +429,7 @@ export function Routes({
 
 		if ( pending && claims.current === 0 ) {
 
-			// no nested Routes took up the rest of the route below the subtree, which falls through to the patterns
-			// following it
+			// unclaimed by nested Routes, the rest of the route falls through to the following patterns
 
 			setRejected(({ route, patterns }) => ({
 				route: target, patterns: route === target ? [...patterns, pending] : [pending]
@@ -459,7 +437,7 @@ export function Routes({
 
 		} else {
 
-			// the match needs no claim, or a nested Routes has claimed the rest of the route
+			// no claim needed, or nested Routes claimed the rest of the route
 
 		}
 
@@ -517,33 +495,25 @@ export function useRoute(): string {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function selector(routes: Table | Switch): Selector {
-	return isFunction(routes) ? route => {
-
-		const view = routes(route);
-
-		return !isDefined(view) || isString(view) ? view : [view, "", ""]; // a switch consumes no head
-
-	} : compile(routes);
-}
-
-function compile(table: Table): Selector {
+function compile(table: Parameters<typeof Routes>[0]["children"]): Selector {
 
 	function pattern(glob: string): RegExp {
 
 		const subtree = glob.length > 1 && glob.endsWith("/");
+		const steps = subtree ? glob.slice(0, -1) : glob;
 
-		return new RegExp(glob === "*" ? "^.*$" : `^${(subtree ? glob.slice(0, -1) : glob)
+		return glob === "*" ? /^.*$/ : new RegExp(`^${steps
 
-			.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") // escape special regex characters
+			.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // escape regex metacharacters
 			.replace(/\\{(\w+)\\}/g, "(?<$1>[^/]+)") // named steps
-			.replace(/\\{\\}/g, "(?:[^/]+)") // anonymous steps
+			.replace(/\\{\\}/g, "[^/]+") // anonymous steps
 
-		}${subtree ? "(?<$>/.*)" : "([?#].*)?"}$`); // the route below a subtree, or the ignored query/hash
+		}${subtree ? "(?<$>/.*)" : "(?:[?#].*)?"}$`); // the route below a subtree, or the ignored query and hash
+
 	}
 
 	function resolve(
-		glob: string, route: string, match: null | RegExpExecArray, entry: Table[string]
+		glob: string, route: string, match: null | RegExpExecArray, entry: string | VNode
 	): ReturnType<Selector> {
 		return isNull(match) ? undefined
 			: isString(entry) ? redirect(route, match, entry)
@@ -565,12 +535,12 @@ function compile(table: Table): Selector {
 
 		return !isDefined(tail) ? [entry, "", ""]
 			: [entry, route.slice(0, -tail.length), /^\/(?:[?#]|$)/.test(tail) ? "" : glob]; // the subtree root needs
-																							  // no claim
+		// no claim
 	}
 
 
 	return (route, skipped) => Object.entries(table).reduce<ReturnType<Selector>>((selected, [glob, entry]) =>
-		selected ?? (skipped.includes(glob) ? undefined : resolve(glob, route, pattern(glob).exec(route), entry)),
+			selected ?? (skipped.includes(glob) ? undefined : resolve(glob, route, pattern(glob).exec(route), entry)),
 		undefined // patterns past the first match are not compiled
 	);
 

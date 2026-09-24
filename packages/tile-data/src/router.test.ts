@@ -18,7 +18,10 @@ import { type ComponentChildren, createElement, type FunctionComponent, render }
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Router, Routes, type Switch, type Table, useRoute, useRouter } from "./router.js";
+import { Router, Routes, useRoute, useRouter } from "./router.js";
+
+
+type Routing = Parameters<typeof Routes>[0]["children"];
 
 
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
@@ -28,11 +31,11 @@ function shell(children: ComponentChildren, mode?: "path" | "hash"): void {
 	act(() => render(createElement(Router, { mode, children }), document.body));
 }
 
-function mount(routes: Table | Switch, mode?: "path" | "hash"): void {
+function mount(routes: Routing, mode?: "path" | "hash"): void {
 	shell(createElement(Routes, { children: routes }), mode);
 }
 
-function section(routes: Table | Switch): FunctionComponent {
+function section(routes: Routing): FunctionComponent {
 	return () => createElement(Routes, { children: routes });
 }
 
@@ -361,24 +364,16 @@ describe("Routes", () => {
 
 		});
 
-	});
+		it("should reject patterns neither rooted nor a catch-all, wherever they sit in the table", async () => {
 
-	describe("switches", () => {
+			expect(() => mount({ "/": createElement("p", {}), "users": createElement("p", {}) }))
+				.toThrow("invalid route pattern <users>");
 
-		it("should render what the switch returns for the current route", async () => {
+			expect(() => mount({ "/": createElement("p", {}), "": createElement("p", {}) }))
+				.toThrow("invalid route pattern <>");
 
-			mount(route => createElement("p", {}, `at ${route}`));
-
-			expect(text()).toBe("at /");
-
-		});
-
-		it("should follow redirections returned by the switch", async () => {
-
-			mount(route => route === "/" ? "/home" : createElement("p", {}, route));
-
-			expect(text()).toBe("/home");
-			expect(location.pathname).toBe("/home");
+			expect(() => mount({ "/": createElement("p", {}), "*/": createElement("p", {}) }))
+				.toThrow("invalid route pattern <*/>");
 
 		});
 
@@ -458,21 +453,11 @@ describe("Routes", () => {
 
 	});
 
-	it("should hand switches the route relative to the section", async () => {
+	it("should see the whole route below a pattern other than a subtree", async () => {
 
 		history.replaceState(null, "", "/users/123");
 
-		mount({ "/users/": createElement(section(route => createElement("p", {}, route)), {}) });
-
-		expect(text()).toBe("/123");
-
-	});
-
-	it("should see the whole route below a switch", async () => {
-
-		history.replaceState(null, "", "/users/123");
-
-		mount(() => createElement(section({ "/users/{id}": createElement(Here, {}) }), {}));
+		mount({ "/users/{id}": createElement(section({ "/users/{id}": createElement(Here, {}) }), {}) });
 
 		expect(text()).toBe("/users/123");
 

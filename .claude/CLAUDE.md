@@ -140,10 +140,10 @@ excluding these would leave a public type undocumented.
 offering it: the package `exports` blocks the `.core` subpaths and `typedoc.json` leaves the modules out of the
 reference, so a consumer meets those types only through the published signatures naming them.
 
-A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.pack.ts`
-module, likewise left out of the reference by `typedoc.json`: the documented module beside it is the only path a
-consumer imports, and carries the comment the catalogue is described by. `icon.ts` documents the `Icon` namespace it
-hands out, `icon.pack.ts` names the glyph each role stands for.
+A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
+module, another exception left out of the reference by `typedoc.json`, which names each such module: the documented
+module beside it is the only path a consumer imports, and carries the comment the catalogue is described by. `icon.ts`
+documents the `Icon` namespace it hands out, `icon.core.ts` names the glyph each role stands for.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

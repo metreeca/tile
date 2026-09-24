@@ -56,7 +56,7 @@
     ],
     "exclude": [
       "**/packages/tile/src/**/*.core.ts",
-      "**/*.pack.ts",
+      "**/packages/tile-cell/src/icon.core.ts",
       "**/*.test.ts",
       "**/*.test-d.ts"
     ],

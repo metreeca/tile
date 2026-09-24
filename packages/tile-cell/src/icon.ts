@@ -155,4 +155,4 @@
 import "./icon.css";
 
 
-export * as Icon from "./icon.pack.js";
+export * as Icon from "./icon.core.js";

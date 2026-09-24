@@ -387,8 +387,6 @@ tile-shell {
 
             row-gap: var(--tile--spacing-025);
 
-            font-size: 90%; /* Optical nudge below the size ladder, setting the entries back from the content. */
-
             & > hr {
                 margin-block: var(--tile--spacing-075);
             }

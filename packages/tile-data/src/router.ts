@@ -32,24 +32,53 @@ import { isDefined, isNull, isString, Optional } from "@metreeca/core";
 import { unique } from "@metreeca/core/arrays";
 import { tidy } from "@metreeca/core/strings";
 import { type ComponentChildren, createContext, createElement, type VNode } from "preact";
-import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
+import { useCallback, useContext, useEffect, useState } from "preact/hooks";
 import { app } from "./index.js";
 
 
 const ActiveAttribute = "active";
 const TargetAttribute = "target";
 
-const RouteContext = createContext<string>("");
+/**
+ * The navigator provided by the enclosing {@link Router}.
+ */
 const RouterContext = createContext<Router>(() => {});
-const RoutesContext = createContext<Readonly<{
-	origin: string, // the route the location carries, before any redirection
-	base: string, // the route prefix consumed by the enclosing subtree matches
-	claim: () => () => void // claims the rest of the route for a nested Routes, returning the release
+
+/**
+ * The routing state provided to a component, by the enclosing {@link Router} and refined by each enclosing
+ * {@link Routes}.
+ *
+ * With the browser at `/users/` and nested tables `{ "/users/": <Users/> }` and `{ "/": "/all", … }`, the view
+ * selected by the inner table reads `{ location: "/users/", route: "/users/all", section: "/users" }`.
+ */
+const RouteContext = createContext<Readonly<{
+
+	/**
+	 * The route in the browser address bar, the same for every component under the router.
+	 *
+	 * Differs from `route` only while a redirection is on its way to the address bar.
+	 */
+	location: string
+
+	/**
+	 * The route on show, as returned by {@link useRoute}: `location` with the redirections of the enclosing
+	 * {@link Routes} applied.
+	 */
+	route: string
+
+	/**
+	 * The part of `route` already matched by the enclosing subtree patterns, empty at the top level.
+	 *
+	 * A {@link Routes} matches its table against what follows it: under the pattern `/users/`, the section is `/users`
+	 * and the inner table sees `/all` for the route `/users/all`.
+	 */
+	section: string
+
 }>>({
 
-	origin: "",
-	base: "",
-	claim: () => () => {}
+	location: "",
+	route: "",
+	section: ""
 
 });
 
@@ -295,11 +324,7 @@ export function Router({
 
 
 	return createElement(RouterContext.Provider, { value: router },
-		createElement(RouteContext.Provider, { value: route },
-			createElement(RoutesContext.Provider, {
-				value: { origin: route, base: "", claim: () => () => {} }
-			}, children)
-		)
+		createElement(RouteContext.Provider, { value: { location: route, route, section: "" } }, children)
 	);
 
 }
@@ -314,8 +339,7 @@ export function Router({
  * Within a view mapped to a subtree pattern, routes the routes below the subtree as a section of its own, so a section
  * declares its sub-routes where it is implemented rather than in the table at the top of the app, and keeps working
  * wherever that table mounts it. Sections nest to any depth, each one matching what the enclosing one left over. A
- * view takes up its subtree only by rendering a nested {@link Routes} along with itself: where none renders, the
- * routes below the subtree fall through to the patterns following it in the enclosing table, such as a catch-all `*`.
+ * view mapped to a subtree handles every route below it, whether or not it renders a nested {@link Routes}.
  *
  * Patterns and redirections are relative to the section, starting at its root `/`: under `/users/`, the pattern
  * `/{id}` matches `/users/123`, and the redirection `/all` moves the location to `/users/all`. Components below still
@@ -365,74 +389,42 @@ export function Routes({
 	 *   along; the location is moved along, replacing the current history entry, so going back never lands on the
 	 *   route redirected from
 	 * - an **element**: the view, rendered as it is; a view needing the matched steps reads the route with
-	 *   {@link useRoute}; a view mapped to a subtree routes the routes below it
-	 *   with a nested {@link Routes}, and where it nests none they fall through to the patterns that follow
+	 *   {@link useRoute}; a view mapped to a subtree handles every route below it, routing them with a nested
+	 *   {@link Routes} where it needs to tell them apart
 	 */
 	children: { readonly [pattern: string]: string | VNode }
 
 }): ComponentChildren {
 
-	const { origin, base, claim } = useContext(RoutesContext);
+	const { location, route, section } = useContext(RouteContext);
 
-	const rest = useRoute().slice(base.length);
 	const router = useRouter();
 
-	const [rejected, setRejected] = useState<Readonly<Record<string, readonly string[]>>>({});
-
-	// a ref, not state, as claims land after render and only effects read them
-
-	const claims = useRef(0);
-
-	const { route: target, view, head, subtree } = match(children, rest, rejected);
-
-	const register = useCallback(() => {
-
-		claims.current += 1;
-
-		return () => { claims.current -= 1; };
-
-	}, []);
-
-
-	useLayoutEffect(() => claim(), [claim]);
-
-	useLayoutEffect(() => {
-
-		if ( subtree && claims.current === 0 ) {
-
-			setRejected(rejected => ({ [target]: [...(rejected[target] ?? []), subtree] }));
-
-		} else {
-
-			// no claim needed, or nested Routes claimed the rest of the route
-
-		}
-
-	}, [target, subtree, view]);
+	const matched = match(children, route.slice(section.length));
+	const current = `${section}${matched.route}`;
 
 
 	useEffect(() => {
 
-		if ( claims.current === 0 && `${base}${target}` !== origin ) {
+		if ( current !== location ) {
 
-			// the innermost Routes lands every enclosing redirection at once, replacing the entry it came from
+			// moves the location along the redirection, replacing the entry redirected from; where enclosing and
+			// nested Routes both redirect, the location settles on the innermost route within a few renders
 
-			router(`${base}${target}`, true);
+			router(current, true);
 
 		} else {
 
-			// the location already carries the route on show, or a nested Routes lands it
+			// the location already carries the route on show
 
 		}
 
-	}, [origin, base, target, router]);
+	}, [location, current, router]);
 
 
-	return createElement(RouteContext.Provider, { value: `${base}${target}` },
-		createElement(RoutesContext.Provider, {
-			value: { origin, base: `${base}${head}`, claim: register }
-		}, view)
-	);
+	return createElement(RouteContext.Provider, {
+		value: { location, route: current, section: `${section}${matched.subtree}` }
+	}, matched.view);
 
 }
 
@@ -458,30 +450,30 @@ export function useRouter(): Router {
  *     empty string outside any router
  */
 export function useRoute(): string {
-	return useContext(RouteContext);
+	return useContext(RouteContext).route;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Resolves a route to its view, following redirections and passing over the rejected subtree patterns.
+ * Resolves a section route to its view, following redirections.
+ *
+ * @returns the section route after redirections, the view for it, and the prefix of the route matched by a subtree
+ *     pattern, empty for other patterns
  */
 function match(
 	table: Parameters<typeof Routes>[0]["children"],
-	route: string,
-	rejected: Readonly<Record<string, readonly string[]>>
-): Readonly<{ route: string, view: VNode, head: string, subtree: string }> {
+	route: string
+): Readonly<{ route: string, view: VNode, subtree: string }> {
 
 	const invalid = Object.keys(table).find(glob => glob !== "*" && !glob.startsWith("/"));
 
 
 	function follow(current: string, trail: readonly string[]): ReturnType<typeof match> {
 
-		const skipped = rejected[current] ?? [];
-
 		const selected = Object.entries(table).reduce<ReturnType<typeof select>>((selected, [glob, entry]) =>
-				selected ?? (skipped.includes(glob) ? undefined : select(glob, entry, current)),
+				selected ?? select(glob, entry, current),
 			undefined // patterns past the first match are not compiled
 		);
 
@@ -512,12 +504,7 @@ function match(
 
 		return isNull(steps) ? undefined
 			: isString(entry) ? redirect(entry, route, steps, tail)
-				: {
-					route,
-					view: entry,
-					head: isDefined(tail) ? route.slice(0, -tail.length) : "",
-					subtree: isDefined(tail) && !/^\/(?:[?#]|$)/.test(tail) ? glob : "" // the subtree root needs no claim
-				};
+				: { route, view: entry, subtree: isDefined(tail) ? route.slice(0, -tail.length) : "" };
 
 	}
 

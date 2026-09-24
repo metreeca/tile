@@ -253,7 +253,7 @@ describe("Routes", () => {
 
 		});
 
-		it("should fall through subtrees not routed by nested routes", async () => {
+		it("should match routes below subtrees not routed by nested routes", async () => {
 
 			history.replaceState(null, "", "/users/123");
 
@@ -262,15 +262,7 @@ describe("Routes", () => {
 				"*": createElement(Here, {})
 			});
 
-			expect(text()).toBe("/users/123");
-
-		});
-
-		it("should reject routes below subtrees not routed by nested routes", async () => {
-
-			history.replaceState(null, "", "/users/123");
-
-			expect(() => mount({ "/users/": createElement("p", {}, "users") })).toThrow("unhandled route /users/123");
+			expect(text()).toBe("users");
 
 		});
 
@@ -501,6 +493,8 @@ describe("Routes", () => {
 
 		history.replaceState(null, "", "/");
 
+		const length = history.length;
+
 		mount({
 			"/": "/users/",
 			"/users/": createElement(section({
@@ -510,6 +504,7 @@ describe("Routes", () => {
 		});
 
 		expect(location.pathname).toBe("/users/all");
+		expect(history.length).toBe(length);
 		expect(text()).toBe("/users/all");
 
 	});

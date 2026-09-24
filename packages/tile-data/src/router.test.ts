@@ -140,6 +140,21 @@ describe("Router", () => {
 
 		});
 
+		it("should leave images inside links alone", async () => {
+
+			mount({
+				"/": createElement("p", {},
+					createElement("a", { href: "#fragment" }, createElement("img", { src: "a.png", alt: "a" })),
+					createElement("a", { href: "/other", target: "_blank" }, createElement("img", { src: "b.png", alt: "b" }))
+				)
+			});
+
+			act(() => document.querySelectorAll("img").forEach(image => image.click()));
+
+			expect(document.querySelectorAll("img[active]").length).toBe(0);
+
+		});
+
 		it("should restore an enlarged image on a plain click", async () => {
 
 			mount({ "/": createElement("img", { src: "a.png", alt: "a" }) });

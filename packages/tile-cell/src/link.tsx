@@ -34,7 +34,7 @@ import "./link.css";
  * Shows its content on a native anchor, so the link role, the activation by `Enter`, the tab stop, the focus ring and
  * the browser's own handling of modified clicks come with it rather than having to be asked for. A plain click on a
  * route of the same site is followed by the enclosing {@link @metreeca/tile-data!router.Router Router} without
- * reloading the page, unless the link is `native`.
+ * reloading the page.
  *
  * An `active` link, while the route it points at is current, is set apart from its neighbours by an underline in the
  * accent colour, and is announced as the current page, or as the current entry of a section where `href` covers the
@@ -52,7 +52,6 @@ import "./link.css";
 export function Link({
 
 	active,
-	native,
 
 	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 
@@ -68,12 +67,6 @@ export function Link({
 	 * Whether the link is marked while the route it points at is current; never marked if omitted.
 	 */
 	active?: boolean
-
-	/**
-	 * Whether the link is left to the browser rather than followed in place by the router, as for a page of the same
-	 * site served outside the app or a download; followed in place if omitted.
-	 */
-	native?: boolean
 
 
 	/**
@@ -122,8 +115,7 @@ export function Link({
 	const current = active && (wild ? route.startsWith(head) : route === head);
 
 	/*
-	 * The `active` and `native` attributes are stated empty, as boolean attributes are: the former is what a
-	 * stylesheet reads, the latter what the router reads to leave the link to the browser. Neither is an anchor
+	 * The `active` attribute is stated empty, as boolean attributes are, for a stylesheet to read. It is no anchor
 	 * attribute JSX knows of, so the anchor is created as the wrapper is.
 	 *
 	 * A look the consumer leaves out leaves the attribute off the wrapper as well, which is what lets the stylesheet
@@ -141,7 +133,6 @@ export function Link({
 		href: head,
 
 		active: current ? "" : undefined,
-		native: native ? "" : undefined,
 
 		"aria-current": !current ? undefined : wild ? "true" : "page",
 

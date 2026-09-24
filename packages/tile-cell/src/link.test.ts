@@ -129,18 +129,6 @@ describe("Link", () => {
 
 	});
 
-	describe("native", () => {
-
-		it("should mark native links", async () => {
-
-			mount({ native: true, href: "/a" }, { href: "/b" });
-
-			expect(anchors("a[native]")).toEqual(["/a"]);
-
-		});
-
-	});
-
 	describe("onClick", () => {
 
 		function click(): void {

@@ -82,6 +82,10 @@ export function Text() {
 
 		<p><img src={logo} alt="The Metreeca logo" width={96} height={96}/></p>
 
+		<p>An image inside a link is left to the link, so a click follows it instead:</p>
+
+		<p><a href="https://www.metreeca.com/"><img src={logo} alt="Metreeca" width={96} height={96}/></a></p>
+
 		<hr/>
 
 		<h3>Lists</h3>

@@ -74,7 +74,7 @@ export function Page({
 
 		logo={<Style css={{ fontSize: "fontSizeLarge" }}>
 
-			<Logo onClick={Root}>{app.name}</Logo>
+			<Link look="strong" href={Root}><Logo/><span>{app.name}</span></Link>
 
 		</Style>}
 

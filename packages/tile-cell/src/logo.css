@@ -22,42 +22,20 @@
 tile-logo {
 
     /*
-     * The mark and whatever stands beside it are a row, centred on the capitals rather than on the line they sit
-     * in. A line box reserves room for descenders whether the wording has any or not, so its middle lies below the
-     * middle of the letters and centring the two boxes leaves the mark reading low. The row is hung off the
-     * baseline instead, which is the line the letters actually share, and the mark is dropped back by half of what
-     * it overshoots the capitals by, which lands its middle on theirs.
-     *
-     * The row is a grid flowing in one direction rather than a flex line, so the mark and what stands beside it
-     * never break onto two: a lockup that wraps stops being one thing. The wording holds its line for the same
-     * reason. A grid also places its single row where a flex line cannot, which is what centres the lockup when a
-     * layout stretches the box to fill its cross axis; left alone, the box takes the row's own size and the two
-     * coincide, which is the ordinary case.
+     * The mark is centred on the capitals rather than on the line it sits in. A line box reserves room for descenders
+     * whether the wording has any or not, so its middle lies below the middle of the letters and centring on it leaves
+     * the mark reading low. The mark is hung off the baseline instead, which is the line the letters actually share,
+     * and dropped back by half of what it overshoots the capitals by, which lands its middle on theirs.
      */
 
     --tile-logo-mark: calc(1.5 * 1cap);
 
     display: inline-grid;
-    grid-auto-flow: column;
-    align-content: center;
     align-items: baseline;
-    justify-content: center;
-
-    column-gap: var(--tile--spacing-050);
-
-    white-space: nowrap;
-
-    /*
-     * The wording is set in the heading face, so the lockup reads as a mark rather than as running text. The mark is
-     * measured in `cap`, which is read off that face, so it follows the swap on its own.
-     */
-
-    font-family: var(--tile--font-family-heading);
-    letter-spacing: var(--tile--letter-spacing-heading);
 
     /*
      * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app
-     * changing its face carries the lockup along rather than needing a figure retuned.
+     * changing its face carries the logo along rather than needing a figure retuned.
      *
      * It is set half again over the capitals rather than level with them. Matching them exactly reads as smaller: a
      * mark is drawn open, with its weight spread over the whole square and gaps through it, while a letter is a
@@ -65,11 +43,7 @@ tile-logo {
      * compensation, below any ladder and answering to the eye rather than to a measure.
      */
 
-    & > img,
-    & > a > img,
-    & > button > img {
-
-        flex: none; /* The mark holds its square whatever the wording beside it asks for. */
+    & > img {
 
         height: var(--tile-logo-mark);
         aspect-ratio: 1;
@@ -77,58 +51,23 @@ tile-logo {
         object-fit: contain; /* The square takes an image of any proportions without cropping it. */
 
         /*
-         * A replaced element sits on its bottom edge, so the row leaves the mark's foot on the baseline and the
-         * mark stands entirely above it. Half its overshoot over the capitals, given back, puts the middle of the
-         * mark on the middle of them. Every term is read off the face, so the lockup holds for any of them.
+         * A replaced element sits on its bottom edge, so the mark's foot rests on the baseline and the mark stands
+         * entirely above it. Half its overshoot over the capitals, given back, puts the middle of the mark on the
+         * middle of them. Every term is read off the face, so the logo holds for any of them.
          */
 
         translate: 0 calc((var(--tile-logo-mark) - 1cap) / 2);
 
     }
 
-    /*
-     * A logo taking activations holds the lockup in a link or a button, which takes the row over from the element so
-     * the mark and the wording stand in it as they stand without it. The cursor and the hover colour are the ones the
-     * design system gives every link and button. The tracking and the leading are handed down explicitly, since the
-     * platform sets its own on a control where the reset leaves them alone.
-     */
+}
 
-    & > a,
-    & > button {
+/* The elements either side of the mark are held off it, so the wording beside it never runs into it. */
 
-        display: grid;
-        grid-auto-flow: column;
-        align-items: baseline;
+*:has(+ tile-logo) {
+    padding-right: var(--tile--spacing-025);
+}
 
-        column-gap: var(--tile--spacing-050);
-
-        letter-spacing: inherit;
-        line-height: inherit;
-
-    }
-
-    /*
-     * A link keeps the ink and the weight the lockup has at rest rather than the ones running text marks a link with,
-     * so the logo reads the same whatever it does. It is never underlined, which would run under the wording and leave
-     * the mark out, and is marked for the keyboard by the ring a button carries instead. The hover colour is restated,
-     * since this sheet stands outside the design system layer and the ink stated here would otherwise hold over it.
-     */
-
-    & > a {
-
-        font-weight: inherit;
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-            color: var(--tile--color-hover);
-        }
-
-        &:focus-visible {
-            outline: var(--tile--outline-focus);
-            outline-offset: var(--tile--border-width);
-        }
-
-    }
-
+tile-logo + * {
+    padding-left: var(--tile--spacing-025);
 }

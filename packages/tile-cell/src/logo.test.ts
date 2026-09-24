@@ -21,6 +21,24 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { Logo } from "./logo.js";
 
 
+/*
+ * The app icon is read off the document as the app module loads, so the tag stating it is in place before any import.
+ */
+
+const icon = vi.hoisted(() => {
+
+	const link = document.createElement("link");
+
+	link.rel = "icon";
+	link.href = "/icon.svg";
+
+	document.head.append(link);
+
+	return link.href;
+
+});
+
+
 function mount(options: Parameters<typeof Logo>[0]): void {
 	act(() => render(createElement(Logo, options), document.body));
 }
@@ -33,49 +51,32 @@ afterEach(async () => {
 
 describe("Logo", () => {
 
-	describe("onClick", () => {
+	it("should show the app mark alone", async () => {
 
-		it("should show the lockup as a button", async () => {
+		mount({});
 
-			mount({ onClick: () => {}, children: "App" });
+		const logo = document.querySelector("tile-logo");
 
-			const button = document.querySelector("tile-logo > button");
+		expect(Array.from(logo?.children ?? [], child => child.tagName)).toEqual(["IMG"]);
+		expect(logo?.querySelector("img")?.getAttribute("src")).toBe(icon);
 
-			expect(button?.getAttribute("type")).toBe("button");
-			expect(button?.textContent).toBe("App");
+	});
 
-		});
+	describe("name", () => {
 
-		it("should hand activations to the handler", async () => {
+		it("should name the mark", async () => {
 
-			const onClick = vi.fn();
+			mount({ name: "App" });
 
-			mount({ onClick, children: "App" });
-
-			act(() => document.querySelector<HTMLButtonElement>("tile-logo > button")?.click());
-
-			expect(onClick).toHaveBeenCalledOnce();
+			expect(document.querySelector("tile-logo > img")?.getAttribute("alt")).toBe("App");
 
 		});
 
-		it("should show the lockup as a link to a route", async () => {
+		it("should leave an unnamed mark decorative", async () => {
 
-			mount({ onClick: "/home", children: "App" });
+			mount({});
 
-			const anchor = document.querySelector("tile-logo > a");
-
-			expect(anchor?.getAttribute("href")).toBe("/home");
-			expect(anchor?.textContent).toBe("App");
-			expect(document.querySelectorAll("button")).toHaveLength(0);
-
-		});
-
-		it("should show neither button nor link without a handler", async () => {
-
-			mount({ children: "App" });
-
-			expect(document.querySelector("tile-logo")?.textContent).toBe("App");
-			expect(document.querySelectorAll("button, a")).toHaveLength(0);
+			expect(document.querySelector("tile-logo > img")?.getAttribute("alt")).toBe("");
 
 		});
 

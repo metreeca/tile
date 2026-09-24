@@ -36,21 +36,20 @@ import "./index.css";
 export function Logos() {
 	return <>
 
-		<p>A logo takes the app mark from what the document already states and sets it in a row with whatever names the
-			app beside it, so a screen places the lockup rather than a mark and a name it has to keep together. The mark
-			stands exactly as tall as the capitals around it and sits on their baseline, so it takes the size of the
-			line it is set in rather than carrying a measure of its own.</p>
+		<p>A logo takes the app mark from what the document already states. The mark is centred on the capitals around
+			it and sits on their baseline, so it takes the size of the line it is set in rather than carrying a measure
+			of its own.</p>
 
 		<div class="controls">
-			<Logo>{app.name}</Logo>
+			<span><Logo/> {app.name}</span>
 			<Logo name={app.name}/>
-			<Style css={{ fontSize: "fontSizeLarge" }}><Logo>{app.name}</Logo></Style>
-			<Style css={{ fontSize: "fontSizeSmall" }}><Logo>{app.name}</Logo></Style>
+			<Style css={{ fontSize: "fontSizeLarge" }}><Logo/> {app.name}</Style>
+			<Style css={{ fontSize: "fontSizeSmall" }}><Logo/> {app.name}</Style>
 		</div>
 
-		<p>A logo standing beside the app name leaves the mark decorative, read once through the name; one standing on
-			the mark alone states what it stands for, as the second above does. A document stating no icon leaves the
-			row holding only what it was given.</p>
+		<p>A logo standing beside the app name leaves the mark decorative, read once through the name; one standing
+			alone states what it stands for, as the second above does. A document stating no icon leaves nothing
+			behind.</p>
 
 	</>;
 }

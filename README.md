@@ -1,19 +1,16 @@
 # Metreeca Tile
 
-Model-driven user interfaces for queryable linked data APIs.
+Minimalist model-driven UI toolkit for linked data resources.
 
-**Metreeca Tile** drives interface components from the shapes and queries a
-[@metreeca/qest](https://github.com/metreeca/qest) API already defines. Behaviour lives in state a component only
-observes, so the same screen logic serves any rendering layer.
+**Metreeca Tile** provides specialised Preact components for working with linked data resources served by
+[@metreeca/qest](https://github.com/metreeca/qest) APIs.
 
-- **Model-Driven**: the shape of a resource decides the controls offered for it, so a model change reaches the interface
-  without a matching interface change
-- **Live Data**: reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store, sharing the
-  caching, batching and validation the rest of the stack relies on
-- **Preact Bindings**: the contexts and hooks a component is wired to, the widgets, layouts and containers it is
-  assembled from, and the views and forms built over them; the state itself stays framework-agnostic
-- **Design System**: an optional token layer styling whatever a binding renders; components stay usable without it, both
-  sides honouring the same token naming contract
+- **Model-Driven Data**: resource models shared by client and server drive data exchanges and validation, cutting
+  the boilerplate usually required by both
+- **Declarative Screens**: JSX composes general-purpose widgets and layouts with specialised linked data components,
+  such as resource and collection viewers, search facets and property editors
+- **Optional Design System**: design tokens theme every component according to the platform light or dark scheme,
+  and can be left out without breaking any of them
 
 # Installation
 

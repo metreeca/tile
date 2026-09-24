@@ -37,7 +37,6 @@ import { app } from "./index.js";
 
 
 const ActiveAttribute = "active";
-const NativeAttribute = "native";
 const TargetAttribute = "target";
 
 const RouteContext = createContext<string>("");
@@ -108,7 +107,7 @@ export interface Router {
  * Takes over plain clicks anywhere in the page, leaving clicks with a modifier key or already handled to the browser:
  *
  * - a link to the same site is followed without reloading the page, unless it points at a fragment of the current
- *   page, targets another browsing context or carries a `native` attribute
+ *   page or targets another browsing context
  * - a link to another site opens in a new browsing context
  * - an image toggles its `active` attribute, which the `@metreeca/tile` stylesheet reads to show it over the whole
  *   viewport
@@ -172,7 +171,6 @@ export function Router({
 
 			if ( plain && anchor
 				&& !anchor.getAttribute("href")?.startsWith("#")
-				&& !anchor.hasAttribute(NativeAttribute)
 				&& (anchor.getAttribute(TargetAttribute) ?? "_self") === "_self"
 			) {
 

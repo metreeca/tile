@@ -40,11 +40,11 @@
  * import "@metreeca/tile/index.css";
  * ```
  *
- * Override any token to restyle the whole interface:
+ * Override any token to restyle the whole interface, stating a colour for both schemes as a `light-dark()` pair:
  *
  * ```css
  * :root {
- *     --tile--color-strong: #D60;
+ *     --tile--color-strong: light-dark(#D60, #F80);
  *     --tile--font-family: Inter, sans-serif;
  * }
  * ```
@@ -74,21 +74,27 @@
  * more specific. An app whose own rules are layered orders its layer after `tile`.
  *
  * **Missing and malformed values** — a token carrying a literal states it as the registered default of its custom
- * property, so the value lives in one place and an override the browser cannot parse leaves the interface on the
- * default rather than unstyled. A component styled against a token it cannot count on, because the stylesheet may not
+ * property, so the value lives in one place. A malformed override is caught only where the token has a fixed type: a
+ * weight, a duration or an opacity the browser cannot parse stays on its default. Most tokens, the colour anchors and
+ * the sizes among them, take an override as written, so a malformed value leaves whatever reads it unstyled rather
+ * than on the default. A component styled against a token it cannot count on, because the stylesheet may not
  * be loaded at all, names its own fallback in the reference it writes by hand: `var(--tile--color-strong, #06C)`,
  * which is the one case {@link css css.var} does not cover.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
- * links it in the document head.
+ * links it in the document head. An override stated in a `<style>` in the document head is in force from the first
+ * frame, so a loader painted before the stylesheet arrives already reads the app's brand.
  *
  * **Values outside the cascade** — a consumer painting where a reference doesn't reach, on a canvas or against an API
  * taking a colour as text, takes the value a token resolves to for the element it applies to, rather than a copy of
- * the default, and so keeps whatever the app overrode and whichever colour scheme is in force:
+ * the default, and so keeps whatever the app overrode and whichever colour scheme is in force. A colour token holds a
+ * `light-dark()` pair or a mix until something paints with it, so it is resolved through a colour property of an
+ * element in the subtree:
  *
  * ```typescript
- * getComputedStyle(element).getPropertyValue(tile.colorStrong)
+ * probe.style.color = css.var(tile.colorStrong);
+ * getComputedStyle(probe).color
  * ```
  *
  * @module index

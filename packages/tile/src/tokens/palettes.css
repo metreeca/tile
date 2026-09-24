@@ -226,9 +226,9 @@
  * with would stop reading as a temperature. Text over a step takes the page colour up to 070 and the page background
  * from 080 on, where the scale turns dark enough to carry it.
  *
- * The light scheme is the registered value, as it is for the anchors, so only the dark scheme is restated below, and
- * only for the last two steps: at their light values they sit below 3:1 against the dark page and lose the top of the
- * range where it matters most. The cool half holds in both schemes and is stated once.
+ * Only the last two steps state a light-dark() pair, as the anchors in colors.css do and for the same reason: at their
+ * light values they sit at 2.05:1 and 2.76:1 against the dark page and lose the top of the range where it matters
+ * most. The cool half holds in both schemes and is stated once.
  */
 
 @property --tile--color-heat-010 {
@@ -282,56 +282,14 @@
 @property --tile--color-heat-090 {
     syntax: "*";
     inherits: true;
+    initial-value: light-dark(#8F0D35, #B13550);
 }
 
 @property --tile--color-heat-100 {
     syntax: "*";
     inherits: true;
+    initial-value: light-dark(#9813B1, #B940D2);
 }
-
-/*
- * The top two steps state each scheme for themselves, as the anchors in colors.css do and for the same reason: the
- * query cannot be scoped to a subtree, the attribute cannot read the platform, and neither scheme is the default of
- * the other. At their light values these two sit at 2.05:1 and 2.76:1 against the dark page and lose the top of the
- * range, which is what the dark pair is for. The cool half holds in both schemes and is stated once.
- */
-
-@media (prefers-color-scheme: light) {
-
-    :root:not([data-theme="dark"]) {
-
-        --tile--color-heat-090: #8F0D35;
-        --tile--color-heat-100: #9813B1;
-
-    }
-
-}
-
-@media (prefers-color-scheme: dark) {
-
-    :root:not([data-theme="light"]) {
-
-        --tile--color-heat-090: #B13550;
-        --tile--color-heat-100: #B940D2;
-
-    }
-
-}
-
-[data-theme="light"] {
-
-    --tile--color-heat-090: #8F0D35;
-    --tile--color-heat-100: #9813B1;
-
-}
-
-[data-theme="dark"] {
-
-    --tile--color-heat-090: #B13550;
-    --tile--color-heat-100: #B940D2;
-
-}
-
 
 /*
  * The series slots tell one thing apart from another, on a bar, a line or a wedge. A number is a slot rather than a

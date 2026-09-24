@@ -29,8 +29,8 @@ only place either side of the family is revised:
   tracking
 - `spacings` — the ladder a thing is set apart from its neighbour on
 - `scalings` — the ladder a thing measured against the text is sized on
-- `colors` — the eight colour anchors, the light value registered and the dark one restated per scheme, and the text,
-  status, state and surface roles derived from them
+- `colors` — the eight colour anchors, each registered as a `light-dark()` pair where it varies by scheme, and the
+  text, status, state and surface roles derived from them
 - `borders` — the line, the radii, the focus ring, the invalid outline and the vector stroke width
 - `elevations` — the surfaces a thing lifted off the page is painted on, the shadows pairing with them and the
   blanket dimming what a modal covers
@@ -149,42 +149,34 @@ A token lives in two places, both inside its family pair, revised together:
 - a **derivation**, reading `var()`, `color-mix()` or `oklch()`, is a `:root` assignment and the registration carries
   **no** `initial-value`, which it could not resolve anyway: a colour role, a derived scale step, the border colour,
   the focus ring, the invalid outline
-- a **scheme-varying value** carries **NO** `initial-value`, and is therefore registered `syntax: "*"` like a
-  derivation, since a registration stating any other syntax **MUST** carry an initial value or the whole `@property`
-  rule is invalid. It states each scheme for itself, in four rules: two guarded media queries,
-  `@media (prefers-color-scheme: light)` under `:root:not([data-theme="dark"])` and
-  `@media (prefers-color-scheme: dark)` under `:root:not([data-theme="light"])`, and two attribute rules,
-  `[data-theme="light"]` and `[data-theme="dark"]`
+- a **scheme-varying value** states both schemes in one value, as `light-dark(light, dark)`, registered
+  `syntax: "*"`: a literal pair is the registration's `initial-value`, a pair of derivations a `:root` assignment. It
+  is **NEVER** stated in a `prefers-color-scheme` query or a `[data-theme]` rule
 
-**Neither scheme is the default of the other.** Light is **NOT** a registered fallback that dark overrides: a value
-differing by scheme while one of the two doubled as the fallback read as though light were merely the absence of
-dark. Between them the four rules cover every case, since `prefers-color-scheme` resolves to `light` wherever dark is
-not asked for.
-
-The four forms are **NOT** redundant, and dropping any one breaks a case the others cannot reach:
-
-- a media query follows the platform, and its `:not()` guard is what stops it overriding an app that pinned the
-  opposite scheme at the root; its specificity has to stay above the two attribute rules that follow it
-- an attribute rule is unqualified rather than `:root[data-theme="…"]`, so a pinned **subtree** works, which is the
-  whole point: a media query cannot be scoped to one, so a dark panel on a light page has no other expression
-- both attribute rules are needed, since a pinned subtree inherits whatever encloses it and a light island inside a
-  dark one would otherwise stay dark
+**Neither scheme is the default of the other**, and **one value covers every case**. A `"*"` token holds the pair
+unresolved and inherits it as written, so it is picked where a rule paints with it, against the `color-scheme` in
+force there: `index.css` settles that from the platform on `:root` and from `data-theme` on any element, so a pinned
+root and a pinned subtree each take their own side. An app overrides the token the same way, once on `:root`, and the
+override follows every scheme and every pinning with no selector restated.
 
 > [!CAUTION]
-> When classifying a rule by scheme, an attribute counts only where the rule **selects** it, never where a guard
-> **excludes** it. `:root:not([data-theme="light"])` names light to say which scheme it is *not* for. A first cut of
-> the suite matched the bare attribute anywhere in the rule, classified the dark query as light as well, and passed
-> a stylesheet with an anchor missing from the light scheme entirely.
+> A scheme-varying token is **NEVER** registered with a real syntax such as `<color>`: a typed property resolves
+> `light-dark()` where it is declared, on the root, and hands every subtree the side the page happened to be on. The
+> same holds for a derivation reading one, which is why every colour role is registered `"*"`.
 
-Only custom properties follow a pinned subtree. Native controls, scrollbars and the caret answer to `color-scheme`,
-which `index.css` states for both attribute values alongside the page defaults.
+Scheme rules would bring back what this avoids: an app overriding a token stated in four rules has to restate all
+four, since an unlayered `:root` rule under a media query beats the layered `[data-theme]` rule on a pinned root, and a
+pinned subtree takes the layered attribute rule over what it inherits.
+
+Native controls, scrollbars and the caret answer to `color-scheme` as the tokens do, and `index.css` restates the page
+colours on any `[data-theme]` element, which would otherwise inherit them as the root resolved them.
 
 `src/index.ts` gathers the families into `tile` and adds nothing of its own; a new family is added to the spread and
 to the imports in `src/index.css`.
 
 `src/index.test.ts` fails when a declared name is defined in neither place or in both, when a defined name is not
 declared, when a rule reads a token no one declares, when a registration is missing or duplicated, when a token
-carrying no unconditional value is missing from either scheme, and when a derived token carries a default it cannot
+is stated per colour scheme in a query or attribute rule, and when a derived token carries a default it cannot
 resolve. It says nothing about the value behind the name.
 
 An `@property` registration states the type a token takes and the default it falls back on, under the constraints
@@ -220,8 +212,8 @@ registered and defined. Only the changelog records that it is on its way out.
 
 # Colours
 
-Eight anchors carry literals in `colors.css`. Seven state a value per colour scheme, in the four rules the contract
-above sets out; `--tile--color-warn` alone carries one value for both and keeps its registered default:
+Eight anchors carry literals in `colors.css`. Seven state a value per colour scheme, as the `light-dark()` pair the
+contract above sets out; `--tile--color-warn` alone carries one value for both:
 
 - `--tile--color` and `--tile--background-color`
 - `--tile--color-subtle`, which an interface carries at rest, and `--tile--color-strong`, which marks a thing out;
@@ -231,7 +223,8 @@ above sets out; `--tile--color-warn` alone carries one value for both and keeps 
 
 `--tile--color-focus` carries a literal per scheme alongside them without being an anchor: the focus mark says where
 the keyboard stands, which reads the same whatever an app brands with, so it is **NEVER** derived from an accent. It
-is stated in the same four rules and held to the ring budget of 3:1 against the page **and** against the stripe.
+is stated as a `light-dark()` pair alongside them and held to the ring budget of 3:1 against the page **and** against
+the stripe.
 
 ## The meaning scale
 
@@ -425,9 +418,9 @@ violet standing for a measure past the top of the range.
 > them, is a misuse the values cannot support; a continuous heat map needs a monotone scale of its own.
 
 Text over a heat step takes `--tile--color` up to `070` and `--tile--background-color` from `080` on, where the scale
-turns dark enough to carry it. The dark scheme restates only the last two steps, which at their light values sit at
-2.05:1 and 2.76:1 against the page and lose the top of the range; the cool half holds in both schemes and is stated
-once.
+turns dark enough to carry it. Only the last two steps carry a `light-dark()` pair, since at their light values they
+sit at 2.05:1 and 2.76:1 against the dark page and lose the top of the range; the cool half holds in both schemes and
+is stated once.
 
 ## Series
 

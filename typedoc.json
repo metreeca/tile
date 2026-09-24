@@ -47,7 +47,8 @@
     "shell",
     "typescript",
     "tsx",
-    "css"
+    "css",
+    "html"
   ],
   "packageOptions": {
     "entryPoints": [

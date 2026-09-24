@@ -18,25 +18,10 @@
 
         <style>
 
-            @media (prefers-color-scheme: light) {
+            :root {
 
-                :root {
-
-                    --tile--color-subtle: #345;
-                    --tile--color-strong: #D60;
-
-                }
-
-            }
-
-            @media (prefers-color-scheme: dark) {
-
-                :root {
-
-                    --tile--color-subtle: #9AB;
-                    --tile--color-strong: #F80;
-
-                }
+                --tile--color-subtle: light-dark(#345, #9AB);
+                --tile--color-strong: light-dark(#D60, #F80);
 
             }
 

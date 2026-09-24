@@ -28,9 +28,13 @@ tile-link {
         text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
     }
 
-    /* The quiet step drops the underline and the link colour, leaving the link set as the text around it. */
+    /*
+     * The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it, and
+     * sets it in the condensed face headings take, so it still reads as a link where nothing else marks it.
+     */
 
     &[look="subtle"] > a {
+        font-family: var(--tile--font-family-heading);
         color: inherit;
         text-decoration-line: none;
     }
@@ -72,6 +76,7 @@ tile-link {
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a {
+        font-family: var(--tile--font-family-heading);
         color: inherit;
         text-decoration-line: none;
     }

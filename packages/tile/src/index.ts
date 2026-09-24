@@ -77,7 +77,7 @@
  * property, so the value lives in one place and an override the browser cannot parse leaves the interface on the
  * default rather than unstyled. A component styled against a token it cannot count on, because the stylesheet may not
  * be loaded at all, names its own fallback in the reference it writes by hand: `var(--tile--color-strong, #06C)`,
- * which is the one case {@link css.var} does not cover.
+ * which is the one case {@link css css.var} does not cover.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
@@ -138,7 +138,7 @@ const inherited: Readonly<Record<string, string>> = {
  * The custom property behind every design system token.
  *
  * Resolves each {@link Token token name} to the {@link Property custom property} carrying its value, which is what
- * {@link css.var} reads a token through and what a value taken outside the cascade is looked up by; assigning a token
+ * {@link css css.var} reads a token through and what a value taken outside the cascade is looked up by; assigning a token
  * to a subtree goes through {@link css} instead. Gathers every token group, so a consumer names a token without
  * knowing which one it belongs to.
  */
@@ -173,7 +173,7 @@ export type Style = Readonly<Record<string, string>>
 /**
  * The custom property carrying the value of a design system token.
  *
- * Addresses a token wherever CSS reads one, as given by {@link tile}: it is what {@link css.var} takes and what a
+ * Addresses a token wherever CSS reads one, as given by {@link tile}: it is what {@link css css.var} takes and what a
  * computed-style read is keyed by.
  */
 export type Property = typeof tile[Token]
@@ -260,7 +260,7 @@ export type Value<K extends Token = Token> = undefined | Alias<K> | Literal<K>
  * CSS has it.
  *
  * Reading a token where a single CSS value is written by hand, rather than assigning one, goes through
- * {@link css.var} instead.
+ * {@link css css.var} instead.
  *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *

@@ -18,10 +18,11 @@
  * The frame is the tray beside the content, each a scrolling column with a header and a footer of its own. A screen
  * standing on its content alone is the same frame with the tray column left out of it.
  *
- * The frame settles no type at all: it states no size, no family and no weight beyond the one that tells a tray
- * heading from its sub-entry, so everything in it is set in whatever the app is written in and a bar reads as part of
- * the page rather than as a band with a voice of its own. Every measure it does state is a measure of the column, so
- * it is stated in rem and holds still while the text around it changes.
+ * The frame settles almost no type: it states no family, no weight beyond the one that tells a tray heading from its
+ * sub-entry, and no size beyond the tray entries being set a little below the text around them, so everything in it is
+ * set in whatever the app is written in and a bar reads as part of the page rather than as a band with a voice of its
+ * own. Every measure it does state is a measure of the column, so it is stated in rem and holds still while the text
+ * around it changes.
  */
 
 tile-shell {
@@ -284,8 +285,6 @@ tile-shell {
                 flex-direction: row;
                 align-items: center;
 
-                column-gap: var(--tile--spacing-025);
-
                 overflow: hidden;
 
                 /*
@@ -299,6 +298,16 @@ tile-shell {
 
                 padding: var(--tile-shell-ring-room);
                 margin: calc(-1 * var(--tile-shell-ring-room));
+
+                /*
+                 * A button brings the air around its glyph along with it, so a run of buttons stands as it is and every
+                 * other pair of neighbours, such as two links or a button and a link, is set apart.
+                 */
+
+                & > :not(tile-button) + *,
+                & > * + :not(tile-button) {
+                    margin-left: var(--tile--spacing-050);
+                }
 
             }
 
@@ -377,6 +386,8 @@ tile-shell {
             align-items: stretch;
 
             row-gap: var(--tile--spacing-025);
+
+            font-size: 90%; /* Optical nudge below the size ladder, setting the entries back from the content. */
 
             & > hr {
                 margin-block: var(--tile--spacing-075);

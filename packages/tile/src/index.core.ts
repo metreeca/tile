@@ -91,7 +91,7 @@ export type Literal<K extends Token> =
 /**
  * The scale steps, series slots and area classes, which address a colour by position rather than by role.
  */
-type Palette = Extract<Token,
+export type Palette = Extract<Token,
 	| `colorGray${Step}`
 	| `colorSubtle${Step}`
 	| `colorStrong${Step}`
@@ -103,83 +103,85 @@ type Palette = Extract<Token,
 /**
  * The tokens painting a mark or a passage of text, and the rule between two of them.
  */
-type Ink = Exclude<Extract<Token, `color${string}` | "borderColor">, Palette>
+export type Ink = Exclude<Extract<Token, `color${string}` | "borderColor">, Palette>
 
 /**
  * The tokens painting a surface.
  */
-type Fill = Extract<Token, `backgroundColor${string}`>
+export type Fill = Extract<Token, `backgroundColor${string}`>
 
 /**
  * The tokens sizing text.
  */
-type Type = Extract<Token, `fontSize${string}`>
+export type Type = Extract<Token, `fontSize${string}`>
 
 /**
  * The tokens sizing a thing against the text around it.
  */
-type Scaling = Extract<Token, `scaling${string}`>
+export type Scaling = Extract<Token, `scaling${string}`>
 
 /**
  * The tokens setting a thing apart from its neighbour.
  */
-type Spacing = Extract<Token, `spacing${string}`>
+export type Spacing = Extract<Token, `spacing${string}`>
 
 /**
  * The tokens rounding a corner.
  */
-type Radius = Extract<Token, `borderRadius${string}`>
+export type Radius = Extract<Token, `borderRadius${string}`>
 
 /**
  * The tokens sizing a line.
  */
-type Stroke = Extract<Token, "borderWidth" | "strokeWidth">
+export type Stroke = Extract<Token, "borderWidth" | "strokeWidth">
 
 /**
  * The tokens tracking a run of text.
  */
-type Tracking = Extract<Token, `letterSpacing${string}`>
+export type Tracking = Extract<Token, `letterSpacing${string}`>
 
 /**
  * The tokens weighting text.
  */
-type Weight = Extract<Token, `fontWeight${string}`>
+export type Weight = Extract<Token, `fontWeight${string}`>
 
 /**
  * The tokens fading a thing present but not available.
  */
-type Opacity = Extract<Token, `opacity${string}`>
+export type Opacity = Extract<Token, `opacity${string}`>
 
 /**
  * The tokens ordering two things that overlap.
  */
-type Layer = Extract<Token, `zIndex${string}`>
+export type Layer = Extract<Token, `zIndex${string}`>
 
 /**
  * The tokens timing a change.
  */
-type Timing = Extract<Token, `duration${string}`>
+export type Timing = Extract<Token, `duration${string}`>
 
 /**
  * The tokens curving a change.
  */
-type Easing = Extract<Token, `easing${string}`>
+export type Easing = Extract<Token, `easing${string}`>
 
 /**
  * The tokens carrying a shadow or an outline, stated as a whole shorthand.
  */
-type Shadow = Extract<Token, `boxShadow${string}` | `outline${string}`>
+export type Shadow = Extract<Token, `boxShadow${string}` | `outline${string}`>
 
 /**
  * The tokens carrying a font stack.
  */
-type Family = Extract<Token, `fontFamily${string}`>
+export type Family = Extract<Token, `fontFamily${string}`>
 
 /**
  * The tokens telling which breakpoints the viewport has passed.
  */
-type Flag = Extract<Token, `viewport${string}`>
+export type Flag = Extract<Token, `viewport${string}`>
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * A step of a ten-step scale, and a slot of a series or a class of an area.
@@ -187,8 +189,6 @@ type Flag = Extract<Token, `viewport${string}`>
 type Step = "010" | "020" | "030" | "040" | "050" | "060" | "070" | "080" | "090" | "100"
 type Slot = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * A colour, written as a hex literal or as one of the two colours CSS names against the context.

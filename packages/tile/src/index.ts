@@ -233,6 +233,26 @@ export type Token = keyof typeof tile
  */
 export type Value<K extends Token = Token> = undefined | Alias<K> | Literal<K>
 
+export type {
+	Palette,
+	Ink,
+	Fill,
+	Type,
+	Scaling,
+	Spacing,
+	Radius,
+	Stroke,
+	Tracking,
+	Weight,
+	Opacity,
+	Layer,
+	Timing,
+	Easing,
+	Shadow,
+	Family,
+	Flag
+} from "./index.core.js";
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

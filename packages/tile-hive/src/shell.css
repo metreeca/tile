@@ -504,6 +504,9 @@ tile-shell {
          *
          * The content is held in a box of its own, so what it holds keeps the block flow it was written for rather
          * than being laid out as a column of flex items.
+         *
+         * The notice lays out what it holds as the bars do, in a row centred on the middle of its own box, so a glyph
+         * or a mark beside a line of text stands level with it.
          */
 
         & > section {
@@ -514,7 +517,15 @@ tile-shell {
             row-gap: var(--tile--spacing-100);
 
             & > footer {
+
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                column-gap: var(--tile--spacing-025);
+
                 margin-top: auto;
+
             }
 
         }

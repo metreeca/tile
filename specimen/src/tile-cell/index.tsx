@@ -54,13 +54,13 @@ export function TileCell() {
 		</>}
 	>
 
-		<Routes routes={{
+		<Routes>{{
 
 			"/": `/${path("Icons")}`,
 
 			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
 
-		}}/>
+		}}</Routes>
 
 	</Page>;
 

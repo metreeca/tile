@@ -31,7 +31,7 @@ import { TileCell, TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
 import { TileHive, TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { Tile, TilePath } from "@metreeca/specimen/tile/index.js";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { Router } from "@metreeca/tile-data/router";
+import { Router, Routes } from "@metreeca/tile-data/router";
 import { host } from "@metreeca/tile-hive";
 import { render } from "preact";
 import "./index.css";
@@ -46,15 +46,19 @@ function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-		<Router routes={{
+		<Router>
 
-			[Root]: TilePath,
+			<Routes>{{
 
-			[`${TilePath}*`]: <Tile/>,
-			[`${TileCellPath}*`]: <TileCell/>,
-			[`${TileHivePath}*`]: <TileHive/>
+				[Root]: TilePath,
 
-		}}/>
+				[TilePath]: <Tile/>,
+				[TileCellPath]: <TileCell/>,
+				[TileHivePath]: <TileHive/>
+
+			}}</Routes>
+
+		</Router>
 
 	</Fetch>;
 

@@ -61,13 +61,13 @@ export function Tile() {
 		</>}
 	>
 
-		<Routes routes={{
+		<Routes>{{
 
 			"/": `/${path("Colours")}`,
 
 			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
 
-		}}/>
+		}}</Routes>
 
 	</Page>;
 

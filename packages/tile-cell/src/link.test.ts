@@ -24,7 +24,7 @@ import { Link } from "./link.js";
 
 function mount(...links: Parameters<typeof Link>[0][]): void {
 	act(() => render(createElement(Router, {
-		routes: { "/*": createElement("nav", {}, links.map(link => createElement(Link, { key: link.href, ...link }))) }
+		children: createElement("nav", {}, links.map(link => createElement(Link, { key: link.href, ...link })))
 	}), document.body));
 }
 

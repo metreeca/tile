@@ -50,13 +50,13 @@ export function TileHive() {
 		</>}
 	>
 
-		<Routes routes={{
+		<Routes>{{
 
 			"/": `/${path("Shell")}`,
 
 			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
 
-		}}/>
+		}}</Routes>
 
 	</Page>;
 

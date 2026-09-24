@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createElement, type FunctionComponent, render } from "preact";
+import { type ComponentChildren, createElement, type FunctionComponent, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -24,8 +24,16 @@ import { Router, Routes, type Switch, type Table, useRoute, useRouter } from "./
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
 
 
+function shell(children: ComponentChildren, mode?: "path" | "hash"): void {
+	act(() => render(createElement(Router, { mode, children }), document.body));
+}
+
 function mount(routes: Table | Switch, mode?: "path" | "hash"): void {
-	act(() => render(createElement(Router, { mode, routes }), document.body));
+	shell(createElement(Routes, { children: routes }), mode);
+}
+
+function section(routes: Table | Switch): FunctionComponent {
+	return () => createElement(Routes, { children: routes });
 }
 
 function text(): string {
@@ -45,129 +53,31 @@ afterEach(async () => {
 
 describe("Router", () => {
 
-	describe("tables", () => {
+	describe("children", () => {
 
-		it("should render the element matching the current route as it is", async () => {
+		it("should render its children as they are", async () => {
 
-			mount({
-				"/": createElement("p", {}, "home"),
-				"/other": createElement("p", {}, "other")
-			});
+			shell(createElement("p", {}, "content"));
 
-			expect(text()).toBe("home");
+			expect(text()).toBe("content");
 
 		});
 
-		it("should match named steps and trailing paths", async () => {
+		it("should provide the current route to its children", async () => {
 
-			history.replaceState(null, "", "/users/123/posts/7");
+			history.replaceState(null, "", "/current");
 
-			mount({ "/users/{id}/*": createElement("p", {}, "matched") });
+			shell(createElement(Here, {}));
 
-			expect(text()).toBe("matched");
-
-		});
-
-		it("should match anonymous steps", async () => {
-
-			history.replaceState(null, "", "/any");
-
-			mount({ "/{}": createElement("p", {}, "matched") });
-
-			expect(text()).toBe("matched");
+			expect(text()).toBe("/current");
 
 		});
 
-		it("should match the first pattern in table order", async () => {
+		it("should accept any route", async () => {
 
-			history.replaceState(null, "", "/users/new");
+			history.replaceState(null, "", "/unhandled");
 
-			mount({
-				"/users/new": createElement("p", {}, "form"),
-				"/users/{id}": createElement("p", {}, "user")
-			});
-
-			expect(text()).toBe("form");
-
-		});
-
-		it("should ignore the query and the hash", async () => {
-
-			history.replaceState(null, "", "/#/?q=1#h");
-
-			mount({ "/": createElement("p", {}, "home") }, "hash");
-
-			expect(text()).toBe("home");
-
-		});
-
-		it("should follow redirections, filling in wildcard references", async () => {
-
-			history.replaceState(null, "", "/people/123/about");
-
-			mount({
-				"/people/{id}/*": "/users/{id}/*",
-				"/users/{id}/*": createElement(Here, {})
-			});
-
-			expect(text()).toBe("/users/123/about");
-
-		});
-
-		it("should move the location to the redirection, replacing the history entry", async () => {
-
-			history.replaceState(null, "", "/old");
-
-			const length = history.length;
-
-			mount({ "/old": "/new", "/new": createElement(Here, {}) });
-
-			expect(location.pathname).toBe("/new");
-			expect(history.length).toBe(length);
-
-		});
-
-		it("should move the location hash to the redirection", async () => {
-
-			history.replaceState(null, "", "/#/old");
-
-			mount({ "/old": "/new", "/new": createElement(Here, {}) }, "hash");
-
-			expect(location.hash).toBe("#/new");
-			expect(text()).toBe("/new");
-
-		});
-
-		it("should reject an unhandled route", async () => {
-
-			expect(() => mount({ "/other": createElement("p", {}) })).toThrow("unhandled route /");
-
-		});
-
-		it("should reject a redirection loop", async () => {
-
-			expect(() => mount({ "/": "/a", "/a": "/b", "/b": "/a" })).toThrow("redirection loop");
-
-		});
-
-	});
-
-	describe("switches", () => {
-
-		it("should render what the switch returns for the current route", async () => {
-
-			mount(route => createElement("p", {}, `at ${route}`));
-
-			expect(text()).toBe("at /");
-
-		});
-
-		it("should follow redirections returned by the switch", async () => {
-
-			mount(route => route === "/" ? "/home" : createElement("p", {}, route));
-
-			expect(text()).toBe("/home");
-			expect(location.pathname).toBe("/home");
+			expect(() => shell(createElement("p", {}))).not.toThrow();
 
 		});
 
@@ -177,7 +87,7 @@ describe("Router", () => {
 
 		it("should render again on browser history navigation", async () => {
 
-			mount({ "/*": createElement(Here, {}) });
+			mount({ "*":createElement(Here, {}) });
 
 			act(() => {
 				history.replaceState(null, "", "/other");
@@ -282,17 +192,223 @@ describe("Router", () => {
 
 describe("Routes", () => {
 
-	function section(routes: Table | Switch): FunctionComponent {
-		return () => createElement(Routes, { routes });
-	}
+	describe("tables", () => {
 
+		it("should render the element matching the current route as it is", async () => {
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/other": createElement("p", {}, "other")
+			});
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should match named steps", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({ "/users/{id}": createElement("p", {}, "matched") });
+
+			expect(text()).toBe("matched");
+
+		});
+
+		it("should match subtrees routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/123/posts/7");
+
+			mount({ "/users/{id}/": createElement(section({ "/posts/{post}": createElement(Here, {}) }), {}) });
+
+			expect(text()).toBe("/users/123/posts/7");
+
+		});
+
+		it("should match the root of subtrees not routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/");
+
+			mount({ "/users/": createElement("p", {}, "users") });
+
+			expect(text()).toBe("users");
+
+		});
+
+		it("should fall through subtrees not routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({
+				"/users/": createElement("p", {}, "users"),
+				"*": createElement(Here, {})
+			});
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should reject routes below subtrees not routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			expect(() => mount({ "/users/": createElement("p", {}, "users") })).toThrow("unhandled route /users/123");
+
+		});
+
+		it("should match the root pattern alone", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"*": createElement(Here, {})
+			});
+
+			expect(text()).toBe("/other");
+
+		});
+
+		it("should match any route with a catch-all", async () => {
+
+			history.replaceState(null, "", "/a/b/c");
+
+			mount({ "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/a/b/c");
+
+		});
+
+		it("should match anonymous steps", async () => {
+
+			history.replaceState(null, "", "/any");
+
+			mount({ "/{}": createElement("p", {}, "matched") });
+
+			expect(text()).toBe("matched");
+
+		});
+
+		it("should match the first pattern in table order", async () => {
+
+			history.replaceState(null, "", "/users/new");
+
+			mount({
+				"/users/new": createElement("p", {}, "form"),
+				"/users/{id}": createElement("p", {}, "user")
+			});
+
+			expect(text()).toBe("form");
+
+		});
+
+		it("should ignore the query and the hash", async () => {
+
+			history.replaceState(null, "", "/#/?q=1#h");
+
+			mount({ "/": createElement("p", {}, "home") }, "hash");
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should follow redirections, filling in wildcard references", async () => {
+
+			history.replaceState(null, "", "/people/123/about");
+
+			mount({
+				"/people/{id}/": "/users/{id}/",
+				"*": createElement(Here, {})
+			});
+
+			expect(text()).toBe("/users/123/about");
+
+		});
+
+		it("should move the location to the redirection, replacing the history entry", async () => {
+
+			history.replaceState(null, "", "/old");
+
+			const length = history.length;
+
+			mount({ "/old": "/new", "/new": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/new");
+			expect(history.length).toBe(length);
+
+		});
+
+		it("should move the location hash to the redirection", async () => {
+
+			history.replaceState(null, "", "/#/old");
+
+			mount({ "/old": "/new", "/new": createElement(Here, {}) }, "hash");
+
+			expect(location.hash).toBe("#/new");
+			expect(text()).toBe("/new");
+
+		});
+
+		it("should reject an unhandled route", async () => {
+
+			expect(() => mount({ "/other": createElement("p", {}) })).toThrow("unhandled route /");
+
+		});
+
+		it("should reject a redirection loop", async () => {
+
+			expect(() => mount({ "/": "/a", "/a": "/b", "/b": "/a" })).toThrow("redirection loop");
+
+		});
+
+	});
+
+	describe("switches", () => {
+
+		it("should render what the switch returns for the current route", async () => {
+
+			mount(route => createElement("p", {}, `at ${route}`));
+
+			expect(text()).toBe("at /");
+
+		});
+
+		it("should follow redirections returned by the switch", async () => {
+
+			mount(route => route === "/" ? "/home" : createElement("p", {}, route));
+
+			expect(text()).toBe("/home");
+			expect(location.pathname).toBe("/home");
+
+		});
+
+	});
+
+	describe("layouts", () => {
+
+		it("should route within the layout wrapping it", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			shell(createElement("main", {},
+				createElement("nav", {}, "menu "),
+				createElement(Routes, { children: { "/other": createElement(Here, {}) } })
+			));
+
+			expect(text()).toBe("menu /other");
+
+		});
+
+	});
+
+	describe("sections", () => {
 
 	it("should match the trailing path left over by the enclosing pattern", async () => {
 
 		history.replaceState(null, "", "/users/123");
 
 		mount({
-			"/users/*": createElement(section({
+			"/users/": createElement(section({
 				"/": createElement("p", {}, "list"),
 				"/{id}": createElement(Here, {})
 			}), {})
@@ -306,7 +422,7 @@ describe("Routes", () => {
 
 		history.replaceState(null, "", "/users/");
 
-		mount({ "/users/*": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
+		mount({ "/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
 
 		expect(text()).toBe("list");
 
@@ -317,8 +433,8 @@ describe("Routes", () => {
 		history.replaceState(null, "", "/a/b/c");
 
 		mount({
-			"/a/*": createElement(section({
-				"/b/*": createElement(section({ "/c": createElement(Here, {}) }), {})
+			"/a/": createElement(section({
+				"/b/": createElement(section({ "/c": createElement(Here, {}) }), {})
 			}), {})
 		});
 
@@ -326,11 +442,27 @@ describe("Routes", () => {
 
 	});
 
+	it("should match the catch-all of the section", async () => {
+
+		history.replaceState(null, "", "/users/123/posts");
+
+		mount({
+			"/users/": createElement(section({
+				"/": createElement("p", {}, "list"),
+				"*": createElement(Here, {})
+			}), {}),
+			"*": createElement("p", {}, "enclosing")
+		});
+
+		expect(text()).toBe("/users/123/posts");
+
+	});
+
 	it("should hand switches the route relative to the section", async () => {
 
 		history.replaceState(null, "", "/users/123");
 
-		mount({ "/users/*": createElement(section(route => createElement("p", {}, route)), {}) });
+		mount({ "/users/": createElement(section(route => createElement("p", {}, route)), {}) });
 
 		expect(text()).toBe("/123");
 
@@ -353,7 +485,7 @@ describe("Routes", () => {
 		const length = history.length;
 
 		mount({
-			"/users/*": createElement(section({
+			"/users/": createElement(section({
 				"/": "/all",
 				"/all": createElement(Here, {})
 			}), {})
@@ -365,13 +497,13 @@ describe("Routes", () => {
 
 	});
 
-	it("should follow a section redirection reached through a router redirection", async () => {
+	it("should follow a section redirection reached through an enclosing redirection", async () => {
 
 		history.replaceState(null, "", "/");
 
 		mount({
 			"/": "/users/",
-			"/users/*": createElement(section({
+			"/users/": createElement(section({
 				"/": "/all",
 				"/all": createElement(Here, {})
 			}), {})
@@ -387,7 +519,7 @@ describe("Routes", () => {
 		history.replaceState(null, "", "/#/users/");
 
 		mount({
-			"/users/*": createElement(section({
+			"/users/": createElement(section({
 				"/": "/all",
 				"/all": createElement(Here, {})
 			}), {})
@@ -403,8 +535,10 @@ describe("Routes", () => {
 		history.replaceState(null, "", "/users/123");
 
 		expect(() => mount({
-			"/users/*": createElement(section({ "/": createElement("p", {}) }), {})
+			"/users/": createElement(section({ "/": createElement("p", {}) }), {})
 		})).toThrow("unhandled route /123");
+
+	});
 
 	});
 
@@ -425,7 +559,7 @@ describe("useRoute", () => {
 
 		history.replaceState(null, "", "/current");
 
-		mount({ "/*": createElement(Here, {}) });
+		mount({ "*":createElement(Here, {}) });
 
 		expect(text()).toBe("/current");
 
@@ -469,7 +603,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": createElement(Probe, {}) });
+		mount({ "*":createElement(Probe, {}) });
 
 		const length = history.length;
 
@@ -485,7 +619,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": createElement(Probe, {}) });
+		mount({ "*":createElement(Probe, {}) });
 
 		const length = history.length;
 
@@ -501,7 +635,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": createElement(Probe, {}) });
+		mount({ "*":createElement(Probe, {}) });
 
 		navigate(navigators, { route: "/other", title: " Other  Page ", state: { key: "value" } });
 
@@ -515,7 +649,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": createElement(Probe, {}) });
+		mount({ "*":createElement(Probe, {}) });
 
 		navigate(navigators, { title: "Title" });
 
@@ -528,7 +662,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "/*": createElement(Probe, {}) });
+		mount({ "*":createElement(Probe, {}) });
 
 		navigate(navigators, "/other");
 
@@ -560,7 +694,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b#/c");
 
-			mount({ "/*": createElement(Here, {}) });
+			mount({ "*":createElement(Here, {}) });
 
 			expect(text()).toBe("/a/b");
 
@@ -570,7 +704,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b?q=1#h");
 
-			mount({ "/*": createElement(Here, {}) }, "path");
+			mount({ "*":createElement(Here, {}) }, "path");
 
 			expect(text()).toBe("/a/b");
 
@@ -580,7 +714,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b");
 
-			mount({ "/*": createElement(Nav, { route: "/c/d" }) }, "path");
+			mount({ "*":createElement(Nav, { route: "/c/d" }) }, "path");
 
 			click();
 
@@ -593,7 +727,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b?q=1#h");
 
-			mount({ "/*": createElement(Nav, { route: "c" }) }, "path");
+			mount({ "*":createElement(Nav, { route: "c" }) }, "path");
 
 			click();
 
@@ -610,7 +744,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/x?q=1#/a/b");
 
-			mount({ "/*": createElement(Here, {}) }, "hash");
+			mount({ "*":createElement(Here, {}) }, "hash");
 
 			expect(text()).toBe("/a/b");
 
@@ -620,7 +754,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/x#/a/b");
 
-			mount({ "/*": createElement(Nav, { route: "/c/d" }) }, "hash");
+			mount({ "*":createElement(Nav, { route: "/c/d" }) }, "hash");
 
 			click();
 

@@ -60,14 +60,14 @@ tile-logo {
 
     }
 
-}
+    /* The mark is held off an element beside it, and sits flush with its container where nothing is. */
 
-/* The elements either side of the mark are held off it, so the wording beside it never runs into it. */
+    * + & {
+        margin-inline-start: var(--tile--spacing-050);
+    }
 
-*:has(+ tile-logo) {
-    padding-right: var(--tile--spacing-025);
-}
+    &:has(+ *) {
+        margin-inline-end: var(--tile--spacing-050);
+    }
 
-tile-logo + * {
-    padding-left: var(--tile--spacing-025);
 }

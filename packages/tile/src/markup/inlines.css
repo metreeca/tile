@@ -68,27 +68,37 @@ small {
 }
 
 /*
- * An image carrying the `active` attribute is lifted out of the text and shown over the whole viewport, fitted without
- * cropping, on the blanket a modal dims the page with. Setting and clearing the attribute is left to whoever renders
- * the page, as the Tile router does on a click, restoring the image on `Escape` or as soon as the focus moves.
+ * An image carrying the `active` attribute is lifted out of the text and shown over most of the viewport, fitted
+ * without cropping on a rounded panel in the page background. A margin of the blanket a modal dims the page with is
+ * left around the panel. Setting and clearing the attribute is left to whoever renders the page, as the Tile router
+ * does on a click, restoring the image on `Escape` or as soon as the focus moves.
  */
+
+img:not(a img) {
+    cursor: zoom-in; /* A click on an image outside a link enlarges it. */
+}
 
 img[active] {
 
     position: fixed;
-    inset: 0;
+    inset: var(--tile--spacing-200);
     z-index: var(--tile--z-index-modal);
 
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 2 * var(--tile--spacing-200));
+    height: calc(100% - 2 * var(--tile--spacing-200));
     max-width: none;
     max-height: none;
 
     margin: 0;
     padding: var(--tile--spacing-100);
+    border-radius: var(--tile--border-radius-050);
 
     object-fit: contain;
-    background-color: var(--tile--background-color-blanket);
+    background-color: var(--tile--background-color);
+
+    /* A spread past any viewport, so the blanket covers the whole page around the panel. */
+
+    box-shadow: 0 0 0 100vmax var(--tile--background-color-blanket);
 
     cursor: zoom-out;
 

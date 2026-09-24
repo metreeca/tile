@@ -17,7 +17,7 @@
 import { Router } from "@metreeca/tile-data/router";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Link } from "./link.js";
 
@@ -136,6 +136,43 @@ describe("Link", () => {
 			mount({ native: true, href: "/a" }, { href: "/b" });
 
 			expect(anchors("a[native]")).toEqual(["/a"]);
+
+		});
+
+	});
+
+	describe("onClick", () => {
+
+		function click(): void {
+			act(() => void document.querySelector("a")?.click());
+		}
+
+		it("should hand the activation to the handler", async () => {
+
+			const onClick = vi.fn();
+
+			mount({ href: "/a", onClick });
+			click();
+
+			expect(onClick).toHaveBeenCalledOnce();
+
+		});
+
+		it("should not follow links given a handler", async () => {
+
+			mount({ href: "/a", onClick: () => {} });
+			click();
+
+			expect(location.pathname).toBe("/");
+
+		});
+
+		it("should follow links given no handler", async () => {
+
+			mount({ href: "/a" });
+			click();
+
+			expect(location.pathname).toBe("/a");
 
 		});
 

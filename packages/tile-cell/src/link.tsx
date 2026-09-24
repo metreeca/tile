@@ -24,7 +24,7 @@
  */
 
 import { useRoute } from "@metreeca/tile-data/router";
-import { type ComponentChildren, createElement } from "preact";
+import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
 import "./link.css";
 
 
@@ -36,8 +36,8 @@ import "./link.css";
  * route of the same site is followed by the enclosing {@link @metreeca/tile-data!router.Router Router} without
  * reloading the page, unless the link is `native`.
  *
- * An `active` link, while the route it points at is current, is set apart from its neighbours by a thick underline in
- * the accent colour, and is announced as the current page, or as the current entry of a section where `href` covers the
+ * An `active` link, while the route it points at is current, is set apart from its neighbours by an underline in the
+ * accent colour, and is announced as the current page, or as the current entry of a section where `href` covers the
  * routes nested under it, so a navigation menu tells the reader where they are whether or not they see it. The anchor
  * also carries an empty `active` attribute, for a stylesheet of the consumer's own to read.
  *
@@ -58,6 +58,8 @@ export function Link({
 
 	href,
 
+	onClick,
+
 	children
 
 }: {
@@ -75,9 +77,10 @@ export function Link({
 
 
 	/**
-	 * How loud the link appears: `subtle` reads as the text around it, told apart only by the link colour, `normal`
-	 * adds an underline, and `strong` stands as a label of its own, smaller and heavier in the text colour with no
-	 * underline, as a navigation entry does. However loud, a marked link is underlined thick in the accent colour.
+	 * How loud the link appears: `subtle` reads as the text around it, font and colour alike, `normal` adds the
+	 * link colour and an underline, and `strong` stands as a label of its own, smaller and heavier in the text colour
+	 * with no underline, as a navigation entry does. However loud, a marked link is underlined in the accent colour,
+	 * thick except for `subtle`, where the mark is thinner and closer to the text.
 	 *
 	 * A link stating nothing takes the look the area around it is written in, from the `--tile--look` token the
 	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
@@ -90,6 +93,17 @@ export function Link({
 	 * it, so `/users/*` links to `/users/` and is marked for `/users/123`, though not for `/users`.
 	 */
 	href: string
+
+
+	/**
+	 * What activating the link is handed to, whether the activation comes from a pointer or from `Enter`; followed as a
+	 * link if omitted. A link given a handler is never followed, by the enclosing router or by the browser, so the
+	 * handler alone decides what the activation does, while `href` still states where the link points. The activation
+	 * event is handed over as it stands, so a handler may read the modifier keys it carries.
+	 *
+	 * @param event The activation event
+	 */
+	onClick?: (event: TargetedMouseEvent<HTMLAnchorElement>) => void
 
 
 	/**
@@ -117,6 +131,9 @@ export function Link({
 	 *
 	 * A link covering nested routes stands for a section rather than for the page in view, so it is announced as the
 	 * current entry of a set rather than as the current page.
+	 *
+	 * A handler takes the activation over from the link: the default action is prevented before it runs, which keeps
+	 * the browser from following the link and tells the router to leave it alone as well.
 	 */
 
 	return createElement("tile-link", { look }, createElement("a", {
@@ -126,7 +143,12 @@ export function Link({
 		active: current ? "" : undefined,
 		native: native ? "" : undefined,
 
-		"aria-current": !current ? undefined : wild ? "true" : "page"
+		"aria-current": !current ? undefined : wild ? "true" : "page",
+
+		onClick: onClick && ((event: TargetedMouseEvent<HTMLAnchorElement>) => {
+			event.preventDefault();
+			onClick(event);
+		})
 
 	}, children));
 

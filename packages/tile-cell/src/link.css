@@ -28,9 +28,10 @@ tile-link {
         text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
     }
 
-    /* The quiet step drops the underline, leaving the link told from the text around it by its colour alone. */
+    /* The quiet step drops the underline and the link colour, leaving the link set as the text around it. */
 
     &[look="subtle"] > a {
+        color: inherit;
         text-decoration-line: none;
     }
 
@@ -71,6 +72,7 @@ tile-link {
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a {
+        color: inherit;
         text-decoration-line: none;
     }
 
@@ -105,4 +107,23 @@ tile-link > a[active] {
     text-decoration-line: underline;
     text-decoration-color: var(--tile--color-strong);
     text-decoration-thickness: calc(3 * var(--tile--border-width));
+}
+
+/*
+ * The quiet step keeps the mark as quiet as the link, thinner and drawn closer to the text it sits under. Both forms
+ * of the step are restated, as for the looks above.
+ */
+
+tile-link[look="subtle"] > a[active] {
+    text-decoration-thickness: calc(2 * var(--tile--border-width));
+    text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+}
+
+@container style(--tile--look: subtle) {
+
+    tile-link:not([look]) > a[active] {
+        text-decoration-thickness: calc(2 * var(--tile--border-width));
+        text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+    }
+
 }

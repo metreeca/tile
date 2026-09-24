@@ -44,7 +44,7 @@ export function TileHive() {
 		tray={<>
 
 			{Object.keys(sections).map(label =>
-				<Link key={label} active look="strong" href={`${TileHivePath}${path(label)}`}>{label}</Link>
+				<Link key={label} active look="subtle" href={`${TileHivePath}${path(label)}`}>{label}</Link>
 			)}
 
 		</>}

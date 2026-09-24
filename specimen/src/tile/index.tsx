@@ -55,7 +55,7 @@ export function Tile() {
 		tray={<>
 
 			{Object.keys(sections).map(label =>
-				<Link key={label} active look="strong" href={`${TilePath}${path(label)}`}>{label}</Link>
+				<Link key={label} active look="subtle" href={`${TilePath}${path(label)}`}>{label}</Link>
 			)}
 
 		</>}

@@ -31,7 +31,7 @@
 import { isDefined, isNull, isString, Optional } from "@metreeca/core";
 import { unique } from "@metreeca/core/arrays";
 import { tidy } from "@metreeca/core/strings";
-import { type ComponentChildren, createContext, createElement, type VNode } from "preact";
+import { type ComponentChildren, type ContextType, createContext, createElement, type VNode } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
 import { app } from "./index.js";
 
@@ -74,11 +74,17 @@ const RouteContext = createContext<Readonly<{
 	 */
 	section: string
 
+	/**
+	 * The {@link Router} fallback, handling the routes no {@link Routes} handles.
+	 */
+	fallback: Optional<string | VNode>
+
 }>>({
 
 	location: "",
 	route: "",
-	section: ""
+	section: "",
+	fallback: undefined
 
 });
 
@@ -140,6 +146,7 @@ export function Router({
 
 	mode = "path",
 
+	fallback,
 	children
 
 }: {
@@ -156,6 +163,20 @@ export function Router({
 	 * @defaultValue `"path"`
 	 */
 	mode?: "path" | "hash"
+
+
+	/**
+	 * The handler for routes no {@link Routes} below the router handles, as one of:
+	 *
+	 * - a **redirection**: an absolute route to move to instead, replacing the current history entry, such as `/`
+	 *   to send unknown routes to the home page
+	 * - an **element**: the view, rendered in place of the view of the {@link Routes} that handles nothing, so a
+	 *   not-found page shows within the layout of the section the route falls in; the view reads the unhandled route
+	 *   with {@link useRoute}
+	 *
+	 * Where omitted, an unhandled route is rejected.
+	 */
+	fallback?: string | VNode
 
 	/**
 	 * The content rendered within the router, nesting the {@link Routes} that select the views for the current route.
@@ -324,7 +345,7 @@ export function Router({
 
 
 	return createElement(RouterContext.Provider, { value: router },
-		createElement(RouteContext.Provider, { value: { location: route, route, section: "" } }, children)
+		createElement(RouteContext.Provider, { value: { location: route, route, section: "", fallback } }, children)
 	);
 
 }
@@ -353,10 +374,12 @@ export function Router({
  *
  * @returns The view for the current route
  *
- * @throws {@link !Error Error} If the table holds a pattern that is neither `*` nor starts with `/`, whatever the
- *     current route
- * @throws {@link !Error Error} If the current route, or a route it redirects to, matches no table pattern, or if
- *     redirections lead back to a route already visited
+ * Routes the table leaves unhandled go to the {@link Router} fallback.
+ *
+ * @throws {@link !Error Error} If the table holds a pattern that does not start with `/`, whatever the current route
+ * @throws {@link !Error Error} If the current route, or a route it redirects to, matches no table pattern and the
+ *     {@link Router} has no fallback, or its fallback route matches no table pattern either
+ * @throws {@link !Error Error} If redirections lead back to a route already visited
  */
 export function Routes({
 
@@ -367,9 +390,8 @@ export function Routes({
 	/**
 	 * The views for the routes, as a table mapping route patterns to views or redirections.
 	 *
-	 * A route is
-	 * handled by the first pattern it matches, in table order, so specific patterns go before the general ones they
-	 * overlap; the query and the hash of a route never take part in matching.
+	 * A route is handled by the first pattern it matches, in table order, so specific patterns go before the general
+	 * ones they overlap; the query and the hash of a route never take part in matching.
 	 *
 	 * A pattern is matched against the whole route and may include the following wildcards, where `step` is a
 	 * sequence of word characters:
@@ -378,9 +400,6 @@ export function Routes({
 	 * - `{}` matches a non-empty anonymous path step
 	 * - `/` at the end, except in the root pattern `/`, makes the pattern a **subtree**, matching the route up to it
 	 *   along with every route below it
-	 *
-	 * A lone `*` is a catch-all, matching any route: placed last, it handles whatever the patterns before it leave
-	 * over, in the table at the top of the app and in any section below it alike.
 	 *
 	 * A pattern maps to one of:
 	 *
@@ -396,12 +415,12 @@ export function Routes({
 
 }): ComponentChildren {
 
-	const { location, route, section } = useContext(RouteContext);
+	const context = useContext(RouteContext);
+	const { location } = context;
 
 	const router = useRouter();
 
-	const matched = match(children, route.slice(section.length));
-	const current = `${section}${matched.route}`;
+	const { route: current, view, section } = resolve(children, context);
 
 
 	useEffect(() => {
@@ -422,9 +441,7 @@ export function Routes({
 	}, [location, current, router]);
 
 
-	return createElement(RouteContext.Provider, {
-		value: { location, route: current, section: `${section}${matched.subtree}` }
-	}, matched.view);
+	return createElement(RouteContext.Provider, { value: { ...context, route: current, section } }, view);
 
 }
 
@@ -457,17 +474,53 @@ export function useRoute(): string {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Resolves the route on show to the view a {@link Routes} renders, falling back to the {@link Router} fallback for
+ * routes its table leaves unhandled.
+ *
+ * @returns the route on show after redirections, the view for it, undefined while moving to a fallback route, and the
+ *     section nested {@link Routes} match past
+ */
+function resolve(
+	table: Parameters<typeof Routes>[0]["children"],
+	{ route, section, fallback }: ContextType<typeof RouteContext>
+): Readonly<{ route: string, view: Optional<VNode>, section: string }> {
+
+	const rest = route.slice(section.length);
+	const matched = match(table, rest);
+	const current = `${section}${matched.route}`;
+
+	if ( isDefined(matched.view) ) {
+
+		return { route: current, view: matched.view, section: `${section}${matched.subtree}` };
+
+	} else if ( isString(fallback) && fallback !== current ) {
+
+		return { route: fallback, view: undefined, section };
+
+	} else if ( isDefined(fallback) && !isString(fallback) ) {
+
+		return { route: current, view: fallback, section };
+
+	} else {
+
+		throw new Error(`unhandled route ${rest}`);
+
+	}
+
+}
+
+/**
  * Resolves a section route to its view, following redirections.
  *
- * @returns the section route after redirections, the view for it, and the prefix of the route matched by a subtree
- *     pattern, empty for other patterns
+ * @returns the section route after redirections, the view for it, undefined if no pattern matches, and the prefix of
+ *     the route matched by a subtree pattern, empty for other patterns
  */
 function match(
 	table: Parameters<typeof Routes>[0]["children"],
 	route: string
-): Readonly<{ route: string, view: VNode, subtree: string }> {
+): Readonly<{ route: string, view: Optional<VNode>, subtree: string }> {
 
-	const invalid = Object.keys(table).find(glob => glob !== "*" && !glob.startsWith("/"));
+	const invalid = Object.keys(table).find(glob => !glob.startsWith("/"));
 
 
 	function follow(current: string, trail: readonly string[]): ReturnType<typeof match> {
@@ -479,7 +532,7 @@ function match(
 
 		if ( !isDefined(selected) ) {
 
-			throw new Error(`unhandled route ${route}`);
+			return { route: current, view: undefined, subtree: "" };
 
 		} else if ( !isString(selected) ) {
 
@@ -521,7 +574,7 @@ function match(
 		const subtree = glob.length > 1 && glob.endsWith("/");
 		const steps = subtree ? glob.slice(0, -1) : glob;
 
-		return glob === "*" ? /^.*$/ : new RegExp(`^${steps
+		return new RegExp(`^${steps
 
 			.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // escape regex metacharacters
 			.replace(/\\{(\w+)\\}/g, "(?<$1>[^/]+)") // named steps

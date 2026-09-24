@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { type ComponentChildren, createElement, type FunctionComponent, render } from "preact";
+import { type ComponentChildren, createElement, type FunctionComponent, render, type VNode } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -27,12 +27,12 @@ type Routing = Parameters<typeof Routes>[0]["children"];
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
 
 
-function shell(children: ComponentChildren, mode?: "path" | "hash"): void {
-	act(() => render(createElement(Router, { mode, children }), document.body));
+function shell(children: ComponentChildren, mode?: "path" | "hash", fallback?: string | VNode): void {
+	act(() => render(createElement(Router, { fallback, mode, children }), document.body));
 }
 
-function mount(routes: Routing, mode?: "path" | "hash"): void {
-	shell(createElement(Routes, { children: routes }), mode);
+function mount(routes: Routing, mode?: "path" | "hash", fallback?: string | VNode): void {
+	shell(createElement(Routes, { children: routes }), mode, fallback);
 }
 
 function section(routes: Routing): FunctionComponent {
@@ -90,7 +90,7 @@ describe("Router", () => {
 
 		it("should render again on browser history navigation", async () => {
 
-			mount({ "*":createElement(Here, {}) });
+			shell(createElement(Here, {}));
 
 			act(() => {
 				history.replaceState(null, "", "/other");
@@ -257,10 +257,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/users/123");
 
-			mount({
-				"/users/": createElement("p", {}, "users"),
-				"*": createElement(Here, {})
-			});
+			mount({ "/users/": createElement("p", {}, "users") }, "path", createElement(Here, {}));
 
 			expect(text()).toBe("users");
 
@@ -270,22 +267,9 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			mount({
-				"/": createElement("p", {}, "home"),
-				"*": createElement(Here, {})
-			});
+			mount({ "/": createElement("p", {}, "home") }, "path", createElement(Here, {}));
 
 			expect(text()).toBe("/other");
-
-		});
-
-		it("should match any route with a catch-all", async () => {
-
-			history.replaceState(null, "", "/a/b/c");
-
-			mount({ "*": createElement(Here, {}) });
-
-			expect(text()).toBe("/a/b/c");
 
 		});
 
@@ -326,10 +310,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/people/123/about");
 
-			mount({
-				"/people/{id}/": "/users/{id}/",
-				"*": createElement(Here, {})
-			});
+			mount({ "/people/{id}/": "/users/{id}/", "/users/": createElement(Here, {}) });
 
 			expect(text()).toBe("/users/123/about");
 
@@ -359,9 +340,52 @@ describe("Routes", () => {
 
 		});
 
-		it("should reject an unhandled route", async () => {
+		it("should render the fallback view for an unhandled route", async () => {
+
+			history.replaceState(null, "", "/a/b/c");
+
+			mount({ "/": createElement("p", {}, "home") }, "path", createElement(Here, {}));
+
+			expect(text()).toBe("/a/b/c");
+
+		});
+
+		it("should render the fallback view for a redirection to an unhandled route", async () => {
+
+			history.replaceState(null, "", "/old");
+
+			mount({ "/old": "/missing" }, "path", createElement(Here, {}));
+
+			expect(location.pathname).toBe("/missing");
+			expect(text()).toBe("/missing");
+
+		});
+
+		it("should move the location to the fallback route, replacing the history entry", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			const length = history.length;
+
+			mount({ "/": createElement("p", {}, "home") }, "path", "/");
+
+			expect(location.pathname).toBe("/");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("home");
+
+		});
+
+		it("should reject an unhandled route without a fallback", async () => {
 
 			expect(() => mount({ "/other": createElement("p", {}) })).toThrow("unhandled route /");
+
+		});
+
+		it("should reject an unhandled fallback route", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			expect(() => mount({ "/": createElement("p", {}) }, "path", "/missing")).toThrow("unhandled route /missing");
 
 		});
 
@@ -371,7 +395,7 @@ describe("Routes", () => {
 
 		});
 
-		it("should reject patterns neither rooted nor a catch-all, wherever they sit in the table", async () => {
+		it("should reject patterns not rooted, wherever they sit in the table", async () => {
 
 			expect(() => mount({ "/": createElement("p", {}), "users": createElement("p", {}) }))
 				.toThrow("invalid route pattern <users>");
@@ -379,8 +403,8 @@ describe("Routes", () => {
 			expect(() => mount({ "/": createElement("p", {}), "": createElement("p", {}) }))
 				.toThrow("invalid route pattern <>");
 
-			expect(() => mount({ "/": createElement("p", {}), "*/": createElement("p", {}) }))
-				.toThrow("invalid route pattern <*/>");
+			expect(() => mount({ "/": createElement("p", {}), "*": createElement("p", {}) }))
+				.toThrow("invalid route pattern <*>");
 
 		});
 
@@ -444,19 +468,29 @@ describe("Routes", () => {
 
 	});
 
-	it("should match the catch-all of the section", async () => {
+	it("should render the fallback view for a route not handled within the section", async () => {
 
 		history.replaceState(null, "", "/users/123/posts");
 
 		mount({
-			"/users/": createElement(section({
-				"/": createElement("p", {}, "list"),
-				"*": createElement(Here, {})
-			}), {}),
-			"*": createElement("p", {}, "enclosing")
-		});
+			"/users/": createElement("main", {}, "users ", createElement(section({ "/": createElement("p", {}, "list") }), {}))
+		}, "path", createElement(Here, {}));
 
-		expect(text()).toBe("/users/123/posts");
+		expect(text()).toBe("users /users/123/posts");
+
+	});
+
+	it("should move the location to the fallback route from within the section", async () => {
+
+		history.replaceState(null, "", "/users/123/posts");
+
+		mount({
+			"/": createElement("p", {}, "home"),
+			"/users/": createElement(section({ "/": createElement("p", {}, "list") }), {})
+		}, "path", "/");
+
+		expect(location.pathname).toBe("/");
+		expect(text()).toBe("home");
 
 	});
 
@@ -554,7 +588,7 @@ describe("useRoute", () => {
 
 		history.replaceState(null, "", "/current");
 
-		mount({ "*":createElement(Here, {}) });
+		shell(createElement(Here, {}));
 
 		expect(text()).toBe("/current");
 
@@ -598,7 +632,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "*":createElement(Probe, {}) });
+		shell(createElement(Probe, {}));
 
 		const length = history.length;
 
@@ -614,7 +648,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "*":createElement(Probe, {}) });
+		shell(createElement(Probe, {}));
 
 		const length = history.length;
 
@@ -630,7 +664,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "*":createElement(Probe, {}) });
+		shell(createElement(Probe, {}));
 
 		navigate(navigators, { route: "/other", title: " Other  Page ", state: { key: "value" } });
 
@@ -644,7 +678,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "*":createElement(Probe, {}) });
+		shell(createElement(Probe, {}));
 
 		navigate(navigators, { title: "Title" });
 
@@ -657,7 +691,7 @@ describe("useRouter", () => {
 
 		const { navigators, Probe } = probe();
 
-		mount({ "*":createElement(Probe, {}) });
+		shell(createElement(Probe, {}));
 
 		navigate(navigators, "/other");
 
@@ -689,7 +723,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b#/c");
 
-			mount({ "*":createElement(Here, {}) });
+			shell(createElement(Here, {}));
 
 			expect(text()).toBe("/a/b");
 
@@ -699,7 +733,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b?q=1#h");
 
-			mount({ "*":createElement(Here, {}) }, "path");
+			shell(createElement(Here, {}), "path");
 
 			expect(text()).toBe("/a/b");
 
@@ -709,7 +743,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b");
 
-			mount({ "*":createElement(Nav, { route: "/c/d" }) }, "path");
+			shell(createElement(Nav, { route: "/c/d" }), "path");
 
 			click();
 
@@ -722,7 +756,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b?q=1#h");
 
-			mount({ "*":createElement(Nav, { route: "c" }) }, "path");
+			shell(createElement(Nav, { route: "c" }), "path");
 
 			click();
 
@@ -739,7 +773,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/x?q=1#/a/b");
 
-			mount({ "*":createElement(Here, {}) }, "hash");
+			shell(createElement(Here, {}), "hash");
 
 			expect(text()).toBe("/a/b");
 
@@ -749,7 +783,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/x#/a/b");
 
-			mount({ "*":createElement(Nav, { route: "/c/d" }) }, "hash");
+			shell(createElement(Nav, { route: "/c/d" }), "hash");
 
 			click();
 

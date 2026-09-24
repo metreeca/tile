@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-cell",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Preact widgets and controls for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -62,8 +62,8 @@
   "dependencies": {
     "@metreeca/core": "^0.11.0",
     "@metreeca/http": "^0.3.0",
-    "@metreeca/tile": "^0.1.0",
-    "@metreeca/tile-data": "^0.1.0",
+    "@metreeca/tile": "^0.2.0",
+    "@metreeca/tile-data": "^0.2.0",
     "lucide-preact": "^1.47.0"
   },
   "devDependencies": {

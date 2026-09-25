@@ -23,6 +23,7 @@
  * @module
  */
 
+import { opt } from "@metreeca/core";
 import { app } from "@metreeca/tile-data";
 import { createElement } from "preact";
 import "./logo.css";
@@ -61,8 +62,8 @@ export function Logo({
 
 }) {
 
-	return app.icon === undefined ? undefined : createElement("tile-logo", {},
-		<img alt={name ?? ""} src={app.icon}/>
-	);
+	return opt(app.icon, icon => createElement("tile-logo", {},
+		<img alt={name ?? ""} src={icon}/>
+	));
 
 }

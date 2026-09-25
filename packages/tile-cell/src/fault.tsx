@@ -23,7 +23,7 @@
  * @module
  */
 
-import { isObject } from "@metreeca/core";
+import { isObject, opt } from "@metreeca/core";
 import { BadRequest, Forbidden, Gone, NotFound, Unauthorized } from "@metreeca/http";
 import { type Problem } from "@metreeca/http/success";
 import { type ComponentChildren } from "preact";
@@ -102,11 +102,11 @@ export function Fault({
 
 }) {
 
-	const notice = status === undefined ? undefined : Notices[status];
+	const notice = opt(status, status => Notices[status]);
 
 	const heading = status !== undefined && status >= BadRequest ? `Unexpected error ${status}` : "Unexpected error";
 
-	const [ Mark, wording ] = notice ?? [ Icon.Error, title === undefined ? heading : `${heading}\n${title}` ];
+	const [ Mark, wording ] = notice ?? [ Icon.Error, opt(title, title => `${heading}\n${title}`, heading) ];
 
 	const $text = text ?? wording;
 

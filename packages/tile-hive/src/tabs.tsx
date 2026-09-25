@@ -253,7 +253,7 @@ export function Tabs({
 
 			const moved = transition().active;
 
-			document.getElementById(tab(moved === undefined ? -1 : order.indexOf(moved)))?.focus();
+			document.getElementById(tab(opt(moved, label => order.indexOf(label), -1)))?.focus();
 
 		};
 	}

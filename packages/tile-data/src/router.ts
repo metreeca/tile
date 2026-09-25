@@ -28,7 +28,7 @@
  * @module
  */
 
-import { isDefined, isNull, isString, Optional } from "@metreeca/core";
+import { isDefined, isNull, isString, opt, Optional } from "@metreeca/core";
 import { unique } from "@metreeca/core/arrays";
 import { tidy } from "@metreeca/core/strings";
 import { type ComponentChildren, createContext, createElement, type VNode } from "preact";
@@ -312,13 +312,15 @@ export function Router({
 			? { route: entry, title: undefined, state: undefined }
 			: entry;
 
-		const $route = route === undefined
-			? location.href
-			: new URL(mode === "hash" ? `#${route}` : route, location.href).href;
+		const $route = opt(route,
+			route => new URL(mode === "hash" ? `#${route}` : route, location.href).href,
+			() => location.href
+		);
 
-		const $title = title === undefined
-			? document.title
-			: unique([tidy(title), app.name]).filter(Boolean).join(" | ");
+		const $title = opt(title,
+			title => unique([tidy(title), app.name]).filter(Boolean).join(" | "),
+			() => document.title
+		);
 
 		const $state = state === undefined
 			? history.state

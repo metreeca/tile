@@ -20,7 +20,7 @@
  * @module
  */
 
-import { InternalServerError, NotFound } from "@metreeca/http";
+import { NotFound, UnprocessableContent } from "@metreeca/http";
 import { Fault } from "@metreeca/tile-cell/fault";
 import "./index.css";
 
@@ -36,19 +36,18 @@ export function Faults() {
 	return <>
 
 		<p>A fault shows problem details as a note: a failure the reader can act on is told in their own terms and
-			left at that, while an unexpected one carries the explanation, what to do about it, and the data the
-			source sent along.</p>
+			left at that, while an unexpected one carries the explanation and the data the source sent along.</p>
 
 		<div class="notes">
 
 			<Fault status={NotFound}/>
 
-			<Fault detail="The request could not be completed." report={{
+			<Fault detail="The submitted product failed validation." report={{
 
-				instance: "/products/42",
-				trace: "java.lang.IllegalStateException"
+				price: [ "expected a value of at least <0>" ],
+				label: [ "expected at most <1> value" ]
 
-			}} status={InternalServerError} title="Internal Server Error"/>
+			}} status={UnprocessableContent} title="Unprocessable Content"/>
 
 		</div>
 

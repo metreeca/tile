@@ -26,14 +26,13 @@
 import { isObject, opt } from "@metreeca/core";
 import { BadRequest, Forbidden, Gone, NotFound, Unauthorized } from "@metreeca/http";
 import { type Problem } from "@metreeca/http/success";
-import { type ComponentChildren } from "preact";
 import { Icon } from "./icon.js";
 import { Note } from "./note.js";
 
 
 /**
- * The mark and the wording the failures a reader can make something of are told by, under the status standing for
- * each. Anything else is an unexpected failure, which no wording of ours improves on.
+ * The mark and the standing wording the failures a reader can make something of are told by, under the status standing
+ * for each. Anything else is an unexpected failure, which no wording of ours improves on.
  *
  * The lines are broken where the sense breaks, rather than where the space happens to run out, each one standing
  * under the mark as a phrase the reader takes in whole.
@@ -58,16 +57,14 @@ const Notices: Partial<Readonly<Record<number, readonly [Icon.LucideIcon, string
  * is read out as soon as it reaches the page, the failure arriving where the reader expected what they asked for.
  *
  * A failure the reader can act on is told in their own terms and left at that: an unidentified reader (401), one
- * denied access (403) and a resource missing (404) or withdrawn (410) are each answered by the reader themselves, so
- * the status, the explanation and the data the source sent along say nothing they can use.
+ * denied access (403) and a resource missing (404) or withdrawn (410) are each answered by the reader themselves. Such
+ * a fault is raised by the interface itself, and its `detail` is the wording the reader is told, standing under the
+ * mark with its line breaks shown where they are written; a standing English wording for the status if omitted. The
+ * summary and the data carried along say nothing the reader can use, and are left out.
  *
- * Anything else is an unexpected failure: the headline states the status and the summary the source gave it, and
- * everything else the source supplied stands beneath, the explanation first, then what the reader is asked to do
- * about it, then the machine-readable data, so that a report reaching whoever maintains the interface carries what
- * they need to place it.
- *
- * The standing wording is English, which `text` and the children replace where an interface speaks to its readers in
- * a language or a register of its own.
+ * Anything else is an unexpected failure, a technical error raised by the source: the headline states the status
+ * and the summary the source gave it, and everything else the source supplied stands beneath, the explanation first,
+ * then the machine-readable data, so that whoever maintains the interface finds what they need to place the failure.
  *
  * @param options The widget configuration
  *
@@ -77,38 +74,20 @@ const Notices: Partial<Readonly<Record<number, readonly [Icon.LucideIcon, string
  */
 export function Fault({
 
-	status,
 	title,
+	status,
 	detail,
-	report,
+	report
 
-	text,
-
-	children
-
-}: Problem & {
-
-	/**
-	 * The wording the failure is told by, standing under the mark in place of the standing wording for the status at
-	 * hand; a line break in it is shown where it is written.
-	 */
-	text?: string
-
-	/**
-	 * What the reader is asked to do about an unexpected failure, shown beneath the explanation; a standing request
-	 * to report it if omitted, and never shown at all for a failure the reader can act on themselves.
-	 */
-	children?: ComponentChildren
-
-}) {
+}: Problem) {
 
 	const notice = opt(status, status => Notices[status]);
 
 	const heading = status !== undefined && status >= BadRequest ? `Unexpected error ${status}` : "Unexpected error";
 
-	const [ Mark, wording ] = notice ?? [ Icon.Error, opt(title, title => `${heading}\n${title}`, heading) ];
-
-	const $text = text ?? wording;
+	const [ Mark, wording ] = notice
+		? [ notice[0], detail ?? notice[1] ]
+		: [ Icon.Error, opt(title, title => `${heading}\n${title}`, heading) ];
 
 	const data = report !== undefined && !isObject(report, {}) // an empty payload states nothing worth showing
 		? JSON.stringify(report, null, 2)
@@ -118,13 +97,11 @@ export function Fault({
 
 	return <Note icon={<Mark/>} level="critical">
 
-		<div>{$text}</div>
+		<div>{wording}</div>
 
 		{!notice && <>
 
 			{detail && <div>{detail}</div>}
-
-			<div>{children ?? "Please report. Thanks!"}</div>
 
 			{data && <code>{data}</code>}
 

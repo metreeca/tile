@@ -23,10 +23,23 @@
  * @module
  */
 
+import { opt } from "@metreeca/core";
 import { css, type Spacing, tile } from "@metreeca/tile";
 import { type ComponentChildren, createElement } from "preact";
 import "./stack.css";
 
+
+const justify = {
+	start: "start",
+	center: "center",
+	end: "end",
+	spread: "space-between",
+	head: undefined, // set apart by the stylesheet
+	tail: undefined // set apart by the stylesheet
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Creates a vertical stack.
@@ -37,7 +50,7 @@ import "./stack.css";
  *
  * The stack stands as tall as its items and as wide as whatever holds it, each item taking the full width unless
  * aligned otherwise; a stack told to grow takes whatever room its container leaves along the main axis, which is
- * what lets `alignBlock` place the items within a stack taller than they are.
+ * what lets `place` position the items within a stack taller than they are.
  *
  * The stack carries no semantics: it is a layout, and a screen grouping its items for assistive technology puts the
  * element that does so inside it or around it.
@@ -50,8 +63,8 @@ export function Stack({
 
 	grow = false,
 
-	alignBlock = "start",
-	alignInline = "stretch",
+	place = "start",
+	align = "stretch",
 	space,
 
 	children
@@ -64,22 +77,26 @@ export function Stack({
 	 */
 	grow?: boolean
 
+
 	/**
 	 * Where the items sit along the column, when the stack is taller than they are: at the `start`, in the `center`,
-	 * at the `end`, or `spread` from edge to edge, the leftover room shared out between them.
+	 * at the `end`, `spread` from edge to edge, the leftover room shared out between them, or split with the first item
+	 * alone at the start and the others at the end (`head`), or the last item alone at the end and the others at the
+	 * start (`tail`).
 	 */
-	alignBlock?: "start" | "center" | "end" | "spread"
+	place?: "start" | "center" | "end" | "spread" | "head" | "tail"
 
 	/**
 	 * Where each item sits across the column: against the `start` edge, in the `center`, against the `end` edge, or
 	 * `stretch`ed to the full width of the stack.
 	 */
-	alignInline?: "start" | "center" | "end" | "stretch"
+	align?: "start" | "center" | "end" | "stretch"
 
 	/**
 	 * The step of the spacing ladder setting each item apart from the next; the items touch where left out.
 	 */
 	space?: Spacing
+
 
 	/**
 	 * What the stack holds, each child an item of the column.
@@ -90,11 +107,13 @@ export function Stack({
 
 	return createElement("tile-stack", {
 
+		place,
+
 		style: {
 			flexGrow: grow ? 1 : undefined,
-			justifyContent: alignBlock === "spread" ? "space-between" : alignBlock,
-			alignItems: alignInline,
-			gap: space === undefined ? undefined : css.var(tile[space])
+			justifyContent: justify[place],
+			alignItems: align,
+			gap: opt(space, step => css.var(tile[step]))
 		}
 
 	}, children);

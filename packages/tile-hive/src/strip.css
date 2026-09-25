@@ -15,13 +15,22 @@
  */
 
 /*
- * The inline is a row and nothing else. The alignment, the gaps, the growth and the wrapping are settled by the widget
- * on the element, being chosen by whoever renders the inline rather than by a rule written ahead of time.
+ * The strip is a row and nothing else. The alignment, the gaps, the growth and the wrapping are settled by the widget
+ * on the element, being chosen by whoever renders the strip rather than by a rule written ahead of time. Only the
+ * split placements live here, as they reach the item set apart rather than the strip.
  */
 
-tile-inline {
+tile-strip {
 
     display: flex;
     flex-direction: row;
+
+    &[place="head"] > :first-child {
+        margin-inline-end: auto;
+    }
+
+    &[place="tail"] > :last-child {
+        margin-inline-start: auto;
+    }
 
 }

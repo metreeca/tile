@@ -16,12 +16,21 @@
 
 /*
  * The stack is a column and nothing else. The alignment, the gap and the growth are settled by the widget on the
- * element, being chosen by whoever renders the stack rather than by a rule written ahead of time.
+ * element, being chosen by whoever renders the stack rather than by a rule written ahead of time. Only the split
+ * placements live here, as they reach the item set apart rather than the stack.
  */
 
 tile-stack {
 
     display: flex;
     flex-direction: column;
+
+    &[place="head"] > :first-child {
+        margin-block-end: auto;
+    }
+
+    &[place="tail"] > :last-child {
+        margin-block-start: auto;
+    }
 
 }

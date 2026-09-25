@@ -520,13 +520,17 @@ tile-shell {
         }
 
         /*
-         * The body stacks the content over the notice closing it, and the notice takes whatever room the content
-         * leaves: short content leaves it resting at the bottom of the column, just above the footer or at the edge
-         * of the frame where no footer stands, and long content pushes it down to follow on after it. Either way it
-         * is part of what scrolls, so it never covers the content the way a bar would.
+         * The body stacks the content over the notice closing it, and the content takes whatever room the notice
+         * leaves: short content leaves the notice resting at the bottom of the column, just above the footer or at
+         * the edge of the frame where no footer stands, and long content pushes it down to follow on after it.
+         * Either way the notice is part of what scrolls, so it never covers the content the way a bar would.
          *
-         * The content is held in a box of its own, so what it holds keeps the block flow it was written for rather
-         * than being laid out as a column of flex items.
+         * The content is held in a box of its own, kept apart from the notice and the gap set before it. The box
+         * grows into the room left over and hands that room on to what it holds, stacked as a column: a child
+         * taking automatic margins, such as a note, stands in the middle of the column, while any other keeps the
+         * width a block would give it and the height its own content asks for. Being flex items, the children
+         * leave their margins uncollapsed and float nothing beside them, which a screen rooted in a single element
+         * never meets.
          *
          * The notice lays out what it holds as the bars do, in a row centred on the middle of its own box, so a glyph
          * or a mark beside a line of text stands level with it.
@@ -539,6 +543,15 @@ tile-shell {
 
             row-gap: var(--tile--spacing-100);
 
+            & > div {
+
+                display: flex;
+                flex-direction: column;
+
+                flex-grow: 1;
+
+            }
+
             & > footer {
 
                 display: flex;
@@ -546,8 +559,6 @@ tile-shell {
                 align-items: center;
 
                 column-gap: var(--tile--spacing-025);
-
-                margin-top: auto;
 
             }
 

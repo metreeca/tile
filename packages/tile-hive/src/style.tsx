@@ -42,9 +42,11 @@ import "./style.css";
  * assigns the same tokens to it with {@link @metreeca/tile!index.css css}, sparing the extra wrapper.
  *
  * The area takes no box of its own, so what it holds sits in the row, the grid or the flow around it exactly as it
- * would without the wrapper. Being an element all the same, it stands between what it holds and whatever encloses
- * that: a rule reaching its children by `> *`, `:first-child` or `:nth-child()` stops at the area, and a screen
- * styling what it holds that way reaches for a class instead.
+ * would without the wrapper. Having no box, it takes nothing from the box tokens, `padding`, `borderRadius` and
+ * `boxShadow`: an area to be padded, rounded or lifted is a {@link box!Box box} instead. Being an element all the
+ * same, it stands between what it holds and whatever encloses that: a rule reaching its children by `> *`,
+ * `:first-child` or `:nth-child()` stops at the area, and a screen styling what it holds that way reaches for a class
+ * instead.
  *
  * @param options The widget configuration
  *

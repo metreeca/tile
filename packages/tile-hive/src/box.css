@@ -1,0 +1,45 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The box is a single cell and nothing else. The padding, the rounding, the shadow and the paint are settled by the
+ * widget on the element, being chosen by whoever renders the box rather than by a rule written ahead of time.
+ *
+ * Every child takes the one cell, so what the box holds is stretched across its full width and height, and a layout
+ * inside a box the layout around it stretched follows it, which a block would leave at the height of its content;
+ * several children lie over one another in the order given. The cell never gets smaller than its content, so a box
+ * set in a flex layout shrinks no further than what it holds allows, as the layout it holds would on its own.
+ */
+
+tile-box {
+
+    display: grid;
+    grid-template: 1fr / 1fr;
+
+    & > * {
+        grid-area: 1 / 1;
+    }
+
+    /*
+     * A block filling the box keeps no room below it: the padding already sets it apart from the edge, and a grid
+     * item's margin does not collapse into it as it would in a block.
+     */
+
+    & > :last-child {
+        margin-block-end: 0;
+    }
+
+}

@@ -58,6 +58,7 @@
       "**/packages/tile/src/**/*.core.ts",
       "**/packages/tile-cell/src/icon.core.ts",
       "**/*.test.ts",
+      "**/*.test.tsx",
       "**/*.test-d.ts"
     ],
     "tsconfig": "./tsconfig.build.json",

@@ -15,7 +15,11 @@
  */
 
 import { Page } from "@metreeca/specimen/index.core.js";
+import { Boxes } from "@metreeca/specimen/tile-hive/boxes.js";
+import { Layouts } from "@metreeca/specimen/tile-hive/layouts.js";
 import { Shells } from "@metreeca/specimen/tile-hive/shells.js";
+import { Stacks } from "@metreeca/specimen/tile-hive/stacks.js";
+import { Strips } from "@metreeca/specimen/tile-hive/strips.js";
 import { Styles } from "@metreeca/specimen/tile-hive/styles.js";
 import { Tabbed } from "@metreeca/specimen/tile-hive/tabbed.js";
 import { Link } from "@metreeca/tile-cell/link";
@@ -33,6 +37,10 @@ export function TileHive() {
 
 		Shell: <Shells/>,
 		Tabs: <Tabbed/>,
+		Stack: <Stacks/>,
+		Strip: <Strips/>,
+		Box: <Boxes/>,
+		Layout: <Layouts/>,
 		Style: <Styles/>,
 		Empty: <></>
 

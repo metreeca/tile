@@ -19,10 +19,10 @@
  * standing on its content alone is the same frame with the tray column left out of it.
  *
  * The frame settles almost no type: it states no family, no weight beyond the one that tells a tray heading from its
- * sub-entry, and no size beyond the tray entries being set a little below the text around them, so everything in it is
- * set in whatever the app is written in and a bar reads as part of the page rather than as a band with a voice of its
- * own. Every measure it does state is a measure of the column, so it is stated in rem and holds still while the text
- * around it changes.
+ * sub-entry, and no size beyond the tray entries being set a little below the text around them and the bars being set
+ * at a size an app can retune, so everything in it is set in whatever the app is written in and a bar reads as part of
+ * the page rather than as a band with a voice of its own. Every other measure it states is a measure of the column,
+ * so it is stated in rem and holds still while the text around it changes.
  */
 
 tile-shell {
@@ -81,6 +81,15 @@ tile-shell {
 
     --tile-shell-foot-inset-top: 0.25rem;
     --tile-shell-foot-inset-bottom: 0.5rem;
+
+    /*
+     * The size each bar sets what it holds in, stated against the text around the frame. They ship at the size of
+     * that text, so a bar reads as part of the page, and stand apart from the heading size: a bar is not a heading,
+     * and resizing the headings of a document leaves the frame around it as it was.
+     */
+
+    --tile-shell-head-font-size: 1em;
+    --tile-shell-foot-font-size: 1em;
 
     /*
      * The band each bar lays over the body it borders, so content leaving the column reads as passing under the bar
@@ -271,6 +280,8 @@ tile-shell {
             padding-top: var(--tile-shell-head-inset-top);
             padding-bottom: var(--tile-shell-head-inset-bottom);
 
+            font-size: var(--tile-shell-head-font-size);
+
             /* The band hangs below the bar, solid where the body meets it and gone a band later. */
 
             &::after {
@@ -358,6 +369,8 @@ tile-shell {
 
             padding-top: var(--tile-shell-foot-inset-top);
             padding-bottom: var(--tile-shell-foot-inset-bottom);
+
+            font-size: var(--tile-shell-foot-font-size);
 
             /* The band hangs above the bar, solid where the body meets it and gone a band earlier. */
 
@@ -580,6 +593,10 @@ tile-shell {
 
             padding-top: var(--tile-shell-head-inset-top);
             padding-bottom: var(--tile-shell-head-inset-bottom);
+
+            /* The mark is set at the size of the header, so it matches the control it stands in for. */
+
+            font-size: var(--tile-shell-head-font-size);
 
             pointer-events: none;
 

@@ -40,12 +40,11 @@ tile-link {
     }
 
     /*
-     * The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it, and
-     * sets it in the condensed face headings take, so it still reads as a link where nothing else marks it.
+     * The quiet step drops the underline and the link colour, leaving the link in the face and the ink of the text
+     * around it.
      */
 
     &[look="subtle"] > a {
-        font-family: var(--tile--font-family-heading);
         color: inherit;
         text-decoration-line: none;
     }

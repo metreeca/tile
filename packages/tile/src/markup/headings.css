@@ -25,7 +25,7 @@ h1 {
     padding-bottom: var(--tile--spacing-025);
     border-bottom-style: var(--tile--border-style);
     margin-bottom: var(--tile--spacing-100);
-    font-size: var(--tile--font-size-large);
+    font-size: calc(var(--tile--font-size-heading) * 1.25); /* A ratio on the heading size, which no em step can express. */
 }
 
 h2 {

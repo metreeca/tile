@@ -61,9 +61,9 @@
 }
 
 /*
- * The heading size is relative and level-independent: the hierarchy below the first level is carried by the face, the
- * weight and the space around a heading rather than by a ladder of sizes, so a deep outline stays readable in a
- * column. An app wanting a ladder overrides this token per level.
+ * The heading size is relative and sizes every level. The first level scales up from it, while the levels below take
+ * it as it stands and leave the hierarchy to the face, the weight and the space around a heading, so a deep outline
+ * stays readable in a column. An app resizing this token resizes every heading together.
  */
 
 @property --tile--font-size-heading {

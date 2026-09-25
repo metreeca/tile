@@ -29,9 +29,10 @@
  * **Sizes** — `fontSize` is absolute, so a page holds its rhythm wherever it is embedded, while `fontSizeSmall` and
  * `fontSizeLarge` are relative and take the size of whatever they sit in along.
  *
- * **Headings** — `fontSizeHeading` is one size for every level below the first, since the hierarchy is carried by the
+ * **Headings** — `fontSizeHeading` sizes every heading level, so an app resizing it resizes all headings together. The
+ * first level scales up from it, while the levels below take it as it stands, since their hierarchy is carried by the
  * face, the weight and the space around a heading rather than by a ladder of sizes, which keeps a deep outline
- * readable in a column. An app wanting a ladder overrides the token per level.
+ * readable in a column.
  * `letterSpacingHeading` ships neutral and lets the brand face decide, so an app supplying a condensed or a wide face
  * corrects the tracking without restating the rule.
  *

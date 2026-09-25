@@ -246,6 +246,16 @@ tile-button {
      * in the dark one, where the mixed tint gave 1.12:1 on the page and 1.03:1 on the tray.
      */
 
+    /*
+     * The reset hands every box the colour of the one around it, which a translucent cover turns into a second coat:
+     * the glyph would take the cover again and stand in a darker square on the fill. What the control carries is left
+     * unpainted, so the cover is laid once across the whole of it.
+     */
+
+    & > button > * {
+        background-color: transparent;
+    }
+
     &[mode="normal"] > button:enabled:hover {
         background-color: color-mix(in oklab, var(--tile--color) 6%, transparent);
     }

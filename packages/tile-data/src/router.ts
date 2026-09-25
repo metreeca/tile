@@ -193,13 +193,35 @@ export interface Router {
 	 * app alongside itself; an empty title, or one equal to the app name, leaves the app name alone. Passing a title
 	 * alone sets it without navigating. The enclosing {@link Router} renders again only if the route actually changes.
 	 *
-	 * @param route The route to navigate to, or the route, document title and history state to navigate to; an omitted
-	 *     field keeps the current value, and a `null` state clears it; a route relative to the current one, such as
-	 *     `../posts`, is resolved as a link would
-	 * @param replace True if the current history entry is to be replaced rather than followed by a new one; navigating
-	 *     to the current route always replaces it
+	 * @param route The route to navigate to, or the details of the navigation; a route relative to the current one,
+	 *     such as `../posts`, is resolved as a link would
 	 */
-	(route: string | { route?: string, title?: string, state?: unknown }, replace?: boolean): void;
+	(route: string | {
+
+		/**
+		 * The route to navigate to; the current route if omitted.
+		 */
+		route?: string
+
+		/**
+		 * The document title; the current title if omitted.
+		 */
+		title?: string
+
+		/**
+		 * The history state; the current state if omitted, cleared if `null`.
+		 */
+		state?: unknown
+
+		/**
+		 * True if the current history entry is to be replaced rather than followed by a new one; false otherwise.
+		 * Navigating to the current route always replaces it.
+		 *
+		 * @defaultValue false
+		 */
+		replace?: boolean
+
+	}): void;
 
 }
 
@@ -374,10 +396,10 @@ export function Router({
 	}, []);
 
 
-	const navigate = useCallback<Router>((entry, replace) => {
+	const navigate = useCallback<Router>(entry => {
 
-		const { route, title, state } = isString(entry)
-			? { route: entry, title: undefined, state: undefined }
+		const { route, title, state, replace } = isString(entry)
+			? { route: entry, title: undefined, state: undefined, replace: false }
 			: entry;
 
 		const $route = opt(route,
@@ -479,7 +501,7 @@ export function Routes({
 
 		if ( isDefined(target) ) {
 
-			navigate(target, true); // replacing the entry moved from, so going back never lands on it
+			navigate({ route: target, replace: true }); // replacing the entry moved from, so going back never lands on it
 
 		} else {
 

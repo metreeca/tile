@@ -761,7 +761,7 @@ describe("useRouter", () => {
 
 		const length = history.length;
 
-		navigate(navigators, "/other", true);
+		navigate(navigators, { route: "/other", replace: true });
 
 		expect(location.pathname).toBe("/other");
 		expect(history.length).toBe(length);

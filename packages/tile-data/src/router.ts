@@ -22,8 +22,8 @@
  * history, and {@link Routes} renders the view for it wherever the page layout places it. Components below the router
  * read the current route and navigate without being handed either.
  *
- * Routes are carried by the location path or by the location hash, as the site serving the page requires, and the same
- * routing works over either.
+ * Routes are carried by the location path, as root-relative paths such as `/users/123`, so the site serving the page
+ * falls back to the app page for every path it routes.
  *
  * @module
  */
@@ -93,7 +93,8 @@ export interface Router {
 	 * alone sets it without navigating. The enclosing {@link Router} renders again only if the route actually changes.
 	 *
 	 * @param route The route to navigate to, or the route, document title and history state to navigate to; an omitted
-	 *     field keeps the current value, and a `null` state clears it
+	 *     field keeps the current value, and a `null` state clears it; a route relative to the current one, such as
+	 *     `../posts`, is resolved as a link would
 	 * @param replace True if the current history entry is to be replaced rather than followed by a new one; navigating
 	 *     to the current route always replaces it
 	 */
@@ -131,26 +132,10 @@ export interface Router {
  */
 export function Router({
 
-	mode = "path",
-
 	fallback,
 	children
 
 }: {
-
-	/**
-	 * The part of the browser location carrying the route:
-	 *
-	 * - `path`, for sites served with a fallback to the app page, so every path reaches it: routes are read as
-	 *   root-relative paths such as `/users/123`, and a navigator also accepts routes relative to the current one, such
-	 *   as `../posts`, resolving them as a link would
-	 * - `hash`, for sites serving the app page at a single location: routes live in the fragment, as in `#/users/123`,
-	 *   so navigation never reaches the server
-	 *
-	 * @defaultValue `"path"`
-	 */
-	mode?: "path" | "hash"
-
 
 	/**
 	 * The handler for routes no {@link Routes} below the router handles, as one of:
@@ -172,13 +157,9 @@ export function Router({
 
 }) {
 
-	const read = mode === "hash"
-		? () => location.hash.substring(1)
-		: () => location.pathname;
+	const [route, setRoute] = useState(() => location.pathname);
 
-	const [route, setRoute] = useState(read);
-
-	const sync = () => setRoute(read()); // renders again only if the route actually changed
+	const sync = () => setRoute(location.pathname); // renders again only if the route actually changed
 
 
 	useEffect(() => {
@@ -226,7 +207,7 @@ export function Router({
 
 					try {
 
-						history.pushState(undefined, document.title, mode === "hash" ? `#${route}` : route);
+						history.pushState(undefined, document.title, route);
 
 					} finally {
 
@@ -289,7 +270,7 @@ export function Router({
 		}
 
 
-		sync(); // catches up with a location changed before the listeners were in place, or read in another mode
+		sync(); // catches up with a location changed before the listeners were in place
 
 		window.addEventListener("popstate", sync);
 		window.addEventListener("click", click);
@@ -303,7 +284,7 @@ export function Router({
 			window.removeEventListener("focusin", focusin);
 		};
 
-	}, [mode]);
+	}, []);
 
 
 	const navigate = useCallback<Router>((entry, replace) => {
@@ -313,7 +294,7 @@ export function Router({
 			: entry;
 
 		const $route = opt(route,
-			route => new URL(mode === "hash" ? `#${route}` : route, location.href).href,
+			route => new URL(route, location.href).href,
 			() => location.href
 		);
 
@@ -338,7 +319,7 @@ export function Router({
 
 		}
 
-	}, [mode]);
+	}, []);
 
 
 	return createElement(RouterContext.Provider, { value: { route, fallback, navigate } }, children);
@@ -444,8 +425,8 @@ export function Routes({
 /**
  * Retrieves the route navigator.
  *
- * The navigator stays the same for as long as the {@link Router} providing it keeps its mode, so a component reading
- * it renders again only as its own state requires, and a handler may keep it across navigations.
+ * The navigator stays the same for as long as the {@link Router} providing it is mounted, so a component reading it
+ * renders again only as its own state requires, and a handler may keep it across navigations.
  *
  * @returns The navigator provided by the innermost enclosing {@link Router}; a no-op outside any router
  */
@@ -458,8 +439,7 @@ export function useRouter(): Router {
  *
  * Renders the component again whenever the route changes, whether through navigation or browser history.
  *
- * @returns The current route, as carried by the location in the mode of the innermost enclosing {@link Router}; an
- *     empty string outside any router
+ * @returns The current route, as carried by the location path; an empty string outside any router
  */
 export function useRoute(): string {
 	return useContext(RouterContext).route;

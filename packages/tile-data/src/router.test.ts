@@ -32,12 +32,12 @@ type Routing = Parameters<typeof Routes>[0]["children"];
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
 
 
-function shell(children: ComponentChildren, mode?: "path" | "hash", fallback?: string | VNode): void {
-	act(() => render(createElement(Router, { fallback, mode, children }), document.body));
+function shell(children: ComponentChildren, fallback?: string | VNode): void {
+	act(() => render(createElement(Router, { fallback, children }), document.body));
 }
 
-function mount(routes: Routing, mode?: "path" | "hash", fallback?: string | VNode): void {
-	shell(createElement(Routes, { children: routes }), mode, fallback);
+function mount(routes: Routing, fallback?: string | VNode): void {
+	shell(createElement(Routes, { children: routes }), fallback);
 }
 
 function section(routes: Routing): FunctionComponent {
@@ -262,7 +262,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/users/123");
 
-			mount({ "/users/": createElement("p", {}, "users") }, "path", createElement(Here, {}));
+			mount({ "/users/": createElement("p", {}, "users") },createElement(Here, {}));
 
 			expect(text()).toBe("users");
 
@@ -272,7 +272,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			mount({ "/": createElement("p", {}, "home") }, "path", createElement(Here, {}));
+			mount({ "/": createElement("p", {}, "home") },createElement(Here, {}));
 
 			expect(text()).toBe("/other");
 
@@ -303,9 +303,9 @@ describe("Routes", () => {
 
 		it("should ignore the query and the hash", async () => {
 
-			history.replaceState(null, "", "/#/?q=1#h");
+			history.replaceState(null, "", "/?q=1#h");
 
-			mount({ "/": createElement("p", {}, "home") }, "hash");
+			mount({ "/": createElement("p", {}, "home") });
 
 			expect(text()).toBe("home");
 
@@ -334,22 +334,11 @@ describe("Routes", () => {
 
 		});
 
-		it("should move the location hash to the redirection", async () => {
-
-			history.replaceState(null, "", "/#/old");
-
-			mount({ "/old": "/new", "/new": createElement(Here, {}) }, "hash");
-
-			expect(location.hash).toBe("#/new");
-			expect(text()).toBe("/new");
-
-		});
-
 		it("should render the fallback view for an unhandled route", async () => {
 
 			history.replaceState(null, "", "/a/b/c");
 
-			mount({ "/": createElement("p", {}, "home") }, "path", createElement(Here, {}));
+			mount({ "/": createElement("p", {}, "home") },createElement(Here, {}));
 
 			expect(text()).toBe("/a/b/c");
 
@@ -359,7 +348,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/old");
 
-			mount({ "/old": "/missing" }, "path", createElement(Here, {}));
+			mount({ "/old": "/missing" },createElement(Here, {}));
 
 			expect(location.pathname).toBe("/missing");
 			expect(text()).toBe("/missing");
@@ -372,7 +361,7 @@ describe("Routes", () => {
 
 			const length = history.length;
 
-			mount({ "/": createElement("p", {}, "home") }, "path", "/");
+			mount({ "/": createElement("p", {}, "home") },"/");
 
 			expect(location.pathname).toBe("/");
 			expect(history.length).toBe(length);
@@ -390,7 +379,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			expect(() => mount({ "/": createElement("p", {}) }, "path", "/missing")).toThrow("unhandled route /missing");
+			expect(() => mount({ "/": createElement("p", {}) },"/missing")).toThrow("unhandled route /missing");
 
 		});
 
@@ -479,7 +468,7 @@ describe("Routes", () => {
 
 		mount({
 			"/users/": createElement("main", {}, "users ", createElement(section({ "/": createElement("p", {}, "list") }), {}))
-		}, "path", createElement(Here, {}));
+		},createElement(Here, {}));
 
 		expect(text()).toBe("users /users/123/posts");
 
@@ -492,7 +481,7 @@ describe("Routes", () => {
 		mount({
 			"/": createElement("p", {}, "home"),
 			"/users/": createElement(section({ "/": createElement("p", {}, "list") }), {})
-		}, "path", "/");
+		},"/");
 
 		expect(location.pathname).toBe("/");
 		expect(text()).toBe("home");
@@ -544,22 +533,6 @@ describe("Routes", () => {
 
 		expect(location.pathname).toBe("/users/all");
 		expect(history.length).toBe(length);
-		expect(text()).toBe("/users/all");
-
-	});
-
-	it("should redirect relative to the section in hash mode", async () => {
-
-		history.replaceState(null, "", "/#/users/");
-
-		mount({
-			"/users/": createElement(section({
-				"/": "/all",
-				"/all": createElement(Here, {})
-			}), {})
-		}, "hash");
-
-		expect(location.hash).toBe("#/users/all");
 		expect(text()).toBe("/users/all");
 
 	});
@@ -739,7 +712,7 @@ describe("useRouter", () => {
 });
 
 
-describe("modes", () => {
+describe("location", () => {
 
 	const Nav = ({ route }: { route: string }) => {
 		const router = useRouter();
@@ -751,23 +724,11 @@ describe("modes", () => {
 	}
 
 
-	describe("path", () => {
-
-		it("should be the default mode", async () => {
-
-			history.replaceState(null, "", "/a/b#/c");
-
-			shell(createElement(Here, {}));
-
-			expect(text()).toBe("/a/b");
-
-		});
-
-		it("should draw routes from the location path", async () => {
+	it("should draw routes from the location path", async () => {
 
 			history.replaceState(null, "", "/a/b?q=1#h");
 
-			shell(createElement(Here, {}), "path");
+			shell(createElement(Here, {}));
 
 			expect(text()).toBe("/a/b");
 
@@ -777,7 +738,7 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b");
 
-			shell(createElement(Nav, { route: "/c/d" }), "path");
+			shell(createElement(Nav, { route: "/c/d" }));
 
 			click();
 
@@ -790,57 +751,12 @@ describe("modes", () => {
 
 			history.replaceState(null, "", "/a/b?q=1#h");
 
-			shell(createElement(Nav, { route: "c" }), "path");
+			shell(createElement(Nav, { route: "c" }));
 
 			click();
 
 			expect(location.pathname).toBe("/a/c");
 			expect(text()).toBe("/a/c");
-
-		});
-
-	});
-
-	describe("hash", () => {
-
-		it("should draw routes from the location hash", async () => {
-
-			history.replaceState(null, "", "/x?q=1#/a/b");
-
-			shell(createElement(Here, {}), "hash");
-
-			expect(text()).toBe("/a/b");
-
-		});
-
-		it("should navigate by carrying routes in the location hash", async () => {
-
-			history.replaceState(null, "", "/x#/a/b");
-
-			shell(createElement(Nav, { route: "/c/d" }), "hash");
-
-			click();
-
-			expect(location.pathname).toBe("/x");
-			expect(location.hash).toBe("#/c/d");
-			expect(text()).toBe("/c/d");
-
-		});
-
-		it("should replace the current history entry when navigating to the current route", async () => {
-
-			history.replaceState(null, "", "/x#/a/b");
-
-			shell(createElement(Nav, { route: "/a/b" }), "hash");
-
-			const length = history.length;
-
-			click();
-
-			expect(location.hash).toBe("#/a/b");
-			expect(history.length).toBe(length);
-
-		});
 
 	});
 

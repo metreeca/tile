@@ -457,8 +457,22 @@ export function Routes({
 		? children
 		: { ...children, [Wildcard]: wild }; // the inherited catch-all goes last, as if declared here
 
-	const resolution = resolve(table, route, path);
-	const target = "move" in resolution ? resolution.move : undefined;
+	const invalid = Object.keys(table).find(glob =>
+		!glob.startsWith("/") || glob !== Wildcard && glob.includes("*")
+	);
+
+	if ( isDefined(invalid) ) {
+		throw new Error(`invalid route pattern <${invalid}>`);
+	}
+
+	const section = path.endsWith("/") ? route.slice(path.length-1) : "/"; // the route as the table sees it
+	const settled = settle(section, [section]);
+
+	const target = settled === section ? undefined
+		: settled === "/" ? path
+			: `${path.replace(/\/$/, "")}${settled}`;
+
+	const hit = lookup(section);
 
 
 	useLayoutEffect(() => { // moves the location before the blank render paints; the router renders again on its own
@@ -476,11 +490,92 @@ export function Routes({
 	}, [target, navigate]);
 
 
-	return "show" in resolution
-		? createElement(RoutesContext.Provider, {
-			value: { path: resolution.path, wild: table[Wildcard] }
-		}, resolution.show)
-		: null;
+	if ( isDefined(target) ) {
+
+		return null;
+
+	} else if ( isDefined(hit) ) {
+
+		const tail = hit.steps.groups?.$;
+
+		const opened = isDefined(tail) ? route.slice(0, route.length-tail.length+1) // up to the route below the subtree
+			: hit.glob === Wildcard ? path
+				: route;
+
+		return createElement(RoutesContext.Provider, { value: { path: opened, wild: table[Wildcard] } }, hit.entry);
+
+	} else {
+
+		throw new Error(`unhandled route ${section}`);
+
+	}
+
+
+	/**
+	 * Follows the redirections of the table from a section route.
+	 *
+	 * @returns The route the redirections lead to, the section route itself if it is not redirected
+	 */
+	function settle(route: string, trail: readonly string[]): string {
+
+		const hit = lookup(route);
+
+		if ( isDefined(hit) && isString(hit.entry) ) {
+
+			const { entry, steps } = hit;
+			const tail = steps.groups?.$;
+
+			const filled = entry.replace(/(?<=\/):(\w+)(?=[/?#]|$)/g, (_, step) => steps.groups?.[step] ?? "");
+			const target = isDefined(tail) && filled.endsWith("/") ? `${filled.slice(0, -1)}${tail}` : filled;
+
+			if ( trail.includes(target) ) {
+				throw new Error(`redirection loop <${trail.join(",")}>`);
+			}
+
+			return settle(target, [...trail, target]);
+
+		} else {
+
+			return route;
+
+		}
+
+	}
+
+	/**
+	 * Looks up the first pattern of the table matching a section route, in table order.
+	 *
+	 * @returns The matching pattern, its entry and the steps it captured, or undefined if no pattern matches
+	 */
+	function lookup(route: string) {
+
+		return Object.entries(table).flatMap(([glob, entry]) => {
+
+			const steps = pattern(glob).exec(route);
+
+			return isNull(steps) ? [] : [{ glob, entry, steps }];
+
+		}).at(0);
+
+
+		/**
+		 * Compiles a route pattern, capturing named steps under their name and the route below a subtree under `$`.
+		 */
+		function pattern(glob: string): RegExp {
+
+			const subtree = glob.length > 1 && glob.endsWith("/");
+			const steps = subtree ? glob.slice(0, -1) : glob;
+
+			return glob === Wildcard ? /^.*$/ : new RegExp(`^${steps
+
+				.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // escape regex metacharacters
+				.replace(/(?<=\/):(\w+)(?=\/|$)/g, "(?<$1>[^/]+)") // named steps
+
+			}${subtree ? "(?<$>/.*)" : "(?:[?#].*)?"}$`); // the route below a subtree, or the ignored query and hash
+
+		}
+
+	}
 
 }
 
@@ -508,196 +603,3 @@ export function useRoute(): string {
 	return useContext(RouterContext).route;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-type Table = Parameters<typeof Routes>[0]["children"];
-
-/**
- * What a {@link Routes} does for the current route: either move the location to another route, or show a view along
- * with the path of the section it opens, as described for {@link RoutesContext}.
- */
-type Resolution = Readonly<{ move: string } | { show: VNode, path: string }>;
-
-/**
- * What a table holds for a section route, after redirections: the route, the path of the section the matching
- * pattern opens within it, as described for {@link RoutesContext}, and the view for it, undefined if no pattern
- * matches.
- */
-type Match = Readonly<{ route: string, path: string, view: Optional<VNode> }>;
-
-
-/**
- * Resolves the current route against a table, within the section at a path.
- */
-function resolve(table: Table, route: string, path: string): Resolution {
-
-	const invalid = Object.keys(table).find(glob =>
-		!glob.startsWith("/") || glob !== Wildcard && glob.includes("*")
-	);
-
-	if ( isDefined(invalid) ) {
-
-		throw new Error(`invalid route pattern <${invalid}>`);
-
-	} else {
-
-		const rest = nest(path, route);
-		const matched = match(table, rest);
-		const current = join(path, matched.route);
-
-		if ( current !== route ) {
-
-			return { move: current }; // redirected
-
-		} else if ( isDefined(matched.view) ) {
-
-			return { show: matched.view, path: join(path, matched.path) };
-
-		} else {
-
-			throw new Error(`unhandled route ${rest}`);
-
-		}
-
-	}
-
-}
-
-/**
- * Maps a route to the route a table within the section at a path sees.
- */
-function nest(path: string, route: string): string {
-	return path.endsWith("/") ? route.slice(path.length-1) : "/"; // any other path is the whole route
-}
-
-/**
- * Maps a route a table within the section at a path sees back to the route it stands for.
- */
-function join(path: string, route: string): string {
-
-	if ( path.endsWith("/") ) {
-
-		return `${path}${route.slice(1)}`;
-
-	} else if ( route === "/" ) {
-
-		return path;
-
-	} else {
-
-		return `${path}${route}`;
-
-	}
-
-}
-
-/**
- * Matches a section route against a table, following redirections.
- */
-function match(table: Table, route: string): Match {
-
-	let trail: readonly string[] = [route];
-	let selected = select(table, route);
-
-	while ( isString(selected) ) {
-
-		if ( trail.includes(selected) ) {
-
-			throw new Error(`redirection loop <${trail.join(",")}>`);
-
-		} else {
-
-			trail = [...trail, selected];
-			selected = select(table, selected);
-
-		}
-
-	}
-
-	return selected;
-
-}
-
-/**
- * Selects the first pattern in a table matching a section route.
- *
- * @returns The route the matching redirection moves to, or the match for the route itself
- */
-function select(table: Table, route: string): string | Match {
-
-	const hit = Object.entries(table).flatMap(([glob, entry]) => {
-
-		const steps = pattern(glob).exec(route);
-
-		return isNull(steps) ? [] : [{ glob, entry, steps }];
-
-	}).at(0); // the first pattern in table order
-
-	const tail = hit?.steps.groups?.$; // the route below a subtree, undefined for other patterns
-
-	if ( !isDefined(hit) ) {
-
-		return { route, path: "/", view: undefined };
-
-	} else if ( !isString(hit.entry) ) {
-
-		return { route, path: opened(hit.glob, route, tail), view: hit.entry };
-
-	} else {
-
-		return redirect(hit.entry, hit.steps, tail);
-
-	}
-
-}
-
-/**
- * Identifies the path of the section a pattern opens within the section route it matched: the route up to the route
- * below a subtree, the root `/` for the catch-all pattern, the whole route for any other pattern.
- */
-function opened(glob: string, route: string, tail: Optional<string>): string {
-
-	if ( isDefined(tail) ) {
-
-		return route.slice(0, route.length-tail.length+1); // up to the leading slash of the route below
-
-	} else if ( glob === Wildcard ) {
-
-		return "/";
-
-	} else {
-
-		return route;
-
-	}
-
-}
-
-/**
- * Fills a redirection with the matched named steps, carrying the route below a subtree along after a trailing `/`.
- */
-function redirect(target: string, steps: RegExpExecArray, tail: Optional<string>): string {
-
-	const filled = target.replace(/(?<=\/):(\w+)(?=[/?#]|$)/g, (_, step) => steps.groups?.[step] ?? "");
-
-	return isDefined(tail) && filled.endsWith("/") ? `${filled.slice(0, -1)}${tail}` : filled;
-
-}
-
-/**
- * Compiles a route pattern, capturing named steps under their name and the route below a subtree under `$`.
- */
-function pattern(glob: string): RegExp {
-
-	const subtree = glob.length > 1 && glob.endsWith("/");
-	const steps = subtree ? glob.slice(0, -1) : glob;
-
-	return glob === Wildcard ? /^.*$/ : new RegExp(`^${steps
-
-		.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // escape regex metacharacters
-		.replace(/(?<=\/):(\w+)(?=\/|$)/g, "(?<$1>[^/]+)") // named steps
-
-	}${subtree ? "(?<$>/.*)" : "(?:[?#].*)?"}$`); // the route below a subtree, or the ignored query and hash
-
-}

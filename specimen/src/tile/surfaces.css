@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+/**** Boxes ***********************************************************************************************************/
+
+/* A boxed sample is a block of its own, so it keeps the room below it a paragraph would. */
+
+.boxed {
+    margin-bottom: var(--tile--spacing-100);
+}
+
+
 /**** Marks ***********************************************************************************************************/
 
 /* A blanket is legible only over something, so the sample lays it across a card carrying text. */

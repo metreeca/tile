@@ -15,7 +15,17 @@
  */
 
 import { describe, expectTypeOf, it } from "vitest";
-import { css, type Property, type Style, tile, type Token, type Value } from "./index.js";
+import {
+	css,
+	type Property,
+	type Radius,
+	type Shadow,
+	type Spacing,
+	type Style,
+	tile,
+	type Token,
+	type Value
+} from "./index.js";
 
 
 describe("tile", () => {
@@ -99,6 +109,38 @@ describe("css", () => {
 		expectTypeOf(css({ easingEnter: "easingExit" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ boxShadowRaised: "boxShadowOverlay" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ fontFamily: "fontFamilyMono" })).toEqualTypeOf<Style>();
+
+	});
+
+	it("takes a step off the ladder a box token is shaped on", () => {
+
+		expectTypeOf(css({ padding: "spacing100" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ borderRadius: "borderRadius050" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ boxShadow: "boxShadowRaised" })).toEqualTypeOf<Style>();
+
+		expectTypeOf(css({ padding: "1rem" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ padding: 0 })).toEqualTypeOf<Style>();
+
+	});
+
+	it("rejects a box token set off another ladder", () => {
+
+		// @ts-expect-error a colour where a padding goes
+		css({ padding: "colorStrong" });
+
+		// @ts-expect-error a radius where a padding goes
+		css({ padding: "borderRadius050" });
+
+		// @ts-expect-error a spacing where a radius goes
+		css({ borderRadius: "spacing100" });
+
+	});
+
+	it("keeps a box token off the ladder it is shaped on", () => {
+
+		expectTypeOf<"padding">().not.toExtend<Spacing>();
+		expectTypeOf<"borderRadius">().not.toExtend<Radius>();
+		expectTypeOf<"boxShadow">().not.toExtend<Shadow>();
 
 	});
 

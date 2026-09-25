@@ -28,6 +28,9 @@
  * A step sizing a thing against the text rather than spacing it from its neighbour belongs to the
  * {@link scalings scaling ladder} instead: a glyph, a spinner, a swatch or a dot is scaled, not spaced.
  *
+ * **Padding** — `padding` is not a step but the padding of the element it is assigned to, set from a step: no rule
+ * reads it, and assigning it through {@link index.css css} pads that element alone, leaving what it holds unpadded.
+ *
  * @module spacings
  */
 
@@ -45,6 +48,8 @@ export const spacings = {
 	spacing100: "--tile--spacing-100",
 	spacing150: "--tile--spacing-150",
 	spacing200: "--tile--spacing-200",
-	spacing250: "--tile--spacing-250"
+	spacing250: "--tile--spacing-250",
+
+	padding: "--tile--padding"
 
 } as const;

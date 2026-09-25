@@ -27,6 +27,9 @@
  * whatever size it is given and a subtree given a size of its own rounds to match. A shape rather than a corner, a
  * roundel or a pill, is a share of its box rather than a step on this ladder, and the component drawing it says so.
  *
+ * **Rounding** — `borderRadius` is not a step but the rounding of the element it is assigned to, set from a step: no
+ * rule reads it, and assigning it through {@link index.css css} rounds that element alone.
+ *
  * **Marks** — `outlineFocus` and `outlineInvalid` are whole `outline` shorthand values rather than colours, so a rule
  * states the mark in one declaration and an app retuning the anchors carries it along. `outline-offset` is not part of
  * that shorthand, so a rule setting either mark states the offset alongside it, and a mark left at the offset the
@@ -56,6 +59,7 @@ export const borders = {
 	borderRadius075: "--tile--border-radius-075",
 	borderRadius100: "--tile--border-radius-100",
 
+	borderRadius: "--tile--border-radius",
 	outlineFocus: "--tile--outline-focus",
 	outlineInvalid: "--tile--outline-invalid",
 

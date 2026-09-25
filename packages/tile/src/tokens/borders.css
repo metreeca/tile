@@ -20,7 +20,8 @@
  * where the line is a vector glyph rather than a border.
  *
  * Nothing here carries a plain default beside its ladder: a box names the step it rounds on, as it names the step it
- * is spaced on, so one reading serves both.
+ * is spaced on, so one reading serves both. The border radius token is no such default, since no rule reads it: it
+ * rounds the one element it is assigned to.
  */
 
 @property --tile--border-style {
@@ -71,6 +72,17 @@
     syntax: "*";
     inherits: true;
     initial-value: 1em;
+}
+
+/*
+ * The rounding of the element it is assigned to, set from a step rather than a step itself. No rule reads it: the
+ * assignment rounds that element alone, so it starts from square corners.
+ */
+
+@property --tile--border-radius {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0;
 }
 
 @property --tile--outline-focus {

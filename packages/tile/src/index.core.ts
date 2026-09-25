@@ -33,7 +33,8 @@ import type { Token } from "./index.js";
  * it is assigned rather than every name the design system carries, or every name of the same broad sort: a text size
  * offers the type and scaling ladders, both of which are measured against the text, and not the spacing one, though
  * all three are lengths, because a size set from a gap is not a thing anyone means. A token belonging to no ladder, a
- * flag or a keyword, resolves to nothing and is left to the literal alone.
+ * flag or a keyword, resolves to nothing and is left to the literal alone. A box token, shaping the element it is
+ * assigned to, resolves to the ladder it is set from without being a step on it.
  *
  * @typeParam K The token being assigned
  */
@@ -43,8 +44,8 @@ export type Alias<K extends Token> =
 			K extends Fill ? Fill :
 				K extends Type ? Type | Scaling :
 					K extends Scaling ? Scaling :
-						K extends Spacing ? Spacing :
-							K extends Radius ? Radius :
+						K extends Spacing | Padding ? Spacing :
+							K extends Radius | Rounding ? Radius :
 								K extends Stroke ? Stroke :
 									K extends Tracking ? Tracking :
 										K extends Weight ? Weight :
@@ -52,7 +53,7 @@ export type Alias<K extends Token> =
 												K extends Layer ? Layer :
 													K extends Timing ? Timing :
 														K extends Easing ? Easing :
-															K extends Shadow ? Shadow :
+															K extends Shadow | Lifting ? Shadow :
 																K extends Family ? Family :
 																	never
 
@@ -72,7 +73,7 @@ export type Alias<K extends Token> =
  */
 export type Literal<K extends Token> =
 	K extends Palette | Ink | Fill ? Paint :
-		K extends Type | Scaling | Spacing | Radius | Stroke | Tracking ? Size :
+		K extends Type | Scaling | Spacing | Radius | Stroke | Tracking | Padding | Rounding ? Size :
 			K extends "lineHeight" ? Leading :
 				K extends Weight ? Heft :
 					K extends Opacity ? Fade :
@@ -82,7 +83,7 @@ export type Literal<K extends Token> =
 									K extends "borderStyle" ? Line :
 										K extends "look" ? Look :
 											K extends Flag ? Switch :
-												K extends Family | Shadow ? Open :
+												K extends Family | Shadow | Lifting ? Open :
 													never
 
 
@@ -126,9 +127,9 @@ export type Scaling = Extract<Token, `scaling${string}`>
 export type Spacing = Extract<Token, `spacing${string}`>
 
 /**
- * The tokens rounding a corner.
+ * The steps a corner is rounded on.
  */
-export type Radius = Extract<Token, `borderRadius${string}`>
+export type Radius = Exclude<Extract<Token, `borderRadius${string}`>, Rounding>
 
 /**
  * The tokens sizing a line.
@@ -166,9 +167,9 @@ export type Timing = Extract<Token, `duration${string}`>
 export type Easing = Extract<Token, `easing${string}`>
 
 /**
- * The tokens carrying a shadow or an outline, stated as a whole shorthand.
+ * The steps a shadow or an outline is drawn from, each stated as a whole shorthand.
  */
-export type Shadow = Extract<Token, `boxShadow${string}` | `outline${string}`>
+export type Shadow = Exclude<Extract<Token, `boxShadow${string}` | `outline${string}`>, Lifting>
 
 /**
  * The tokens carrying a font stack.
@@ -179,6 +180,21 @@ export type Family = Extract<Token, `fontFamily${string}`>
  * The tokens telling which breakpoints the viewport has passed.
  */
 export type Flag = Extract<Token, `viewport${string}`>
+
+/**
+ * The token padding the element it is assigned to, set from a {@link Spacing spacing step}.
+ */
+export type Padding = Extract<Token, "padding">
+
+/**
+ * The token rounding the element it is assigned to, set from a {@link Radius radius step}.
+ */
+export type Rounding = Extract<Token, "borderRadius">
+
+/**
+ * The token lifting the element it is assigned to, set from a {@link Shadow shadow step}.
+ */
+export type Lifting = Extract<Token, "boxShadow">
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

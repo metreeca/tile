@@ -116,24 +116,32 @@ import { visuals } from "./tokens/visuals.js";
 
 
 /**
- * The CSS property a token is applied through as well as assigned, for a token the page alone reads.
+ * The CSS property a token is applied through as well as assigned, for a token no rule below the page reads.
  *
  * Every other token is read by a rule on the elements that take it, so assigning it anywhere is enough to restyle
- * what stands below. A token listed here is read a single time, where the page sets its own defaults, and an element
- * further down takes the property it inherits rather than looking the token up again. Assigning one of them to an
- * area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to predict from the
- * name. Applying the property alongside the assignment makes the area behave as every other token already leads them
- * to expect.
+ * what stands below. A token listed here is read at most a single time, where the page sets its own defaults, and an
+ * element further down takes the property it inherits rather than looking the token up again. Assigning one of them to
+ * an area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to predict from
+ * the name. Applying the property alongside the assignment makes the area behave as every other token already leads
+ * them to expect.
  *
- * A token joins the list on that condition alone, whatever it decides: the page is its only reader, and the entry
- * names the property the page states it through, which is what carries an override down the subtree.
+ * A token joins the list on that condition alone, whatever it decides, and the entry names the property it is applied
+ * through: an inherited one carries an override down the subtree, as the typography and the colours do, while the box
+ * tokens name properties that do not inherit, so each shapes the element it is assigned to and nothing inside it.
  */
-const inherited: Readonly<Record<string, string>> = {
+const applied: Readonly<Record<string, string>> = {
 
 	fontFamily: "font-family",
 	fontSize: "font-size",
 	fontWeight: "font-weight",
-	lineHeight: "line-height"
+	lineHeight: "line-height",
+
+	color: "color",
+	backgroundColor: "background-color",
+
+	padding: "padding",
+	borderRadius: "border-radius",
+	boxShadow: "box-shadow"
 
 };
 
@@ -250,7 +258,10 @@ export type {
 	Easing,
 	Shadow,
 	Family,
-	Flag
+	Flag,
+	Padding,
+	Rounding,
+	Lifting
 } from "./index.core.js";
 
 
@@ -283,7 +294,14 @@ export type {
  * it, since the page states each of them once and nothing below reads them again; an area given one of the four is
  * therefore written in it, rather than assigning a value nothing would consult. What an area holds inherits them as
  * it inherits any other, so a size stated on an area compounds with a size stated on an area inside it, exactly as
- * CSS has it.
+ * CSS has it. The text and background colours are applied the same way, so an area given either is painted in it.
+ *
+ * The box tokens, `padding`, `borderRadius` and `boxShadow`, are read by no rule at all, and are applied to the
+ * element they are assigned to alone, padding, rounding or lifting it without reaching what it holds:
+ *
+ * ```tsx
+ * <section style={css({ padding: "spacing100", borderRadius: "borderRadius050" })}>
+ * ```
  *
  * Reading a token where a single CSS value is written by hand, rather than assigning one, goes through
  * {@link css css.var} instead.
@@ -292,7 +310,7 @@ export type {
  *
  * @returns An immutable {@link Style style declaration} assigning the {@link Property custom property} of each token
  * given a defined value in `tokens` its text form, or a reference to the token it names, and applying the CSS
- * property as well for the four the page carries its own typography in
+ * property as well for the typography and the colours the page carries its own defaults in, and for the box tokens
  */
 export const css = Object.assign(
 
@@ -304,7 +322,7 @@ export const css = Object.assign(
 			.filter(([, value]) => value !== undefined)
 			.flatMap(([token, value]) => {
 
-				const property = inherited[token];
+				const property = applied[token];
 
 				// a value naming a token stands for what that token carries; no CSS value is spelt as a token name,
 				// the names being camel-cased identifiers and CSS values keywords, numbers, colours and functions

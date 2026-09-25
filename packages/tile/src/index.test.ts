@@ -175,6 +175,42 @@ describe("css", () => {
 
 	});
 
+	it("paints an area in the colours it is given, the page reading them only for itself", () => {
+
+		expect(css({
+
+			color: "colorStrong",
+			backgroundColor: "backgroundColorRaised"
+
+		})).toEqual({
+
+			"--tile--color": "var(--tile--color-strong)", "color": "var(--tile--color-strong)",
+			"--tile--background-color": "var(--tile--background-color-raised)",
+			"background-color": "var(--tile--background-color-raised)"
+
+		});
+
+	});
+
+	it("shapes the box of the element it is given, no rule reading the box tokens", () => {
+
+		expect(css({
+
+			padding: "spacing100",
+			borderRadius: "borderRadius050",
+			boxShadow: "boxShadowRaised"
+
+		})).toEqual({
+
+			"--tile--padding": "var(--tile--spacing-100)", "padding": "var(--tile--spacing-100)",
+			"--tile--border-radius": "var(--tile--border-radius-050)",
+			"border-radius": "var(--tile--border-radius-050)",
+			"--tile--box-shadow": "var(--tile--box-shadow-raised)", "box-shadow": "var(--tile--box-shadow-raised)"
+
+		});
+
+	});
+
 	it("sets a token from another named as the value", () => {
 
 		expect(css({ fontSize: "fontSizeLarge" })).toEqual({
@@ -243,12 +279,19 @@ describe("css", () => {
 
 				...Object.values(tile).map(property => [ property, "value" ]),
 
-				// the four the page carries its own typography in are written as well as assigned
+				// the tokens the page alone reads, and the box tokens no rule reads, are applied as well as assigned
 
 				[ "font-family", "value" ],
 				[ "font-size", "value" ],
 				[ "font-weight", "value" ],
-				[ "line-height", "value" ]
+				[ "line-height", "value" ],
+
+				[ "color", "value" ],
+				[ "background-color", "value" ],
+
+				[ "padding", "value" ],
+				[ "border-radius", "value" ],
+				[ "box-shadow", "value" ]
 
 			]));
 

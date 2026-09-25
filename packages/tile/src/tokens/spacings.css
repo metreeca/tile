@@ -62,3 +62,14 @@
     inherits: true;
     initial-value: 2.5em;
 }
+
+/*
+ * The padding of the element it is assigned to, set from a step rather than a step itself. No rule reads it: the
+ * assignment pads that element alone, so it starts from no padding at all.
+ */
+
+@property --tile--padding {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0;
+}

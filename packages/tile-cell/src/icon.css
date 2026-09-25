@@ -27,14 +27,6 @@
     width: var(--tile--scaling-100);
     height: var(--tile--scaling-100);
 
-    /*
-     * A glyph left on the baseline stands above the room the line keeps for descenders, reading high beside the text
-     * and high in any box holding it alone. It is centred on the middle of the lowercase letters instead, where the
-     * text around it has its visual centre.
-     */
-
-    vertical-align: middle;
-
     stroke-width: var(--tile--stroke-width);
 
 }

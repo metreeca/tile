@@ -22,7 +22,18 @@
 
 tile-link {
 
+    /*
+     * A logo or an icon riding in the link is centred on its wording, so neither needs an alignment of its own and
+     * neither stretches the line the link stands in.
+     */
+
+    display: inline-flex;
+
     & > a {
+
+        display: inline-flex;
+        align-items: center;
+
         font-weight: inherit;
         text-decoration-line: underline;
         text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
@@ -46,7 +57,6 @@ tile-link {
 
     &[look="strong"] > a {
 
-        font-size: var(--tile--font-size-small);
         font-weight: var(--tile--font-weight-heavy);
         color: var(--tile--color);
 

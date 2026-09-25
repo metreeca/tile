@@ -510,6 +510,16 @@ tile-shell {
         }
 
         /*
+         * The navigation keeps to the end of the bar whether a heading stands before it or not, which is where the
+         * mark standing in for it comes to rest. It is told from the heading by the name the heading carries for the
+         * landmark, the navigation carrying none.
+         */
+
+        & > header > span:not([id]) {
+            margin-left: auto;
+        }
+
+        /*
          * The body stacks the content over the notice closing it, and the notice takes whatever room the content
          * leaves: short content leaves it resting at the bottom of the column, just above the footer or at the edge
          * of the frame where no footer stands, and long content pushes it down to follow on after it. Either way it

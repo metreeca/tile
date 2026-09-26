@@ -23,11 +23,19 @@
  * @module
  */
 
-import type { Fetch } from "@metreeca/http";
+import type { ResourceShape } from "@metreeca/blue/resource";
+import type { Lazy, Optional } from "@metreeca/core";
+import { createRelay, type Relay } from "@metreeca/core/relay";
+import { resolve } from "@metreeca/core/resource";
+import { type Fetch, NotFound } from "@metreeca/http";
+import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
+import type { Instance, LookedUp } from "@metreeca/keep/_blue/value";
+import type { Template } from "@metreeca/qest/model";
+import type { Reference } from "@metreeca/qest/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
-import { useContext, useState } from "preact/hooks";
+import { useContext, useEffect, useState } from "preact/hooks";
 import { useFetch } from "./fetch.js";
 
 
@@ -88,4 +96,226 @@ export function Store({
  */
 export function useStore(): Store {
 	return useContext(Context);
+}
+
+/**
+ * Binds a component to a resource held by the shared store.
+ *
+ * Retrieves the resource from the store offered by the innermost enclosing {@link Store} context and keeps the
+ * component in step with it, so that a view renders what the store holds and writes changes back without driving
+ * exchanges of its own: the resource is retrieved again whenever the store signals a change to it, whoever made it.
+ *
+ * A missing resource, a rejected write and a failed exchange alike move the binding to its `error` state, so that a
+ * view shows them where it shows the resource and offers to retry from there; an operation the view called also
+ * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure.
+ *
+ * @typeParam S The shape describing the resource
+ * @typeParam T The template stating which values of the resource are wanted
+ *
+ * @param options The resource to be bound, the shape describing it and the values wanted; read as the component
+ *     first renders and whenever the store or the resource identifier change, so a view is expected to keep the
+ *     shape and the template stable for the lifetime of the component
+ *
+ * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
+ *     while the resource is being retrieved, `ready` with the resource and the operations writing it back to the
+ *     store, `stale` with the resource last retrieved while it is being refreshed, or `error` with the
+ *     {@link Problem} that prevented any of them
+ */
+export function useResource<S extends Lazy<ResourceShape>, T extends Template>({ // !!! enforce S/T consistency
+
+	entry,
+	shape,
+	model
+
+}: {
+
+	/**
+	 * The absolute identifier of the resource.
+	 */
+	readonly entry: Reference;
+
+	/**
+	 * The shape the retrieved resource is validated against, possibly deferred to break definition cycles.
+	 */
+	readonly shape: S;
+
+	/**
+	 * The template stating which values of the resource are retrieved; the value handed back holds these and nothing
+	 * wider.
+	 */
+	readonly model: T;
+
+
+}): Relay<{
+
+	/**
+	 * The resource is being retrieved, with neither a value nor an error to show yet.
+	 */
+	readonly blank: void
+
+	/**
+	 * The resource is retrieved and in step with the store.
+	 */
+	readonly ready: {
+
+		/**
+		 * The resource as the store currently holds it, narrowed to the values the template asks for.
+		 */
+		state: LookedUp<S, T>
+
+		/**
+		 * Replaces the resource in the store.
+		 *
+		 * @param state The complete replacement state of the resource
+		 *
+		 * @returns A promise resolving once the store has handled the write, the binding following the change as the
+		 *     store signals it; rejects with the {@link Problem} the binding moves to `error` with, if the resource
+		 *     is missing or the write fails
+		 */
+		update(state: Instance<S>): Promise<void>
+
+		/**
+		 * Removes the resource from the store.
+		 *
+		 * @returns A promise resolving to the absolute identifier of the collection the removed resource belonged to
+		 *     (`https://example.com/c/` for `https://example.com/c/r`), so that a view can move there; rejects with
+		 *     the {@link Problem} the binding moves to `error` with, if the resource is missing or the removal fails
+		 */
+		delete(): Promise<Reference>
+
+	}
+
+	/**
+	 * The last known state of the resource, superseded by a change the store signalled and not yet retrieved.
+	 *
+	 * The binding moves back to `ready` once the change is retrieved, or to `error` if the retrieval fails; no write
+	 * is offered meanwhile, as it would be based on values the store no longer holds.
+	 */
+	readonly stale: {
+
+		/**
+		 * The resource as it was last retrieved, narrowed to the values the template asks for.
+		 */
+		state: LookedUp<S, T>
+
+	}
+
+	/**
+	 * The last exchange with the store failed, whether retrieving the resource or writing it back.
+	 */
+	readonly error: {
+
+		/**
+		 * The problem describing the failure.
+		 */
+		readonly state: Problem
+
+		/**
+		 * Retrieves the resource again, moving the binding back to `blank` until the store answers.
+		 *
+		 * @returns A promise resolving once the resource is retrieved and the binding is `ready`; rejects with the
+		 *     {@link Problem} the binding moves back to `error` with, if the resource is missing or the retrieval
+		 *     fails
+		 */
+		reload(): Promise<void>
+
+	}
+
+
+}> {
+
+	type Options = ReturnType<typeof useResource<S, T>> extends Relay<infer O> ? O : never;
+
+
+	const store = useStore();
+
+	const [status, setStatus] = useState<Optional<
+		| { readonly state: LookedUp<S, T>, readonly stale: boolean }
+		| { readonly error: Problem }
+	>>(undefined);
+
+
+	// the store signals changes for as long as the component observes it, outliving any single render
+
+	useEffect(() => {
+
+		reload().catch(stated);
+
+		return store.observe(refresh, entry);
+
+	}, [store, entry]);
+
+
+	return createRelay<Options>(status === undefined ? { blank: undefined }
+		: "error" in status ? { error: { state: status.error, reload } }
+			: status.stale ? { stale: { state: status.state } }
+				: { ready: { state: status.state, update, delete: remove } }
+	);
+
+
+	function reload(): Promise<void> {
+
+		setStatus(undefined);
+
+		return retrieve();
+
+	}
+
+	function refresh(): Promise<void> {
+
+		// the latest status, as the observer outlives the render that registered it
+
+		setStatus(current => current !== undefined && "state" in current ? { ...current, stale: true } : current);
+
+		return retrieve().catch(stated);
+
+	}
+
+	function retrieve(): Promise<void> {
+		return store.lookup({ entry, shape, model })
+			.then(state => state === undefined ? Promise.reject(missing()) : setStatus({ state, stale: false }))
+			.catch(reject);
+	}
+
+	function update(state: Instance<S>): Promise<void> {
+		return store.update({ entry, shape, state })
+			.then(reference => reference === undefined ? Promise.reject(missing()) : undefined)
+			.catch(reject);
+	}
+
+	function remove(): Promise<Reference> {
+		return store.delete({ entry, shape })
+			.then(reference => reference === undefined ? Promise.reject(missing()) : parent())
+			.catch(reject);
+	}
+
+
+	function parent(): Reference {
+		return resolve(entry, entry.endsWith("/") ? ".." : ".");
+	}
+
+
+	function missing(): Problem {
+		return toProblem({
+
+			status: NotFound
+
+		});
+	}
+
+	/**
+	 * Absorbs a failure no caller waits on, the binding already stating it as its `error` state.
+	 */
+	function stated(): void {}
+
+	function reject(issue: unknown): Promise<never> {
+
+		const error = toProblem(issue);
+
+		setStatus({ error });
+
+		return Promise.reject(error);
+
+	}
+
 }

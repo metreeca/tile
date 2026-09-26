@@ -602,6 +602,8 @@ export function Routes({
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Retrieves the route navigator.
  *
@@ -624,4 +626,3 @@ export function useRouter(): Router {
 export function useRoute(): string {
 	return useContext(RouterContext).route;
 }
-

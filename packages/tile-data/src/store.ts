@@ -135,10 +135,9 @@ export function useStore(): Store {
  *     to keep the shape stable for the lifetime of the component
  *
  * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
- *     until the resource is first retrieved or while a failed exchange is retried, `ready` with the resource and the
- *     operations writing it back to the store, `stale` with the resource last retrieved while it is being refreshed,
- *     or `error` with the {@link Problem} that prevented any of them; a state is kept until the next one supersedes
- *     it, including while the resource of a new identifier is retrieved
+ *     until the resource is first retrieved, `ready` with the resource and the operations writing it back to the
+ *     store, or `error` with the {@link Problem} that prevented either; a state is kept until the next one supersedes
+ *     it, including while the resource is retrieved again after a change, under a new identifier or on reload
  *
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
@@ -178,12 +177,12 @@ export function useResource<
 }): Relay<{
 
 	/**
-	 * The resource is being retrieved, with neither a value nor an error to show.
+	 * The resource is being retrieved for the first time, with neither a value nor an error to show.
 	 */
 	readonly blank: void
 
 	/**
-	 * The resource is retrieved and in step with the store.
+	 * The resource is retrieved, and stays on show while a change the store signals is retrieved again.
 	 */
 	readonly ready: {
 
@@ -215,20 +214,6 @@ export function useResource<
 	}
 
 	/**
-	 * The last known state of the resource, superseded by a change the store signalled and not yet retrieved.
-	 *
-	 * Moves back to `ready` once the change is retrieved, or to `error` if that fails; no write is offered meanwhile.
-	 */
-	readonly stale: {
-
-		/**
-		 * The resource as it was last retrieved, narrowed to the values the template asks for.
-		 */
-		state: LookedUp<S, T>
-
-	}
-
-	/**
 	 * The last exchange with the store failed, whether retrieving the resource or writing it back.
 	 */
 	readonly error: {
@@ -239,7 +224,7 @@ export function useResource<
 		readonly state: Problem
 
 		/**
-		 * Retrieves the resource again, moving the binding back to `blank` until the store answers.
+		 * Retrieves the resource again, the binding staying in `error` until the store answers.
 		 *
 		 * @returns A promise resolving once the resource is retrieved and the binding is `ready`; rejects with the
 		 *     {@link Problem} the binding moves back to `error` with, if the resource is missing or the retrieval
@@ -293,7 +278,8 @@ export function useResource<
  * The template is typed and held stable as for {@link useResource}, and may likewise be fixed or replaced at runtime.
  *
  * @typeParam S The shape describing the resource holding the collection
- * @typeParam F The name of the property collecting the items
+ * @typeParam F The name of the property collecting the items, inferred as written so that the items are typed after
+ *     that property alone
  * @typeParam T The template or projection stating which values of each item are wanted
  *
  * @param options The resource holding the collection, the property collecting the items, the shape describing the
@@ -301,16 +287,16 @@ export function useResource<
  *     resource identifier, the property or the template change
  *
  * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
- *     until the collection is first retrieved or while a failed exchange is retried, `ready` with the items and the
- *     operation adding one, `stale` with the items last retrieved while they are being refreshed, or `error` with the
- *     {@link Problem} that prevented any of them; a state is kept until the next one supersedes it
+ *     until the collection is first retrieved, `ready` with the items and the operation adding one, or `error` with
+ *     the {@link Problem} that prevented either; a state is kept until the next one supersedes it, including while
+ *     the collection is retrieved again after a change or on reload
  *
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
 export function useCollection<
 	S extends Lazy<ResourceShape>,
-	F extends Repeated<S>,
+	const F extends Repeated<S>,
 	T extends Template | Projection
 >({ // !!! enforce S/T consistency
 
@@ -351,12 +337,12 @@ export function useCollection<
 }): Relay<{
 
 	/**
-	 * The collection is being retrieved, with neither items nor an error to show.
+	 * The collection is being retrieved for the first time, with neither items nor an error to show.
 	 */
 	readonly blank: void
 
 	/**
-	 * The collection is retrieved and in step with the store.
+	 * The collection is retrieved, and stays on show while a change the store signals is retrieved again.
 	 */
 	readonly ready: {
 
@@ -379,20 +365,6 @@ export function useCollection<
 	}
 
 	/**
-	 * The last known items of the collection, superseded by a change the store signalled and not yet retrieved.
-	 *
-	 * Moves back to `ready` once the change is retrieved, or to `error` if that fails; no item can be added meanwhile.
-	 */
-	readonly stale: {
-
-		/**
-		 * The items as they were last retrieved, narrowed to the values the template asks for.
-		 */
-		state: Items<S, F, T>
-
-	}
-
-	/**
 	 * The last exchange with the store failed, whether retrieving the collection or adding an item to it.
 	 */
 	readonly error: {
@@ -403,7 +375,7 @@ export function useCollection<
 		readonly state: Problem
 
 		/**
-		 * Retrieves the collection again, moving the binding back to `blank` until the store answers.
+		 * Retrieves the collection again, the binding staying in `error` until the store answers.
 		 *
 		 * @returns A promise resolving once the collection is retrieved and the binding is `ready`; rejects with the
 		 *     {@link Problem} the binding moves back to `error` with, if the resource is missing or the retrieval
@@ -483,7 +455,6 @@ function useEntry<V, W extends object>({
 
 	readonly blank: void
 	readonly ready: { readonly state: V } & W
-	readonly stale: { readonly state: V }
 	readonly error: { readonly state: Problem, reload(): Promise<void> }
 
 }> {
@@ -495,7 +466,7 @@ function useEntry<V, W extends object>({
 
 		void track();
 
-		return store.observe(refresh, entry);
+		return store.observe(track, entry);
 
 	}, [store, entry, field, model]);
 
@@ -504,22 +475,6 @@ function useEntry<V, W extends object>({
 
 
 	function reload(): Promise<void> {
-
-		setOption({ blank: undefined });
-
-		return retrieve();
-
-	}
-
-	function refresh(): Promise<void> { // the latest option, as the observer outlives the render that registered it
-
-		setOption(current => current.ready ? { stale: { state: current.ready.state } } : current);
-
-		return track();
-
-	}
-
-	function retrieve(): Promise<void> {
 		return settle(lookup()).then(ready);
 	}
 

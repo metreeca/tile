@@ -59,7 +59,6 @@ function mount(store: Backend, target: string = entry): () => Binding {
 		return createElement("output", {}, binding({
 			blank: "blank",
 			ready: ({ state }) => `ready ${JSON.stringify(state)}`,
-			stale: ({ state }) => `stale ${JSON.stringify(state)}`,
 			error: ({ state }) => `error ${state.status}`
 		}));
 
@@ -232,7 +231,6 @@ describe("useResource()", () => {
 				return createElement("output", {}, useResource({ entry, shape, model })({
 					blank: "blank",
 					ready: ({ state }) => `ready ${JSON.stringify(state)}`,
-					stale: ({ state }) => `stale ${JSON.stringify(state)}`,
 					error: ({ state }) => `error ${state.status}`
 				}));
 			}
@@ -264,7 +262,6 @@ describe("useResource()", () => {
 				return createElement("output", {}, useResource({ entry, shape, model })({
 					blank: "blank",
 					ready: ({ state }) => `ready ${JSON.stringify(state)}`,
-					stale: ({ state }) => `stale ${JSON.stringify(state)}`,
 					error: ({ state }) => `error ${state.status}`
 				}));
 			}
@@ -322,7 +319,7 @@ describe("useResource()", () => {
 
 		});
 
-		it("should be stale while the resource is refreshed", async () => {
+		it("should keep the resource while it is retrieved again", async () => {
 
 			const lookup = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
@@ -333,7 +330,8 @@ describe("useResource()", () => {
 
 			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
 
-			await settled(`stale ${JSON.stringify(resource)}`);
+			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
 
 		});
 
@@ -504,6 +502,21 @@ describe("useResource()", () => {
 
 		});
 
+		it("should keep the error while the resource is retrieved again", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
+
+			const binding = mount(backend({ lookup }));
+
+			await settled(`error ${NotFound}`);
+
+			act(() => void binding()({ error: ({ reload }) => reload() }));
+
+			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(text()).toBe(`error ${NotFound}`);
+
+		});
+
 		it("should reject on a failed retrieval, moving to error", async () => {
 
 			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValue({ status: 503 });
@@ -550,7 +563,6 @@ describe("useCollection()", () => {
 			return createElement("output", {}, binding({
 				blank: "blank",
 				ready: ({ state }) => `ready ${JSON.stringify(state)}`,
-				stale: ({ state }) => `stale ${JSON.stringify(state)}`,
 				error: ({ state }) => `error ${state.status}`
 			}));
 
@@ -620,6 +632,16 @@ describe("useCollection()", () => {
 
 		});
 
+		it("should type the items of the property named, not of every collecting property", async () => {
+
+			const Tagged = shaped({ id: id(), members: multiple(reference(Item)), tags: multiple(string()) });
+
+			void (() => useCollection({ entry, field: "members", shape: Tagged, model })({
+				ready: ({ state }) => expectTypeOf(state).toEqualTypeOf<readonly { readonly label: string }[]>()
+			}));
+
+		});
+
 		it("should move to error on a missing resource", async () => {
 
 			mount(collection({ lookup: async () => undefined }));
@@ -664,7 +686,7 @@ describe("useCollection()", () => {
 
 		});
 
-		it("should be stale while the collection is refreshed", async () => {
+		it("should keep the items while they are retrieved again", async () => {
 
 			const lookup = vi.fn().mockResolvedValueOnce({ members: items }).mockReturnValue(new Promise(() => {}));
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
@@ -675,7 +697,8 @@ describe("useCollection()", () => {
 
 			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
 
-			await settled(`stale ${JSON.stringify(items)}`);
+			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(text()).toBe(`ready ${JSON.stringify(items)}`);
 
 		});
 
@@ -739,6 +762,21 @@ describe("useCollection()", () => {
 			await binding()({ error: ({ reload }) => reload() });
 
 			await settled(`ready ${JSON.stringify(items)}`);
+
+		});
+
+		it("should keep the error while the collection is retrieved again", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
+
+			const binding = mount(collection({ lookup }));
+
+			await settled(`error ${NotFound}`);
+
+			act(() => void binding()({ error: ({ reload }) => reload() }));
+
+			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(text()).toBe(`error ${NotFound}`);
 
 		});
 

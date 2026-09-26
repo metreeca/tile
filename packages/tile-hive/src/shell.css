@@ -324,6 +324,20 @@ tile-shell {
 
             font-size: var(--tile-shell-head-font-size);
 
+            /*
+             * A bar that stands is held to at least the height of a subtle icon button between its insets, whatever it
+             * was given to show, so a heading standing alone, a link at its end or a control coming and going leaves
+             * the bar where it was rather than folding the body up and down beneath it. The floor is the one a glyph
+             * button sizes itself to, the larger of its minimum target and its glyph with the air around it, so the
+             * two stay level however either ladder is retuned. A bar holding something taller still grows to fit.
+             */
+
+            min-height: calc(
+                var(--tile-shell-head-inset-top)
+                + max(var(--tile--scaling-150), var(--tile--scaling-100) + 2 * var(--tile--spacing-025))
+                + var(--tile-shell-head-inset-bottom)
+            );
+
             /* The band hangs below the bar, solid where the body meets it and gone a band later. */
 
             &::after {
@@ -546,20 +560,6 @@ tile-shell {
         }
 
         & > header {
-
-            /*
-             * A bar that stands is held to at least the height of a subtle icon button between its insets, whatever it
-             * was given to show, so a heading standing alone, a link at its end or a control coming and going leaves
-             * the bar where it was rather than folding the body up and down beneath it. The floor is the one a glyph
-             * button sizes itself to, the larger of its minimum target and its glyph with the air around it, so the
-             * two stay level however either ladder is retuned. A bar holding something taller still grows to fit.
-             */
-
-            min-height: calc(
-                var(--tile-shell-head-inset-top)
-                + max(var(--tile--scaling-150), var(--tile--scaling-100) + 2 * var(--tile--spacing-025))
-                + var(--tile-shell-head-inset-bottom)
-            );
 
             /*
              * The navigation keeps to the end of the bar whether a heading stands before it or not, which is where the

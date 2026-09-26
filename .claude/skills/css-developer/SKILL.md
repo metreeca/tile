@@ -33,11 +33,11 @@ it. The rules it displaces, and what holds instead:
 
 | `react-developer-style` says                                        | here instead                                                                                                       |
 |---------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| declare component variables in a `:root` block atop each file       | a component declares **NO** token; a missing one is added to `@metreeca/tile` through its two-place contract       |
+| declare component variables in a `:root` block atop each file       | a component declares **NO** design system token; its own knobs are registered, named apart (§Tokens, Not Literals) |
 | name classes `.component-name-element`, BEM-like, component-prefixed | style the `<tile-*>` element the widget renders; a class earns its place only where the element cannot tell a part from its sibling |
 | nest every style under the root component **class**                 | nest under the custom element, whose prefix already carries the scope                                               |
 | always give an external variable a fallback, `var(--x, #fallback)`  | read a token plainly: a fallback restates an anchor and hides a missing import, and is reserved for a consumer that cannot count on the stylesheet being loaded at all |
-| file layout: header, `:root` section, then styles                   | header, then declarations **ahead of** any nested rule; a component sheet has no `:root` section                    |
+| file layout: header, `:root` section, then styles                   | header, knob registrations, then the component rule, declarations **ahead of** any nested rule; no `:root` section |
 
 Unaffected, and still in force from that skill: `&` nesting mirroring the DOM, kebab-case, no global leakage, and
 semantic names describing purpose rather than appearance.
@@ -75,8 +75,29 @@ emits the two stylesheets in and whichever selector is the more specific.
 Every colour, measure, weight and radius comes from `@metreeca/tile`. A literal survives only as an optical nudge
 below the scale, and says so in a comment.
 
-A component **NEVER** declares a token of its own. A token the design system is missing is added there, in the two
-places its contract names, so the suite sees it and an app can retheme it.
+A component **NEVER** declares, restates or overrides a design system token. A value the whole interface is themed by
+and the design system is missing is added there, in the places its contract names, so the suite sees it and an app can
+retheme it.
+
+A component **MAY** declare knobs of its own for what only its layout needs, such as a column width:
+
+- **named apart** from the token contract, so they stay out of it and out of any suite checking it
+- **registered** with `@property` ahead of the component rule, under §Registrations, and never declared on the
+  component element or on `:root`: the default lives in the registration, so a consumer retunes one instance by
+  restating the knob on it, or every instance below an element by restating it there
+- **commented** with what each one controls
+
+An internal variable, one the sheet uses for its own bookkeeping and offers no consumer, such as a value derived from
+knobs or a list two rules share, is not a knob: it stays a plain declaration on the element or in the rule reading it,
+and is never registered.
+
+A knob **NEVER** stands in for a token: a colour, spacing step or radius the design system already names is read from
+it, not given a component-level alias.
+
+> [!NOTE]
+>
+> In Tile, tokens are double-dashed (`--tile--*`) and knobs single-dashed (`--tile-<widget>-*`), as `tile-shell` does
+> for its column widths.
 
 ## Selectors
 
@@ -136,9 +157,10 @@ Retuning an anchor means recomputing every role derived from it, in both schemes
 
 ## Registrations
 
-An `@property` `initial-value` has to be computationally independent, so a token stated in `em`, `rem` or a percentage
-is registered `syntax: "*"`; only an absolute value takes a real type. A derived token is registered `syntax: "*"` with
-no `initial-value`, since its value stands on other tokens.
+The same rules hold for a token and for a knob. An `@property` `initial-value` has to be computationally independent,
+so a value stated in `em`, `rem`, `cap` or a percentage is registered `syntax: "*"`, which also leaves it to resolve
+where it is read rather than where it is stated; only an absolute value takes a real type. A derived value is
+registered `syntax: "*"` with no `initial-value`, since it stands on other values.
 
 # Workflow
 

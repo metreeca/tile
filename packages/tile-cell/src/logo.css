@@ -19,9 +19,18 @@
  * is fitted to a square box, which takes an image of any proportions without cropping it.
  */
 
-tile-logo {
+/*
+ * The side of the square the mark is fitted to. It is registered without a type, so `cap` is read off the face where
+ * the mark is drawn rather than where the value is stated.
+ */
 
-    --tile-logo-mark: calc(1.5 * 1cap);
+@property --tile-logo-mark {
+    syntax: "*";
+    inherits: true;
+    initial-value: calc(1.5 * 1cap);
+}
+
+tile-logo {
 
     display: inline-grid;
 

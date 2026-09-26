@@ -17,4 +17,5 @@
 npx link \
   ../Core \
   ../HTTP \
-  ../Keep/packages/components/keep
+  ../Keep/packages/components/keep \
+  ../Keep/packages/connectors/keep-rest

@@ -150,14 +150,14 @@ export function useResource<
 	T extends Template
 >({ // !!! enforce S/T consistency
 
-	entry,
+	entry: relative,
 	shape,
 	model
 
 }: {
 
 	/**
-	 * The identifier of the resource; a relative one is resolved against the current location.
+	 * The identifier of the resource, either absolute or relative to the current location.
 	 */
 	readonly entry: IRI
 
@@ -256,23 +256,23 @@ export function useResource<
 }> {
 
 	const store = useStore();
-	const $entry = resolve(location.href, entry);
+	const entry = resolve(location.href, relative);
 
 	return createRelay(useEntry({
 
 		store,
-		entry: $entry,
+		entry,
 		model,
 
-		lookup: () => store.lookup({ entry: $entry, shape, model }),
+		lookup: () => store.lookup({ entry, shape, model }),
 
 		writes: settle => ({
 
-			update: (state: Instance<S>) => settle(store.update({ entry: $entry, shape, state }))
+			update: (state: Instance<S>) => settle(store.update({ entry, shape, state }))
 				.then(() => {}),
 
-			delete: () => settle(store.delete({ entry: $entry, shape }))
-				.then(() => getIRIParent($entry) ?? $entry) // the root is its own collection
+			delete: () => settle(store.delete({ entry, shape }))
+				.then(() => getIRIParent(entry) ?? entry) // the root is its own collection
 
 		})
 
@@ -319,7 +319,7 @@ export function useCollection<
 	T extends Template | Projection
 >({ // !!! enforce S/T consistency
 
-	entry,
+	entry: relative,
 	field,
 	shape,
 	model
@@ -327,7 +327,7 @@ export function useCollection<
 }: {
 
 	/**
-	 * The identifier of the resource holding the collection; a relative one is resolved against the current location.
+	 * The identifier of the resource holding the collection, either absolute or relative to the current location.
 	 */
 	readonly entry: IRI
 
@@ -423,24 +423,23 @@ export function useCollection<
 
 }> {
 
-	const $entry = resolve(location.href, entry);
-
 	const store = useStore();
+	const entry = resolve(location.href, relative);
 
 	return createRelay(useEntry({
 
 		store,
-		entry: $entry,
+		entry,
 		field,
 		model,
 
-		lookup: () => store.lookup({ entry: $entry, shape, model: { [field]: model } })
+		lookup: () => store.lookup({ entry, shape, model: { [field]: model } })
 			.then(value => value === undefined ? undefined : value[field] ?? []), // an empty collection may be left out
 
 		writes: settle => ({
 
 			create: (state: Draft<Collected<S, F>>) => settle(store.create({
-				entry: $entry,
+				entry,
 				shape: collected(shape, field),
 				state
 			}), Conflict)

@@ -28,7 +28,7 @@
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { error, type Identifier, type Lazy, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
-import { getIRIParent } from "@metreeca/core/resource";
+import { getIRIParent, type IRI, resolve } from "@metreeca/core/resource";
 import { Conflict, type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
@@ -111,7 +111,10 @@ export function useStore(): Store {
  *
  * A missing resource, a rejected write and a failed exchange alike move the binding to its `error` state, so that a
  * view shows them where it shows the resource and offers to retry from there; an operation the view called also
- * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure.
+ * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
+ * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
+ * is reported through the binding alone and never reaches the page: only a missing {@link Store} context or an
+ * unforeseen failure does, for an enclosing {@link "faults"!Faults Faults} context to take up.
  *
  * The template may be fixed or replaced at runtime, and the resource is retrieved again whenever a different
  * template is handed over:
@@ -139,6 +142,8 @@ export function useStore(): Store {
  *     it, including while the resource of a new identifier is retrieved
  *
  * @throws {@link !Error Error} If called outside any {@link Store} context
+ * @throws {@link !RangeError RangeError} If `entry` is not a valid identifier, or is relative while the current
+ *     location is not hierarchical
  */
 export function useResource<
 	S extends Lazy<ResourceShape>,
@@ -152,9 +157,9 @@ export function useResource<
 }: {
 
 	/**
-	 * The absolute identifier of the resource.
+	 * The identifier of the resource; a relative one is resolved against the current location.
 	 */
-	readonly entry: Reference
+	readonly entry: IRI
 
 	/**
 	 * The shape the retrieved resource is validated against, possibly deferred to break definition cycles.
@@ -251,22 +256,23 @@ export function useResource<
 }> {
 
 	const store = useStore();
+	const $entry = resolve(location.href, entry);
 
 	return createRelay(useEntry({
 
 		store,
-		entry,
+		entry: $entry,
 		model,
 
-		lookup: () => store.lookup({ entry, shape, model }),
+		lookup: () => store.lookup({ entry: $entry, shape, model }),
 
 		writes: settle => ({
 
-			update: (state: Instance<S>) => settle(store.update({ entry, shape, state }))
+			update: (state: Instance<S>) => settle(store.update({ entry: $entry, shape, state }))
 				.then(() => {}),
 
-			delete: () => settle(store.delete({ entry, shape }))
-				.then(() => getIRIParent(entry) ?? entry) // the root is its own collection
+			delete: () => settle(store.delete({ entry: $entry, shape }))
+				.then(() => getIRIParent($entry) ?? $entry) // the root is its own collection
 
 		})
 
@@ -284,7 +290,8 @@ export function useResource<
  * signals a change to the resource holding it, whoever made it.
  *
  * A missing resource, a rejected creation and a failed exchange alike move the binding to its `error` state, as for
- * {@link useResource}; an operation the view called also rejects with the same {@link Problem}.
+ * {@link useResource}; an operation the view called also rejects with the same {@link Problem}, while a failed
+ * exchange no view called for is reported through the binding alone.
  *
  * The template may be fixed or replaced at runtime, with the same typing and the same stability requirements as the
  * template {@link useResource} is handed.
@@ -303,6 +310,8 @@ export function useResource<
  *     {@link Problem} that prevented any of them; a state is kept until the next one supersedes it
  *
  * @throws {@link !Error Error} If called outside any {@link Store} context
+ * @throws {@link !RangeError RangeError} If `entry` is not a valid identifier, or is relative while the current
+ *     location is not hierarchical
  */
 export function useCollection<
 	S extends Lazy<ResourceShape>,
@@ -318,9 +327,9 @@ export function useCollection<
 }: {
 
 	/**
-	 * The absolute identifier of the resource holding the collection.
+	 * The identifier of the resource holding the collection; a relative one is resolved against the current location.
 	 */
-	readonly entry: Reference
+	readonly entry: IRI
 
 	/**
 	 * The name of the multi-valued property collecting the items.
@@ -414,22 +423,24 @@ export function useCollection<
 
 }> {
 
+	const $entry = resolve(location.href, entry);
+
 	const store = useStore();
 
 	return createRelay(useEntry({
 
 		store,
-		entry,
+		entry: $entry,
 		field,
 		model,
 
-		lookup: () => store.lookup({ entry, shape, model: { [field]: model } })
+		lookup: () => store.lookup({ entry: $entry, shape, model: { [field]: model } })
 			.then(value => value === undefined ? undefined : value[field] ?? []), // an empty collection may be left out
 
 		writes: settle => ({
 
 			create: (state: Draft<Collected<S, F>>) => settle(store.create({
-				entry,
+				entry: $entry,
 				shape: collected(shape, field),
 				state
 			}), Conflict)
@@ -491,7 +502,7 @@ function useEntry<V, W extends object>({
 
 	useEffect(() => {
 
-		retrieve().catch(ignore);
+		void track();
 
 		return store.observe(refresh, entry);
 
@@ -513,13 +524,24 @@ function useEntry<V, W extends object>({
 
 		setOption(current => current.ready ? { stale: { state: current.ready.state } } : current);
 
-		return retrieve().catch(ignore);
+		return track();
 
 	}
 
 	function retrieve(): Promise<void> {
-		return settle(lookup())
-			.then(state => setOption({ ready: { state, ...writes(settle) } }));
+		return settle(lookup()).then(ready);
+	}
+
+	/**
+	 * Retrieves the value for no caller, leaving a failed exchange to the `error` state alone: only a failure no state
+	 * of the binding stands for is left unhandled, for the page to take up.
+	 */
+	function track(): Promise<void> {
+		return settle(lookup()).then(ready, () => {});
+	}
+
+	function ready(state: V): void {
+		setOption({ ready: { state, ...writes(settle) } });
 	}
 
 
@@ -542,11 +564,6 @@ function useEntry<V, W extends object>({
 
 			});
 	}
-
-	/**
-	 * Ignores a failure no caller waits on, the binding already showing it as its `error` state.
-	 */
-	function ignore(): void {}
 
 }
 

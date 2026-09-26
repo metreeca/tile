@@ -86,9 +86,6 @@ export function Faults({
 
 }) {
 
-	// adopted through the setter rather than with useModel: a transition starts from the state it was read from, so
-	// a raising handed out once would otherwise lose every fault raised since
-
 	const [faults, setFaults] = useState(() => manageState(createFaults({ limit })).attach(state => setFaults(state)));
 
 	const raise = useCallback((issue: unknown) => { setFaults(faults => faults.raise(issue)); }, []);

@@ -22,7 +22,7 @@ import type { Store as Backend, StoreObserver } from "@metreeca/keep";
 import type { Template } from "@metreeca/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
-import { afterEach, describe, expect, expectTypeOf, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
 import { type Items, Store, useCollection, useResource, useStore } from "./store.js";
 
@@ -46,13 +46,13 @@ function backend(overrides: { readonly [K in keyof Backend]?: unknown }): Backen
 	} as Backend; // ;(cast) test mock: only the members the hook calls are provided
 }
 
-function mount(store: Backend): () => Binding {
+function mount(store: Backend, target: string = entry): () => Binding {
 
 	const seen = vi.fn<(binding: Binding) => void>();
 
 	function Probe() {
 
-		const binding = useResource({ entry, shape, model });
+		const binding = useResource({ entry: target, shape, model });
 
 		seen(binding);
 
@@ -95,8 +95,30 @@ function orphan(hook: () => unknown): () => void {
 }
 
 
+/**
+ * The Node process the tests run in, reduced to the unhandled rejection events: the package compiles against the
+ * DOM alone, with no Node type definitions.
+ */
+declare const process: {
+	on(event: "unhandledRejection", listener: (reason: unknown) => void): void
+	off(event: "unhandledRejection", listener: (reason: unknown) => void): void
+};
+
+/**
+ * Collects the rejections nobody handled, as the page would take them up.
+ */
+const unhandled = vi.fn<(reason: unknown) => void>();
+
+
+beforeEach(async () => {
+	process.on("unhandledRejection", unhandled);
+});
+
 afterEach(async () => {
 	act(() => render(null, document.body));
+	process.off("unhandledRejection", unhandled);
+	unhandled.mockClear();
+	vi.unstubAllGlobals();
 });
 
 
@@ -160,6 +182,20 @@ describe("useResource()", () => {
 
 		});
 
+		it("should resolve a relative identifier against the current location", async () => {
+
+			vi.stubGlobal("location", { href: "https://example.com/page" });
+
+			const lookup = vi.fn(async () => resource);
+
+			mount(backend({ lookup }), "resource");
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			expect(lookup).toHaveBeenCalledWith({ entry, shape, model });
+
+		});
+
 		it("should move to error on a missing resource", async () => {
 
 			mount(backend({ lookup: async () => undefined }));
@@ -173,6 +209,18 @@ describe("useResource()", () => {
 			mount(backend({ lookup: async () => { throw { status: 503, title: "Service Unavailable" }; } }));
 
 			await settled("error 503");
+
+		});
+
+		it("should report a failed retrieval through the binding only", async () => {
+
+			mount(backend({ lookup: async () => { throw { status: 503 }; } }));
+
+			await settled("error 503");
+
+			await new Promise(resolve => setTimeout(resolve)); // an unhandled rejection is detected once the task ends
+
+			expect(unhandled).not.toHaveBeenCalled();
 
 		});
 
@@ -305,6 +353,25 @@ describe("useResource()", () => {
 
 		});
 
+		it("should report a failed refresh through the binding only", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce(resource).mockRejectedValue({ status: 503 });
+			const observe = vi.fn((_observer: StoreObserver) => () => {});
+
+			mount(backend({ lookup, observe }));
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
+
+			await settled("error 503");
+
+			await new Promise(resolve => setTimeout(resolve)); // an unhandled rejection is detected once the task ends
+
+			expect(unhandled).not.toHaveBeenCalled();
+
+		});
+
 		it("should stop observing the store as the component goes away", async () => {
 
 			const detach = vi.fn();
@@ -358,6 +425,22 @@ describe("useResource()", () => {
 			await expect(binding()({ ready: ({ update }) => update(resource) })).rejects.toMatchObject({ status: 422 });
 
 			await settled("error 422");
+
+		});
+
+		it("should leave a failed write to the caller", async () => {
+
+			const binding = mount(backend({ update: async () => { throw { status: 422 }; } }));
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			await expect(binding()({ ready: ({ update }) => update(resource) })).rejects.toMatchObject({ status: 422 });
+
+			await settled("error 422");
+
+			await new Promise(resolve => setTimeout(resolve)); // an unhandled rejection is detected once the task ends
+
+			expect(unhandled).not.toHaveBeenCalled();
 
 		});
 
@@ -455,13 +538,13 @@ describe("useCollection()", () => {
 		return backend({ lookup: async () => ({ members: items }), ...overrides });
 	}
 
-	function mount(store: Backend): () => Collection {
+	function mount(store: Backend, target: string = entry): () => Collection {
 
 		const seen = vi.fn<(binding: Collection) => void>();
 
 		function Probe() {
 
-			const binding = useCollection({ entry, field, shape: Catalogue, model });
+			const binding = useCollection({ entry: target, field, shape: Catalogue, model });
 
 			seen(binding);
 
@@ -509,6 +592,20 @@ describe("useCollection()", () => {
 
 		});
 
+		it("should resolve a relative identifier against the current location", async () => {
+
+			vi.stubGlobal("location", { href: "https://example.com/page" });
+
+			const lookup = vi.fn(async () => ({ members: items }));
+
+			mount(collection({ lookup }), "resource");
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			expect(lookup).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
+
+		});
+
 		it("should take a collection left out of the resource as empty", async () => {
 
 			mount(collection({ lookup: async () => ({}) }));
@@ -537,6 +634,18 @@ describe("useCollection()", () => {
 			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
 
 			await settled("error 503");
+
+		});
+
+		it("should report a failed retrieval through the binding only", async () => {
+
+			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
+
+			await settled("error 503");
+
+			await new Promise(resolve => setTimeout(resolve)); // an unhandled rejection is detected once the task ends
+
+			expect(unhandled).not.toHaveBeenCalled();
 
 		});
 

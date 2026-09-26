@@ -157,6 +157,40 @@ describe("useResource()", () => {
 
 		});
 
+		it("should retrieve the resource again as the template changes, keeping it meanwhile", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
+			const store = backend({ lookup });
+
+			function Probe({ model }: { readonly model: Template }) {
+				return createElement("output", {}, useResource({ entry, shape, model })({
+					blank: "blank",
+					ready: ({ state }) => `ready ${JSON.stringify(state)}`,
+					stale: ({ state }) => `stale ${JSON.stringify(state)}`,
+					error: ({ state }) => `error ${state.status}`
+				}));
+			}
+
+			function bind(model: Template): void {
+				act(() => render(createElement(Store, {
+					factory: () => store,
+					children: createElement(Probe, { model })
+				}), document.body));
+			}
+
+			bind(model);
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			const wider = { ...model, id: {} };
+
+			bind(wider);
+
+			expect(lookup).toHaveBeenLastCalledWith({ entry, shape, model: wider });
+			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
+
+		});
+
 	});
 
 	describe("change tracking", () => {

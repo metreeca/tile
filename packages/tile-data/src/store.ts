@@ -109,12 +109,25 @@ export function useStore(): Store {
  * view shows them where it shows the resource and offers to retry from there; an operation the view called also
  * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure.
  *
+ * The template may be fixed or replaced at runtime, and the resource is retrieved again whenever a different
+ * template is handed over:
+ *
+ * - a **fixed** template, declared in code, types the resource exactly with the values it asks for; it is to be
+ *   declared once, outside the component, rather than written inline at the call site
+ * - a **runtime** template, built as the interface runs, for instance as a user picks the values to show, types the
+ *   resource only as loosely as the template itself is typed, so a view reads the values it holds by inspecting it;
+ *   it is to be held in state of the component's own and replaced there
+ *
+ * > [!CAUTION]
+ * > The template is told apart by identity: a template rebuilt on every render, as an object literal written at the
+ * > call site is, has the resource retrieved again on every render, and every retrieval renders the component again.
+ *
  * @typeParam S The shape describing the resource
  * @typeParam T The template stating which values of the resource are wanted
  *
  * @param options The resource to be bound, the shape describing it and the values wanted; read as the component
- *     first renders and whenever the store or the resource identifier change, so a view is expected to keep the
- *     shape and the template stable for the lifetime of the component
+ *     first renders and whenever the store, the resource identifier or the template change, so a view is expected
+ *     to keep the shape stable for the lifetime of the component
  *
  * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
  *     until the resource is first retrieved or while a failed exchange is retried, `ready` with the resource and the
@@ -143,6 +156,9 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	/**
 	 * The template stating which values of the resource are retrieved; the value handed back holds these and nothing
 	 * wider.
+	 *
+	 * Replacing it retrieves the resource again, so it is kept stable across renders: declared outside the component
+	 * if fixed, held in state if replaced at runtime.
 	 */
 	readonly model: T;
 
@@ -239,7 +255,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 		return store.observe(refresh, entry);
 
-	}, [store, entry]);
+	}, [store, entry, model]);
 
 
 	return createRelay(option);

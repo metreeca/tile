@@ -17,8 +17,7 @@
 /**
  * Viewport tokens.
  *
- * Tells which breakpoints the viewport has passed, so a stylesheet branches on a breakpoint by name instead of
- * repeating its width, which CSS gives it no other way to do.
+ * Tells which breakpoints the viewport has passed, so a stylesheet branches on one by name, CSS offering no other way.
  *
  * @remarks
  *
@@ -26,8 +25,7 @@
  * matches and a breakpoint cannot be a width token. Each of these carries the *answer* instead of the question: the
  * stylesheet states the width once, in its own media query, and hands the result on as a token any rule can read.
  *
- * **The breakpoints** — four widths, each naming the shape a layout takes from it upwards, stated in the companion
- * stylesheet and nowhere else:
+ * **The breakpoints** — four widths, each naming the layout from it upwards, stated in the companion stylesheet alone:
  *
  * | Token            | From    | What it answers                                      |
  * |------------------|---------|------------------------------------------------------|
@@ -63,8 +61,7 @@
  * }
  * ```
  *
- * **Both branches** — each token is registered with `off` as its default and set to `on` from its width upwards, so
- * the narrow case is a value a rule can match rather than the absence of one.
+ * **Both branches** — each token defaults to `off` and turns `on` from its width up, so a rule matches either value.
  *
  * **Reusable, not retunable** — the width stays in the stylesheet's own media query, so overriding one of these
  * tokens forces the flag without moving the threshold. What they remove is the width repeated across every component,

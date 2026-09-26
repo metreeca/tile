@@ -65,8 +65,7 @@
  * browser setting does, which is the one input that should. Browser zoom scales the CSS pixel and so moves a px
  * query and a rem query alike, and is not a case either unit handles better.
  *
- * A device-bound question, whether this is a touch phone, would take other units and other features. None of the four
- * below asks one.
+ * A device-bound question, such as whether this is a touch phone, takes other units and features: none below asks one.
  */
 
 @media (min-width: 30rem) {

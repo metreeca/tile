@@ -54,8 +54,7 @@
  * not a step: it paints nothing and leaves the ordinary page colours. A widget maps its remaining values onto the
  * steps and states that mapping in its own documentation.
  *
- * How loud a widget appears is a separate axis, carried by its `look` attribute and told in placement, size and
- * weight rather than in colour, so the two never compete for the same channel.
+ * How loud a widget appears is a separate axis, its `look`, told in placement, size and weight and never in colour.
  *
  * The four stand apart as anchors rather than derivations of an accent, so a meaning keeps reading as itself
  * whatever an app brands with, and each pairs with a `backgroundColor*` role tinting a notice. A step is never told

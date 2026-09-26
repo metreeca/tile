@@ -74,10 +74,7 @@
     initial-value: 1em;
 }
 
-/*
- * The rounding of the element it is assigned to, set from a step rather than a step itself. No rule reads it: the
- * assignment rounds that element alone, so it starts from square corners.
- */
+/* The rounding of the one element it is assigned to, set from a step and read by no rule, square if unassigned. */
 
 @property --tile--border-radius {
     syntax: "*";

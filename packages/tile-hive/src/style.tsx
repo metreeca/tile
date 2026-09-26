@@ -17,8 +17,7 @@
 /**
  * Styled area.
  *
- * Restyles everything an area holds by assigning design system tokens to it, without laying anything out or taking
- * room of its own.
+ * Restyles everything an area holds by assigning design system tokens to it, laying nothing out and taking no room.
  *
  * @module
  */
@@ -74,10 +73,7 @@ export function Style({
 
 }) {
 
-	/*
-	 * The tokens are assigned on the element rather than declared in a stylesheet, an area being settled by whoever
-	 * renders it and not by a rule written ahead of time.
-	 */
+	// tokens are assigned on the element, an area being settled by whoever renders it rather than by a stylesheet
 
 	return createElement("tile-style", { style: compile(css) }, children);
 

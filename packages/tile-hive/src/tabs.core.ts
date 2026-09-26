@@ -42,8 +42,7 @@ import { createState } from "@metreeca/core/state";
 export interface Tabs {
 
 	/**
-	 * Whether each panel can be shown, keyed by the label identifying it: the labels in display order, as given,
-	 * without duplicates and none of them blank.
+	 * Whether each panel can be shown, keyed by its label: the labels in display order, unique and none of them blank.
 	 */
 	readonly labels: Readonly<Record<string, boolean>>;
 
@@ -87,8 +86,7 @@ export interface Tabs {
  *
  * @param options The tabs configuration
  *
- * @returns Immutable {@link Tabs} holding the panels `labels` identifies, showing `active` if its panel is enabled
- * and the first enabled panel otherwise
+ * @returns Immutable {@link Tabs} for `labels`, showing `active` where its panel is enabled, else the first enabled one
  *
  * @throws {@link !TypeError TypeError} If `labels` includes a blank label, or if `active` isn't one of them
  */

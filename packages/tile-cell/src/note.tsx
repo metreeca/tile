@@ -34,8 +34,7 @@ import "./note.css";
  * Shows a glyph and a headline, with whatever detail is given beneath them, centred in the space the note is handed,
  * so a screen fills an area it has nothing else to put in without laying one out for the purpose.
  *
- * A note given a headline sets the mark beside it, on the one line a passing remark asks for; one given none sets the
- * mark on its own, above what the body carries.
+ * A note given a headline sets the mark beside it on one line; one given none sets the mark above the body.
  *
  * Where the reader is asked something, `onAccept` turns the head into a native control, so the activation by `Enter`
  * and `Space`, the tab stop and the focus ring come with it rather than having to be asked for. The head then stands

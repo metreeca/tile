@@ -17,13 +17,11 @@
 /**
  * Spacing tokens.
  *
- * Names the ladder an interface sets a thing apart from what surrounds it on, whether on a margin, a padding or a gap,
- * so the spacing of an interface is retuned from one place.
+ * Names the ladder margins, paddings and gaps set a thing apart on, so an interface's spacing retunes from one place.
  *
  * @remarks
  *
- * The number is the multiple of the text size the step carries, `spacing100` matching the text it sits beside. Every
- * step is stated in `em`, so a subtree given a size of its own takes the rhythm along.
+ * Each step is the multiple of the text size its number names, stated in `em` so a resized subtree takes it along.
  *
  * A step sizing a thing against the text rather than spacing it from its neighbour belongs to the
  * {@link scalings scaling ladder} instead: a glyph, a spinner, a swatch or a dot is scaled, not spaced.

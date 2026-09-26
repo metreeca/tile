@@ -18,7 +18,7 @@
  * Styled box.
  *
  * Sets what it holds on a box of its own, padded, rounded, lifted and painted from design system tokens, so a screen
- * draws a card, a panel or a well without writing a rule of its own.
+ * draws a card, a panel or a well without writing a rule of its own, and each one follows the interface as it is themed.
  *
  * @module
  */
@@ -46,8 +46,7 @@ import "./box.css";
  * what it holds allows, exactly as that would on its own. The box holds a single element, a layout or a block: several
  * elements lie over one another, and text is wrapped in an element of its own rather than handed to the box loose.
  *
- * The box carries no semantics: a screen giving it a role for assistive technology puts the element that carries one
- * inside it or around it.
+ * The box carries no semantics: a role for assistive technology goes on an element inside it or around it.
  *
  * @param options The widget configuration
  *

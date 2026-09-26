@@ -36,8 +36,7 @@
  * }
  * ```
  *
- * Give it a factory, which may carry the name of the interface it builds, types and values living in separate
- * namespaces:
+ * Give it a factory, which may share the interface name, as types and values live in separate namespaces:
  *
  * ```typescript
  * import { createState } from "@metreeca/core/state";
@@ -54,8 +53,7 @@
  * }
  * ```
  *
- * A component exported under that same name claims it first, and a module importing both has room for only one: name
- * the factory `createCounter` wherever a component already answers to `Counter`.
+ * Where a component already answers to `Counter`, name the factory `createCounter`: a module cannot import both.
  *
  * Then read data and transitions off the model: a transition is bound to the state it was read from, so a
  * zero-argument one goes straight to a handler, and any of them may be stored and passed on:
@@ -76,8 +74,7 @@
  *
  * **Transitions do not accumulate**
  *
- * What a handler holds is the state of the render that read it, and a transition always starts from there, so taking
- * one twice lands where taking it once does:
+ * Every transition starts from the state of the render that read it, so taking one twice lands where once does:
  *
  * ```typescript
  * const twice = () => {
@@ -86,8 +83,7 @@
  * };
  * ```
  *
- * A transition also notifies asynchronously, so the data read alongside it keeps the earlier value for the rest of
- * the handler, and the new one arrives with the next render:
+ * A transition also notifies asynchronously, so data read alongside keeps its earlier value until the next render:
  *
  * ```typescript
  * const report = () => {
@@ -114,8 +110,7 @@ import { useState } from "preact/hooks";
 /**
  * Adopts a state object as the state of a component.
  *
- * Renders the component again after every transition that changes something; a transition that changes nothing
- * returns the same state and renders nothing.
+ * Renders the component again after every transition that changes something, never after one returning the same state.
  *
  * @typeParam T The state interface
  *
@@ -123,8 +118,7 @@ import { useState } from "preact/hooks";
  * may be written inline and close over props, at the cost of capturing them as they stood then: a prop changing
  * later never reaches the model
  *
- * @returns The model as it stands for this render, superseded by the next one after every transition that changes
- * something
+ * @returns The model as it stands for this render, superseded by the next after every transition that changes something
  */
 export function useModel<T extends State<T>>(model: Lazy<Instance<T>>): Instance<T> {
 

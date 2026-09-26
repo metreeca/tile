@@ -29,10 +29,7 @@ tile-note {
     align-items: center;
     row-gap: var(--tile--spacing-100);
 
-    /*
-     * The note is as wide as what it carries, whatever box it sits in, so the margins centre it across the room
-     * rather than a block stretching it to the edges.
-     */
+    /* The note is as wide as what it carries, so the margins centre it rather than a block stretching it. */
 
     width: fit-content;
 

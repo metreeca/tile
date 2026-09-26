@@ -28,8 +28,8 @@
  * > Glyphs are provided by Lucide under the ISC and MIT licences. Redistribution, including within a bundled
  * > application, must preserve the copyright and permission notices reproduced in [Notices](./icon.md).
  *
- * An icon is hidden from assistive technology unless given a `role`, a `title` or an `aria-*` attribute, leaving the
- * control it marks to carry the accessible name.
+ * An icon is hidden from assistive technology unless given a `role`, a `title` or an `aria-*` attribute: the control
+ * it marks carries the accessible name, and a glyph read out beside it would only name the control a second time.
  *
  * > [!IMPORTANT]
  * >
@@ -42,8 +42,7 @@
  *
  * **Standard Glyphs**
  *
- * Import the namespace once, then mark a control with a glyph: every glyph Lucide draws is there, under the name
- * Lucide gives it.
+ * Import the namespace once, then mark a control with any glyph Lucide draws, under the name Lucide gives it.
  *
  * ```tsx
  * import { Icon } from "@metreeca/tile-cell/icon";

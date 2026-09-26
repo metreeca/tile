@@ -40,7 +40,7 @@ import "./tabs.css";
  * neighbour and wrapping at both ends, `Home` and `End` jumping to either end of the strip.
  *
  * A panel given no content is disabled: its label keeps its place, marked as such, but no gesture ever brings it on
- * show, a pointer choice being refused and keyboard steps and jumps passing it by.
+ * show, a pointer choice on its label being refused and keyboard steps and jumps between the labels passing it by.
  *
  * Where the labels would not fit on one line, the strip gives way to a menu offering the same choice under the same
  * rules, worked with the keys the platform gives a menu of its own: the labels keep their order, a disabled one stays
@@ -71,8 +71,7 @@ export function Tabs({
 }: {
 
 	/**
-	 * The accessible name of the tabs, telling them apart where a screen carries more than one, whether they are
-	 * offered as a strip or as a menu; unnamed if omitted.
+	 * The accessible name of the tabs, as a strip or as a menu, telling apart several on one screen; unnamed if omitted.
 	 */
 	name?: string
 
@@ -91,8 +90,7 @@ export function Tabs({
 	look?: "subtle" | "normal"
 
 	/**
-	 * The content of each panel, keyed by the label activating it and presented in key order; a label given no content
-	 * stands for a disabled panel.
+	 * The content of each panel, keyed by its label in display order; a label with no content marks a disabled panel.
 	 */
 	panels: Readonly<Record<string, Optional<ComponentChildren>>>
 

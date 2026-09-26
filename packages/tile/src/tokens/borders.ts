@@ -36,8 +36,7 @@
  * platform gives the control will not sit where the rule expects. They pair with the {@link colors `colorFocus`} and
  * {@link colors `colorFail`} roles, which a consumer reaches for where it paints the mark itself.
  *
- * **Strokes** — `strokeWidth` carries a bare number, in the user units of the vector viewport it applies to, so the
- * weight of a glyph holds at any size.
+ * **Strokes** — `strokeWidth` is a bare number in viewport user units, so a glyph keeps its weight at any size.
  *
  * @module borders
  */

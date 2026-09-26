@@ -33,10 +33,7 @@ tile-box {
         grid-area: 1 / 1;
     }
 
-    /*
-     * A block filling the box keeps no room below it: the padding already sets it apart from the edge, and a grid
-     * item's margin does not collapse into it as it would in a block.
-     */
+    /* The last block keeps no margin: the padding already clears the edge, and a grid item's margin never collapses. */
 
     & > :last-child {
         margin-block-end: 0;

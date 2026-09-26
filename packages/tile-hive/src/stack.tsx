@@ -17,8 +17,7 @@
 /**
  * Vertical stack.
  *
- * Lays out what it holds as a column, one item below the other, set apart by a step of the spacing ladder, so a screen
- * arranges its parts top to bottom without writing a layout rule of its own.
+ * Stacks what it holds top to bottom, a spacing step apart, so a screen lays out its parts without a rule of its own.
  *
  * @module
  */
@@ -52,8 +51,7 @@ const justify = {
  * aligned otherwise; a stack told to grow takes whatever room its container leaves along the main axis, which is
  * what lets `place` position the items within a stack taller than they are.
  *
- * The stack carries no semantics: it is a layout, and a screen grouping its items for assistive technology puts the
- * element that does so inside it or around it.
+ * The stack carries no semantics: grouping its items for assistive technology takes an element inside it or around it.
  *
  * @param options The widget configuration
  *
@@ -72,8 +70,7 @@ export function Stack({
 }: {
 
 	/**
-	 * Whether the stack takes whatever room its container leaves along the container main axis, rather than standing
-	 * as large as its items.
+	 * Whether the stack takes the room its container leaves along the main axis, rather than the size of its items.
 	 */
 	grow?: boolean
 
@@ -87,8 +84,7 @@ export function Stack({
 	place?: "start" | "center" | "end" | "spread" | "head" | "tail"
 
 	/**
-	 * Where each item sits across the column: against the `start` edge, in the `center`, against the `end` edge, or
-	 * `stretch`ed to the full width of the stack.
+	 * Where each item sits across the column: `start`, `center`, `end`, or `stretch`ed to the full width of the stack.
 	 */
 	align?: "start" | "center" | "end" | "stretch"
 

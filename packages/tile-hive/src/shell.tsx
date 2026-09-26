@@ -117,8 +117,7 @@ export function Shell({
 	logo?: ComponentChildren
 
 	/**
-	 * What stands opposite the mark at the top of the tray, in view however the tray scrolls, such as the release on
-	 * show or a standing control.
+	 * What stands opposite the mark at the top of the tray, in view however it scrolls, such as the release on show.
 	 */
 	meta?: ComponentChildren
 
@@ -130,8 +129,7 @@ export function Shell({
 	tray?: ComponentChildren
 
 	/**
-	 * What stands at the bottom of the tray, in view however the tray scrolls, such as the reader signed in and the
-	 * way out.
+	 * What stands at the bottom of the tray, in view however it scrolls, such as the reader signed in and the way out.
 	 */
 	info?: ComponentChildren
 
@@ -145,7 +143,7 @@ export function Shell({
 
 	/**
 	 * The control returning to the step before, standing at the end of the content header and taking the place `menu`
-	 * would have had; it gives way to the turning mark while an exchange is in flight.
+	 * would have had. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
 	 */
 	back?: ComponentChildren
 
@@ -158,7 +156,7 @@ export function Shell({
 
 	/**
 	 * The control opening whatever the screen holds back, standing at the end of the content header where `back` is
-	 * left out; it gives way to the turning mark while an exchange is in flight.
+	 * left out. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
 	 */
 	menu?: ComponentChildren
 
@@ -189,8 +187,7 @@ export function Shell({
 	const lead = done ?? head;
 	const tail = back ?? menu;
 
-	// the content landmark is named by the heading already on show, so the reference and what it points at stand or
-	// fall on the same condition and the reference is never left dangling
+	// the landmark is named by the heading on show, so the reference stands or falls with its target and never dangles
 
 	const title = lead ? `${id}-title` : undefined;
 

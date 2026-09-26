@@ -34,8 +34,7 @@ import { Note } from "./note.js";
  * The mark and the standing wording the failures a reader can make something of are told by, under the status standing
  * for each. Anything else is an unexpected failure, which no wording of ours improves on.
  *
- * The lines are broken where the sense breaks, rather than where the space happens to run out, each one standing
- * under the mark as a phrase the reader takes in whole.
+ * The lines break where the sense breaks, so each stands under the mark as a phrase the reader takes in whole.
  */
 const Notices: Partial<Readonly<Record<number, readonly [Icon.LucideIcon, string]>>> = {
 

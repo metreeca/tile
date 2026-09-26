@@ -179,16 +179,14 @@ export const tile = {
 /**
  * An inline style declaration.
  *
- * Assignable as-is to the `style` prop of a rendering layer that accepts one, with no cast: overriding a token for a
- * subtree is a style declaration like any other.
+ * Assignable with no cast to the `style` prop of a rendering layer, a token override being a style like any other.
  */
 export type Style = Readonly<Record<string, string>>
 
 /**
  * The custom property carrying the value of a design system token.
  *
- * Addresses a token wherever CSS reads one, as given by {@link tile}: it is what {@link css css.var} takes and what a
- * computed-style read is keyed by.
+ * As given by {@link tile}: what {@link css css.var} takes, and what a computed-style read is keyed by.
  */
 export type Property = typeof tile[Token]
 
@@ -218,8 +216,7 @@ export type Token = keyof typeof tile
 /**
  * The value a design system token is assigned.
  *
- * Admits what the token in hand can carry and nothing else, as three alternatives, two of them named by types this
- * reference leaves out:
+ * Admits only what the token in hand can carry, as three alternatives, two named by types left out of this reference:
  *
  * - `Alias<K>` — the {@link Token token names} `K` may be set from, being the ladder it belongs to and no other: a
  *   colour offers colours, a text size the type and scaling ladders and not the spacing one, though all are lengths.
@@ -270,8 +267,7 @@ export type {
 /**
  * Overrides design system tokens for a subtree.
  *
- * Assigns each named token the value given for it, restyling the elements that read it without touching the ones that
- * don't:
+ * Assigns each named token its value, restyling the elements that read it and leaving the rest untouched:
  *
  * ```tsx
  * <section style={css({ colorStrong: "#D60" })}>
@@ -303,8 +299,7 @@ export type {
  * <section style={css({ padding: "spacing100", borderRadius: "borderRadius050" })}>
  * ```
  *
- * Reading a token where a single CSS value is written by hand, rather than assigning one, goes through
- * {@link css css.var} instead.
+ * Reading a token where a CSS value is written by hand goes through {@link css css.var} instead.
  *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *
@@ -356,8 +351,7 @@ export const css = Object.assign(
 		 * through {@link css} itself instead, and a consumer that cannot count on the stylesheet being loaded at all
 		 * writes the reference by hand, naming in it the fallback it wants.
 		 *
-		 * @param property The {@link Property custom property} carrying the value of the token to be read, as given
-		 * by {@link tile}
+		 * @param property The {@link Property custom property} of the token to be read, as given by {@link tile}
 		 *
 		 * @returns A `var()` reference resolving to the value `property` carries on the element reading it
 		 */

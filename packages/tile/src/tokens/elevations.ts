@@ -31,8 +31,7 @@
  * `backgroundColorOverlay` lifts one that leaves it, a menu, a popover or a dialog. `backgroundColorSunken` goes the
  * other way, for a well a thing is dropped into.
  *
- * **Lifting** — `boxShadow` is not a step but the shadow of the element it is assigned to, set from a step: no rule
- * reads it, and assigning it through {@link index.css css} lifts that element alone.
+ * **Lifting** — `boxShadow` is the shadow of the one element {@link index.css css} assigns it to, set from a step.
  *
  * **White pages** — the surfaces are derived by lightening the page, so on a light scheme whose page is already white
  * they resolve to the page colour itself and the shadow carries the whole separation, while on a dark scheme they

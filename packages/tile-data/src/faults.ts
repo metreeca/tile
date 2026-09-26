@@ -24,8 +24,7 @@
  * Issues nothing in the interface caught are taken up as well: a broken script and an unhandled rejection are raised
  * as they reach the page, so an exchange whose rejection went unattended is shown rather than logged.
  *
- * Raising and reading are offered apart: a component that only raises issues renders no more often than its own
- * state requires, however many faults stand.
+ * Raising and reading are offered apart, so a component only raising issues never renders because faults change.
  *
  * @module
  */
@@ -123,8 +122,7 @@ export function Faults({
  * Clearing through the retrieved faults reaches every other reader, while the faults this render was given stand as
  * they were until the next one.
  *
- * @returns The faults offered by the innermost enclosing {@link Faults} context, to be read and cleared; an empty
- *     queue nothing ever fills, outside any such context
+ * @returns The faults of the innermost enclosing {@link Faults} context; outside any, an empty queue nothing fills
  */
 export function useFaults(): Faults {
 	return useContext(Queue);
@@ -136,8 +134,7 @@ export function useFaults(): Faults {
  * The raising stands for as long as the {@link Faults} context offering it lives, so a component raising issues
  * renders again only as its own state requires, and a handler may keep it across exchanges.
  *
- * @returns The raising offered by the innermost enclosing {@link Faults} context; a raising that logs the issue to
- *     the console, outside any such context
+ * @returns The raising of the innermost enclosing {@link Faults} context; outside any, one logging to the console
  */
 export function useRaise(): (issue: unknown) => void {
 	return useContext(Raise);

@@ -96,8 +96,7 @@ function orphan(hook: () => unknown): () => void {
 
 
 /**
- * The Node process the tests run in, reduced to the unhandled rejection events: the package compiles against the
- * DOM alone, with no Node type definitions.
+ * The Node process, reduced to unhandled rejection events: the package compiles without the Node type definitions.
  */
 declare const process: {
 	on(event: "unhandledRejection", listener: (reason: unknown) => void): void

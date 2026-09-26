@@ -28,8 +28,7 @@ describe("tile", () => {
 		.map(name => readFileSync(new URL(`./${ name }`, import.meta.url), "utf-8"));
 
 	/*
-	 * A media query and the rules nested in it, and a rule an app forces a scheme with, so a scheme variant is told
-	 * apart from an unconditional definition however the scheme is settled.
+	 * A media query with its nested rules, or a rule forcing a scheme: each form a scheme variant can take.
 	 */
 
 	const query = /@media[^{]*\{(?:[^{}]*\{[^{}]*})*[^{}]*}/g;

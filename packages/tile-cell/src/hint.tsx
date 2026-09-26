@@ -47,15 +47,13 @@ export function Hint({
 }: {
 
 	/**
-	 * Whether the area is outlined and recessed, so that it reads as room left open for the missing content; left
-	 * flush with the page if omitted.
+	 * Whether the area is outlined and recessed, reading as room left for the missing content; flush if omitted.
 	 */
 	border?: boolean
 
 
 	/**
-	 * The content centred in the area: a leading glyph, drawn as the mark of the area, and the wording saying why the
-	 * content is missing.
+	 * The content centred in the area: a leading glyph marking it, and the wording saying why the content is missing.
 	 */
 	children?: ComponentChildren
 

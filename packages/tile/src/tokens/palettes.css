@@ -25,8 +25,7 @@
  * 010 is the faintest step and 100 the anchor at full strength. A consumer mapping a measure onto a scale reads the
  * step by name, so the values behind the ladder stay revisable.
  *
- * The greyscale and the two accent scales are derived, so an app retuning the anchors carries them along and a step
- * mixes towards the page in either colour scheme.
+ * The grey and accent scales are derived, following retuned anchors and mixing towards the page in either scheme.
  */
 
 @property --tile--color-gray-010 {

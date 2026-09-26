@@ -116,8 +116,7 @@ export function useStore(): Store {
  * is reported through the binding alone and never reaches the page: only a missing {@link Store} context or an
  * unforeseen failure does, for an enclosing {@link "faults"!Faults Faults} context to take up.
  *
- * The template may be fixed or replaced at runtime, and the resource is retrieved again whenever a different
- * template is handed over:
+ * The template may be fixed or replaced at runtime, and a different one has the resource retrieved again:
  *
  * - a **fixed** template, declared in code, types the resource exactly with the values it asks for
  * - a **runtime** template, built as the interface runs, for instance as a user picks the values to show, types the
@@ -142,8 +141,7 @@ export function useStore(): Store {
  *     it, including while the resource of a new identifier is retrieved
  *
  * @throws {@link !Error Error} If called outside any {@link Store} context
- * @throws {@link !RangeError RangeError} If `entry` is not a valid identifier, or is relative while the current
- *     location is not hierarchical
+ * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
 export function useResource<
 	S extends Lazy<ResourceShape>,
@@ -219,8 +217,7 @@ export function useResource<
 	/**
 	 * The last known state of the resource, superseded by a change the store signalled and not yet retrieved.
 	 *
-	 * The binding moves back to `ready` once the change is retrieved, or to `error` if the retrieval fails; no write
-	 * is offered meanwhile, as it would be based on values the store no longer holds.
+	 * Moves back to `ready` once the change is retrieved, or to `error` if that fails; no write is offered meanwhile.
 	 */
 	readonly stale: {
 
@@ -293,8 +290,7 @@ export function useResource<
  * {@link useResource}; an operation the view called also rejects with the same {@link Problem}, while a failed
  * exchange no view called for is reported through the binding alone.
  *
- * The template may be fixed or replaced at runtime, with the same typing and the same stability requirements as the
- * template {@link useResource} is handed.
+ * The template is typed and held stable as for {@link useResource}, and may likewise be fixed or replaced at runtime.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam F The name of the property collecting the items
@@ -310,8 +306,7 @@ export function useResource<
  *     {@link Problem} that prevented any of them; a state is kept until the next one supersedes it
  *
  * @throws {@link !Error Error} If called outside any {@link Store} context
- * @throws {@link !RangeError RangeError} If `entry` is not a valid identifier, or is relative while the current
- *     location is not hierarchical
+ * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
 export function useCollection<
 	S extends Lazy<ResourceShape>,
@@ -373,8 +368,7 @@ export function useCollection<
 		/**
 		 * Adds an item to the collection.
 		 *
-		 * @param state The initial state of the new item, validated against the shape of the items the property
-		 *     collects; its identifier may be left out for the store to assign
+		 * @param state The new item, checked against the item shape; its identifier may be left for the store to assign
 		 *
 		 * @returns A promise resolving to the absolute identifier the store assigned to the new item, so that a view
 		 *     can move there, the binding following the change as the store signals it; rejects with the
@@ -387,8 +381,7 @@ export function useCollection<
 	/**
 	 * The last known items of the collection, superseded by a change the store signalled and not yet retrieved.
 	 *
-	 * The binding moves back to `ready` once the change is retrieved, or to `error` if the retrieval fails; no item
-	 * can be added meanwhile.
+	 * Moves back to `ready` once the change is retrieved, or to `error` if that fails; no item can be added meanwhile.
 	 */
 	readonly stale: {
 
@@ -456,8 +449,7 @@ export function useCollection<
 /**
  * Binds a component to a value retrieved from a store.
  *
- * Keeps the value in step with the changes the store signals to a resource, so that resource and collection bindings
- * move through the same states whatever the value they hold and the writes they offer.
+ * Tracks the changes the store signals to a resource, so resource and collection bindings move through the same states.
  *
  * @param options The store and the resource whose changes are tracked, the property and the template narrowing the
  *     value, how the value is retrieved, and the writes offered while it is `ready`; a write settles its exchange
@@ -532,8 +524,7 @@ function useEntry<V, W extends object>({
 	}
 
 	/**
-	 * Retrieves the value for no caller, leaving a failed exchange to the `error` state alone: only a failure no state
-	 * of the binding stands for is left unhandled, for the page to take up.
+	 * Retrieves the value for no caller, leaving failures to `error` and only unforeseen ones to the page.
 	 */
 	function track(): Promise<void> {
 		return settle(lookup()).then(ready, () => {});

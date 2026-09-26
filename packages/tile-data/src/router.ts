@@ -22,8 +22,7 @@
  * history, and {@link Routes} renders the view for it wherever the page layout places it. Components below the router
  * read the current route and navigate without being handed either.
  *
- * Routes are carried by the location path, as root-relative paths such as `/users/123`, so the site serving the page
- * falls back to the app page for every path it routes.
+ * Routes are root-relative location paths such as `/users/123`, so the site has to serve the app page for every one.
  *
  * # Route Tables
  *
@@ -57,8 +56,7 @@
  *
  * - **Named steps**: `:slug` standing for a whole path step matches any non-empty step, where `slug` is a sequence of
  *   word characters: `/users/:id` matches `/users/123`, but neither `/users/` nor `/users/123/posts`
- * - **Subtrees**: a pattern ending with `/`, except the root pattern `/`, matches the route up to it along with every
- *   route below it
+ * - **Subtrees**: a pattern ending with `/`, except the root `/`, matches the route up to it and every route below it
  * - **Catch-all**: `*` matches any route; placed last, it handles the routes the patterns before it leave unhandled,
  *   as a not-found view shown within the layout of the section or as a redirection; `*` is rejected within any other
  *   pattern, so `/users/*` and `/*` are not glob patterns but invalid ones
@@ -194,8 +192,7 @@ export interface Router {
 	 * app alongside itself; an empty title, or one equal to the app name, leaves the app name alone. Passing a title
 	 * alone sets it without navigating. The enclosing {@link Router} renders again only if the route actually changes.
 	 *
-	 * @param route The route to navigate to, or the details of the navigation; a route relative to the current one,
-	 *     such as `../posts`, is resolved as a link would
+	 * @param route The route or the navigation details; a route relative to the current one resolves as a link would
 	 */
 	(route: string | {
 
@@ -215,8 +212,7 @@ export interface Router {
 		state?: unknown
 
 		/**
-		 * True if the current history entry is to be replaced rather than followed by a new one; false otherwise.
-		 * Navigating to the current route always replaces it.
+		 * True to replace the current history entry rather than add one; navigating to the current route always does.
 		 *
 		 * @defaultValue false
 		 */
@@ -446,17 +442,14 @@ export function Router({
  *
  * Renders below a {@link Router}, which keeps sole charge of the location, the history and the page clicks.
  *
- * Renders nothing while moving the location along a redirection, so no view ever shows for a route on its way out and
- * the nested {@link Routes} only ever see the route the location carries.
+ * Renders nothing during a redirection, so neither it nor a nested {@link Routes} shows a route on its way out.
  *
  * @param options The routes configuration
  *
  * @returns The view for the current route
  *
- * @throws {@link !Error Error} If the table holds a pattern other than the catch-all pattern `*` that does not start
- *     with `/` or that holds `*`, whatever the current route
- * @throws {@link !Error Error} If the current route, or a route it redirects to, matches no table pattern and no
- *     enclosing table declares a catch-all
+ * @throws {@link !Error Error} If a pattern other than `*` lacks a leading `/` or holds `*`, whatever the current route
+ * @throws {@link !Error Error} If the route, or one it redirects to, matches no pattern and no enclosing catch-all
  * @throws {@link !Error Error} If redirections lead back to a route already visited
  */
 export function Routes({

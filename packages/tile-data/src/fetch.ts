@@ -21,8 +21,7 @@
  * once where the interface is assembled rather than at every call site, and states whether that client is busy, so
  * that waiting is shown wherever the interface sees fit.
  *
- * The client and its status are offered apart: a component performing exchanges renders no more often than its own
- * state requires, however busy the client is.
+ * The client and its status are offered apart, so a component making exchanges never renders as the client gets busy.
  *
  * > [!NOTE]
  * >
@@ -106,11 +105,9 @@ export function Fetch({
 /**
  * Retrieves the shared fetch client.
  *
- * The client stands for as long as the {@link Fetch} context offering it lives, so a component reading it renders
- * again only as its own state requires, and a handler may keep it across exchanges.
+ * The client lasts as long as its {@link Fetch} context, so a handler may keep it and reading it triggers no render.
  *
- * @returns The client offered by the innermost enclosing {@link Fetch} context; the global fetch function outside any
- *     such context
+ * @returns The client of the innermost enclosing {@link Fetch} context; outside any, the global fetch function
  */
 export function useFetch(): Fetch {
 	return useContext(Client);
@@ -123,8 +120,7 @@ export function useFetch(): Fetch {
  * what the interface is waiting for without following exchanges of its own. Concurrent exchanges stand as a single
  * stretch of waiting, rather than as one stretch each.
  *
- * @returns true if the client offered by the innermost enclosing {@link Fetch} context has exchanges in flight; false
- *     otherwise, and outside any such context
+ * @returns true if the client of the innermost enclosing {@link Fetch} context has exchanges in flight; false otherwise
  */
 export function useFetching(): boolean {
 	return useContext(Status);

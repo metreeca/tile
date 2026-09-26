@@ -37,10 +37,7 @@
     initial-value: "Roboto Mono", Courier, monospace;
 }
 
-/*
- * The base size is absolute, so a page holds its rhythm wherever it is embedded, while the two variants are relative
- * and take the size of whatever they sit in along.
- */
+/* The base size is absolute, holding its rhythm wherever embedded, the two variants relative to what they sit in. */
 
 @property --tile--font-size {
     syntax: "*";

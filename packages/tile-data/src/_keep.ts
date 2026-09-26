@@ -17,8 +17,7 @@
 /**
  * Collection items.
  *
- * Resolves the shape of the resources a multi-valued property collects, so that a collection binding validates and
- * types the items it creates against the shape they are held to.
+ * Resolves the shape of the items a multi-valued property collects, to type and validate the items a binding creates.
  *
  * > [!NOTE]
  * > Prototype of a helper meant for `@metreeca/keep`, next to `Repeated`.
@@ -52,8 +51,7 @@ export type Collected<S extends Lazy<ResourceShape>, F extends Repeated<S>> =
 /**
  * The initial state of a resource to be created.
  *
- * Yields the state of a resource the shape describes, with the member naming the resource made optional, so that the
- * store may assign the identifier on creation.
+ * Yields the state of a resource the shape describes, with its identifier optional for the store to assign on creation.
  *
  * @typeParam S The shape describing the resource, possibly deferred to break definition cycles
  */
@@ -97,8 +95,7 @@ export function collected<S extends Lazy<ResourceShape>, F extends Repeated<S>>(
 
 
 	/**
-	 * Resolves a member a shape declares or inherits, the shape declaring it taking precedence over the ones it
-	 * extends, and among these the first one listed.
+	 * Resolves a member a shape declares or inherits, preferring the declaring shape, then the first parent listed.
 	 */
 	function carried(shape: Lazy<ResourceShape>, field: string): Optional<Member> {
 

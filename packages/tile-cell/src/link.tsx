@@ -89,8 +89,7 @@ export function Link({
 	href: string
 
 	/**
-	 * The hint the platform shows on resting the pointer on the link, such as where it leads at greater length than
-	 * its content says; no hint if omitted.
+	 * The hint the platform shows on resting the pointer on the link, such as where it leads; no hint if omitted.
 	 *
 	 * Beside content that names the link it names nothing. On a glyph standing alone with no label of its own it names
 	 * the link, and is then spoken as a name rather than as an aside. Either way it reaches neither a reader who never
@@ -112,8 +111,7 @@ export function Link({
 
 
 	/**
-	 * The content the link shows, naming it; a glyph standing alone carries a label of its own, so that the link has a
-	 * name to be announced by.
+	 * The content the link shows, naming it; a glyph standing alone carries a label of its own to be announced by.
 	 */
 	children?: ComponentChildren
 
@@ -133,8 +131,7 @@ export function Link({
 	 * A look the consumer leaves out leaves the attribute off the wrapper as well, which is what lets the stylesheet
 	 * tell a link asking for the ordinary step from one taking whatever the area around it is written in.
 	 *
-	 * A link covering nested routes stands for a section rather than for the page in view, so it is announced as the
-	 * current entry of a set rather than as the current page.
+	 * A link covering nested routes stands for a section, so it is announced as the current entry of a set.
 	 *
 	 * A handler takes the activation over from the link: the default action is prevented before it runs, which keeps
 	 * the browser from following the link and tells the router to leave it alone as well.

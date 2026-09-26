@@ -42,8 +42,7 @@
  * One value serves both colour schemes, as a series slot does: a hazard yellow that dimmed on the dark page would
  * stop being one, and the dark page anchor sitting over it stays dark in either scheme.
  *
- * An app supplying its brand states a value per scheme too, as a single light-dark() pair, and rechecks that the text
- * roles still hold AA contrast against the page and the striped row in both.
+ * An app supplying its brand states a light-dark() pair too, and rechecks AA text contrast on page and stripe in both.
  */
 
 /*
@@ -117,10 +116,7 @@
 }
 
 
-/*
- * Every role is derived from an anchor, so it follows an app retuning the brand and holds in either colour scheme,
- * and carries neither a type nor a default an initial value could state.
- */
+/* Every role derives from an anchor, following a retuned brand in either scheme, with no type or initial value. */
 
 @property --tile--color-label {
     syntax: "*";
@@ -213,8 +209,7 @@
  * rather than 4.5:1, can afford the mix, and 70% is as light as it goes: the edit background is the tightest surface
  * it has to hold, at 3.02:1, and a lighter mix drops below the floor there first.
  *
- * A role whose share differs by scheme states a light-dark() pair of derivations, picked where it paints as an anchor
- * pair is, so it follows a pinned subtree along with the anchors it mixes.
+ * A role whose share differs by scheme states a light-dark() pair of derivations, following a pinned subtree too.
  */
 
 :root {

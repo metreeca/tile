@@ -21,7 +21,8 @@
 
 /*
  * The side of the square the mark is fitted to. It is registered without a type, so `cap` is read off the face where
- * the mark is drawn rather than where the value is stated.
+ * the mark is drawn rather than where the value is stated: a logo in a heading is measured against the capitals of the
+ * heading, and one in a footer against those of the footer, from the one registration.
  */
 
 @property --tile-logo-mark {

@@ -17,8 +17,7 @@
 /**
  * Horizontal strip.
  *
- * Lays out what it holds as a row, one item beside the other, set apart by a step of the spacing ladder, so a screen
- * arranges its parts side by side without writing a layout rule of its own.
+ * Lines up what it holds side by side, a spacing step apart, so a screen lays out its parts without a rule of its own.
  *
  * @module
  */
@@ -53,8 +52,7 @@ const justify = {
  * one line and overflow it, unless the strip is told to wrap, in which case they flow onto as many rows as they
  * need, set apart as `wrap` states.
  *
- * The strip carries no semantics: it is a layout, and a screen grouping its items for assistive technology puts the
- * element that does so inside it or around it.
+ * The strip carries no semantics: grouping its items for assistive technology takes an element inside it or around it.
  *
  * @param options The widget configuration
  *
@@ -74,8 +72,7 @@ export function Strip({
 }: {
 
 	/**
-	 * Whether the strip takes whatever room its container leaves along the container main axis, rather than standing
-	 * as large as its items.
+	 * Whether the strip takes the room its container leaves along the main axis, rather than the size of its items.
 	 */
 	grow?: boolean
 

@@ -38,8 +38,7 @@
  *
  * @param name The name of the hosting custom element, hyphenated as the DOM requires
  *
- * @returns The element named `name`, appended to the document body and fitted to it if the document doesn't already
- * carry one
+ * @returns The element named `name`, appended to the body and fitted to it unless the document already carries one
  */
 export function host(name: string): Element {
 

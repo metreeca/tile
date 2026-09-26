@@ -17,8 +17,7 @@
 /**
  * Typography tokens.
  *
- * Names the faces, sizes, weights and line height an interface sets its text in, and that an app overrides to put its
- * own type on the whole interface with no component change.
+ * Names the faces, sizes, weights and line height text is set in, which an app overrides to retype a whole interface.
  *
  * @remarks
  *
@@ -26,8 +25,7 @@
  * the one a code span or a figure aligns on. Each ships as a brand face ahead of a generic stack covering it until it
  * loads, so an app supplying a face of its own keeps the fallbacks by restating them.
  *
- * **Sizes** — `fontSize` is absolute, so a page holds its rhythm wherever it is embedded, while `fontSizeSmall` and
- * `fontSizeLarge` are relative and take the size of whatever they sit in along.
+ * **Sizes** — `fontSize` is absolute, while `fontSizeSmall` and `fontSizeLarge` follow what they sit in.
  *
  * **Headings** — `fontSizeHeading` sizes every heading level, so an app resizing it resizes all headings together. The
  * first level scales up from it, while the levels below take it as it stands, since their hierarchy is carried by the
@@ -36,8 +34,7 @@
  * `letterSpacingHeading` ships neutral and lets the brand face decide, so an app supplying a condensed or a wide face
  * corrects the tracking without restating the rule.
  *
- * **Weights** — `fontWeight` carries text at rest, `fontWeightStrong` marks a run out within it, and
- * `fontWeightHeavy` is what a title and a table header take.
+ * **Weights** — `fontWeight` is text at rest, `fontWeightStrong` a run marked out, `fontWeightHeavy` a title or header.
  *
  * @module typography
  */

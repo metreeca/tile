@@ -63,10 +63,7 @@
     initial-value: 2.5em;
 }
 
-/*
- * The padding of the element it is assigned to, set from a step rather than a step itself. No rule reads it: the
- * assignment pads that element alone, so it starts from no padding at all.
- */
+/* The padding of the one element it is assigned to, set from a step and read by no rule, none if unassigned. */
 
 @property --tile--padding {
     syntax: "*";

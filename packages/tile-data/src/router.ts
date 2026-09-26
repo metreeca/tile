@@ -34,7 +34,7 @@
  *     "/": <Home/>,
  *     "/users/": <Users/>,
  *     "/people/:id": "/users/:id",
- *     "/*": <NotFound/>
+ *     "*": <NotFound/>
  * }}</Routes>
  * ```
  *
@@ -44,7 +44,7 @@
  *
  * # Route Patterns
  *
- * A pattern starts with `/` and is matched against the whole route:
+ * A pattern other than the catch-all starts with `/`, and every pattern is matched against the whole route:
  *
  * | Pattern                | Kind      | Matches                      | Section sees |
  * |------------------------|-----------|------------------------------|--------------|
@@ -53,14 +53,15 @@
  * | `/collection/:slug`    | exact     | `/collection/{slug}`         | `/`          |
  * | `/collection/`         | subtree   | `/collection/`               | `/`          |
  * |                        |           | `/collection/{path}`         | `/{path}`    |
- * | `/*`                   | catch-all | any route                    | the route    |
+ * | `*`                    | catch-all | any route                    | the route    |
  *
  * - **Named steps**: `:slug` standing for a whole path step matches any non-empty step, where `slug` is a sequence of
  *   word characters: `/users/:id` matches `/users/123`, but neither `/users/` nor `/users/123/posts`
  * - **Subtrees**: a pattern ending with `/`, except the root pattern `/`, matches the route up to it along with every
  *   route below it
- * - **Catch-all**: `/*` matches any route; placed last, it handles the routes the patterns before it leave unhandled,
- *   as a not-found view shown within the layout of the section or as a redirection; `*` is rejected anywhere else
+ * - **Catch-all**: `*` matches any route; placed last, it handles the routes the patterns before it leave unhandled,
+ *   as a not-found view shown within the layout of the section or as a redirection; `*` is rejected within any other
+ *   pattern, so `/users/*` and `/*` are not glob patterns but invalid ones
  *
  * A view needing the matched steps reads the route with {@link useRoute}.
  *
@@ -74,7 +75,7 @@
  * |---------------|--------------|---------------|--------------|
  * | `/people/:id` | `/users/:id` | `/people/123` | `/users/123` |
  * | `/old/`       | `/new/`      | `/old/a/b`    | `/new/a/b`   |
- * | `/*`          | `/`          | `/missing`    | `/`          |
+ * | `*`           | `/`          | `/missing`    | `/`          |
  *
  * Redirections are followed until a view is reached, and rejected if they lead back to a route already visited.
  *
@@ -91,17 +92,17 @@
  * navigate with {@link useRouter}, so links and navigators keep working unchanged wherever a section is mounted.
  *
  * A section declaring no catch-all inherits the one of the nearest enclosing table declaring one, as if declared
- * there, so a single `/*` in the table at the top of the app handles the unknown routes of every section, a view
+ * there, so a single `*` in the table at the top of the app handles the unknown routes of every section, a view
  * being shown in place of the section, within the layout of the views enclosing it.
  *
  * > [!WARNING]
  * >
  * > An inherited catch-all is resolved **within the section it handles**, not within the table declaring it: a
- * > redirection is relative to the section, like any other redirection declared there. With `"/*": "/"` at the top of
+ * > redirection is relative to the section, like any other redirection declared there. With `"*": "/"` at the top of
  * > the app, an unknown route below `/users/`, such as `/users/123/posts`, moves the location to `/users/`, the root
  * > of the section, and **not** to the home page `/`.
  * >
- * > A section whose unknown routes are to go elsewhere declares a `/*` of its own, which takes precedence over the
+ * > A section whose unknown routes are to go elsewhere declares a `*` of its own, which takes precedence over the
  * > inherited one; a catch-all redirection to a route the section leaves unhandled is rejected as a redirection loop.
  *
  * @module
@@ -115,7 +116,7 @@ import { useCallback, useContext, useEffect, useLayoutEffect, useState } from "p
 import { app } from "./index.js";
 
 
-const Wildcard = "/*";
+const Wildcard = "*";
 
 const ActiveAttribute = "active";
 const TargetAttribute = "target";
@@ -158,7 +159,7 @@ const RoutesContext = createContext<Readonly<{
 	 *   path is `/users/` and a nested table sees `/all` for the route `/users/all`
 	 * - under any other pattern, it is the whole route, and a nested table sees `/`: under `/users/:id`, the path is
 	 *   `/users/123` for the route `/users/123`
-	 * - under the catch-all pattern `/*`, it is the path of the enclosing table, and a nested table sees what that
+	 * - under the catch-all pattern `*`, it is the path of the enclosing table, and a nested table sees what that
 	 *   one sees
 	 */
 	path: string
@@ -452,8 +453,8 @@ export function Router({
  *
  * @returns The view for the current route
  *
- * @throws {@link !Error Error} If the table holds a pattern that does not start with `/`, or holds `*` anywhere but in
- *     the catch-all pattern `/*`, whatever the current route
+ * @throws {@link !Error Error} If the table holds a pattern other than the catch-all pattern `*` that does not start
+ *     with `/` or that holds `*`, whatever the current route
  * @throws {@link !Error Error} If the current route, or a route it redirects to, matches no table pattern and no
  *     enclosing table declares a catch-all
  * @throws {@link !Error Error} If redirections lead back to a route already visited
@@ -480,7 +481,7 @@ export function Routes({
 		: { ...children, [Wildcard]: wild }; // the inherited catch-all goes last, as if declared here
 
 	const invalid = Object.keys(table).find(glob =>
-		!glob.startsWith("/") || glob !== Wildcard && glob.includes("*")
+		glob !== Wildcard && (!glob.startsWith("/") || glob.includes("*"))
 	);
 
 	if ( isDefined(invalid) ) {
@@ -488,7 +489,7 @@ export function Routes({
 	}
 
 	const section = path.endsWith("/") ? route.slice(path.length-1) : "/"; // the route as the table sees it
-	const settled = settle(section, [section]);
+	const settled = settle(section);
 
 	const target = settled === section ? undefined
 		: settled === "/" ? path
@@ -538,7 +539,30 @@ export function Routes({
 	 *
 	 * @returns The route the redirections lead to, the section route itself if it is not redirected
 	 */
-	function settle(route: string, trail: readonly string[]): string {
+	function settle(section: string): string {
+
+		const trail = [section]; // the routes visited so far, grown as each redirection is followed
+
+		for (let route = redirect(section); isDefined(route); route = redirect(route)) {
+
+			if ( trail.includes(route) ) {
+				throw new Error(`redirection loop <${trail.join(",")}>`);
+			}
+
+			trail.push(route);
+
+		}
+
+		return trail.at(-1) ?? section;
+
+	}
+
+	/**
+	 * Resolves the redirection the table defines for a section route.
+	 *
+	 * @returns The route the section route is redirected to, or undefined if it is not redirected
+	 */
+	function redirect(route: string): undefined | string {
 
 		const hit = lookup(route);
 
@@ -548,17 +572,12 @@ export function Routes({
 			const tail = steps.groups?.$;
 
 			const filled = entry.replace(/(?<=\/):(\w+)(?=[/?#]|$)/g, (_, step) => steps.groups?.[step] ?? "");
-			const target = isDefined(tail) && filled.endsWith("/") ? `${filled.slice(0, -1)}${tail}` : filled;
 
-			if ( trail.includes(target) ) {
-				throw new Error(`redirection loop <${trail.join(",")}>`);
-			}
-
-			return settle(target, [...trail, target]);
+			return isDefined(tail) && filled.endsWith("/") ? `${filled.slice(0, -1)}${tail}` : filled;
 
 		} else {
 
-			return route;
+			return undefined;
 
 		}
 

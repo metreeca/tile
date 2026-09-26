@@ -276,7 +276,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			mount({ "/": createElement("p", {}, "home"), "/*": createElement(Here, {}) });
+			mount({ "/": createElement("p", {}, "home"), "*":createElement(Here, {}) });
 
 			expect(text()).toBe("/other");
 
@@ -286,7 +286,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/users/123/posts");
 
-			mount({ "/users/:id": createElement("p", {}, "user"), "/*": createElement(Here, {}) });
+			mount({ "/users/:id": createElement("p", {}, "user"), "*":createElement(Here, {}) });
 
 			expect(text()).toBe("/users/123/posts");
 
@@ -342,7 +342,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/a/b/c");
 
-			mount({ "/": createElement("p", {}, "home"), "/*": createElement(Here, {}) });
+			mount({ "/": createElement("p", {}, "home"), "*":createElement(Here, {}) });
 
 			expect(text()).toBe("/a/b/c");
 
@@ -350,7 +350,7 @@ describe("Routes", () => {
 
 		it("should match the catch-all pattern in table order", async () => {
 
-			mount({ "/": createElement("p", {}, "home"), "/*": createElement(Here, {}) });
+			mount({ "/": createElement("p", {}, "home"), "*":createElement(Here, {}) });
 
 			expect(text()).toBe("home");
 
@@ -360,7 +360,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/old");
 
-			mount({ "/old": "/missing", "/*": createElement(Here, {}) });
+			mount({ "/old": "/missing", "*":createElement(Here, {}) });
 
 			expect(location.pathname).toBe("/missing");
 			expect(text()).toBe("/missing");
@@ -373,7 +373,7 @@ describe("Routes", () => {
 
 			const length = history.length;
 
-			mount({ "/": createElement("p", {}, "home"), "/*": "/" });
+			mount({ "/": createElement("p", {}, "home"), "*":"/" });
 
 			expect(location.pathname).toBe("/");
 			expect(history.length).toBe(length);
@@ -391,7 +391,7 @@ describe("Routes", () => {
 
 			history.replaceState(null, "", "/other");
 
-			expect(() => mount({ "/": createElement("p", {}), "/*": "/missing" })).toThrow("redirection loop");
+			expect(() => mount({ "/": createElement("p", {}), "*":"/missing" })).toThrow("redirection loop");
 
 		});
 
@@ -409,12 +409,12 @@ describe("Routes", () => {
 			expect(() => mount({ "/": createElement("p", {}), "": createElement("p", {}) }))
 				.toThrow("invalid route pattern <>");
 
-			expect(() => mount({ "/": createElement("p", {}), "*": createElement("p", {}) }))
-				.toThrow("invalid route pattern <*>");
-
 		});
 
 		it("should reject wildcards other than the catch-all pattern", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "/*": createElement("p", {}) }))
+				.toThrow("invalid route pattern </*>");
 
 			expect(() => mount({ "/": createElement("p", {}), "/users/*": createElement("p", {}) }))
 				.toThrow("invalid route pattern </users/*>");
@@ -491,7 +491,7 @@ describe("Routes", () => {
 		mount({
 			"/users/": createElement("main", {}, "users ", createElement(section({
 				"/": createElement("p", {}, "list"),
-				"/*": createElement(Here, {})
+				"*":createElement(Here, {})
 			}), {}))
 		});
 
@@ -505,7 +505,7 @@ describe("Routes", () => {
 
 		mount({
 			"/": createElement("p", {}, "home"),
-			"/users/": createElement(section({ "/": createElement("p", {}, "list"), "/*": "/" }), {})
+			"/users/": createElement(section({ "/": createElement("p", {}, "list"), "*":"/" }), {})
 		});
 
 		expect(location.pathname).toBe("/users/");
@@ -535,7 +535,7 @@ describe("Routes", () => {
 
 		history.replaceState(null, "", "/users/123");
 
-		mount({ "/*": createElement(section({ "/users/:id": createElement(Here, {}) }), {}) });
+		mount({ "*":createElement(section({ "/users/:id": createElement(Here, {}) }), {}) });
 
 		expect(text()).toBe("/users/123");
 
@@ -547,7 +547,7 @@ describe("Routes", () => {
 
 		mount({
 			"/users/": createElement(section({
-				"/*": createElement(section({ "/:id": createElement(Here, {}) }), {})
+				"*":createElement(section({ "/:id": createElement(Here, {}) }), {})
 			}), {})
 		});
 
@@ -610,7 +610,7 @@ describe("Routes", () => {
 
 		mount({
 			"/users/": createElement("main", {}, "users ", createElement(section({ "/": createElement("p", {}, "list") }), {})),
-			"/*": createElement(Here, {})
+			"*":createElement(Here, {})
 		});
 
 		expect(text()).toBe("users /users/123/posts");
@@ -626,7 +626,7 @@ describe("Routes", () => {
 		mount({
 			"/": createElement("p", {}, "home"),
 			"/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}),
-			"/*": "/"
+			"*":"/"
 		});
 
 		expect(location.pathname).toBe("/users/");
@@ -642,9 +642,9 @@ describe("Routes", () => {
 		mount({
 			"/users/": createElement(section({
 				"/": createElement("p", {}, "list"),
-				"/*": createElement("p", {}, "section")
+				"*":createElement("p", {}, "section")
 			}), {}),
-			"/*": createElement("p", {}, "root")
+			"*":createElement("p", {}, "root")
 		});
 
 		expect(text()).toBe("section");
@@ -658,9 +658,9 @@ describe("Routes", () => {
 		mount({
 			"/a/": createElement(section({
 				"/b/": createElement(section({ "/": createElement("p", {}, "b") }), {}),
-				"/*": createElement("p", {}, "a")
+				"*":createElement("p", {}, "a")
 			}), {}),
-			"/*": createElement("p", {}, "root")
+			"*":createElement("p", {}, "root")
 		});
 
 		expect(text()).toBe("a");
@@ -673,7 +673,7 @@ describe("Routes", () => {
 
 		expect(() => mount({
 			"/users/": createElement(section({ "/": createElement("p", {}) }), {}),
-			"/*": "/missing"
+			"*":"/missing"
 		})).toThrow("redirection loop");
 
 	});

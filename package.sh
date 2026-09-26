@@ -17,5 +17,7 @@
 npx link \
   ../Core \
   ../HTTP \
+  ../Blue \
+  ../Qest \
   ../Keep/packages/components/keep \
   ../Keep/packages/connectors/keep-rest

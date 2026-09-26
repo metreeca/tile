@@ -93,10 +93,12 @@
  * | `Update`         | edits the resource on show                                   |
  * | `Save`           | writes the edits back                                        |
  * | `Delete`         | destroys it                                                  |
+ * | `Reload`         | retrieves it again, after a failure or a change              |
  * | **Confirmation** | what becomes of what was entered                             |
  * | `Accept`         | commits it                                                   |
  * | `Cancel`         | abandons it, leaving things as they stood                    |
  * | `Close`          | dismisses what is on show, deciding nothing                  |
+ * | `Dismiss`        | sets aside a notice or a failure, returning to the screen    |
  * | **Modes**        | entering and leaving a way of working                        |
  * | `Menu`           | opens what a screen keeps out of the way until asked         |
  * | `Done`           | leaves a mode, whatever it was entered for                   |

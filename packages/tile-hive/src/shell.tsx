@@ -76,10 +76,10 @@ export function Shell({
 	tray,
 	info,
 
-	done,
-	back,
 	head,
 	menu,
+	done,
+	back,
 	copy,
 	foot,
 
@@ -135,19 +135,6 @@ export function Shell({
 
 
 	/**
-	 * The way out of the content of the moment, standing at the top of the shell in place of `head` and
-	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
-	 * they simply arrived at.
-	 */
-	done?: ComponentChildren
-
-	/**
-	 * The control returning to the step before, standing at the end of the content header and taking the place `menu`
-	 * would have had. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
-	 */
-	back?: ComponentChildren
-
-	/**
 	 * What the content of the moment is called. It stands at the top of the shell, in view however the content
 	 * scrolls, unless `done` stands there instead, and names the content landmark either way, so a reader arriving at
 	 * it hears which screen they are on.
@@ -159,6 +146,19 @@ export function Shell({
 	 * left out. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
 	 */
 	menu?: ComponentChildren
+
+	/**
+	 * The way out of the content of the moment, standing at the top of the shell in place of `head` and
+	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
+	 * they simply arrived at.
+	 */
+	done?: ComponentChildren
+
+	/**
+	 * The control returning to the step before, standing at the end of the content header and taking the place `menu`
+	 * would have had. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
+	 */
+	back?: ComponentChildren
 
 	/**
 	 * What closes the content itself, such as a copyright notice. It scrolls with the content rather than standing

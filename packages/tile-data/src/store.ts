@@ -117,9 +117,10 @@ export function useStore(): Store {
  *     shape and the template stable for the lifetime of the component
  *
  * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
- *     while the resource is being retrieved, `ready` with the resource and the operations writing it back to the
- *     store, `stale` with the resource last retrieved while it is being refreshed, or `error` with the
- *     {@link Problem} that prevented any of them
+ *     until the resource is first retrieved or while a failed exchange is retried, `ready` with the resource and the
+ *     operations writing it back to the store, `stale` with the resource last retrieved while it is being refreshed,
+ *     or `error` with the {@link Problem} that prevented any of them; a state is kept until the next one supersedes
+ *     it, including while the resource of a new identifier is retrieved
  */
 export function useResource<S extends Lazy<ResourceShape>, T extends Template>({ // !!! enforce S/T consistency
 
@@ -149,7 +150,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 }): Relay<{
 
 	/**
-	 * The resource is being retrieved, with neither a value nor an error to show yet.
+	 * The resource is being retrieved, with neither a value nor an error to show.
 	 */
 	readonly blank: void
 
@@ -232,11 +233,9 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	const [option, setOption] = useState<Option<Options>>({ blank: undefined });
 
 
-	// the store signals changes for as long as the component observes it, outliving any single render
-
 	useEffect(() => {
 
-		reload().catch(stated);
+		retrieve().catch(ignore);
 
 		return store.observe(refresh, entry);
 
@@ -254,19 +253,17 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 	}
 
-	function refresh(): Promise<void> {
-
-		// the latest option, as the observer outlives the render that registered it
+	function refresh(): Promise<void> { // the latest option, as the observer outlives the render that registered it
 
 		setOption(current => current.ready ? { stale: { state: current.ready.state } } : current);
 
-		return retrieve().catch(stated);
+		return retrieve().catch(ignore);
 
 	}
 
 	function retrieve(): Promise<void> {
 		return settle(store.lookup({ entry, shape, model }))
-			.then(state => setOption({ ready: { state, update, delete: remove } }));
+			.then(state => setOption({ ready: { state, update, delete: deleet } }));
 	}
 
 	function update(state: Instance<S>): Promise<void> {
@@ -274,7 +271,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 			.then(() => {});
 	}
 
-	function remove(): Promise<Reference> {
+	function deleet(): Promise<Reference> {
 		return settle(store.delete({ entry, shape }))
 			.then(() => getIRIParent(entry) ?? entry); // the root is its own collection
 	}
@@ -298,8 +295,8 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	}
 
 	/**
-	 * Absorbs a failure no caller waits on, the binding already stating it as its `error` state.
+	 * Ignores a failure no caller waits on, the binding already showing it as its `error` state.
 	 */
-	function stated(): void {}
+	function ignore(): void {}
 
 }

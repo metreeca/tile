@@ -125,6 +125,38 @@ describe("useResource()", () => {
 
 		});
 
+		it("should keep the resource until another one is retrieved", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
+			const store = backend({ lookup });
+
+			function Probe({ entry }: { readonly entry: string }) {
+				return createElement("output", {}, useResource({ entry, shape, model })({
+					blank: "blank",
+					ready: ({ state }) => `ready ${JSON.stringify(state)}`,
+					stale: ({ state }) => `stale ${JSON.stringify(state)}`,
+					error: ({ state }) => `error ${state.status}`
+				}));
+			}
+
+			function bind(entry: string): void {
+				act(() => render(createElement(Store, {
+					factory: () => store,
+					children: createElement(Probe, { entry })
+				}), document.body));
+			}
+
+			bind(entry);
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			bind("https://example.com/other");
+
+			expect(lookup).toHaveBeenLastCalledWith({ entry: "https://example.com/other", shape, model });
+			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
+
+		});
+
 	});
 
 	describe("change tracking", () => {

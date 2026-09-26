@@ -130,8 +130,7 @@ tile-shell {
      * beside the text; full width, the bar stands where a reader looks for it and the text is still held to the
      * measure.
      *
-     * A percentage in a custom property is resolved where the property is read rather than where it is stated, so this
-     * is a measure of whatever part reads it and not of the frame it is declared on.
+     * A percentage in a custom property resolves where it is read, so this measures the part reading it, not the frame.
      */
 
     --tile-shell-main-inset: max(
@@ -182,17 +181,13 @@ tile-shell {
      * whatever either is given to hold. Nothing here states a height: the row is sized by what the bars hold, so a bar
      * holding a control is as tall as the control needs and the frame stays out of the argument.
      *
-     * The widths go the other way: each column holds to the room it is given whatever it holds, so wording too wide for
-     * a column is clipped inside it rather than pushing it across its neighbour.
+     * The widths go the other way: each column keeps to its room, clipping wording too wide rather than crossing over.
      */
 
     grid-template-columns: var(--tile-shell-tray-width) minmax(0, 1fr);
     grid-template-rows: auto 1fr auto;
 
-    /*
-     * A frame showing the content alone is one column wide: the tray column is not merely emptied but taken out of the
-     * track list, so nothing of the room it held is left beside the content.
-     */
+    /* A frame showing the content alone takes the tray column out of the track list, leaving no room beside it. */
 
     &[main] {
         grid-template-columns: minmax(0, 1fr);
@@ -255,10 +250,7 @@ tile-shell {
         grid-row: 1 / -1;
         grid-template-rows: subgrid;
 
-        /*
-         * The parts take the width of the column rather than widening it to fit what they hold, and whatever runs past
-         * it is clipped at its edge rather than drawn over the neighbouring column.
-         */
+        /* The parts keep to the column width, clipping at its edge whatever would run over the neighbouring column. */
 
         grid-template-columns: minmax(0, 1fr);
         overflow-x: clip;
@@ -553,25 +545,43 @@ tile-shell {
             padding-right: var(--tile-shell-main-inset);
         }
 
-        /*
-         * The navigation the mark stands in for is taken off show as well as out of reach, so the two are never read as
-         * standing one on top of the other. It keeps its place in the bar all the same, which is what holds the bar at
-         * the height it had. Reach is settled by `inert` on the element, and the rule reads the attribute the markup
-         * already owes rather than asking for a class saying the same thing again.
-         */
+        & > header {
 
-        & > header > span[inert] {
-            visibility: hidden;
-        }
+            /*
+             * A bar that stands is held to at least the height of a subtle icon button between its insets, whatever it
+             * was given to show, so a heading standing alone, a link at its end or a control coming and going leaves
+             * the bar where it was rather than folding the body up and down beneath it. The floor is the one a glyph
+             * button sizes itself to, the larger of its minimum target and its glyph with the air around it, so the
+             * two stay level however either ladder is retuned. A bar holding something taller still grows to fit.
+             */
 
-        /*
-         * The navigation keeps to the end of the bar whether a heading stands before it or not, which is where the mark
-         * standing in for it comes to rest. It is told from the heading by the name the heading carries for the
-         * landmark, the navigation carrying none.
-         */
+            min-height: calc(
+                var(--tile-shell-head-inset-top)
+                + max(var(--tile--scaling-150), var(--tile--scaling-100) + 2 * var(--tile--spacing-025))
+                + var(--tile-shell-head-inset-bottom)
+            );
 
-        & > header > span:not([id]) {
-            margin-left: auto;
+            /*
+             * The navigation keeps to the end of the bar whether a heading stands before it or not, which is where the
+             * mark standing in for it comes to rest. It is told from the heading by the name the heading carries for
+             * the landmark, the navigation carrying none.
+             */
+
+            & > span:not([id]) {
+                margin-left: auto;
+            }
+
+            /*
+             * The navigation the mark stands in for is taken off show as well as out of reach, so the two are never
+             * read as standing one on top of the other. It keeps its place in the bar all the same, which is what holds
+             * the bar at the height it had. Reach is settled by `inert` on the element, and the rule reads the
+             * attribute the markup already owes rather than asking for a class saying the same thing again.
+             */
+
+            & > span[inert] {
+                visibility: hidden;
+            }
+
         }
 
         /*
@@ -586,8 +596,7 @@ tile-shell {
          * block would give it and the height its own content asks for. Being flex items, the children leave their
          * margins uncollapsed and float nothing beside them, which a screen rooted in a single element never meets.
          *
-         * The notice lays out what it holds as the bars do, in a row centred on the middle of its own box, so a glyph
-         * or a mark beside a line of text stands level with it.
+         * The notice lays out what it holds as the bars do, so a glyph beside a line of text stands level with it.
          */
 
         & > section {

@@ -104,13 +104,49 @@ it, not given a component-level alias.
 Style the custom element the widget renders, nesting its parts beneath it. The `<tile-*>` prefix carries the scope, so
 a class earns its place only where the element cannot distinguish a part from its sibling.
 
+**One block per thing styled.** Rules addressing the same element, state or variant sit in one block and nest what
+refines it, rather than restating its path in sibling rules:
+
+```css
+/* never */
+
+& > header { justify-content: flex-start; }
+& > header::before { content: ""; }
+& > header > span[inert] { visibility: hidden; }
+
+/* always */
+
+& > header {
+
+    justify-content: flex-start;
+
+    &::before { content: ""; }
+
+    & > span[inert] { visibility: hidden; }
+
+}
+```
+
+The same holds for a variant and its states (`&[mode="safe"] > button:enabled` holding its `&:hover` and `&:active`),
+for a group of rules keyed on one attribute (`&[look="strong"] { & > button {…} &:not([labelled]) > button {…} }`),
+and inside a `@container` query as much as outside one. A comment moves with the rule it explains. Nesting leaves
+specificity where it was, so regrouping changes nothing but the order rules appear in, which is the one thing to
+check: a rule overriding another at equal specificity still has to come after it.
+
+A rule stands apart only where nesting cannot place it:
+
+- the cascade needs it later in the sheet, after a `@container` query matching at equal specificity
+- it keys on an ancestor state the nested block cannot reach, as `&[locked] > aside > *` beside `& > aside`
+- one declaration list is shared across different parts, as `& > header::after, & > footer::before`
+
 Declarations come **before** any nested rule: a declaration after one was broken in shipping browsers until late 2024.
 
 ## Comments
 
 A comment is either a one-liner or a block carrying a left margin of vertical asterisks, as the licence header does.
 A continuation line indented to sit under the opening `/*` is **NEVER** acceptable: nothing marks it as comment text,
-so it reads as code at a glance and an editor reflowing the file leaves it ragged.
+so it reads as code at a glance and an editor reflowing the file leaves it ragged. Which of the two a comment takes is
+settled by its length, as `sw-developer-code` §Comment Length sets out: a line and a fragment is **NEVER** acceptable.
 
 The text is prose: an initial capital, a full stop, and complete sentences. A chain of clauses strung on semicolons is
 split into the sentences it was hiding, each stating one thing.
@@ -120,7 +156,8 @@ split into the sentences it was hiding, each stating one thing.
 
 /*
  * A block, where the margin carries every line and the reader sees at once where it ends. Each sentence states one
- * thing, so the next reader can take issue with that one thing.
+ * thing, so the next reader can take issue with that one thing. A block runs to two full lines at least, since text
+ * spilling a fragment past one line is tightened into a one-liner instead.
  */
 ```
 
@@ -186,6 +223,7 @@ Before reporting a stylesheet task complete, list every occurrence and justify o
 - a design system rule sits inside `@layer tile`, a component rule outside any layer
 - no rule reassigns an anchor while reading something derived from it
 - nothing wins by `!important` or by a specificity bump
+- no two sibling rules restate the same leading path, unless §Selectors lists why the rule stands apart
 
 **Colours**
 

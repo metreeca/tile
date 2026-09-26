@@ -1,0 +1,81 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A hint fills its space and centres a large glyph over the wording saying why the content is missing. */
+
+/* The largest share of the area the glyph takes. */
+
+@property --tile-hint-icon-size {
+    syntax: "*";
+    inherits: true;
+    initial-value: 20%;
+}
+
+tile-hint {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    text-align: center;
+
+    /* The wording carries meaning, so it takes the label colour, which holds its contrast. */
+
+    color: var(--tile--color-label);
+
+    &[border] {
+
+        padding: var(--tile--spacing-100);
+
+        /* Dotted, so the outline reads as room left open rather than as a panel. */
+
+        border: var(--tile--border-width) dotted var(--tile--border-color);
+        border-radius: var(--tile--border-radius-050);
+
+        /* The label holds 4.84:1 over the recess in the light scheme and 5.04:1 in the dark one. */
+
+        background-color: var(--tile--background-color-sunken);
+
+    }
+
+    & > svg:first-child {
+
+        aspect-ratio: 1;
+
+        width: 100%;
+        height: 100%;
+
+        max-width: var(--tile-hint-icon-size);
+        max-height: var(--tile-hint-icon-size);
+
+        color: var(--tile--color-disabled);
+
+        /* A share of the standard weight, which would otherwise grow heavy with the glyph. */
+
+        stroke-width: calc(0.3 * var(--tile--stroke-width));
+
+        & + * {
+            margin-top: var(--tile--spacing-100);
+            font-size: var(--tile--font-size-large);
+        }
+
+    }
+
+}

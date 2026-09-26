@@ -33,10 +33,10 @@ ul, ol {
             margin-bottom: var(--tile--spacing-050);
         }
 
-    }
+        & + li {
+            margin-top: var(--tile--spacing-025);
+        }
 
-    & > li + li {
-        margin-top: var(--tile--spacing-025);
     }
 
 }

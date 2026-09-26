@@ -60,6 +60,16 @@ tile-button {
         min-width: var(--tile--scaling-150);
         min-height: var(--tile--scaling-150);
 
+        /*
+         * The reset hands every box the colour of the one around it, which a translucent cover turns into a second
+         * coat: the glyph would take the cover again and stand in a darker square on the fill. What the control carries
+         * is left unpainted, so the cover is laid once across the whole of it.
+         */
+
+        & > * {
+            background-color: transparent;
+        }
+
     }
 
     /*
@@ -69,8 +79,21 @@ tile-button {
      */
 
     &[labelled] > button {
+
         padding-block: var(--tile--spacing-025);
         padding-inline: var(--tile--spacing-050);
+
+        /*
+         * A glyph is drawn inside a box of its own and leaves a margin within it, so the full step reads as a wider
+         * edge on the side it sits on than on the side the text ends at. A control leading with a mark is pulled in to
+         * the step below, which leaves the two edges reading as even. A glyph given as text takes the full step, being
+         * text.
+         */
+
+        &:has(> *) {
+            padding-inline-start: var(--tile--spacing-025);
+        }
+
     }
 
     /*
@@ -81,16 +104,6 @@ tile-button {
 
     &:not([labelled]) > button {
         padding: var(--tile--spacing-025);
-    }
-
-    /*
-     * A glyph is drawn inside a box of its own and leaves a margin within it, so the full step reads as a wider edge
-     * on the side it sits on than on the side the text ends at. A control leading with a mark is pulled in to the
-     * step below, which leaves the two edges reading as even. A glyph given as text takes the full step, being text.
-     */
-
-    &[labelled] > button:has(> *) {
-        padding-inline-start: var(--tile--spacing-025);
     }
 
     /*
@@ -112,65 +125,60 @@ tile-button {
         border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
     }
 
-    &[look="strong"] > button {
+    &[look="strong"] {
 
-        font-weight: var(--tile--font-weight-heavy);
+        & > button {
 
-        /*
-         * A glyph carries no weight of its own, so the heavier setting would leave the mark reading lighter than the
-         * label beside it. The stroke is drawn half again as thick, which is the nudge that puts the two back on the
-         * same footing rather than a measure the ladder carries.
-         */
+            font-weight: var(--tile--font-weight-heavy);
 
-        & .lucide {
-            stroke-width: calc(1.5 * var(--tile--stroke-width));
+            /*
+             * A glyph carries no weight of its own, so the heavier setting would leave the mark reading lighter than
+             * the label beside it. The stroke is drawn half again as thick, which is the nudge that puts the two back
+             * on the same footing rather than a measure the ladder carries.
+             */
+
+            & .lucide {
+                stroke-width: calc(1.5 * var(--tile--stroke-width));
+            }
+
         }
 
-    }
+        /*
+         * A mark standing alone gives the rule nothing to lean on, where a label set at the heaviest weight already
+         * bounds the control from inside, so the hairline the design system draws every boundary with reads as an
+         * empty box around the glyph. It is carried twice as far into the ink there, staying the same neutral, which
+         * is what an ordinary control falls back on where it has no step to state.
+         */
 
-    /*
-     * A mark standing alone gives the rule nothing to lean on, where a label set at the heaviest weight already
-     * bounds the control from inside, so the hairline the design system draws every boundary with reads as an empty
-     * box around the glyph. It is carried twice as far into the ink there, staying the same neutral, which is what an
-     * ordinary control falls back on where it has no step to state.
-     */
+        &:not([labelled]) > button {
+            border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
+        }
 
-    &[look="strong"]:not([labelled]) > button {
-        border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
-    }
+        /*
+         * The loud step carrying a meaning draws its rule in its own ink instead, so the edge, the fill and the label
+         * all say the same thing and the control reads as one mark rather than as a coloured face in a neutral frame.
+         * It is the one place a border states what a control means rather than merely bounding it, and the loud step
+         * is where that is worth spending: it is the control a row is meant to lead with.
+         *
+         * Reading the ink off `currentColor` keeps the edge and the label one colour however the step is retuned, and
+         * costs one rule where naming each step would cost four. It holds 3:1 against the page and against the fill
+         * in both schemes, 3.57:1 at the worst.
+         */
 
-    /*
-     * The loud step carrying a meaning draws its rule in its own ink instead, so the edge, the fill and the label all
-     * say the same thing and the control reads as one mark rather than as a coloured face in a neutral frame. It is
-     * the one place a border states what a control means rather than merely bounding it, and the loud step is where
-     * that is worth spending: it is the control a row is meant to lead with.
-     *
-     * Reading the ink off `currentColor` keeps the edge and the label one colour however the step is retuned, and
-     * costs one rule where naming each step would cost four. It holds 3:1 against the page and against the fill in
-     * both schemes, 3.57:1 at the worst.
-     */
+        &:not([mode="normal"]) > button:enabled {
+            border-color: currentColor;
+        }
 
-    &[look="strong"]:not([mode="normal"]) > button:enabled {
-        border-color: currentColor;
-    }
+        /*
+         * A mark beside a label is read at the size of the text it sits in, where the full nudge closes the counters
+         * of the glyph and leaves it heavier than the word it leads. It takes half the nudge, the mark standing alone
+         * keeping the whole of it.
+         */
 
-    /*
-     * A mark beside a label is read at the size of the text it sits in, where the full nudge closes the counters of
-     * the glyph and leaves it heavier than the word it leads. It takes half the nudge, the mark standing alone
-     * keeping the whole of it.
-     */
+        &[labelled] > button .lucide {
+            stroke-width: calc(1.25 * var(--tile--stroke-width));
+        }
 
-    &[look="strong"][labelled] > button .lucide {
-        stroke-width: calc(1.25 * var(--tile--stroke-width));
-    }
-
-    /*
-     * The quiet step closes the gap between the mark and the label to the step below, which is what draws the two
-     * together into the one word a button read as text has to be.
-     */
-
-    &[look="subtle"] > button {
-        column-gap: var(--tile--spacing-025);
     }
 
     /*
@@ -194,38 +202,7 @@ tile-button {
      *
      * A step paints a control that is live, and one that is not leaves it to the disabled colour the design system
      * greys every control with, which is why each rule is held to `:enabled`.
-     */
-
-    &[mode="safe"] > button:enabled {
-
-        color: var(--tile--color-info);
-        background-color: var(--tile--background-color-info);
-
-    }
-
-    &[mode="commit"] > button:enabled {
-
-        color: var(--tile--color-pass);
-        background-color: var(--tile--background-color-pass);
-
-    }
-
-    &[mode="alert"] > button:enabled {
-
-        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
-        l calc(c * 1.8) calc(h - 12));
-        background-color: var(--tile--background-color-warn);
-
-    }
-
-    &[mode="danger"] > button:enabled {
-
-        color: var(--tile--color-fail);
-        background-color: var(--tile--background-color-fail);
-
-    }
-
-    /*
+     *
      * Under the pointer the fill deepens by a share of what the control already carries, and under the press by
      * twice that, so the two states are told apart by how far the same colour has travelled rather than by a second
      * colour. A control carrying no step travels along the neutral the page itself is shaded with, and one carrying
@@ -246,64 +223,94 @@ tile-button {
      * in the dark one, where the mixed tint gave 1.12:1 on the page and 1.03:1 on the tray.
      */
 
+    &[mode="normal"] > button:enabled {
+
+        &:hover {
+            background-color: color-mix(in oklab, var(--tile--color) 6%, transparent);
+        }
+
+        &:active {
+            background-color: color-mix(in oklab, var(--tile--color) 12%, transparent);
+        }
+
+    }
+
+    &[mode="safe"] > button:enabled {
+
+        color: var(--tile--color-info);
+        background-color: var(--tile--background-color-info);
+
+        &:hover {
+            background-color: color-mix(in oklab, var(--tile--color-info) 12%, var(--tile--background-color-info));
+        }
+
+        &:active {
+            background-color: color-mix(in oklab, var(--tile--color-info) 24%, var(--tile--background-color-info));
+        }
+
+    }
+
+    &[mode="commit"] > button:enabled {
+
+        color: var(--tile--color-pass);
+        background-color: var(--tile--background-color-pass);
+
+        &:hover {
+            background-color: color-mix(in oklab, var(--tile--color-pass) 12%, var(--tile--background-color-pass));
+        }
+
+        &:active {
+            background-color: color-mix(in oklab, var(--tile--color-pass) 24%, var(--tile--background-color-pass));
+        }
+
+    }
+
+    &[mode="alert"] > button:enabled {
+
+        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
+        l calc(c * 1.8) calc(h - 12));
+        background-color: var(--tile--background-color-warn);
+
+        &:hover {
+            background-color: color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color-warn));
+        }
+
+        &:active {
+            background-color: color-mix(in oklab, var(--tile--color-warn) 24%, var(--tile--background-color-warn));
+        }
+
+    }
+
+    &[mode="danger"] > button:enabled {
+
+        color: var(--tile--color-fail);
+        background-color: var(--tile--background-color-fail);
+
+        &:hover {
+            background-color: color-mix(in oklab, var(--tile--color-fail) 12%, var(--tile--background-color-fail));
+        }
+
+        &:active {
+            background-color: color-mix(in oklab, var(--tile--color-fail) 24%, var(--tile--background-color-fail));
+        }
+
+    }
+
     /*
-     * The reset hands every box the colour of the one around it, which a translucent cover turns into a second coat:
-     * the glyph would take the cover again and stand in a darker square on the fill. What the control carries is left
-     * unpainted, so the cover is laid once across the whole of it.
+     * The quiet step closes the gap between the mark and the label to the step below, which is what draws the two
+     * together into the one word a button read as text has to be. It takes the ink of its mode and none of the fill,
+     * which is what leaves it reading as part of the text around it where the other two read as controls. The fill
+     * still answers the pointer, so the control says as much as its neighbours once it is reached.
      */
 
-    & > button > * {
-        background-color: transparent;
-    }
+    &[look="subtle"] > button {
 
-    &[mode="normal"] > button:enabled:hover {
-        background-color: color-mix(in oklab, var(--tile--color) 6%, transparent);
-    }
+        column-gap: var(--tile--spacing-025);
 
-    &[mode="normal"] > button:enabled:active {
-        background-color: color-mix(in oklab, var(--tile--color) 12%, transparent);
-    }
+        &:enabled {
+            background-color: transparent;
+        }
 
-    &[mode="safe"] > button:enabled:hover {
-        background-color: color-mix(in oklab, var(--tile--color-info) 12%, var(--tile--background-color-info));
-    }
-
-    &[mode="safe"] > button:enabled:active {
-        background-color: color-mix(in oklab, var(--tile--color-info) 24%, var(--tile--background-color-info));
-    }
-
-    &[mode="commit"] > button:enabled:hover {
-        background-color: color-mix(in oklab, var(--tile--color-pass) 12%, var(--tile--background-color-pass));
-    }
-
-    &[mode="commit"] > button:enabled:active {
-        background-color: color-mix(in oklab, var(--tile--color-pass) 24%, var(--tile--background-color-pass));
-    }
-
-    &[mode="alert"] > button:enabled:hover {
-        background-color: color-mix(in oklab, var(--tile--color-warn) 12%, var(--tile--background-color-warn));
-    }
-
-    &[mode="alert"] > button:enabled:active {
-        background-color: color-mix(in oklab, var(--tile--color-warn) 24%, var(--tile--background-color-warn));
-    }
-
-    &[mode="danger"] > button:enabled:hover {
-        background-color: color-mix(in oklab, var(--tile--color-fail) 12%, var(--tile--background-color-fail));
-    }
-
-    &[mode="danger"] > button:enabled:active {
-        background-color: color-mix(in oklab, var(--tile--color-fail) 24%, var(--tile--background-color-fail));
-    }
-
-    /*
-     * The quiet step takes the ink of its mode and none of the fill, which is what leaves it reading as part of the
-     * text around it where the other two read as controls. The fill still answers the pointer, so the control says
-     * as much as its neighbours once it is reached.
-     */
-
-    &[look="subtle"] > button:enabled {
-        background-color: transparent;
     }
 
 }
@@ -330,25 +337,31 @@ tile-button {
 
 @container style(--tile--look: strong) {
 
-    tile-button:not([look]) > button {
-        border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
-        font-weight: var(--tile--font-weight-heavy);
-    }
+    tile-button:not([look]) {
 
-    tile-button:not([look]) > button .lucide {
-        stroke-width: calc(1.5 * var(--tile--stroke-width));
-    }
+        & > button {
 
-    tile-button:not([look]):not([labelled]) > button {
-        border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
-    }
+            border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+            font-weight: var(--tile--font-weight-heavy);
 
-    tile-button:not([look]):not([mode="normal"]) > button:enabled {
-        border-color: currentColor;
-    }
+            & .lucide {
+                stroke-width: calc(1.5 * var(--tile--stroke-width));
+            }
 
-    tile-button:not([look])[labelled] > button .lucide {
-        stroke-width: calc(1.25 * var(--tile--stroke-width));
+        }
+
+        &:not([labelled]) > button {
+            border-color: color-mix(in oklab, var(--tile--border-color) 50%, var(--tile--color));
+        }
+
+        &:not([mode="normal"]) > button:enabled {
+            border-color: currentColor;
+        }
+
+        &[labelled] > button .lucide {
+            stroke-width: calc(1.25 * var(--tile--stroke-width));
+        }
+
     }
 
 }
@@ -356,11 +369,13 @@ tile-button {
 @container style(--tile--look: subtle) {
 
     tile-button:not([look]) > button {
-        column-gap: var(--tile--spacing-025);
-    }
 
-    tile-button:not([look]) > button:enabled {
-        background-color: transparent;
+        column-gap: var(--tile--spacing-025);
+
+        &:enabled {
+            background-color: transparent;
+        }
+
     }
 
 }

@@ -40,7 +40,8 @@ import "./shell.css";
  *
  * Waiting is stated by the shell itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark at the end of the
- * content header, in place of whatever navigation sits there. Nothing else moves while it stands: a screen with no
+ * content header, in place of whatever navigation sits there, and `done` is taken off show along with it, so no way
+ * out is offered while the exchange it would abandon is running. Nothing else moves while it stands: a screen with no
  * content header is not given one for the duration, and a header that stands keeps the height it had. No call site
  * takes part, so a screen states waiting by performing its exchanges through that client and nothing else. Nothing is
  * taken out of reach meanwhile: the content is on its way out rather than unavailable, and a gesture that must not be
@@ -150,7 +151,7 @@ export function Shell({
 	/**
 	 * The way out of the content of the moment, standing at the top of the shell in place of `head` and
 	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
-	 * they simply arrived at.
+	 * they simply arrived at. It is taken off show while an exchange is in flight, and comes back once it settles.
 	 */
 	done?: ComponentChildren
 
@@ -225,7 +226,7 @@ export function Shell({
 		<main aria-labelledby={title}>
 
 			<header>
-				{lead && <span id={title}>{lead}</span>}
+				{lead && <span id={title} inert={fetching && lead === done}>{lead}</span>}
 				{tail && <span inert={fetching}>{tail}</span>}
 			</header>
 

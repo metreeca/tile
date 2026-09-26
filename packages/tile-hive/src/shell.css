@@ -573,9 +573,10 @@ tile-shell {
 
             /*
              * The navigation the mark stands in for is taken off show as well as out of reach, so the two are never
-             * read as standing one on top of the other. It keeps its place in the bar all the same, which is what holds
-             * the bar at the height it had. Reach is settled by `inert` on the element, and the rule reads the
-             * attribute the markup already owes rather than asking for a class saying the same thing again.
+             * read as standing one on top of the other, and a way out standing in place of the heading goes with it.
+             * Each keeps its place in the bar all the same, which is what holds the bar at the height it had. Reach is
+             * settled by `inert` on the element, and the rule reads the attribute the markup already owes rather than
+             * asking for a class saying the same thing again.
              */
 
             & > span[inert] {

@@ -25,7 +25,7 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Lazy, Optional } from "@metreeca/core";
-import { createRelay, type Relay } from "@metreeca/core/relay";
+import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { getIRIParent } from "@metreeca/core/resource";
 import { type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
@@ -229,10 +229,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 	const store = useStore();
 
-	const [status, setStatus] = useState<Optional<
-		| { readonly state: LookedUp<S, T>, readonly stale: boolean }
-		| { readonly error: Problem }
-	>>(undefined);
+	const [option, setOption] = useState<Option<Options>>({ blank: undefined });
 
 
 	// the store signals changes for as long as the component observes it, outliving any single render
@@ -246,16 +243,12 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	}, [store, entry]);
 
 
-	return createRelay<Options>(status === undefined ? { blank: undefined }
-		: "error" in status ? { error: { state: status.error, reload } }
-			: status.stale ? { stale: { state: status.state } }
-				: { ready: { state: status.state, update, delete: remove } }
-	);
+	return createRelay(option);
 
 
 	function reload(): Promise<void> {
 
-		setStatus(undefined);
+		setOption({ blank: undefined });
 
 		return retrieve();
 
@@ -263,54 +256,50 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 	function refresh(): Promise<void> {
 
-		// the latest status, as the observer outlives the render that registered it
+		// the latest option, as the observer outlives the render that registered it
 
-		setStatus(current => current !== undefined && "state" in current ? { ...current, stale: true } : current);
+		setOption(current => current.ready ? { stale: { state: current.ready.state } } : current);
 
 		return retrieve().catch(stated);
 
 	}
 
 	function retrieve(): Promise<void> {
-		return store.lookup({ entry, shape, model })
-			.then(state => state === undefined ? Promise.reject(missing()) : setStatus({ state, stale: false }))
-			.catch(reject);
+		return settle(store.lookup({ entry, shape, model }))
+			.then(state => setOption({ ready: { state, update, delete: remove } }));
 	}
 
 	function update(state: Instance<S>): Promise<void> {
-		return store.update({ entry, shape, state })
-			.then(reference => reference === undefined ? Promise.reject(missing()) : undefined)
-			.catch(reject);
+		return settle(store.update({ entry, shape, state }))
+			.then(() => {});
 	}
 
 	function remove(): Promise<Reference> {
-		return store.delete({ entry, shape })
-			.then(reference => reference === undefined ? Promise.reject(missing()) : getIRIParent(entry) ?? entry) // the root is its own collection
-			.catch(reject);
+		return settle(store.delete({ entry, shape }))
+			.then(() => getIRIParent(entry) ?? entry); // the root is its own collection
 	}
 
 
-	function missing(): Problem {
-		return toProblem({
+	/**
+	 * Moves the binding to `error` if an exchange fails or finds no resource, rejecting with the same problem.
+	 */
+	function settle<V>(outcome: Promise<Optional<V>>): Promise<V> {
+		return outcome
+			.then(value => value ?? Promise.reject(toProblem({ status: NotFound })))
+			.catch(issue => {
 
-			status: NotFound
+				const error = toProblem(issue);
 
-		});
+				setOption({ error: { state: error, reload } });
+
+				return Promise.reject(error);
+
+			});
 	}
 
 	/**
 	 * Absorbs a failure no caller waits on, the binding already stating it as its `error` state.
 	 */
 	function stated(): void {}
-
-	function reject(issue: unknown): Promise<never> {
-
-		const error = toProblem(issue);
-
-		setStatus({ error });
-
-		return Promise.reject(error);
-
-	}
 
 }

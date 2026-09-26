@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import type { ResourceShape } from "@metreeca/blue/resource";
-import { NotFound } from "@metreeca/http";
+import { reference } from "@metreeca/blue/reference";
+import { id, multiple, required, resource as shaped, type ResourceShape } from "@metreeca/blue/resource";
+import { string } from "@metreeca/blue/string";
+import { Conflict, NotFound } from "@metreeca/http";
 import type { Store as Backend, StoreObserver } from "@metreeca/keep";
 import type { Template } from "@metreeca/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
-import { Store, useResource } from "./store.js";
+import { type Items, Store, useCollection, useResource, useStore } from "./store.js";
 
 
 const entry = "https://example.com/resource";
@@ -79,13 +81,62 @@ async function settled(expected: string): Promise<void> {
 	await vi.waitFor(() => expect(text()).toBe(expected));
 }
 
+function orphan(hook: () => unknown): () => void {
+
+	function Probe() {
+
+		hook();
+
+		return null;
+
+	}
+
+	return () => act(() => render(createElement(Probe, {}), document.body));
+}
+
 
 afterEach(async () => {
 	act(() => render(null, document.body));
 });
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+describe("useStore()", () => {
+
+	it("should retrieve the store offered by the enclosing context", async () => {
+
+		const store = backend({});
+		const seen = vi.fn<(store: Backend) => void>();
+
+		function Probe() {
+
+			seen(useStore());
+
+			return null;
+
+		}
+
+		act(() => render(createElement(Store, {
+			factory: () => store,
+			children: createElement(Probe, {})
+		}), document.body));
+
+		expect(seen).toHaveBeenCalledWith(store);
+
+	});
+
+	it("should throw outside a store context", async () => {
+		expect(orphan(useStore)).toThrow("missing <Store> context");
+	});
+
+});
+
 describe("useResource()", () => {
+
+	it("should throw outside a store context", async () => {
+		expect(orphan(() => useResource({ entry, shape, model }))).toThrow("missing <Store> context");
+	});
 
 	describe("retrieval", () => {
 
@@ -382,6 +433,204 @@ describe("useResource()", () => {
 			await expect(binding()({ error: ({ reload }) => reload() })).rejects.toMatchObject({ status: 503 });
 
 			await settled("error 503");
+
+		});
+
+	});
+
+});
+
+describe("useCollection()", () => {
+
+	const Item = shaped({ id: id(), label: required(string()) });
+	const Catalogue = shaped({ id: id(), members: multiple(reference(Item)) });
+
+	const field = "members";
+	const items = [{ id: "https://example.com/resource/1", label: "one" }];
+
+	type Collection = ReturnType<typeof useCollection<typeof Catalogue, typeof field, typeof model>>;
+
+
+	function collection(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
+		return backend({ lookup: async () => ({ members: items }), ...overrides });
+	}
+
+	function mount(store: Backend): () => Collection {
+
+		const seen = vi.fn<(binding: Collection) => void>();
+
+		function Probe() {
+
+			const binding = useCollection({ entry, field, shape: Catalogue, model });
+
+			seen(binding);
+
+			return createElement("output", {}, binding({
+				blank: "blank",
+				ready: ({ state }) => `ready ${JSON.stringify(state)}`,
+				stale: ({ state }) => `stale ${JSON.stringify(state)}`,
+				error: ({ state }) => `error ${state.status}`
+			}));
+
+		}
+
+		act(() => render(createElement(Store, {
+			factory: () => store,
+			children: createElement(Probe, {})
+		}), document.body));
+
+		return () => seen.mock.lastCall![0]; // test harness: Probe has rendered at least once
+	}
+
+
+	it("should throw outside a store context", async () => {
+		expect(orphan(() => useCollection({ entry, field, shape: Catalogue, model }))).toThrow("missing <Store> context");
+	});
+
+	describe("retrieval", () => {
+
+		it("should be blank until the collection is retrieved", async () => {
+
+			mount(collection({ lookup: () => new Promise(() => {}) }));
+
+			expect(text()).toBe("blank");
+
+		});
+
+		it("should retrieve the items through the property collecting them", async () => {
+
+			const lookup = vi.fn(async () => ({ members: items }));
+
+			mount(collection({ lookup }));
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			expect(lookup).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
+
+		});
+
+		it("should take a collection left out of the resource as empty", async () => {
+
+			mount(collection({ lookup: async () => ({}) }));
+
+			await settled("ready []");
+
+		});
+
+		it("should type the items as the template narrows them", async () => {
+
+			expectTypeOf<Items<typeof Catalogue, typeof field, typeof model>>()
+				.toEqualTypeOf<readonly { readonly label: string }[]>();
+
+		});
+
+		it("should move to error on a missing resource", async () => {
+
+			mount(collection({ lookup: async () => undefined }));
+
+			await settled(`error ${NotFound}`);
+
+		});
+
+		it("should move to error on a failed retrieval", async () => {
+
+			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
+
+			await settled("error 503");
+
+		});
+
+	});
+
+	describe("change tracking", () => {
+
+		it("should observe changes to the resource holding the collection", async () => {
+
+			const observe = vi.fn(() => () => {});
+
+			mount(collection({ observe }));
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			expect(observe).toHaveBeenCalledWith(expect.any(Function), entry);
+
+		});
+
+		it("should be stale while the collection is refreshed", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce({ members: items }).mockReturnValue(new Promise(() => {}));
+			const observe = vi.fn((_observer: StoreObserver) => () => {});
+
+			mount(collection({ lookup, observe }));
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
+
+			await settled(`stale ${JSON.stringify(items)}`);
+
+		});
+
+	});
+
+	describe("create()", () => {
+
+		const item = { label: "two" };
+		const location = "https://example.com/resource/2";
+
+		it("should add the item to the collection, resolving to its identifier", async () => {
+
+			const create = vi.fn(async () => location);
+
+			const binding = mount(collection({ create }));
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			await expect(binding()({ ready: ({ create }) => create(item) })).resolves.toBe(location);
+
+			expect(create).toHaveBeenCalledWith({ entry, shape: Item, state: item });
+
+		});
+
+		it("should reject on an existing item, moving to error", async () => {
+
+			const binding = mount(collection({ create: async () => undefined }));
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			await expect(binding()({ ready: ({ create }) => create(item) })).rejects.toMatchObject({ status: Conflict });
+
+			await settled(`error ${Conflict}`);
+
+		});
+
+		it("should reject on a failed creation, moving to error", async () => {
+
+			const binding = mount(collection({ create: async () => { throw { status: 422 }; } }));
+
+			await settled(`ready ${JSON.stringify(items)}`);
+
+			await expect(binding()({ ready: ({ create }) => create(item) })).rejects.toMatchObject({ status: 422 });
+
+			await settled("error 422");
+
+		});
+
+	});
+
+	describe("reload()", () => {
+
+		it("should retrieve the collection again, discarding the error", async () => {
+
+			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue({ members: items });
+
+			const binding = mount(collection({ lookup }));
+
+			await settled(`error ${NotFound}`);
+
+			await binding()({ error: ({ reload }) => reload() });
+
+			await settled(`ready ${JSON.stringify(items)}`);
 
 		});
 

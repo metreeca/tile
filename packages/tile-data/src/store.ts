@@ -18,28 +18,31 @@
  * Shared resource store.
  *
  * Offers the components of an interface one [store](https://metreeca.github.io/keep/) to read resources from and
- * write them back to, configured once where the interface is assembled rather than at every call site.
+ * write them back to, configured once where the interface is assembled rather than at every call site, and binds
+ * them to the resources and collections it holds, so that a view stays in step with the store without driving
+ * exchanges of its own.
  *
  * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Lazy, Optional } from "@metreeca/core";
+import { error, type Identifier, type Lazy, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { getIRIParent } from "@metreeca/core/resource";
-import { type Fetch, NotFound } from "@metreeca/http";
+import { Conflict, type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
-import type { Instance, LookedUp } from "@metreeca/keep/_blue/value";
-import type { Template } from "@metreeca/qest/model";
+import type { Instance, LookedUp, Repeated } from "@metreeca/keep/_blue/value";
+import type { Projection, Template } from "@metreeca/qest/model";
 import type { Reference } from "@metreeca/qest/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { useFetch } from "./fetch.js";
+import { type Collected, collected, type Draft } from "./_keep.js";
 
 
-const Context = createContext<Store>(createRESTStore(globalThis.fetch));
+const Context = createContext<Optional<Store>>(undefined);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,11 +94,12 @@ export function Store({
 /**
  * Retrieves the shared resource store.
  *
- * @returns The store offered by the innermost enclosing {@link Store} context; outside any such context, a REST proxy
- *     store performing its exchanges through the global fetch function
+ * @returns The store offered by the innermost enclosing {@link Store} context
+ *
+ * @throws {@link !Error Error} If called outside any {@link Store} context
  */
 export function useStore(): Store {
-	return useContext(Context);
+	return useContext(Context) ?? error(new Error("missing <Store> context"));
 }
 
 /**
@@ -112,15 +116,14 @@ export function useStore(): Store {
  * The template may be fixed or replaced at runtime, and the resource is retrieved again whenever a different
  * template is handed over:
  *
- * - a **fixed** template, declared in code, types the resource exactly with the values it asks for; it is to be
- *   declared once, outside the component, rather than written inline at the call site
+ * - a **fixed** template, declared in code, types the resource exactly with the values it asks for
  * - a **runtime** template, built as the interface runs, for instance as a user picks the values to show, types the
- *   resource only as loosely as the template itself is typed, so a view reads the values it holds by inspecting it;
- *   it is to be held in state of the component's own and replaced there
+ *   resource only as loosely as the template itself is typed, so a view reads the values it holds by inspecting it
  *
  * > [!CAUTION]
- * > The template is told apart by identity: a template rebuilt on every render, as an object literal written at the
- * > call site is, has the resource retrieved again on every render, and every retrieval renders the component again.
+ * > A template is told apart by identity, not content: declare a fixed template once, outside the component, and
+ * > hold a runtime one in state of the component's own. A template written inline at the call site is a new object
+ * > on every render, and has the resource retrieved again, and the component rendered again, on every render.
  *
  * @typeParam S The shape describing the resource
  * @typeParam T The template stating which values of the resource are wanted
@@ -134,8 +137,13 @@ export function useStore(): Store {
  *     operations writing it back to the store, `stale` with the resource last retrieved while it is being refreshed,
  *     or `error` with the {@link Problem} that prevented any of them; a state is kept until the next one supersedes
  *     it, including while the resource of a new identifier is retrieved
+ *
+ * @throws {@link !Error Error} If called outside any {@link Store} context
  */
-export function useResource<S extends Lazy<ResourceShape>, T extends Template>({ // !!! enforce S/T consistency
+export function useResource<
+	S extends Lazy<ResourceShape>,
+	T extends Template
+>({ // !!! enforce S/T consistency
 
 	entry,
 	shape,
@@ -146,22 +154,23 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	/**
 	 * The absolute identifier of the resource.
 	 */
-	readonly entry: Reference;
+	readonly entry: Reference
 
 	/**
 	 * The shape the retrieved resource is validated against, possibly deferred to break definition cycles.
 	 */
-	readonly shape: S;
+	readonly shape: S
 
 	/**
-	 * The template stating which values of the resource are retrieved; the value handed back holds these and nothing
-	 * wider.
+	 * The template stating which values of the resource are retrieved, and nothing wider.
 	 *
-	 * Replacing it retrieves the resource again, so it is kept stable across renders: declared outside the component
-	 * if fixed, held in state if replaced at runtime.
+	 * > [!WARNING]
+	 * > Templates are compared by reference: any new object, even with the same content, retrieves the resource
+	 * > again. A template written inline, as in `useResource({ …, model: { name: {} } })`, is a new object on every
+	 * > render, and retrieves the resource on every render: declare it as a constant instead, or keep it in state
+	 * > if it changes at runtime.
 	 */
-	readonly model: T;
-
+	readonly model: T
 
 }): Relay<{
 
@@ -241,12 +250,243 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 }> {
 
-	type Options = ReturnType<typeof useResource<S, T>> extends Relay<infer O> ? O : never;
+	const store = useStore();
 
+	return createRelay(useEntry({
+
+		store,
+		entry,
+		model,
+
+		lookup: () => store.lookup({ entry, shape, model }),
+
+		writes: settle => ({
+
+			update: (state: Instance<S>) => settle(store.update({ entry, shape, state }))
+				.then(() => {}),
+
+			delete: () => settle(store.delete({ entry, shape }))
+				.then(() => getIRIParent(entry) ?? entry) // the root is its own collection
+
+		})
+
+	}));
+
+}
+
+
+/**
+ * Binds a component to a collection held by the shared store.
+ *
+ * Retrieves the items a multi-valued property of a resource collects from the store offered by the innermost
+ * enclosing {@link Store} context and keeps the component in step with them, so that a view lists what the store
+ * holds and adds items without driving exchanges of its own: the collection is retrieved again whenever the store
+ * signals a change to the resource holding it, whoever made it.
+ *
+ * A missing resource, a rejected creation and a failed exchange alike move the binding to its `error` state, as for
+ * {@link useResource}; an operation the view called also rejects with the same {@link Problem}.
+ *
+ * The template may be fixed or replaced at runtime, with the same typing and the same stability requirements as the
+ * template {@link useResource} is handed.
+ *
+ * @typeParam S The shape describing the resource holding the collection
+ * @typeParam F The name of the property collecting the items
+ * @typeParam T The template or projection stating which values of each item are wanted
+ *
+ * @param options The resource holding the collection, the property collecting the items, the shape describing the
+ *     resource and the values wanted of each item; read as the component first renders and whenever the store, the
+ *     resource identifier, the property or the template change
+ *
+ * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
+ *     until the collection is first retrieved or while a failed exchange is retried, `ready` with the items and the
+ *     operation adding one, `stale` with the items last retrieved while they are being refreshed, or `error` with the
+ *     {@link Problem} that prevented any of them; a state is kept until the next one supersedes it
+ *
+ * @throws {@link !Error Error} If called outside any {@link Store} context
+ */
+export function useCollection<
+	S extends Lazy<ResourceShape>,
+	F extends Repeated<S>,
+	T extends Template | Projection
+>({ // !!! enforce S/T consistency
+
+	entry,
+	field,
+	shape,
+	model
+
+}: {
+
+	/**
+	 * The absolute identifier of the resource holding the collection.
+	 */
+	readonly entry: Reference
+
+	/**
+	 * The name of the multi-valued property collecting the items.
+	 */
+	readonly field: F
+
+	/**
+	 * The shape describing the resource holding the collection, possibly deferred to break definition cycles.
+	 */
+	readonly shape: S
+
+	/**
+	 * The template or projection stating which values of each item are retrieved, and nothing wider.
+	 *
+	 * > [!WARNING]
+	 * > Templates and projections are compared by reference: any new object, even with the same content, retrieves
+	 * > the collection again. A template written inline, as in `useCollection({ …, model: { name: {} } })`, is a new
+	 * > object on every render, and retrieves the collection on every render: declare it as a constant instead, or
+	 * > keep it in state if it changes at runtime.
+	 */
+	readonly model: T
+
+
+}): Relay<{
+
+	/**
+	 * The collection is being retrieved, with neither items nor an error to show.
+	 */
+	readonly blank: void
+
+	/**
+	 * The collection is retrieved and in step with the store.
+	 */
+	readonly ready: {
+
+		/**
+		 * The items as the store currently holds them, narrowed to the values the template asks for.
+		 */
+		state: Items<S, F, T>
+
+		/**
+		 * Adds an item to the collection.
+		 *
+		 * @param state The initial state of the new item, validated against the shape of the items the property
+		 *     collects; its identifier may be left out for the store to assign
+		 *
+		 * @returns A promise resolving to the absolute identifier the store assigned to the new item, so that a view
+		 *     can move there, the binding following the change as the store signals it; rejects with the
+		 *     {@link Problem} the binding moves to `error` with, if the item already exists or the creation fails
+		 */
+		create(state: Draft<Collected<S, F>>): Promise<Reference>
+
+	}
+
+	/**
+	 * The last known items of the collection, superseded by a change the store signalled and not yet retrieved.
+	 *
+	 * The binding moves back to `ready` once the change is retrieved, or to `error` if the retrieval fails; no item
+	 * can be added meanwhile.
+	 */
+	readonly stale: {
+
+		/**
+		 * The items as they were last retrieved, narrowed to the values the template asks for.
+		 */
+		state: Items<S, F, T>
+
+	}
+
+	/**
+	 * The last exchange with the store failed, whether retrieving the collection or adding an item to it.
+	 */
+	readonly error: {
+
+		/**
+		 * The problem describing the failure.
+		 */
+		readonly state: Problem
+
+		/**
+		 * Retrieves the collection again, moving the binding back to `blank` until the store answers.
+		 *
+		 * @returns A promise resolving once the collection is retrieved and the binding is `ready`; rejects with the
+		 *     {@link Problem} the binding moves back to `error` with, if the resource is missing or the retrieval
+		 *     fails
+		 */
+		reload(): Promise<void>
+
+	}
+
+
+}> {
 
 	const store = useStore();
 
-	const [option, setOption] = useState<Option<Options>>({ blank: undefined });
+	return createRelay(useEntry({
+
+		store,
+		entry,
+		field,
+		model,
+
+		lookup: () => store.lookup({ entry, shape, model: { [field]: model } })
+			.then(value => value === undefined ? undefined : value[field] ?? []), // an empty collection may be left out
+
+		writes: settle => ({
+
+			create: (state: Draft<Collected<S, F>>) => settle(store.create({
+				entry,
+				shape: collected(shape, field),
+				state
+			}), Conflict)
+
+		})
+
+	}));
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Binds a component to a value retrieved from a store.
+ *
+ * Keeps the value in step with the changes the store signals to a resource, so that resource and collection bindings
+ * move through the same states whatever the value they hold and the writes they offer.
+ *
+ * @param options The store and the resource whose changes are tracked, the property and the template narrowing the
+ *     value, how the value is retrieved, and the writes offered while it is `ready`; a write settles its exchange
+ *     through the function it is handed, so that a failure moves the binding to `error`; the value is retrieved again
+ *     whenever the store, the resource, the property or the template change
+ *
+ * @returns The current state of the binding
+ */
+function useEntry<V, W extends object>({
+
+	store,
+	entry,
+	field,
+	model,
+
+	lookup,
+	writes
+
+}: {
+
+	readonly store: Store
+	readonly entry: Reference
+	readonly field?: Identifier
+	readonly model: Template | Projection
+
+	lookup(): Promise<Optional<V>>
+
+	writes(settle: <R>(outcome: Promise<Optional<R>>, status?: number) => Promise<R>): W
+
+}): Option<{
+
+	readonly blank: void
+	readonly ready: { readonly state: V } & W
+	readonly stale: { readonly state: V }
+	readonly error: { readonly state: Problem, reload(): Promise<void> }
+
+}> {
+
+	const [option, setOption] = useState<ReturnType<typeof useEntry<V, W>>>({ blank: undefined });
 
 
 	useEffect(() => {
@@ -255,10 +495,10 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 		return store.observe(refresh, entry);
 
-	}, [store, entry, model]);
+	}, [store, entry, field, model]);
 
 
-	return createRelay(option);
+	return option;
 
 
 	function reload(): Promise<void> {
@@ -278,27 +518,20 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	}
 
 	function retrieve(): Promise<void> {
-		return settle(store.lookup({ entry, shape, model }))
-			.then(state => setOption({ ready: { state, update, delete: deleet } }));
-	}
-
-	function update(state: Instance<S>): Promise<void> {
-		return settle(store.update({ entry, shape, state }))
-			.then(() => {});
-	}
-
-	function deleet(): Promise<Reference> {
-		return settle(store.delete({ entry, shape }))
-			.then(() => getIRIParent(entry) ?? entry); // the root is its own collection
+		return settle(lookup())
+			.then(state => setOption({ ready: { state, ...writes(settle) } }));
 	}
 
 
 	/**
-	 * Moves the binding to `error` if an exchange fails or finds no resource, rejecting with the same problem.
+	 * Moves the binding to `error` if an exchange fails or yields nothing, rejecting with the same problem.
+	 *
+	 * @param outcome The pending exchange
+	 * @param status The status of the problem an exchange yielding nothing is rejected with
 	 */
-	function settle<V>(outcome: Promise<Optional<V>>): Promise<V> {
+	function settle<R>(outcome: Promise<Optional<R>>, status: number = NotFound): Promise<R> {
 		return outcome
-			.then(value => value ?? Promise.reject(toProblem({ status: NotFound })))
+			.then(value => value ?? Promise.reject(toProblem({ status })))
 			.catch(issue => {
 
 				const error = toProblem(issue);
@@ -316,3 +549,17 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 	function ignore(): void {}
 
 }
+
+
+
+//// !!! ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * The items of a collection, narrowed to the values a template or a projection asks for.
+ *
+ * @typeParam S The shape describing the resource holding the collection
+ * @typeParam F The name of the property collecting the items
+ * @typeParam T The template or projection stating which values of each item are wanted
+ */
+export type Items<S extends Lazy<ResourceShape>, F extends Repeated<S>, T extends Template | Projection> =
+	Exclude<LookedUp<S, { readonly [field in F]: T }>[F], undefined>;

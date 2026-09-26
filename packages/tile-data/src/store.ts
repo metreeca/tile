@@ -62,7 +62,7 @@ const Context = createContext<Optional<Store>>(undefined);
  */
 export function Store({
 
-	factory = createRESTStore,
+	factory = fetch => createRESTStore({ fetch } ),
 
 	children
 

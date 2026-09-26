@@ -26,7 +26,7 @@
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Lazy, Optional } from "@metreeca/core";
 import { createRelay, type Relay } from "@metreeca/core/relay";
-import { resolve } from "@metreeca/core/resource";
+import { getIRIParent } from "@metreeca/core/resource";
 import { type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
@@ -285,13 +285,8 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Template>({
 
 	function remove(): Promise<Reference> {
 		return store.delete({ entry, shape })
-			.then(reference => reference === undefined ? Promise.reject(missing()) : parent())
+			.then(reference => reference === undefined ? Promise.reject(missing()) : getIRIParent(entry) ?? entry) // the root is its own collection
 			.catch(reject);
-	}
-
-
-	function parent(): Reference {
-		return resolve(entry, entry.endsWith("/") ? ".." : ".");
 	}
 
 

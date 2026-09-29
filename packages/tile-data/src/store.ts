@@ -36,13 +36,14 @@ import { createRESTStore } from "@metreeca/keep-rest";
 import {
 	type Collected,
 	collected,
-	type Detailed,
 	type Draft,
-	type Instance,
 	type Items,
-	type Repeated
+	type Match,
+	type Model,
+	type Models,
+	type Repeated,
+	type State
 } from "@metreeca/keep/_blue/value";
-import type { Projection, Template } from "@metreeca/qest/model";
 import type { Reference } from "@metreeca/qest/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
@@ -151,8 +152,8 @@ export function useStore(): Store {
  */
 export function useResource<
 	S extends Lazy<ResourceShape>,
-	T extends Template
->({ // !!! enforce S/T consistency
+	T extends Model<S, T>
+>({
 
 	entry: relative,
 	shape,
@@ -196,7 +197,7 @@ export function useResource<
 		/**
 		 * The resource as the store currently holds it, narrowed to the values the template asks for.
 		 */
-		state: Detailed<S, T>
+		state: Match<S, T>
 
 		/**
 		 * Replaces the resource in the store.
@@ -207,7 +208,7 @@ export function useResource<
 		 *     store signals it; rejects with the {@link Problem} the binding moves to `error` with, if the resource
 		 *     is missing or the write fails
 		 */
-		update(state: Instance<S>): Promise<void>
+		update(state: State<S>): Promise<void>
 
 		/**
 		 * Removes the resource from the store.
@@ -257,7 +258,7 @@ export function useResource<
 
 		writes: settle => ({
 
-			update: (state: Instance<S>) => settle(store.update({ entry, shape, state }))
+			update: (state: State<S>) => settle(store.update({ entry, shape, state }))
 				.then(() => {}),
 
 			delete: () => settle(store.delete({ entry, shape }))
@@ -303,9 +304,9 @@ export function useResource<
  */
 export function useCollection<
 	S extends Lazy<ResourceShape>,
-	const F extends Repeated<S>,
-	T extends Template | Projection
->({ // !!! enforce S/T consistency
+	const F extends Repeated<S>, // !!!
+	T extends Models<Collected<S, F>, T> // !!! simplify
+>({
 
 	entry: relative,
 	field,
@@ -405,7 +406,9 @@ export function useCollection<
 		field,
 		model,
 
-		lookup: () => store.detail({ entry, shape, model: { [field]: model } }).then(value =>
+		// ;(cast) T is the entry Model<S> admits for F, which the compiler can't relate for a generic F
+
+		lookup: () => store.detail({ entry, shape, model: { [field]: model } as Model<S> }).then(value =>
 			value === undefined ? undefined : value[field] ?? [] // an empty collection may be left out
 		),
 
@@ -453,7 +456,7 @@ function useEntry<V, W extends object>({
 	readonly store: Store
 	readonly entry: Reference
 	readonly field?: Identifier
-	readonly model: Template | Projection
+	readonly model: object
 
 	lookup(): Promise<Optional<V>>
 

@@ -19,12 +19,13 @@ import { id, multiple, required, resource as shaped, type ResourceShape } from "
 import { string } from "@metreeca/blue/string";
 import { Conflict, NotFound } from "@metreeca/http";
 import type { Store as Backend, StoreObserver } from "@metreeca/keep";
+import type { Items } from "@metreeca/keep/_blue/value";
 import type { Template } from "@metreeca/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
-import { type Items, Store, useCollection, useResource, useStore } from "./store.js";
+import { Store, useCollection, useResource, useStore } from "./store.js";
 
 
 const entry = "https://example.com/resource";
@@ -40,7 +41,7 @@ type Binding = ReturnType<typeof useResource<typeof shape, typeof model>>;
 
 function backend(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
 	return {
-		lookup: async () => resource,
+		detail: async () => resource,
 		observe: () => () => {},
 		...overrides
 	} as Backend; // ;(cast) test mock: only the members the hook calls are provided
@@ -162,7 +163,7 @@ describe("useResource()", () => {
 
 		it("should be blank until the resource is retrieved", async () => {
 
-			mount(backend({ lookup: () => new Promise(() => {}) }));
+			mount(backend({ detail: () => new Promise(() => {}) }));
 
 			expect(text()).toBe("blank");
 
@@ -170,13 +171,13 @@ describe("useResource()", () => {
 
 		it("should retrieve the resource from the shared store", async () => {
 
-			const lookup = vi.fn(async () => resource);
+			const detail = vi.fn(async () => resource);
 
-			mount(backend({ lookup }));
+			mount(backend({ detail }));
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
-			expect(lookup).toHaveBeenCalledWith({ entry, shape, model });
+			expect(detail).toHaveBeenCalledWith({ entry, shape, model });
 
 		});
 
@@ -184,19 +185,19 @@ describe("useResource()", () => {
 
 			vi.stubGlobal("location", { href: "https://example.com/page" });
 
-			const lookup = vi.fn(async () => resource);
+			const detail = vi.fn(async () => resource);
 
-			mount(backend({ lookup }), "resource");
+			mount(backend({ detail }), "resource");
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
-			expect(lookup).toHaveBeenCalledWith({ entry, shape, model });
+			expect(detail).toHaveBeenCalledWith({ entry, shape, model });
 
 		});
 
 		it("should move to error on a missing resource", async () => {
 
-			mount(backend({ lookup: async () => undefined }));
+			mount(backend({ detail: async () => undefined }));
 
 			await settled(`error ${NotFound}`);
 
@@ -204,7 +205,7 @@ describe("useResource()", () => {
 
 		it("should move to error on a failed retrieval", async () => {
 
-			mount(backend({ lookup: async () => { throw { status: 503, title: "Service Unavailable" }; } }));
+			mount(backend({ detail: async () => { throw { status: 503, title: "Service Unavailable" }; } }));
 
 			await settled("error 503");
 
@@ -212,7 +213,7 @@ describe("useResource()", () => {
 
 		it("should report a failed retrieval through the binding only", async () => {
 
-			mount(backend({ lookup: async () => { throw { status: 503 }; } }));
+			mount(backend({ detail: async () => { throw { status: 503 }; } }));
 
 			await settled("error 503");
 
@@ -224,8 +225,8 @@ describe("useResource()", () => {
 
 		it("should keep the resource until another one is retrieved", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
-			const store = backend({ lookup });
+			const detail = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
+			const store = backend({ detail });
 
 			function Probe({ entry }: { readonly entry: string }) {
 				return createElement("output", {}, useResource({ entry, shape, model })({
@@ -248,15 +249,15 @@ describe("useResource()", () => {
 
 			bind("https://example.com/other");
 
-			expect(lookup).toHaveBeenLastCalledWith({ entry: "https://example.com/other", shape, model });
+			expect(detail).toHaveBeenLastCalledWith({ entry: "https://example.com/other", shape, model });
 			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
 
 		});
 
 		it("should retrieve the resource again as the template changes, keeping it meanwhile", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
-			const store = backend({ lookup });
+			const detail = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
+			const store = backend({ detail });
 
 			function Probe({ model }: { readonly model: Template }) {
 				return createElement("output", {}, useResource({ entry, shape, model })({
@@ -281,7 +282,7 @@ describe("useResource()", () => {
 
 			bind(wider);
 
-			expect(lookup).toHaveBeenLastCalledWith({ entry, shape, model: wider });
+			expect(detail).toHaveBeenLastCalledWith({ entry, shape, model: wider });
 			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
 
 		});
@@ -306,10 +307,10 @@ describe("useResource()", () => {
 
 			const updated = { ...resource, label: "updated" };
 
-			const lookup = vi.fn().mockResolvedValueOnce(resource).mockResolvedValue(updated);
+			const detail = vi.fn().mockResolvedValueOnce(resource).mockResolvedValue(updated);
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
 
-			mount(backend({ lookup, observe }));
+			mount(backend({ detail, observe }));
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
@@ -321,26 +322,26 @@ describe("useResource()", () => {
 
 		it("should keep the resource while it is retrieved again", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
+			const detail = vi.fn().mockResolvedValueOnce(resource).mockReturnValue(new Promise(() => {}));
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
 
-			mount(backend({ lookup, observe }));
+			mount(backend({ detail, observe }));
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
 			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
 
-			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(detail).toHaveBeenCalledTimes(2);
 			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
 
 		});
 
 		it("should move to error on a failed refresh", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(resource).mockRejectedValue({ status: 503 });
+			const detail = vi.fn().mockResolvedValueOnce(resource).mockRejectedValue({ status: 503 });
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
 
-			mount(backend({ lookup, observe }));
+			mount(backend({ detail, observe }));
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
@@ -352,10 +353,10 @@ describe("useResource()", () => {
 
 		it("should report a failed refresh through the binding only", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(resource).mockRejectedValue({ status: 503 });
+			const detail = vi.fn().mockResolvedValueOnce(resource).mockRejectedValue({ status: 503 });
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
 
-			mount(backend({ lookup, observe }));
+			mount(backend({ detail, observe }));
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
@@ -490,9 +491,9 @@ describe("useResource()", () => {
 
 		it("should retrieve the resource again, discarding the error", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue(resource);
+			const detail = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue(resource);
 
-			const binding = mount(backend({ lookup }));
+			const binding = mount(backend({ detail }));
 
 			await settled(`error ${NotFound}`);
 
@@ -504,24 +505,24 @@ describe("useResource()", () => {
 
 		it("should keep the error while the resource is retrieved again", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
+			const detail = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
 
-			const binding = mount(backend({ lookup }));
+			const binding = mount(backend({ detail }));
 
 			await settled(`error ${NotFound}`);
 
 			act(() => void binding()({ error: ({ reload }) => reload() }));
 
-			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(detail).toHaveBeenCalledTimes(2);
 			expect(text()).toBe(`error ${NotFound}`);
 
 		});
 
 		it("should reject on a failed retrieval, moving to error", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValue({ status: 503 });
+			const detail = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValue({ status: 503 });
 
-			const binding = mount(backend({ lookup }));
+			const binding = mount(backend({ detail }));
 
 			await settled(`error ${NotFound}`);
 
@@ -547,7 +548,7 @@ describe("useCollection()", () => {
 
 
 	function collection(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
-		return backend({ lookup: async () => ({ members: items }), ...overrides });
+		return backend({ detail: async () => ({ members: items }), ...overrides });
 	}
 
 	function mount(store: Backend, target: string = entry): () => Collection {
@@ -585,7 +586,7 @@ describe("useCollection()", () => {
 
 		it("should be blank until the collection is retrieved", async () => {
 
-			mount(collection({ lookup: () => new Promise(() => {}) }));
+			mount(collection({ detail: () => new Promise(() => {}) }));
 
 			expect(text()).toBe("blank");
 
@@ -593,13 +594,13 @@ describe("useCollection()", () => {
 
 		it("should retrieve the items through the property collecting them", async () => {
 
-			const lookup = vi.fn(async () => ({ members: items }));
+			const detail = vi.fn(async () => ({ members: items }));
 
-			mount(collection({ lookup }));
+			mount(collection({ detail }));
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
-			expect(lookup).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
+			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
 
 		});
 
@@ -607,19 +608,19 @@ describe("useCollection()", () => {
 
 			vi.stubGlobal("location", { href: "https://example.com/page" });
 
-			const lookup = vi.fn(async () => ({ members: items }));
+			const detail = vi.fn(async () => ({ members: items }));
 
-			mount(collection({ lookup }), "resource");
+			mount(collection({ detail }), "resource");
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
-			expect(lookup).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
+			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
 
 		});
 
 		it("should take a collection left out of the resource as empty", async () => {
 
-			mount(collection({ lookup: async () => ({}) }));
+			mount(collection({ detail: async () => ({}) }));
 
 			await settled("ready []");
 
@@ -644,7 +645,7 @@ describe("useCollection()", () => {
 
 		it("should move to error on a missing resource", async () => {
 
-			mount(collection({ lookup: async () => undefined }));
+			mount(collection({ detail: async () => undefined }));
 
 			await settled(`error ${NotFound}`);
 
@@ -652,7 +653,7 @@ describe("useCollection()", () => {
 
 		it("should move to error on a failed retrieval", async () => {
 
-			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
+			mount(collection({ detail: async () => { throw { status: 503 }; } }));
 
 			await settled("error 503");
 
@@ -660,7 +661,7 @@ describe("useCollection()", () => {
 
 		it("should report a failed retrieval through the binding only", async () => {
 
-			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
+			mount(collection({ detail: async () => { throw { status: 503 }; } }));
 
 			await settled("error 503");
 
@@ -688,16 +689,16 @@ describe("useCollection()", () => {
 
 		it("should keep the items while they are retrieved again", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce({ members: items }).mockReturnValue(new Promise(() => {}));
+			const detail = vi.fn().mockResolvedValueOnce({ members: items }).mockReturnValue(new Promise(() => {}));
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
 
-			mount(collection({ lookup, observe }));
+			mount(collection({ detail, observe }));
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
 			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
 
-			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(detail).toHaveBeenCalledTimes(2);
 			expect(text()).toBe(`ready ${JSON.stringify(items)}`);
 
 		});
@@ -753,9 +754,9 @@ describe("useCollection()", () => {
 
 		it("should retrieve the collection again, discarding the error", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue({ members: items });
+			const detail = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue({ members: items });
 
-			const binding = mount(collection({ lookup }));
+			const binding = mount(collection({ detail }));
 
 			await settled(`error ${NotFound}`);
 
@@ -767,15 +768,15 @@ describe("useCollection()", () => {
 
 		it("should keep the error while the collection is retrieved again", async () => {
 
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
+			const detail = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
 
-			const binding = mount(collection({ lookup }));
+			const binding = mount(collection({ detail }));
 
 			await settled(`error ${NotFound}`);
 
 			act(() => void binding()({ error: ({ reload }) => reload() }));
 
-			expect(lookup).toHaveBeenCalledTimes(2);
+			expect(detail).toHaveBeenCalledTimes(2);
 			expect(text()).toBe(`error ${NotFound}`);
 
 		});

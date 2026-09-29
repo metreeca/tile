@@ -33,13 +33,20 @@ import { Conflict, type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
-import type { Instance, LookedUp, Repeated } from "@metreeca/keep/_blue/value";
+import {
+	type Collected,
+	collected,
+	type Detailed,
+	type Draft,
+	type Instance,
+	type Items,
+	type Repeated
+} from "@metreeca/keep/_blue/value";
 import type { Projection, Template } from "@metreeca/qest/model";
 import type { Reference } from "@metreeca/qest/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { useFetch } from "./fetch.js";
-import { type Collected, collected, type Draft } from "./_keep.js";
 
 
 const Context = createContext<Optional<Store>>(undefined);
@@ -189,7 +196,7 @@ export function useResource<
 		/**
 		 * The resource as the store currently holds it, narrowed to the values the template asks for.
 		 */
-		state: LookedUp<S, T>
+		state: Detailed<S, T>
 
 		/**
 		 * Replaces the resource in the store.
@@ -246,7 +253,7 @@ export function useResource<
 		entry,
 		model,
 
-		lookup: () => store.lookup({ entry, shape, model }),
+		lookup: () => store.detail({ entry, shape, model }),
 
 		writes: settle => ({
 
@@ -398,8 +405,9 @@ export function useCollection<
 		field,
 		model,
 
-		lookup: () => store.lookup({ entry, shape, model: { [field]: model } })
-			.then(value => value === undefined ? undefined : value[field] ?? []), // an empty collection may be left out
+		lookup: () => store.detail({ entry, shape, model: { [field]: model } }).then(value =>
+			value === undefined ? undefined : value[field] ?? [] // an empty collection may be left out
+		),
 
 		writes: settle => ({
 
@@ -511,17 +519,3 @@ function useEntry<V, W extends object>({
 	}
 
 }
-
-
-
-//// !!! ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * The items of a collection, narrowed to the values a template or a projection asks for.
- *
- * @typeParam S The shape describing the resource holding the collection
- * @typeParam F The name of the property collecting the items
- * @typeParam T The template or projection stating which values of each item are wanted
- */
-export type Items<S extends Lazy<ResourceShape>, F extends Repeated<S>, T extends Template | Projection> =
-	Exclude<LookedUp<S, { readonly [field in F]: T }>[F], undefined>;

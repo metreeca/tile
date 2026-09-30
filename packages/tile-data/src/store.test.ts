@@ -541,10 +541,10 @@ describe("useCollection()", () => {
 	const Item = shaped({ id: id(), label: required(string()) });
 	const Catalogue = shaped({ id: id(), members: multiple(reference(Item)) });
 
-	const field = "members";
+	const selection = { members: model };
 	const items = [{ id: "https://example.com/resource/1", label: "one" }];
 
-	type Collection = ReturnType<typeof useCollection<typeof Catalogue, typeof field, typeof model>>;
+	type Collection = ReturnType<typeof useCollection<typeof Catalogue, typeof selection>>;
 
 
 	function collection(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
@@ -557,7 +557,7 @@ describe("useCollection()", () => {
 
 		function Probe() {
 
-			const binding = useCollection({ entry: target, field, shape: Catalogue, model });
+			const binding = useCollection({ entry: target, shape: Catalogue, model: selection });
 
 			seen(binding);
 
@@ -579,7 +579,8 @@ describe("useCollection()", () => {
 
 
 	it("should throw outside a store context", async () => {
-		expect(orphan(() => useCollection({ entry, field, shape: Catalogue, model }))).toThrow("missing <Store> context");
+		expect(orphan(() => useCollection({ entry, shape: Catalogue, model: selection })))
+			.toThrow("missing <Store> context");
 	});
 
 	describe("retrieval", () => {
@@ -600,7 +601,7 @@ describe("useCollection()", () => {
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
-			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
+			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
 
 		});
 
@@ -614,7 +615,7 @@ describe("useCollection()", () => {
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
-			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: model } });
+			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
 
 		});
 
@@ -628,7 +629,7 @@ describe("useCollection()", () => {
 
 		it("should type the items as the template narrows them", async () => {
 
-			expectTypeOf<Items<typeof Catalogue, typeof field, typeof model>>()
+			expectTypeOf<Items<typeof Catalogue, typeof selection>>()
 				.toEqualTypeOf<readonly { readonly label: string }[]>();
 
 		});
@@ -637,7 +638,7 @@ describe("useCollection()", () => {
 
 			const Tagged = shaped({ id: id(), members: multiple(reference(Item)), tags: multiple(string()) });
 
-			void (() => useCollection({ entry, field: "members", shape: Tagged, model })({
+			void (() => useCollection({ entry, shape: Tagged, model: selection })({
 				ready: ({ state }) => expectTypeOf(state).toEqualTypeOf<readonly { readonly label: string }[]>()
 			}));
 

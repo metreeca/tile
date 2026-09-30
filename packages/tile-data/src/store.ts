@@ -26,7 +26,7 @@
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
-import { error, type Identifier, type Lazy, type Optional } from "@metreeca/core";
+import { error, type Lazy, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { getIRIParent, type IRI, resolve } from "@metreeca/core/resource";
 import { Conflict, type Fetch, NotFound } from "@metreeca/http";
@@ -36,12 +36,12 @@ import { createRESTStore } from "@metreeca/keep-rest";
 import {
 	type Collected,
 	collected,
+	type Collection,
 	type Draft,
 	type Items,
+	items,
 	type Match,
 	type Model,
-	type Models,
-	type Repeated,
 	type State
 } from "@metreeca/keep/_blue/value";
 import type { Reference } from "@metreeca/qest/state";
@@ -283,16 +283,14 @@ export function useResource<
  * {@link useResource}; an operation the view called also rejects with the same {@link Problem}, while a failed
  * exchange no view called for is reported through the binding alone.
  *
- * The template is typed and held stable as for {@link useResource}, and may likewise be fixed or replaced at runtime.
+ * The model is typed and held stable as for {@link useResource}, and may likewise be fixed or replaced at runtime.
  *
  * @typeParam S The shape describing the resource holding the collection
- * @typeParam F The name of the property collecting the items, inferred as written so that the items are typed after
- *     that property alone
- * @typeParam T The template or projection stating which values of each item are wanted
+ * @typeParam T The model naming the property collecting the items and stating which values of each item are wanted
  *
- * @param options The resource holding the collection, the property collecting the items, the shape describing the
- *     resource and the values wanted of each item; read as the component first renders and whenever the store, the
- *     resource identifier, the property or the template change
+ * @param options The resource holding the collection, the shape describing it and the model addressing the
+ *     collection; read as the component first renders and whenever the store, the resource identifier or the model
+ *     change
  *
  * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
  *     until the collection is first retrieved, `ready` with the items and the operation adding one, or `error` with
@@ -304,12 +302,10 @@ export function useResource<
  */
 export function useCollection<
 	S extends Lazy<ResourceShape>,
-	const F extends Repeated<S>, // !!!
-	T extends Models<Collected<S, F>, T> // !!! simplify
+	T extends Collection<S, T>
 >({
 
 	entry: relative,
-	field,
 	shape,
 	model
 
@@ -321,21 +317,18 @@ export function useCollection<
 	readonly entry: IRI
 
 	/**
-	 * The name of the multi-valued property collecting the items.
-	 */
-	readonly field: F
-
-	/**
 	 * The shape describing the resource holding the collection, possibly deferred to break definition cycles.
 	 */
 	readonly shape: S
 
 	/**
-	 * The template or projection stating which values of each item are retrieved, and nothing wider.
+	 * The model naming the multi-valued property collecting the items and stating, under that name, the template or
+	 * projection narrowing each item to the values retrieved, and nothing wider: `{ members: { name: {} } }` lists
+	 * the names of the items the `members` property collects.
 	 *
 	 * > [!WARNING]
-	 * > Templates and projections are compared by reference: any new object, even with the same content, retrieves
-	 * > the collection again. A template written inline, as in `useCollection({ …, model: { name: {} } })`, is a new
+	 * > Models are compared by reference: any new object, even with the same content, retrieves the collection
+	 * > again. A model written inline, as in `useCollection({ …, model: { members: { name: {} } } })`, is a new
 	 * > object on every render, and retrieves the collection on every render: declare it as a constant instead, or
 	 * > keep it in state if it changes at runtime.
 	 */
@@ -355,9 +348,9 @@ export function useCollection<
 	readonly ready: {
 
 		/**
-		 * The items as the store currently holds them, narrowed to the values the template asks for.
+		 * The items as the store currently holds them, narrowed to the values the model asks for.
 		 */
-		state: Items<S, F, T>
+		state: Items<S, T>
 
 		/**
 		 * Adds an item to the collection.
@@ -368,7 +361,7 @@ export function useCollection<
 		 *     can move there, the binding following the change as the store signals it; rejects with the
 		 *     {@link Problem} the binding moves to `error` with, if the item already exists or the creation fails
 		 */
-		create(state: Draft<Collected<S, F>>): Promise<Reference>
+		create(state: Draft<Collected<S, T>>): Promise<Reference>
 
 	}
 
@@ -403,20 +396,17 @@ export function useCollection<
 
 		store,
 		entry,
-		field,
 		model,
 
-		// ;(cast) T is the entry Model<S> admits for F, which the compiler can't relate for a generic F
-
-		lookup: () => store.detail({ entry, shape, model: { [field]: model } as Model<S> }).then(value =>
-			value === undefined ? undefined : value[field] ?? [] // an empty collection may be left out
+		lookup: () => store.detail({ entry, shape, model }).then(value =>
+			value === undefined ? undefined : items<S, T>(model, value)
 		),
 
 		writes: settle => ({
 
-			create: (state: Draft<Collected<S, F>>) => settle(store.create({
+			create: (state: Draft<Collected<S, T>>) => settle(store.create({
 				entry,
-				shape: collected(shape, field),
+				shape: collected(shape, model),
 				state
 			}), Conflict)
 
@@ -434,10 +424,10 @@ export function useCollection<
  *
  * Tracks the changes the store signals to a resource, so resource and collection bindings move through the same states.
  *
- * @param options The store and the resource whose changes are tracked, the property and the template narrowing the
- *     value, how the value is retrieved, and the writes offered while it is `ready`; a write settles its exchange
- *     through the function it is handed, so that a failure moves the binding to `error`; the value is retrieved again
- *     whenever the store, the resource, the property or the template change
+ * @param options The store and the resource whose changes are tracked, the model narrowing the value, how the value
+ *     is retrieved, and the writes offered while it is `ready`; a write settles its exchange through the function it
+ *     is handed, so that a failure moves the binding to `error`; the value is retrieved again whenever the store, the
+ *     resource or the model change
  *
  * @returns The current state of the binding
  */
@@ -445,7 +435,6 @@ function useEntry<V, W extends object>({
 
 	store,
 	entry,
-	field,
 	model,
 
 	lookup,
@@ -455,7 +444,6 @@ function useEntry<V, W extends object>({
 
 	readonly store: Store
 	readonly entry: Reference
-	readonly field?: Identifier
 	readonly model: object
 
 	lookup(): Promise<Optional<V>>
@@ -479,7 +467,7 @@ function useEntry<V, W extends object>({
 
 		return store.observe(track, entry);
 
-	}, [store, entry, field, model]);
+	}, [store, entry, model]);
 
 
 	return option;

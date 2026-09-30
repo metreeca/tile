@@ -713,7 +713,7 @@ describe("useCollection()", () => {
 
 			await expect(binding()({ ready: ({ create }) => create(item) })).resolves.toBe(location);
 
-			expect(create).toHaveBeenCalledWith({ entry, shape: Item, state: item });
+			expect(create).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection, state: item });
 
 		});
 

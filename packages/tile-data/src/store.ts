@@ -34,7 +34,6 @@ import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
 import {
-	collected,
 	type Batch,
 	type Draft,
 	type Match,
@@ -394,11 +393,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Specs<S, 
 
 		writes: settle => ({
 
-			create: (state: Draft<S, T>) => settle(store.create({
-				entry,
-				shape: collected(shape, model),
-				state
-			}), Conflict)
+			create: (state: Draft<S, T>) => settle(store.create({ entry, shape, model, state }), Conflict)
 
 		})
 

@@ -35,11 +35,11 @@ import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
 import {
 	collected,
-	type Collection,
+	type Batch,
 	type Draft,
-	type Items,
 	type Match,
 	type Model,
+	type Specs,
 	type State
 } from "@metreeca/keep/_blue/value";
 import type { Reference } from "@metreeca/qest/state";
@@ -295,7 +295,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useCollection<S extends Lazy<ResourceShape>, T extends Collection<S, T>>({
+export function useCollection<S extends Lazy<ResourceShape>, T extends Specs<S, T>>({
 
 	entry: relative,
 	shape,
@@ -342,7 +342,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Collectio
 		/**
 		 * The items as the store currently holds them, narrowed to the values the model asks for.
 		 */
-		state: Items<S, T>
+		state: Batch<S, T>
 
 		/**
 		 * Adds an item to the collection.

@@ -19,7 +19,7 @@ import { id, multiple, required, resource as shaped, type ResourceShape } from "
 import { string } from "@metreeca/blue/string";
 import { Conflict, NotFound } from "@metreeca/http";
 import type { Store as Backend, StoreObserver } from "@metreeca/keep";
-import type { Items } from "@metreeca/keep/_blue/value";
+import type { Batch } from "@metreeca/keep/_blue/value";
 import type { Template } from "@metreeca/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
@@ -621,7 +621,7 @@ describe("useCollection()", () => {
 
 		it("should type the items as the template narrows them", async () => {
 
-			expectTypeOf<Items<typeof Catalogue, typeof selection>>()
+			expectTypeOf<Batch<typeof Catalogue, typeof selection>>()
 				.toEqualTypeOf<readonly { readonly label: string }[]>();
 
 		});

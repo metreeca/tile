@@ -34,7 +34,6 @@ import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
 import {
-	type Collected,
 	collected,
 	type Collection,
 	type Draft,
@@ -150,10 +149,7 @@ export function useStore(): Store {
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useResource<
-	S extends Lazy<ResourceShape>,
-	T extends Model<S, T>
->({
+export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
 
 	entry: relative,
 	shape,
@@ -300,10 +296,7 @@ export function useResource<
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useCollection<
-	S extends Lazy<ResourceShape>,
-	T extends Collection<S, T>
->({
+export function useCollection<S extends Lazy<ResourceShape>, T extends Collection<S, T>>({
 
 	entry: relative,
 	shape,
@@ -361,7 +354,7 @@ export function useCollection<
 		 *     can move there, the binding following the change as the store signals it; rejects with the
 		 *     {@link Problem} the binding moves to `error` with, if the item already exists or the creation fails
 		 */
-		create(state: Draft<Collected<S, T>>): Promise<Reference>
+		create(state: Draft<S, T>): Promise<Reference>
 
 	}
 
@@ -404,7 +397,7 @@ export function useCollection<
 
 		writes: settle => ({
 
-			create: (state: Draft<Collected<S, T>>) => settle(store.create({
+			create: (state: Draft<S, T>) => settle(store.create({
 				entry,
 				shape: collected(shape, model),
 				state

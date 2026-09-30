@@ -388,7 +388,7 @@ describe("useResource()", () => {
 
 	describe("update()", () => {
 
-		it("should write the resource back to the store", async () => {
+		it("should write the resource back to the store, resolving to its entry", async () => {
 
 			const update = vi.fn(async () => entry);
 
@@ -396,7 +396,7 @@ describe("useResource()", () => {
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
-			await binding()({ ready: ({ update }) => update(resource) });
+			await expect(binding()({ ready: ({ update }) => update(resource) })).resolves.toBe(entry);
 
 			expect(update).toHaveBeenCalledWith({ entry, shape, state: resource });
 

@@ -199,11 +199,11 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 		 *
 		 * @param state The complete replacement state of the resource
 		 *
-		 * @returns A promise resolving once the store has handled the write, the binding following the change as the
-		 *     store signals it; rejects with the {@link Problem} the binding moves to `error` with, if the resource
-		 *     is missing or the write fails
+		 * @returns A promise resolving to the absolute identifier of the updated resource once the store has handled
+		 *     the write, the binding following the change as the store signals it; rejects with the {@link Problem}
+		 *     the binding moves to `error` with, if the resource is missing or the write fails
 		 */
-		update(state: State<S>): Promise<void>
+		update(state: Draft<S>): Promise<Reference>
 
 		/**
 		 * Removes the resource from the store.
@@ -253,11 +253,11 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 
 		writes: settle => ({
 
-			update: (state: State<S>) => settle(store.update({ entry, shape, state }))
-				.then(() => {}),
+			update: (state: Draft<S>) => settle(store.update({ entry, shape, state })),
 
-			delete: () => settle(store.delete({ entry, shape }))
-				.then(() => getIRIParent(entry) ?? entry) // the root is its own collection
+			delete: () => settle(store.delete({ entry, shape })).then(() =>
+				getIRIParent(entry) ?? entry // the root is its own collection
+			)
 
 		})
 

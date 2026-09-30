@@ -38,7 +38,6 @@ import {
 	type Collection,
 	type Draft,
 	type Items,
-	items,
 	type Match,
 	type Model,
 	type State
@@ -391,9 +390,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Collectio
 		entry,
 		model,
 
-		lookup: () => store.detail({ entry, shape, model }).then(value =>
-			value === undefined ? undefined : items<S, T>(model, value)
-		),
+		lookup: () => store.select({ entry, shape, model }),
 
 		writes: settle => ({
 

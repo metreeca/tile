@@ -548,7 +548,7 @@ describe("useCollection()", () => {
 
 
 	function collection(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
-		return backend({ detail: async () => ({ members: items }), ...overrides });
+		return backend({ select: async () => items, ...overrides });
 	}
 
 	function mount(store: Backend, target: string = entry): () => Collection {
@@ -587,21 +587,21 @@ describe("useCollection()", () => {
 
 		it("should be blank until the collection is retrieved", async () => {
 
-			mount(collection({ detail: () => new Promise(() => {}) }));
+			mount(collection({ select: () => new Promise(() => {}) }));
 
 			expect(text()).toBe("blank");
 
 		});
 
-		it("should retrieve the items through the property collecting them", async () => {
+		it("should select the items through the property collecting them", async () => {
 
-			const detail = vi.fn(async () => ({ members: items }));
+			const select = vi.fn(async () => items);
 
-			mount(collection({ detail }));
+			mount(collection({ select }));
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
-			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
+			expect(select).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
 
 		});
 
@@ -609,21 +609,13 @@ describe("useCollection()", () => {
 
 			vi.stubGlobal("location", { href: "https://example.com/page" });
 
-			const detail = vi.fn(async () => ({ members: items }));
+			const select = vi.fn(async () => items);
 
-			mount(collection({ detail }), "resource");
+			mount(collection({ select }), "resource");
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
-			expect(detail).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
-
-		});
-
-		it("should take a collection left out of the resource as empty", async () => {
-
-			mount(collection({ detail: async () => ({}) }));
-
-			await settled("ready []");
+			expect(select).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
 
 		});
 
@@ -646,7 +638,7 @@ describe("useCollection()", () => {
 
 		it("should move to error on a missing resource", async () => {
 
-			mount(collection({ detail: async () => undefined }));
+			mount(collection({ select: async () => undefined }));
 
 			await settled(`error ${NotFound}`);
 
@@ -654,7 +646,7 @@ describe("useCollection()", () => {
 
 		it("should move to error on a failed retrieval", async () => {
 
-			mount(collection({ detail: async () => { throw { status: 503 }; } }));
+			mount(collection({ select: async () => { throw { status: 503 }; } }));
 
 			await settled("error 503");
 
@@ -662,7 +654,7 @@ describe("useCollection()", () => {
 
 		it("should report a failed retrieval through the binding only", async () => {
 
-			mount(collection({ detail: async () => { throw { status: 503 }; } }));
+			mount(collection({ select: async () => { throw { status: 503 }; } }));
 
 			await settled("error 503");
 
@@ -690,16 +682,16 @@ describe("useCollection()", () => {
 
 		it("should keep the items while they are retrieved again", async () => {
 
-			const detail = vi.fn().mockResolvedValueOnce({ members: items }).mockReturnValue(new Promise(() => {}));
+			const select = vi.fn().mockResolvedValueOnce(items).mockReturnValue(new Promise(() => {}));
 			const observe = vi.fn((_observer: StoreObserver) => () => {});
 
-			mount(collection({ detail, observe }));
+			mount(collection({ select, observe }));
 
 			await settled(`ready ${JSON.stringify(items)}`);
 
 			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
 
-			expect(detail).toHaveBeenCalledTimes(2);
+			expect(select).toHaveBeenCalledTimes(2);
 			expect(text()).toBe(`ready ${JSON.stringify(items)}`);
 
 		});
@@ -755,9 +747,9 @@ describe("useCollection()", () => {
 
 		it("should retrieve the collection again, discarding the error", async () => {
 
-			const detail = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue({ members: items });
+			const select = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue(items);
 
-			const binding = mount(collection({ detail }));
+			const binding = mount(collection({ select }));
 
 			await settled(`error ${NotFound}`);
 
@@ -769,15 +761,15 @@ describe("useCollection()", () => {
 
 		it("should keep the error while the collection is retrieved again", async () => {
 
-			const detail = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
+			const select = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
 
-			const binding = mount(collection({ detail }));
+			const binding = mount(collection({ select }));
 
 			await settled(`error ${NotFound}`);
 
 			act(() => void binding()({ error: ({ reload }) => reload() }));
 
-			expect(detail).toHaveBeenCalledTimes(2);
+			expect(select).toHaveBeenCalledTimes(2);
 			expect(text()).toBe(`error ${NotFound}`);
 
 		});

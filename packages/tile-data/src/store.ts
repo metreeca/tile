@@ -33,14 +33,7 @@ import { Conflict, type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
-import {
-	type Batch,
-	type Draft,
-	type Match,
-	type Model,
-	type Specs,
-	type State
-} from "@metreeca/keep/_blue/value";
+import { type Batch, type Draft, type Frame, type Match, type Slice } from "@metreeca/keep/_blue/value";
 import type { Reference } from "@metreeca/qest/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
@@ -67,7 +60,7 @@ const Context = createContext<Optional<Store>>(undefined);
  */
 export function Store({
 
-	factory = fetch => createRESTStore({ fetch } ),
+	factory = fetch => createRESTStore({ fetch }),
 
 	children
 
@@ -147,7 +140,7 @@ export function useStore(): Store {
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
+export function useResource<S extends Lazy<ResourceShape>, T extends Frame<S, T>>({
 
 	entry: relative,
 	shape,
@@ -294,7 +287,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useCollection<S extends Lazy<ResourceShape>, T extends Specs<S, T>>({
+export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 	entry: relative,
 	shape,

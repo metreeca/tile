@@ -1,8 +1,8 @@
-# Metreeca Tile
+# @metreeca/tile
 
 Minimalist model-driven UI toolkit for linked data resources.
 
-**Metreeca Tile** provides specialised Preact components for working with linked data resources served by
+**@metreeca/tile** provides specialised Preact components for working with linked data resources served by
 [@metreeca/qest](https://github.com/metreeca/qest) APIs.
 
 - **Model-Driven Data**: resource models shared by client and server drive data exchanges and validation, cutting

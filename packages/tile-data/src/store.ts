@@ -242,7 +242,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 		entry,
 		model,
 
-		lookup: () => store.detail({ entry, shape, model }),
+		lookup: () => store.lookup({ entry, shape, model }),
 
 		modify: settle => ({
 
@@ -383,7 +383,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		entry,
 		model,
 
-		lookup: () => store.detail({ entry, shape, model }).then(holder => holder && slice(holder, model)),
+		lookup: () => store.lookup({ entry, shape, model }).then(holder => holder && slice(holder, model)),
 
 		modify: settle => ({
 

@@ -27,7 +27,7 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Draft, Slice } from "@metreeca/blue/value";
-import { Batch, Match, Model, slice } from "@metreeca/blue/value";
+import { Items, Match, Model, items } from "@metreeca/blue/value";
 import { error, type Lazy, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { getIRIParent, type IRI, resolve } from "@metreeca/core/resource";
@@ -335,7 +335,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		/**
 		 * The items as the store currently holds them, narrowed to the values the model asks for.
 		 */
-		state: Batch<S, T>
+		state: Items<S, T>
 
 		/**
 		 * Adds an item to the collection.
@@ -383,7 +383,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		entry,
 		model,
 
-		lookup: () => store.lookup({ entry, shape, model }).then(holder => holder && slice(holder, model)),
+		lookup: () => store.lookup({ entry, shape, model }).then(holder => holder && items(holder, model)),
 
 		modify: settle => ({
 

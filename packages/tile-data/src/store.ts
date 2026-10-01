@@ -27,7 +27,7 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Draft, Slice } from "@metreeca/blue/value";
-import { Batch, Match, Model } from "@metreeca/blue/value";
+import { Batch, Match, Model, slice } from "@metreeca/blue/value";
 import { error, type Lazy, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { getIRIParent, type IRI, resolve } from "@metreeca/core/resource";
@@ -376,7 +376,6 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 
 	const store = useStore();
 	const entry = resolve(location.href, relative);
-	const [collection] = Object.keys(model); // the model names a single collecting property
 
 	return createRelay(useEntry({
 
@@ -384,10 +383,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		entry,
 		model,
 
-		lookup: () => store.detail({ entry, shape, model }).then(holder =>
-				holder && (Reflect.get(holder, collection) ?? []) as Batch<S, T>
-			// ;(cast) Batch is not derivable from Match generically
-		),
+		lookup: () => store.detail({ entry, shape, model }).then(holder => holder && slice(holder, model)),
 
 		modify: settle => ({
 

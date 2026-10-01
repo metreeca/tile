@@ -26,6 +26,8 @@
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
+import type { Draft, Slice } from "@metreeca/blue/value";
+import { Batch, Match, Model } from "@metreeca/blue/value";
 import { error, type Lazy, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { getIRIParent, type IRI, resolve } from "@metreeca/core/resource";
@@ -33,7 +35,6 @@ import { Conflict, type Fetch, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
-import { type Batch, type Draft, type Frame, type Match, type Slice } from "@metreeca/keep/_blue/value";
 import type { Reference } from "@metreeca/qest/state";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
@@ -140,7 +141,7 @@ export function useStore(): Store {
  * @throws {@link !Error Error} If called outside any {@link Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useResource<S extends Lazy<ResourceShape>, T extends Frame<S, T>>({
+export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
 
 	entry: relative,
 	shape,
@@ -375,6 +376,7 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 
 	const store = useStore();
 	const entry = resolve(location.href, relative);
+	const [collection] = Object.keys(model); // the model names a single collecting property
 
 	return createRelay(useEntry({
 
@@ -382,7 +384,10 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		entry,
 		model,
 
-		lookup: () => store.select({ entry, shape, model }),
+		lookup: () => store.detail({ entry, shape, model }).then(holder =>
+			holder && (Reflect.get(holder, collection) ?? []) as Batch<S, T> // ;(cast) Batch is not derivable from
+																			 // Match generically
+		),
 
 		writes: settle => ({
 

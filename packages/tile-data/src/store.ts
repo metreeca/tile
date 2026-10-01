@@ -385,8 +385,8 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		model,
 
 		lookup: () => store.detail({ entry, shape, model }).then(holder =>
-				holder && (Reflect.get(holder, collection) ?? []) as Batch<S, T> // ;(cast) Batch is not derivable from
-			// Match generically
+				holder && (Reflect.get(holder, collection) ?? []) as Batch<S, T>
+			// ;(cast) Batch is not derivable from Match generically
 		),
 
 		modify: settle => ({

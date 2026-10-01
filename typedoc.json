@@ -3,7 +3,7 @@
     "packages/*"
   ],
   "entryPointStrategy": "packages",
-  "name": "Metreeca Tile",
+  "name": "@metreeca/tile",
   "out": "docs",
   "readme": "README.md",
   "hostedBaseUrl": "https://metreeca.github.io/tile/",

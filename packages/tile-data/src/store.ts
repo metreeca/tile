@@ -244,7 +244,7 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 
 		lookup: () => store.detail({ entry, shape, model }),
 
-		writes: settle => ({
+		modify: settle => ({
 
 			update: (state: Draft<S>) => settle(store.update({ entry, shape, state })),
 
@@ -385,11 +385,11 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		model,
 
 		lookup: () => store.detail({ entry, shape, model }).then(holder =>
-			holder && (Reflect.get(holder, collection) ?? []) as Batch<S, T> // ;(cast) Batch is not derivable from
-																			 // Match generically
+				holder && (Reflect.get(holder, collection) ?? []) as Batch<S, T> // ;(cast) Batch is not derivable from
+			// Match generically
 		),
 
-		writes: settle => ({
+		modify: settle => ({
 
 			create: (state: Draft<S, T>) => settle(store.create({ entry, shape, model, state }), Conflict)
 
@@ -405,12 +405,13 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 /**
  * Binds a component to a value retrieved from a store.
  *
- * Tracks the changes the store signals to a resource, so resource and collection bindings move through the same states.
+ * Tracks the changes the store signals to a resource, so resource and collection bindings move through the same
+ * states.
  *
  * @param options The store and the resource whose changes are tracked, the model narrowing the value, how the value
- *     is retrieved, and the writes offered while it is `ready`; a write settles its exchange through the function it
- *     is handed, so that a failure moves the binding to `error`; the value is retrieved again whenever the store, the
- *     resource or the model change
+ *     is retrieved, and the modifications offered while it is `ready`; a modification settles its exchange through the
+ *     function it is handed, so that a failure moves the binding to `error`; the value is retrieved again whenever the
+ *     store, the resource or the model change
  *
  * @returns The current state of the binding
  */
@@ -421,7 +422,7 @@ function useEntry<V, W extends object>({
 	model,
 
 	lookup,
-	writes
+	modify
 
 }: {
 
@@ -431,7 +432,7 @@ function useEntry<V, W extends object>({
 
 	lookup(): Promise<Optional<V>>
 
-	writes(settle: <R>(outcome: Promise<Optional<R>>, status?: number) => Promise<R>): W
+	modify(settle: <R>(outcome: Promise<Optional<R>>, status?: number) => Promise<R>): W
 
 }): Option<{
 
@@ -468,7 +469,7 @@ function useEntry<V, W extends object>({
 	}
 
 	function ready(state: V): void {
-		setOption({ ready: { state, ...writes(settle) } });
+		setOption({ ready: { state, ...modify(settle) } });
 	}
 
 

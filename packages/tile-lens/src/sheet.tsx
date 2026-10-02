@@ -26,15 +26,13 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Items, Slice } from "@metreeca/blue/value";
-import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
+import { isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import type { IRI } from "@metreeca/core/resource";
 import { Fault } from "@metreeca/tile-cell/fault";
 import { Hint } from "@metreeca/tile-cell/hint";
-import { useModel } from "@metreeca/tile-data/model";
-import { useCollection } from "@metreeca/tile-data/store";
 import { type ComponentChildren, createElement, Fragment } from "preact";
-import { useEffect, useId, useMemo, useState } from "preact/hooks";
-import { tally, createWindow } from "./_/window.js";
+import { useEffect, useId, useState } from "preact/hooks";
+import { useWindow } from "./_/window.js";
 import "./sheet.css";
 
 
@@ -43,7 +41,7 @@ import "./sheet.css";
  *
  * Lists the items of a collection held by the {@link @metreeca/tile-data!store.Store shared store}, rendering each
  * through `children`, and keeps in step with the store as {@link @metreeca/tile-data!store.useCollection useCollection}
- * does. Only the items in view are retrieved, in batches of 25 together with the batch before and the one after them,
+ * does. Only the items in view are retrieved, in batches of 100 together with the batch before and the one after them,
  * while the list takes the room the whole collection would, as estimated from the height of the rows on show, so the
  * scrollbar of whatever area the list scrolls in spans the collection; the items on show stay where they stand while
  * the batches for a new position are on their way.
@@ -104,51 +102,17 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 }) {
 
-	// A new model, as when a filter changes, creates the window again from the first items.
+	const window = useWindow({ entry, shape, model });
 
-	const { model: slice, lower, stale, focus } = useModel(() => createWindow({ model }), [model]);
-
-	// The count is retrieved again only as the window moves, the binding comparing models by reference.
-
-	const counting = useMemo(() => tally(slice), [slice]);
-
-	const collection = useCollection({
-
-		entry,
-		shape,
-
-		model: slice as T // ;(cast) offset and limit leave the items typed alike
-
-	});
-
-	const counter = useCollection({
-
-		entry,
-		shape,
-
-		model: counting as T // ;(cast) count() reads the count off an untyped item
-
-	});
-
-	const total = counter({ ready: ({ state }) => count(state) });
-
-	return collection({
+	return window({
 
 		blank: () => placeholder && <Hint>{placeholder}<span>Loading…</span></Hint>,
 
-		ready: ({ state }) => {
+		ready: ({ state, offset, total, focus }) => state.length === 0 && offset === 0
 
-			// Stale items stand where they were taken from until the new window lands.
+			? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
 
-			const start = state === stale?.items ? stale.lower : lower;
-
-			return state.length === 0 && start === 0
-
-				? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
-
-				: <Rows items={state} start={start} total={total} focus={focus}>{children}</Rows>;
-
-		},
+			: <Rows items={state} offset={offset} total={total} focus={focus}>{children}</Rows>,
 
 		error: ({ state }) => <Fault {...state}/>
 
@@ -171,7 +135,7 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 function Rows<I>({
 
 	items,
-	start,
+	offset,
 	total,
 
 	focus,
@@ -181,10 +145,10 @@ function Rows<I>({
 }: {
 
 	items: readonly I[]
-	start: number
+	offset: number
 	total: Optional<number>
 
-	focus: (first: number, last: number, items: readonly unknown[]) => void
+	focus: (first: number, last: number) => void
 
 	children: (item: I) => ComponentChildren
 
@@ -193,9 +157,10 @@ function Rows<I>({
 	const id = useId();
 
 	// Row height is known to the browser alone, so it is measured off the rows on show.
+
 	const [row, setRow] = useState<number>();
 
-	const size = Math.max(total ?? 0, start+items.length);
+	const size = Math.max(total ?? 0, offset+items.length);
 
 	useEffect(() => opt(document.getElementById(id) ?? undefined, element => {
 
@@ -210,6 +175,7 @@ function Rows<I>({
 	}), [id, items.length]);
 
 	// Items in view are known to the browser alone, so scrolling is followed on the whole page.
+
 	useEffect(() => opt(row, row => opt(document.getElementById(id) ?? undefined, element => {
 
 		const index = (offset: number) => Math.min(size-1, Math.max(0, Math.floor(offset/row)));
@@ -218,7 +184,7 @@ function Rows<I>({
 
 			const { top } = element.getBoundingClientRect();
 
-			focus(index(-top), index(window.innerHeight-top), items);
+			focus(index(-top), index(window.innerHeight-top));
 
 		};
 
@@ -232,33 +198,21 @@ function Rows<I>({
 			window.removeEventListener("resize", track);
 		};
 
-	})), [id, row, size, items, focus]);
+	})), [id, row, size, focus]);
 
 	return createElement("tile-sheet", {
 
 		id,
 
 		style: opt(row, row => ({
-			paddingTop: `${start*row}px`,
-			paddingBottom: `${Math.max(0, size-start-items.length)*row}px`
+			paddingTop: `${offset*row}px`,
+			paddingBottom: `${Math.max(0, size-offset-items.length)*row}px`
 		}))
 
 	}, items.map(item =>
 		<Fragment key={key(item)}>{children(item)}</Fragment>
 	));
 
-}
-
-
-/**
- * Reads the size of a collection off its count.
- *
- * @param items The items retrieved for the count of a collection
- *
- * @returns The count carried by the single item retrieved, if it carries one
- */
-function count(items: readonly unknown[]): Optional<number> {
-	return opt(items[0], item => isObject(item) && isNumber(item.count) ? item.count : undefined);
 }
 
 

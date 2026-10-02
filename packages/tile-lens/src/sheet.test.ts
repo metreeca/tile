@@ -30,7 +30,7 @@ import { Sheet } from "./sheet.js";
 /**
  * The number of items in each batch, as the widget documents it.
  */
-const batch = 25;
+const batch = 100;
 
 /**
  * The height of a row, as the stand-in observer measures it.

@@ -16,33 +16,20 @@
 
 tile-grid {
 
+    --cols: 2;
+    --gap: 1em;
+    --ratio: 4 /3;
+
+    --width: calc(max(15em, 100% / var(--cols) - var(--gap) * var(--cols)));
+
+
     display: grid;
 
-    grid-template-columns: min-content minmax(min-content, 1fr);
-    align-items: baseline;
-
-    grid-column-gap: 0.75em;
-    grid-row-gap: 0.1em;
-
-    white-space: nowrap;
-
-    overflow: hidden;
+    grid-gap: var(--gap);
+    grid-template-columns: repeat(auto-fit, minmax(var(--width), 1fr));
 
     & > * {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    & > dt {
-        text-align: right;
-        font-size: 90%;
-        font-weight: 700;
-        color: var(--tile--color-label);
-    }
-
-    & > hr {
-        display: block;
-        grid-column: 1 / span 2;
+        aspect-ratio: var(--ratio)
     }
 
 }

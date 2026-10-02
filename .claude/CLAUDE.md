@@ -165,10 +165,10 @@ is, so the next reader doesn't take it for an oversight.
 
 # Testing
 
-The root `vitest.config.ts` aliases all workspace `@metreeca/tile*` packages to their TypeScript source via regex, so
-vitest transpiles directly from `src/` without requiring a prior build step. The resolver maps each `@metreeca/tile*`
-specifier to `packages/<package>/src`; the aliases are convention-based and require no manual updates when adding
-packages or subpath exports.
+The root `vitest.config.ts` resolves workspace imports through the `@metreeca/source` export condition, as
+`tsconfig.json` does, so tests run against the `src/` of every sibling without a prior build. A subpath reaches source
+only if its `exports` entry carries the condition: an entry without it falls back to `dist`, and tests then see the
+sibling as it was last built.
 
 Headless state is tested without a DOM: a test that needs one belongs to a binding package, which supplies its own
 environment.

@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile",
   "version": "0.3.0",
-  "description": "Design system for Metreeca Tile interfaces.",
+  "description": "Design system for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
     "css",

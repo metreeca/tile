@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
-Design system for [Metreeca Tile](https://github.com/metreeca/tile) interfaces.
+Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 An app includes the stylesheet and gets a coherent look across every Tile component: a token layer defining colour,
 type, spacing, sizing and focus affordances, and base rules applying them to plain document markup. Redefining a token

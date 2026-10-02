@@ -79,8 +79,7 @@ Every package states its summary in three places, which **MUST** be kept aligned
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
-The suffix names the family a package belongs to, so `@metreeca/tile` itself names the project instead, as
-`<summary> for Metreeca Tile interfaces.`, rather than pointing at itself.
+The suffix names the project repository as `@metreeca/tile`, for `@metreeca/tile` itself as for every other package.
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the

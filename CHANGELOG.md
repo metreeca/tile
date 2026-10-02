@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0](https://github.com/metreeca/tile/compare/v0.2.0...HEAD)
+## [Unreleased](https://github.com/metreeca/tile/compare/v0.3.0...HEAD)
+
+## [0.3.0](https://github.com/metreeca/tile/releases/tag/v0.3.0) - 2026-10-02
 
 ### Added
 
@@ -28,13 +30,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `@metreeca/tile-data/router` — **breaking**: `Router` drops the `mode` (hash routing) and `fallback` props, in favour
   of catch-all patterns in `Routes`; route tables are declared only in `Routes`
+  (`<Router fallback={view}>` → `<Routes>{{ ..., "*": view }}</Routes>`)
 - `@metreeca/tile-data/router` — **breaking**: the navigator takes the `replace` flag in the navigation object rather
-  than as a second argument
+  than as a second argument (`navigate(route, true)` → `navigate({ route, replace: true })`)
 - `@metreeca/tile-data/router` — **breaking**: every same-site link is followed in place, and `Routes` renders nothing
   while it moves the location
 - `@metreeca/tile-cell/fault` — **breaking**: `text` and `children` props removed; reader-actionable faults are told by
-  their `detail`
-- `@metreeca/tile-data` — depends on `@metreeca/keep` and `@metreeca/keep-rest` `^0.10.0`
+  their `detail` (`<Fault text={wording}/>` → a problem carrying `detail: wording`)
+- `@metreeca/tile-data` — depends on `@metreeca/blue` and `@metreeca/qest` `^0.12.0`, and on `@metreeca/keep` and
+  `@metreeca/keep-rest` `^0.11.0`
+- `@metreeca/tile-data`, `/tile-cell`, `/tile-hive` and `/tile-lens` — require `@metreeca/core` `^0.12.0`, and
+  `@metreeca/http` `^0.4.0` where they depend on it
 
 ### Fixed
 

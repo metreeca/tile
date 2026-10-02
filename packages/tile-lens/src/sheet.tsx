@@ -15,40 +15,42 @@
  */
 
 /**
- * Incremental collection list.
+ * Windowed collection list.
  *
- * Offers the list a screen shows the items of a collection in, fetched from the shared store a batch at a time as the
- * reader scrolls to its end, so a long collection is read without being retrieved all at once.
+ * Offers the list a screen shows the items of a collection in, fetching from the shared store only the items in view
+ * and the batches around them, while taking the room of the whole collection, so a long collection is read without
+ * being retrieved all at once and the scrollbar still tells where the reader stands in it.
  *
  * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Items, Slice } from "@metreeca/blue/value";
-import { isObject, isString, type Lazy } from "@metreeca/core";
+import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import type { IRI } from "@metreeca/core/resource";
 import { Fault } from "@metreeca/tile-cell/fault";
 import { Hint } from "@metreeca/tile-cell/hint";
-import { More } from "@metreeca/tile-cell/more";
 import { useModel } from "@metreeca/tile-data/model";
 import { useCollection } from "@metreeca/tile-data/store";
 import { type ComponentChildren, createElement, Fragment } from "preact";
-import { Paging } from "./_/paging.js";
+import { useEffect, useId, useMemo, useState } from "preact/hooks";
+import { tally, Window } from "./_/window.js";
 import "./sheet.css";
 
 
 /**
- * Creates an incremental collection list.
+ * Creates a windowed collection list.
  *
  * Lists the items of a collection held by the {@link @metreeca/tile-data!store.Store shared store}, rendering each
  * through `children`, and keeps in step with the store as {@link @metreeca/tile-data!store.useCollection useCollection}
- * does. The list starts with the first 25 items and closes with a
- * {@link @metreeca/tile-cell!more.More trigger} while the collection holds more, fetching the next batch as soon as
- * the reader scrolls it into view; the items on show stay there while the next batch is on its way.
+ * does. Only the items in view are retrieved, in batches of 25 together with the batch before and the one after them,
+ * while the list takes the room the whole collection would, as estimated from the height of the rows on show, so the
+ * scrollbar of whatever area the list scrolls in spans the collection; the items on show stay where they stand while
+ * the batches for a new position are on their way.
  *
  * Filters and sort order are stated in the model as criteria on the collection, as the store takes them: the list
- * sets the limit alone, overriding any the model states, and starts again from the first batch whenever it is handed a
- * model stating something different.
+ * sets the offset and limit alone, overriding any the model states, and starts again from the first items whenever it
+ * is handed a model stating something different.
  *
  * Where a `placeholder` is supplied, a list with nothing to show fills its area with it, worded as still loading or as
  * matching nothing; a failed exchange is shown as a {@link @metreeca/tile-cell!fault.Fault fault} in place of the
@@ -103,20 +105,39 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 }) {
 
 	/*
-	 * The paging is created again whenever the consumer hands over a new model, as when a filter changes, so a new query
-	 * starts again from the first batch.
+	 * The window is created again whenever the consumer hands over a new model, as when a filter changes, so a new query
+	 * starts again from the first items.
 	 */
 
-	const { model: paged, limit, asked, next } = useModel(() => Paging({ model }), [model]);
+	const { model: slice, lower, stale, focus } = useModel(() => Window({ model }), [model]);
+
+	/*
+	 * The count is retrieved again only as the slice changes identity, that is as the window moves, since the store
+	 * binding compares models by reference.
+	 */
+
+	const counting = useMemo(() => tally(slice), [slice]);
 
 	const collection = useCollection({
 
 		entry,
 		shape,
 
-		model: paged as T // ;(cast) the paged copy of model differs only in the limit, which leaves the items typed alike
+		model: slice as T // ;(cast) the sliced copy of model differs only in the offset and limit, which leave the items
+						  // typed alike
 
 	});
+
+	const counter = useCollection({
+
+		entry,
+		shape,
+
+		model: counting as T // ;(cast) the count is read off as an untyped item by count(), whatever the model types it as
+
+	});
+
+	const total = counter({ ready: ({ state }) => count(state) });
 
 	return collection({
 
@@ -125,25 +146,17 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 		ready: ({ state }) => {
 
 			/*
-			 * While the binding still holds the items the next batch was asked over, the batch is on its way: they include
-			 * the one item past the previous window, which stays off show until the batch lands.
+			 * While the binding still holds the items it held when the window last moved, the new window is on its way,
+			 * and the items stand where they were taken from.
 			 */
 
-			const shown = state === asked ? state.length - 1 : limit;
+			const start = state === stale?.items ? stale.lower : lower;
 
-			return state.length === 0
+			return state.length === 0 && start === 0
 
 				? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
 
-				: createElement("tile-sheet", {}, <>
-
-					{state.slice(0, shown).map(item =>
-						<Fragment key={key(item)}>{children(item)}</Fragment>
-					)}
-
-					{state.length > shown && <More onLoad={() => next(state)}/>}
-
-				</>);
+				: <Rows items={state} start={start} total={total} focus={focus}>{children}</Rows>;
 
 		},
 
@@ -151,6 +164,117 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 	});
 
+}
+
+
+/**
+ * Lays out a window of a collection in the room of the whole collection.
+ *
+ * @param options The items in the window, the index of the first of them, the size of the collection, the transition
+ *     bringing the window over the items in view, and the renderer of an item
+ *
+ * @returns The `<tile-sheet>` element holding the items, padded above and below by the room of the items outside the
+ *     window
+ */
+function Rows<I>({
+
+	items,
+	start,
+	total,
+
+	focus,
+
+	children
+
+}: {
+
+	items: readonly I[]
+	start: number
+	total: Optional<number>
+
+	focus: (first: number, last: number, items: readonly unknown[]) => void
+
+	children: (item: I) => ComponentChildren
+
+}) {
+
+	const id = useId();
+
+	/*
+	 * The height of a row is known to the browser alone, so it is measured off the rows on show and kept as rendered
+	 * state, the room of the items outside the window being laid out from it.
+	 */
+
+	const [row, setRow] = useState<number>();
+
+	const size = Math.max(total ?? 0, start+items.length);
+
+	useEffect(() => opt(document.getElementById(id) ?? undefined, element => {
+
+		const observer = new ResizeObserver(entries => opt(entries.at(-1), ({ contentRect: { height } }) =>
+			setRow(row => height > 0 ? height/items.length : row)
+		));
+
+		observer.observe(element);
+
+		return () => observer.disconnect();
+
+	}), [id, items.length]);
+
+	/*
+	 * Which items are in view is known to the browser alone, and changes as any area enclosing the list scrolls, so
+	 * scrolling is followed on the whole page, as long as the height of a row is known.
+	 */
+
+	useEffect(() => opt(row, row => opt(document.getElementById(id) ?? undefined, element => {
+
+		const index = (offset: number) => Math.min(size-1, Math.max(0, Math.floor(offset/row)));
+
+		const track = () => {
+
+			const { top } = element.getBoundingClientRect();
+
+			focus(index(-top), index(window.innerHeight-top), items);
+
+		};
+
+		track();
+
+		window.addEventListener("scroll", track, { capture: true, passive: true });
+		window.addEventListener("resize", track, { passive: true });
+
+		return () => {
+			window.removeEventListener("scroll", track, { capture: true });
+			window.removeEventListener("resize", track);
+		};
+
+	})), [id, row, size, items, focus]);
+
+	return createElement("tile-sheet", {
+
+		id,
+
+		style: opt(row, row => ({
+			paddingTop: `${start*row}px`,
+			paddingBottom: `${Math.max(0, size-start-items.length)*row}px`
+		}))
+
+	}, items.map(item =>
+		<Fragment key={key(item)}>{children(item)}</Fragment>
+	));
+
+}
+
+
+/**
+ * Reads the size of a collection off its count.
+ *
+ * @param items The items retrieved for the count of a collection
+ *
+ * @returns The count carried by the single item retrieved, if it carries one
+ */
+function count(items: readonly unknown[]): Optional<number> {
+	return opt(items[0], item => isObject(item) && isNumber(item.count) ? item.count : undefined);
 }
 
 

@@ -49,15 +49,15 @@ const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 const Increasing = { members: { id: {}, label: {}, "^label": "asc" } } as const; // ;(literal) the order keeps its literal type
 const Decreasing = { members: { id: {}, label: {}, "^label": "desc" } } as const; // ;(literal) as above
 
-const items = Array.from({ length: 120 }, (_, index) => ({
+const items = Array.from({ length: 1000 }, (_, index) => ({
 	id: `${entry}${index + 1}`,
-	label: `Item ${String(index + 1).padStart(3, "0")}`
+	label: `Item ${String(index + 1).padStart(4, "0")}`
 }));
 
 
 /**
- * Answers a collection query over the sample items, sorted and limited as the query asks, with no member the query
- * didn't ask for.
+ * Answers a collection query over the sample items, sorted and sliced as the query asks, with no member the query
+ * didn't ask for, or their count if the query asks for it.
  */
 async function serve(request: Request): Promise<Response> {
 
@@ -65,10 +65,13 @@ async function serve(request: Request): Promise<Response> {
 	const members: { readonly [key: string]: unknown } = isObject(query.members) ? query.members : {};
 
 	const order = members["^label"] === "desc" ? -1 : 1;
+	const offset = isNumber(members["@"]) ? members["@"] : 0;
 	const limit = isNumber(members["#"]) && members["#"] > 0 ? members["#"] : items.length;
 
 	return Response.json({
-		members: [...items].sort((x, y) => order * x.label.localeCompare(y.label)).slice(0, limit)
+		members: "count=count:" in members ? [{ count: items.length }] : [...items]
+			.sort((x, y) => order * x.label.localeCompare(y.label))
+			.slice(offset, offset + limit)
 	});
 
 }
@@ -77,8 +80,8 @@ async function serve(request: Request): Promise<Response> {
 /**
  * Creates the sheets section.
  *
- * Shows a collection listed a batch at a time from a store answering after a delay, and a list starting again from the
- * first batch when the order changes.
+ * Shows a collection listed a window at a time from a store answering after a delay, and a list starting again from the
+ * first items when the order changes.
  *
  * @returns The sheets section
  */
@@ -90,9 +93,9 @@ export function Sheets() {
 
 		<Store>
 
-			<p>A sheet lists the items of a collection held by the store, fetching the next batch as the reader scrolls to
-				its end, and starts again from the first batch when it is handed a new model, as when the order
-				changes.</p>
+			<p>A sheet lists the items of a collection held by the store, fetching only the items in view and the batches
+				around them while taking the room of the whole collection, and starts again from the first items when it
+				is handed a new model, as when the order changes.</p>
 
 			<div class="controls">
 				<Button

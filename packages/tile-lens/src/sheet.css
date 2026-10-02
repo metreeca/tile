@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-/* A sheet stacks the items it lists, closing with the trigger fetching more of them while there are any. */
+/* A sheet stacks the items in its window, padded inline by the widget with the room of the items outside it. */
 
 tile-sheet {
 
     display: block;
-
-    & > tile-more {
-        margin-top: var(--tile--spacing-100);
-    }
 
 }

@@ -29,6 +29,7 @@ import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
 import { TileCell, TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
 import { TileHive, TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
+import { TileLens, TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
 import { Tile, TilePath } from "@metreeca/specimen/tile/index.js";
 import { Fetch } from "@metreeca/tile-data/fetch";
 import { Router, Routes } from "@metreeca/tile-data/router";
@@ -54,7 +55,8 @@ function Specimen() {
 
 				[TilePath]: <Tile/>,
 				[TileCellPath]: <TileCell/>,
-				[TileHivePath]: <TileHive/>
+				[TileHivePath]: <TileHive/>,
+				[TileLensPath]: <TileLens/>
 
 			}}</Routes>
 

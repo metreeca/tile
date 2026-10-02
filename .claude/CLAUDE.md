@@ -124,7 +124,12 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
 - A transition starts from the state the render read and notifies asynchronously: two calls in one handler land where
   one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
-  **NEVER** reaches it.
+  **NEVER** reaches it, unless it is listed as a dependency. A model created from props lists them, and is created
+  again from the factory whenever one changes, losing the state it reached:
+
+  ```tsx
+  const { model: paged, next } = useModel(() => Paging({ model }), [model]); // a new query starts from the first page
+  ```
 - Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
   the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
 

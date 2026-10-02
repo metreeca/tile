@@ -33,7 +33,7 @@ import { More } from "@metreeca/tile-cell/more";
 import { useModel } from "@metreeca/tile-data/model";
 import { useCollection } from "@metreeca/tile-data/store";
 import { type ComponentChildren, createElement, Fragment } from "preact";
-import { Paging } from "./paging.js";
+import { Paging } from "./_/paging.js";
 import "./sheet.css";
 
 

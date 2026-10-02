@@ -31,8 +31,8 @@
   ],
   "exports": {
     "./selection": {
-      "@metreeca/source": "./src/selection.ts",
-      "default": "./dist/selection.js"
+      "@metreeca/source": "./src/_/selection.ts",
+      "default": "./dist/_/selection.js"
     },
     "./*": {
       "@metreeca/source": "./src/*.tsx",

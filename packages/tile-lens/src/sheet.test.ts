@@ -37,7 +37,9 @@ const entry = "https://example.com/catalogue/";
 const Item = resource({ id: id(), label: required(string()) });
 const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
-const model = { members: { id: {}, label: {}, "^label": "asc" } } as const; // ;(literal) the order keeps its literal type
+const model: { readonly members: { readonly id: {}, readonly label: {}, readonly "^label": "asc" | "desc" } } = {
+	members: { id: {}, label: {}, "^label": "asc" }
+};
 
 
 function pool(size: number): readonly { id: string, label: string }[] {
@@ -225,7 +227,7 @@ describe("Sheet", () => {
 
 			await vi.waitFor(() => expect(shown()).toHaveLength(2 * batch));
 
-			mount(lookup, undefined, { members: { ...model.members } });
+			mount(lookup, undefined, { members: { ...model.members, "^label": "desc" } });
 
 			await vi.waitFor(() => expect(shown()).toHaveLength(batch));
 

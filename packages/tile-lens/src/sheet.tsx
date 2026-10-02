@@ -48,7 +48,7 @@ import "./sheet.css";
  *
  * Filters and sort order are stated in the model as criteria on the collection, as the store takes them: the list
  * sets the limit alone, overriding any the model states, and starts again from the first batch whenever it is handed a
- * new model.
+ * model stating something different.
  *
  * Where a `placeholder` is supplied, a list with nothing to show fills its area with it, worded as still loading or as
  * matching nothing; a failed exchange is shown as a {@link @metreeca/tile-cell!fault.Fault fault} in place of the
@@ -79,8 +79,8 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 	/**
 	 * The model naming the multi-valued property collecting the items, stating the values wanted from each item along
-	 * with the criteria filtering and sorting them; compared by reference, as for
-	 * {@link @metreeca/tile-data!store.useCollection useCollection}, so a model is declared once or kept in state.
+	 * with the criteria filtering and sorting them; compared by content, so a model may be written inline and a copy
+	 * stating the same leaves the list where it stands.
 	 */
 	model: T
 

@@ -102,8 +102,9 @@
  * @module
  */
 
-import { eager, type Lazy, type Optional } from "@metreeca/core";
+import { eager, type Lazy } from "@metreeca/core";
 import { type Instance, manageState, type State } from "@metreeca/core/state";
+import { equals } from "@metreeca/core/values";
 import { useState } from "preact/hooks";
 
 
@@ -121,86 +122,44 @@ import { useState } from "preact/hooks";
  * @param model The model, or a factory creating it; resolved when the component first renders, and again whenever
  * one of `dependencies` changes, so a factory may be written inline and close over props: a prop left out of
  * `dependencies` reaches the model as it stood when the model was last created
- * @param dependencies The values the model is created from, compared by identity, position by position, with the ones
+ * @param dependencies The values the model is created from, compared for {@link equals deep equality} with the ones
  * of the previous render; the model is kept for the lifetime of the component if omitted
  *
  * @returns The model as it stands for this render, superseded by the next after every transition that changes something
  */
 export function useModel<T extends State<T>>(model: Lazy<Instance<T>>, dependencies?: readonly unknown[]): Instance<T> {
 
-	const [adopted, setAdopted] = useState<Adoption<T>>(() => adopt(model, dependencies, update));
+	const [entry, setEntry] = useState(create);
 
-	const current = changed(adopted.dependencies, dependencies) ? adopt(model, dependencies, update) : adopted;
-
-	function update(next: (adoption: Adoption<T>) => Adoption<T>): void {
-		setAdopted(next);
-	}
+	const current = equals(entry.key, dependencies) ? entry : create();
 
 	/*
 	 * A model created again is returned by this very render rather than the next one, so the component never shows
 	 * the state it is discarding alongside the props that discarded it; storing it here keeps it for the renders after.
 	 */
 
-	if ( current !== adopted ) {
-		setAdopted(current);
+	if ( current !== entry ) {
+		setEntry(current);
 	}
 
 	return current.model;
 
-}
 
+	/*
+	 * Every notification carries the key the model was created under, so one arriving from a model already superseded
+	 * leaves the entry in place: transitions do not survive the model they were taken on.
+	 */
 
-/**
- * A model adopted by a component, with the dependencies it was created from.
- */
-interface Adoption<T extends State<T>> {
+	function create() {
+		return {
 
-	readonly dependencies: Optional<readonly unknown[]>;
-	readonly model: Instance<T>;
+			key: dependencies,
 
-}
+			model: manageState(eager(model)).attach(state => setEntry(entry =>
+				entry.key === dependencies ? { ...entry, model: state } : entry
+			))
 
-/**
- * Creates a model and binds its transitions to the adoption holding it.
- *
- * Every notification is tagged with the dependencies the model was created from, so one arriving from a model already
- * superseded leaves the adoption in place: transitions do not survive the model they were taken on.
- *
- * @param model The model, or a factory creating it
- * @param dependencies The dependencies the model is created from
- * @param update The setter of the adoption held by the component
- *
- * @returns The adoption of the new model
- */
-function adopt<T extends State<T>>(
-	model: Lazy<Instance<T>>,
-	dependencies: Optional<readonly unknown[]>,
-	update: (next: (adoption: Adoption<T>) => Adoption<T>) => void
-): Adoption<T> {
+		};
+	}
 
-	return {
-
-		dependencies,
-
-		model: manageState(eager(model)).attach(state => update(adoption =>
-			adoption.dependencies === dependencies ? { dependencies, model: state } : adoption
-		))
-
-	};
-
-}
-
-/**
- * Checks whether the dependencies of a render differ from the ones the model was created from.
- *
- * @param previous The dependencies the model was created from
- * @param next The dependencies of the current render
- *
- * @returns `true` if `next` is supplied and differs from `previous` in length or, by identity, in any position
- */
-function changed(previous: Optional<readonly unknown[]>, next: Optional<readonly unknown[]>): boolean {
-	return next !== undefined && (previous === undefined
-		|| previous.length !== next.length
-		|| previous.some((value, index) => !Object.is(value, next[index]))
-	);
 }

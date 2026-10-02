@@ -230,7 +230,6 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 
 	}
 
-
 }> {
 
 	const store = useStore();
@@ -370,7 +369,6 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		reload(): Promise<void>
 
 	}
-
 
 }> {
 

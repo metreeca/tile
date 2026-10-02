@@ -16,7 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { Selection } from "./selection.js";
+import { createSelection } from "./selection.js";
 
 
 describe("Selection", () => {
@@ -25,7 +25,7 @@ describe("Selection", () => {
 
 		it("should create empty selection by default", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			expect(selection.items).toEqual([]);
 
@@ -33,7 +33,7 @@ describe("Selection", () => {
 
 		it("should create selection with initial items", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana"]
 			});
 
@@ -43,7 +43,7 @@ describe("Selection", () => {
 
 		it("should handle empty items array", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: []
 			});
 
@@ -53,7 +53,7 @@ describe("Selection", () => {
 
 		it("should work with different item types", () => {
 
-			const numberSelection = Selection<number>({
+			const numberSelection = createSelection<number>({
 				items: [1, 2, 3]
 			});
 
@@ -63,7 +63,7 @@ describe("Selection", () => {
 
 		it("should deduplicate initial items", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana", "apple", "orange", "banana"]
 			});
 
@@ -78,7 +78,7 @@ describe("Selection", () => {
 
 		it("should add single item when not present", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle("apple");
 
@@ -89,7 +89,7 @@ describe("Selection", () => {
 
 		it("should remove single item when present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana"]
 			});
 
@@ -103,7 +103,7 @@ describe("Selection", () => {
 
 		it("should toggle single item multiple times", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const step1 = selection.toggle("apple");
 			expect(step1.items).toContain("apple");
@@ -119,7 +119,7 @@ describe("Selection", () => {
 
 		it("should add multiple items when not present", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle(["apple", "banana"]);
 
@@ -131,7 +131,7 @@ describe("Selection", () => {
 
 		it("should remove multiple items when all present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana", "orange"]
 			});
 
@@ -146,7 +146,7 @@ describe("Selection", () => {
 
 		it("should handle mixed presence - add missing, remove present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -161,7 +161,7 @@ describe("Selection", () => {
 
 		it("should preserve order of existing items when toggling", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana", "orange"]
 			});
 
@@ -177,7 +177,7 @@ describe("Selection", () => {
 
 		it("should add single item when force=true and item not present", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle("apple", true);
 
@@ -188,7 +188,7 @@ describe("Selection", () => {
 
 		it("should keep single item when force=true and item already present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -202,7 +202,7 @@ describe("Selection", () => {
 
 		it("should add multiple items when force=true and items not present", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle(["apple", "banana"], true);
 
@@ -214,7 +214,7 @@ describe("Selection", () => {
 
 		it("should keep multiple items when force=true and items already present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana"]
 			});
 
@@ -229,7 +229,7 @@ describe("Selection", () => {
 
 		it("should add only missing items when force=true with mixed presence", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -247,7 +247,7 @@ describe("Selection", () => {
 
 		it("should remove single item when force=false and item present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana"]
 			});
 
@@ -261,7 +261,7 @@ describe("Selection", () => {
 
 		it("should keep empty when force=false and item not present", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle("apple", false);
 
@@ -273,7 +273,7 @@ describe("Selection", () => {
 
 		it("should remove multiple items when force=false and items present", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana", "orange"]
 			});
 
@@ -288,7 +288,7 @@ describe("Selection", () => {
 
 		it("should handle mixed presence when force=false - remove only present items", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -306,7 +306,7 @@ describe("Selection", () => {
 
 		it("should clear all items", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple", "banana", "orange"]
 			});
 
@@ -318,7 +318,7 @@ describe("Selection", () => {
 
 		it("should return same reference when already empty", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.clear();
 
@@ -329,7 +329,7 @@ describe("Selection", () => {
 
 		it("should work with clear after toggle", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection
 				.toggle("apple")
@@ -346,7 +346,7 @@ describe("Selection", () => {
 
 		it("should chain multiple toggle calls", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection
 				.toggle("apple")
@@ -362,7 +362,7 @@ describe("Selection", () => {
 
 		it("should chain toggle and clear", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection
 				.toggle(["apple", "banana"])
@@ -376,7 +376,7 @@ describe("Selection", () => {
 
 		it("should support method extraction (destructuring)", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -397,7 +397,7 @@ describe("Selection", () => {
 
 		it("should return new state object after toggle", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle("apple");
 
@@ -407,7 +407,7 @@ describe("Selection", () => {
 
 		it("should return new state object after clear", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -419,7 +419,7 @@ describe("Selection", () => {
 
 		it("should not mutate original selection", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -431,7 +431,7 @@ describe("Selection", () => {
 
 		it("should preserve intermediate states", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const step1 = selection.toggle("apple");
 			const step2 = step1.toggle("banana");
@@ -450,7 +450,7 @@ describe("Selection", () => {
 
 		it("should handle empty array toggle", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle([]);
 
@@ -461,7 +461,7 @@ describe("Selection", () => {
 
 		it("should handle duplicate items in toggle array", () => {
 
-			const selection = Selection<string>();
+			const selection = createSelection<string>();
 
 			const next = selection.toggle(["apple", "apple", "banana"]);
 
@@ -473,7 +473,7 @@ describe("Selection", () => {
 
 		it("should handle toggle with items already in selection (duplicates)", () => {
 
-			const selection = Selection<string>({
+			const selection = createSelection<string>({
 				items: ["apple"]
 			});
 
@@ -494,7 +494,7 @@ describe("Selection", () => {
 			const item1: Item = { id: 1, name: "apple" };
 			const item2: Item = { id: 2, name: "banana" };
 
-			const selection = Selection<Item>();
+			const selection = createSelection<Item>();
 
 			const next = selection.toggle(item1);
 

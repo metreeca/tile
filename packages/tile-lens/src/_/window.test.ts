@@ -17,7 +17,7 @@
 import { immutable } from "@metreeca/core/values";
 import { describe, expect, it } from "vitest";
 
-import { tally, Window } from "./window.js";
+import { tally, createWindow } from "./window.js";
 
 
 const model = { members: { label: {}, "^label": "asc" } };
@@ -27,7 +27,7 @@ describe("Window()", () => {
 
 	it("should span the first batch and the one after it", async () => {
 
-		const window = Window({ model, batch: 10 });
+		const window = createWindow({ model, batch: 10 });
 
 		expect(window.lower).toBe(0);
 		expect(window.upper).toBe(20);
@@ -36,27 +36,27 @@ describe("Window()", () => {
 
 	it("should default to batches of 25", async () => {
 
-		expect(Window({ model }).upper).toBe(50);
+		expect(createWindow({ model }).upper).toBe(50);
 
 	});
 
 	it("should ask for the window, keeping the criteria", async () => {
 
-		expect(Window({ model, batch: 10 }).model)
+		expect(createWindow({ model, batch: 10 }).model)
 			.toEqual({ members: { label: {}, "^label": "asc", "@": 0, "#": 20 } });
 
 	});
 
 	it("should override the offset and limit the model states", async () => {
 
-		expect(Window({ model: { members: { label: {}, "@": 5, "#": 100 } }, batch: 10 }).model)
+		expect(createWindow({ model: { members: { label: {}, "@": 5, "#": 100 } }, batch: 10 }).model)
 			.toEqual({ members: { label: {}, "@": 0, "#": 20 } });
 
 	});
 
 	it("should start with no stale items", async () => {
 
-		expect(Window({ model }).stale).toBeUndefined();
+		expect(createWindow({ model }).stale).toBeUndefined();
 
 	});
 
@@ -66,7 +66,7 @@ describe("Window()", () => {
 
 		it("should span the batches in view and one on either side", async () => {
 
-			const window = Window({ model, batch: 10 }).focus(35, 48, items);
+			const window = createWindow({ model, batch: 10 }).focus(35, 48, items);
 
 			expect(window.lower).toBe(20);
 			expect(window.upper).toBe(60);
@@ -76,7 +76,7 @@ describe("Window()", () => {
 
 		it("should stop the window at the first item", async () => {
 
-			const window = Window({ model, batch: 10 }).focus(5, 12, items);
+			const window = createWindow({ model, batch: 10 }).focus(5, 12, items);
 
 			expect(window.lower).toBe(0);
 			expect(window.upper).toBe(30);
@@ -85,7 +85,7 @@ describe("Window()", () => {
 
 		it("should keep the window while it stays put", async () => {
 
-			const window = Window({ model, batch: 10 });
+			const window = createWindow({ model, batch: 10 });
 
 			expect(window.focus(3, 9, items)).toBe(window);
 
@@ -93,13 +93,13 @@ describe("Window()", () => {
 
 		it("should remember the items held when the window moved", async () => {
 
-			expect(Window({ model, batch: 10 }).focus(35, 48, items).stale).toEqual({ items, lower: 0 });
+			expect(createWindow({ model, batch: 10 }).focus(35, 48, items).stale).toEqual({ items, lower: 0 });
 
 		});
 
 		it("should keep where stale items were taken from while the window moves on", async () => {
 
-			expect(Window({ model, batch: 10 }).focus(35, 48, items).focus(55, 68, items).stale?.lower).toBe(0);
+			expect(createWindow({ model, batch: 10 }).focus(35, 48, items).focus(55, 68, items).stale?.lower).toBe(0);
 
 		});
 
@@ -107,7 +107,7 @@ describe("Window()", () => {
 
 			const landed = immutable(Array.from({ length: 40 }, (_, index) => 20 + index));
 
-			expect(Window({ model, batch: 10 }).focus(35, 48, items).focus(55, 68, landed).stale)
+			expect(createWindow({ model, batch: 10 }).focus(35, 48, items).focus(55, 68, landed).stale)
 				.toEqual({ items: landed, lower: 20 });
 
 		});

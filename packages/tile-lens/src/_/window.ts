@@ -22,7 +22,7 @@
  * it.
  *
  * The window rides on the collection model itself, as the offset and limit criteria the store takes, so a view hands
- * {@link Window.model} to the store binding and nothing else: the model keeps its identity until the window moves,
+ * {@link createWindow.model} to the store binding and nothing else: the model keeps its identity until the window moves,
  * which is what a binding comparing models by reference needs. {@link tally} counts the whole collection under the
  * same filters, so that a view can reserve the room taken by the items outside the window.
  *
@@ -101,7 +101,7 @@ export interface Window {
  *
  * @returns A window over the first batches of `model`, as if its first item were in view
  */
-export function Window({
+export function createWindow({
 
 	model,
 	batch = 25

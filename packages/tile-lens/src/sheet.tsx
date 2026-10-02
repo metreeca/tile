@@ -34,7 +34,7 @@ import { useModel } from "@metreeca/tile-data/model";
 import { useCollection } from "@metreeca/tile-data/store";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import { useEffect, useId, useMemo, useState } from "preact/hooks";
-import { tally, Window } from "./_/window.js";
+import { tally, createWindow } from "./_/window.js";
 import "./sheet.css";
 
 
@@ -66,10 +66,10 @@ import "./sheet.css";
 export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 	entry,
-	model,
-	placeholder,
 	shape,
+	model,
 
+	placeholder,
 	children
 
 }: {
@@ -80,22 +80,22 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 	entry: IRI
 
 	/**
+	 * The shape describing the resource holding the collection, possibly deferred to break definition cycles.
+	 */
+	shape: S
+
+	/**
 	 * The model naming the multi-valued property collecting the items, stating the values wanted from each item along
 	 * with the criteria filtering and sorting them; compared by content, so a model may be written inline and a copy
 	 * stating the same leaves the list where it stands.
 	 */
 	model: T
 
+
 	/**
 	 * The glyph marking the area while the list has nothing to show; nothing is rendered in its place if omitted.
 	 */
 	placeholder?: ComponentChildren
-
-	/**
-	 * The shape describing the resource holding the collection, possibly deferred to break definition cycles.
-	 */
-	shape: S
-
 
 	/**
 	 * Renders an item of the collection.
@@ -104,17 +104,13 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 }) {
 
-	/*
-	 * The window is created again whenever the consumer hands over a new model, as when a filter changes, so a new query
-	 * starts again from the first items.
-	 */
+	// The window is created again whenever the consumer hands over a new model, as when a filter changes, so a new
+	// query starts again from the first items.
 
-	const { model: slice, lower, stale, focus } = useModel(() => Window({ model }), [model]);
+	const { model: slice, lower, stale, focus } = useModel(() => createWindow({ model }), [model]);
 
-	/*
-	 * The count is retrieved again only as the slice changes identity, that is as the window moves, since the store
-	 * binding compares models by reference.
-	 */
+	// The count is retrieved again only as the slice changes identity, that is as the window moves, since the store
+	// binding compares models by reference.
 
 	const counting = useMemo(() => tally(slice), [slice]);
 
@@ -145,10 +141,8 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 		ready: ({ state }) => {
 
-			/*
-			 * While the binding still holds the items it held when the window last moved, the new window is on its way,
-			 * and the items stand where they were taken from.
-			 */
+			// While the binding still holds the items it held when the window last moved, the new window is on its way,
+			// and the items stand where they were taken from.
 
 			const start = state === stale?.items ? stale.lower : lower;
 
@@ -166,6 +160,8 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Lays out a window of a collection in the room of the whole collection.
@@ -200,11 +196,8 @@ function Rows<I>({
 
 	const id = useId();
 
-	/*
-	 * The height of a row is known to the browser alone, so it is measured off the rows on show and kept as rendered
-	 * state, the room of the items outside the window being laid out from it.
-	 */
-
+	// The height of a row is known to the browser alone, so it is measured off the rows on show and kept as rendered
+	// state, the room of the items outside the window being laid out from it.
 	const [row, setRow] = useState<number>();
 
 	const size = Math.max(total ?? 0, start+items.length);
@@ -221,11 +214,8 @@ function Rows<I>({
 
 	}), [id, items.length]);
 
-	/*
-	 * Which items are in view is known to the browser alone, and changes as any area enclosing the list scrolls, so
-	 * scrolling is followed on the whole page, as long as the height of a row is known.
-	 */
-
+	// Which items are in view is known to the browser alone, and changes as any area enclosing the list scrolls, so
+	// scrolling is followed on the whole page, as long as the height of a row is known.
 	useEffect(() => opt(row, row => opt(document.getElementById(id) ?? undefined, element => {
 
 		const index = (offset: number) => Math.min(size-1, Math.max(0, Math.floor(offset/row)));

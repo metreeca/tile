@@ -26,14 +26,20 @@
     "directory": "packages/tile-lens"
   },
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "exports": {
     ".": {
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./selection": {
+      "@metreeca/source": "./src/selection.ts",
+      "default": "./dist/selection.js"
+    },
     "./*": {
-      "@metreeca/source": "./src/*.ts",
+      "@metreeca/source": "./src/*.tsx",
       "default": "./dist/*.js"
     },
     "./*.css": {
@@ -52,14 +58,19 @@
   },
   "scripts": {
     "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
-    "build": "tsc -b tsconfig.build.json",
-    "check": "npx vitest --typecheck --passWithNoTests run"
+    "build": "tsc -b tsconfig.build.json && cp src/*.css dist/",
+    "check": "npx vitest --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
+    "@metreeca/blue": "^0.12.0",
     "@metreeca/core": "^0.12.0",
-    "@metreeca/tile": "^0.3.0"
+    "@metreeca/tile": "^0.3.0",
+    "@metreeca/tile-cell": "^0.3.0",
+    "@metreeca/tile-data": "^0.3.0"
   },
   "devDependencies": {
+    "@metreeca/keep": "^0.11.0",
+    "happy-dom": "^20.0.0",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vite": "^8.3.0",

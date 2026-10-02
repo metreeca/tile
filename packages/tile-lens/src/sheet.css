@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-@import "index.css";
+/* A sheet stacks the items it lists, closing with the trigger fetching more of them while there are any. */
 
 tile-sheet {
 
+    display: block;
+
     & > tile-more {
-        margin-top: 1em;
-        font-size: 2.5em;
+        margin-top: var(--tile--spacing-100);
     }
 
 }

@@ -128,7 +128,7 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
   again from the factory whenever one changes, losing the state it reached:
 
   ```tsx
-  const { model: slice, focus } = useModel(() => Window({ model }), [model]); // a new query starts from the first items
+  const { model: slice, focus } = useModel(() => createWindow({ model }), [model]); // a new query starts from the first items
   ```
 - Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
   the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.

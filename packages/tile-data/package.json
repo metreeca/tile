@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-data",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Preact contexts and hooks for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -52,10 +52,12 @@
     "check": "npx vitest --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.11.0",
-    "@metreeca/http": "^0.3.0",
-    "@metreeca/keep": "^0.10.0",
-    "@metreeca/keep-rest": "^0.10.0"
+    "@metreeca/blue": "^0.12.0",
+    "@metreeca/core": "^0.12.0",
+    "@metreeca/http": "^0.4.0",
+    "@metreeca/keep": "^0.11.0",
+    "@metreeca/keep-rest": "^0.11.0",
+    "@metreeca/qest": "^0.12.0"
   },
   "devDependencies": {
     "happy-dom": "^20.0.0",

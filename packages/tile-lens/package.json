@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-lens",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Preact linked data views for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -56,8 +56,8 @@
     "check": "npx vitest --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.11.0",
-    "@metreeca/tile": "^0.2.0"
+    "@metreeca/core": "^0.12.0",
+    "@metreeca/tile": "^0.3.0"
   },
   "devDependencies": {
     "preact": "^10.29.8",

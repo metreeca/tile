@@ -17,14 +17,14 @@
 import { TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
 import { TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { TilePath } from "@metreeca/specimen/tile/index.js";
-import { Button } from "@metreeca/tile-cell/button.js";
+import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
-import { Link } from "@metreeca/tile-cell/link.js";
-import { Logo } from "@metreeca/tile-cell/logo.js";
+import { Link } from "@metreeca/tile-cell/link";
+import { Logo } from "@metreeca/tile-cell/logo";
 import { app } from "@metreeca/tile-data";
-import { useFetch } from "@metreeca/tile-data/fetch.js";
-import { Shell } from "@metreeca/tile-hive/shell.js";
-import { Style } from "@metreeca/tile-hive/style.js";
+import { useFetch } from "@metreeca/tile-data/fetch";
+import { Shell } from "@metreeca/tile-hive/shell";
+import { Style } from "@metreeca/tile-hive/style";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 

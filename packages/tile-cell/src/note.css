@@ -29,6 +29,10 @@ tile-note {
     align-items: center;
     row-gap: var(--tile--spacing-100);
 
+    /* The note is as wide as what it carries, so the margins centre it rather than a block stretching it. */
+
+    width: fit-content;
+
     margin: auto;
 
     & > *:not(p) {
@@ -181,7 +185,11 @@ tile-note {
 
     }
 
-    /* Machine-readable detail is set apart from the text above and wrapped on its own lines. */
+    /*
+     * Machine-readable detail is set apart from the text above between two rules, in the mono face the design system
+     * gives code. It is laid out exactly as written, so the indentation of a trace survives, and a line wider than the
+     * note scrolls across rather than folding.
+     */
 
     & > code {
 
@@ -192,7 +200,7 @@ tile-note {
         border-style: var(--tile--border-style) none;
         overflow: auto;
 
-        white-space: pre-wrap;
+        white-space: pre;
         font-size: 0.75em;
 
     }

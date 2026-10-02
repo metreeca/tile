@@ -34,8 +34,7 @@ import "./note.css";
  * Shows a glyph and a headline, with whatever detail is given beneath them, centred in the space the note is handed,
  * so a screen fills an area it has nothing else to put in without laying one out for the purpose.
  *
- * A note given a headline sets the mark beside it, on the one line a passing remark asks for; one given none sets the
- * mark on its own, above what the body carries.
+ * A note given a headline sets the mark beside it on one line; one given none sets the mark above the body.
  *
  * Where the reader is asked something, `onAccept` turns the head into a native control, so the activation by `Enter`
  * and `Space`, the tab stop and the focus ring come with it rather than having to be asked for. The head then stands
@@ -50,8 +49,9 @@ import "./note.css";
  */
 export function Note({
 
-	icon,
 	level = "normal",
+
+	icon,
 	text,
 
 	onAccept,
@@ -59,14 +59,6 @@ export function Note({
 	children
 
 }: {
-
-	/**
-	 * The glyph marking the notice, kept out of the accessibility tree unless it carries a label of its own, so that
-	 * the note is read by its headline; the mark matching the kind of notice if omitted, that is an alert where the
-	 * passage carries a caution or tells of a failure and an information mark otherwise. A note the reader answers
-	 * shows no mark at all, so what is given here plays no part alongside `onAccept`.
-	 */
-	icon?: ComponentChildren
 
 	/**
 	 * How much attention the passage deserves, told in the weight of the headline and the colour of the mark on the
@@ -80,12 +72,22 @@ export function Note({
 	 */
 	level?: "normal" | "info" | "highlight" | "warning" | "critical"
 
+
+	/**
+	 * The glyph marking the notice, kept out of the accessibility tree unless it carries a label of its own, so that
+	 * the note is read by its headline; the mark matching the kind of notice if omitted, that is an alert where the
+	 * passage carries a caution or tells of a failure and an information mark otherwise. A note the reader answers
+	 * shows no mark at all, so what is given here plays no part alongside `onAccept`.
+	 */
+	icon?: ComponentChildren
+
 	/**
 	 * The headline the notice is read by, required where `onAccept` makes the head a control, which carries no mark
 	 * to name it by. It is kept on the one line the head occupies, so wording asking for more room belongs in the
 	 * body.
 	 */
 	text?: string
+
 
 	/**
 	 * What the reader's answer is handed to: supplying it turns the head into a control, boxed so that it reads as
@@ -95,6 +97,7 @@ export function Note({
 	 * with it: only whoever removes the note knows what stands in its place, so the focus is theirs to hand on.
 	 */
 	onAccept?: () => void
+
 
 	/**
 	 * The detail shown beneath the head, in the column the note centres; plain markup, styled as the same markup is

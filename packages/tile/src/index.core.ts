@@ -33,7 +33,8 @@ import type { Token } from "./index.js";
  * it is assigned rather than every name the design system carries, or every name of the same broad sort: a text size
  * offers the type and scaling ladders, both of which are measured against the text, and not the spacing one, though
  * all three are lengths, because a size set from a gap is not a thing anyone means. A token belonging to no ladder, a
- * flag or a keyword, resolves to nothing and is left to the literal alone.
+ * flag or a keyword, resolves to nothing and is left to the literal alone. A box token, shaping the element it is
+ * assigned to, resolves to the ladder it is set from without being a step on it.
  *
  * @typeParam K The token being assigned
  */
@@ -43,8 +44,8 @@ export type Alias<K extends Token> =
 			K extends Fill ? Fill :
 				K extends Type ? Type | Scaling :
 					K extends Scaling ? Scaling :
-						K extends Spacing ? Spacing :
-							K extends Radius ? Radius :
+						K extends Spacing | Padding ? Spacing :
+							K extends Radius | Rounding ? Radius :
 								K extends Stroke ? Stroke :
 									K extends Tracking ? Tracking :
 										K extends Weight ? Weight :
@@ -52,7 +53,7 @@ export type Alias<K extends Token> =
 												K extends Layer ? Layer :
 													K extends Timing ? Timing :
 														K extends Easing ? Easing :
-															K extends Shadow ? Shadow :
+															K extends Shadow | Lifting ? Shadow :
 																K extends Family ? Family :
 																	never
 
@@ -72,7 +73,7 @@ export type Alias<K extends Token> =
  */
 export type Literal<K extends Token> =
 	K extends Palette | Ink | Fill ? Paint :
-		K extends Type | Scaling | Spacing | Radius | Stroke | Tracking ? Size :
+		K extends Type | Scaling | Spacing | Radius | Stroke | Tracking | Padding | Rounding ? Size :
 			K extends "lineHeight" ? Leading :
 				K extends Weight ? Heft :
 					K extends Opacity ? Fade :
@@ -82,7 +83,7 @@ export type Literal<K extends Token> =
 									K extends "borderStyle" ? Line :
 										K extends "look" ? Look :
 											K extends Flag ? Switch :
-												K extends Family | Shadow ? Open :
+												K extends Family | Shadow | Lifting ? Open :
 													never
 
 
@@ -91,7 +92,7 @@ export type Literal<K extends Token> =
 /**
  * The scale steps, series slots and area classes, which address a colour by position rather than by role.
  */
-type Palette = Extract<Token,
+export type Palette = Extract<Token,
 	| `colorGray${Step}`
 	| `colorSubtle${Step}`
 	| `colorStrong${Step}`
@@ -103,83 +104,100 @@ type Palette = Extract<Token,
 /**
  * The tokens painting a mark or a passage of text, and the rule between two of them.
  */
-type Ink = Exclude<Extract<Token, `color${string}` | "borderColor">, Palette>
+export type Ink = Exclude<Extract<Token, `color${string}` | "borderColor">, Palette>
 
 /**
  * The tokens painting a surface.
  */
-type Fill = Extract<Token, `backgroundColor${string}`>
+export type Fill = Extract<Token, `backgroundColor${string}`>
 
 /**
  * The tokens sizing text.
  */
-type Type = Extract<Token, `fontSize${string}`>
+export type Type = Extract<Token, `fontSize${string}`>
 
 /**
  * The tokens sizing a thing against the text around it.
  */
-type Scaling = Extract<Token, `scaling${string}`>
+export type Scaling = Extract<Token, `scaling${string}`>
 
 /**
  * The tokens setting a thing apart from its neighbour.
  */
-type Spacing = Extract<Token, `spacing${string}`>
+export type Spacing = Extract<Token, `spacing${string}`>
 
 /**
- * The tokens rounding a corner.
+ * The steps a corner is rounded on.
  */
-type Radius = Extract<Token, `borderRadius${string}`>
+export type Radius = Exclude<Extract<Token, `borderRadius${string}`>, Rounding>
 
 /**
  * The tokens sizing a line.
  */
-type Stroke = Extract<Token, "borderWidth" | "strokeWidth">
+export type Stroke = Extract<Token, "borderWidth" | "strokeWidth">
 
 /**
  * The tokens tracking a run of text.
  */
-type Tracking = Extract<Token, `letterSpacing${string}`>
+export type Tracking = Extract<Token, `letterSpacing${string}`>
 
 /**
  * The tokens weighting text.
  */
-type Weight = Extract<Token, `fontWeight${string}`>
+export type Weight = Extract<Token, `fontWeight${string}`>
 
 /**
  * The tokens fading a thing present but not available.
  */
-type Opacity = Extract<Token, `opacity${string}`>
+export type Opacity = Extract<Token, `opacity${string}`>
 
 /**
  * The tokens ordering two things that overlap.
  */
-type Layer = Extract<Token, `zIndex${string}`>
+export type Layer = Extract<Token, `zIndex${string}`>
 
 /**
  * The tokens timing a change.
  */
-type Timing = Extract<Token, `duration${string}`>
+export type Timing = Extract<Token, `duration${string}`>
 
 /**
  * The tokens curving a change.
  */
-type Easing = Extract<Token, `easing${string}`>
+export type Easing = Extract<Token, `easing${string}`>
 
 /**
- * The tokens carrying a shadow or an outline, stated as a whole shorthand.
+ * The steps a shadow or an outline is drawn from, each stated as a whole shorthand.
  */
-type Shadow = Extract<Token, `boxShadow${string}` | `outline${string}`>
+export type Shadow = Exclude<Extract<Token, `boxShadow${string}` | `outline${string}`>, Lifting>
 
 /**
  * The tokens carrying a font stack.
  */
-type Family = Extract<Token, `fontFamily${string}`>
+export type Family = Extract<Token, `fontFamily${string}`>
 
 /**
  * The tokens telling which breakpoints the viewport has passed.
  */
-type Flag = Extract<Token, `viewport${string}`>
+export type Flag = Extract<Token, `viewport${string}`>
 
+/**
+ * The token padding the element it is assigned to, set from a {@link Spacing spacing step}.
+ */
+export type Padding = Extract<Token, "padding">
+
+/**
+ * The token rounding the element it is assigned to, set from a {@link Radius radius step}.
+ */
+export type Rounding = Extract<Token, "borderRadius">
+
+/**
+ * The token lifting the element it is assigned to, set from a {@link Shadow shadow step}.
+ */
+export type Lifting = Extract<Token, "boxShadow">
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * A step of a ten-step scale, and a slot of a series or a class of an area.
@@ -187,8 +205,6 @@ type Flag = Extract<Token, `viewport${string}`>
 type Step = "010" | "020" | "030" | "040" | "050" | "060" | "070" | "080" | "090" | "100"
 type Slot = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * A colour, written as a hex literal or as one of the two colours CSS names against the context.

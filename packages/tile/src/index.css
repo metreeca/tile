@@ -64,9 +64,10 @@
     }
 
     /*
-     * A pinned scheme carries the native widgets with it: color-scheme is what a form control, a scrollbar and a
-     * caret answer to, and the tokens have no reach there. Stated for any element, not only the root, so an island
-     * that pins a scheme is not left with the controls of the page around it.
+     * A pinned scheme is settled by color-scheme, which picks the side of every light-dark() token pair and is what a
+     * form control, a scrollbar and a caret answer to. Stated for any element, not only the root, so an island that
+     * pins a scheme is not left with the colours of the page around it. The page colours are restated there too,
+     * since the island would otherwise inherit them as the root resolved them.
      */
 
     [data-theme="light"] {
@@ -75,6 +76,11 @@
 
     [data-theme="dark"] {
         color-scheme: dark;
+    }
+
+    [data-theme] {
+        color: var(--tile--color);
+        background-color: var(--tile--background-color);
     }
 
 }

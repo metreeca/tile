@@ -17,16 +17,17 @@
 /**
  * Spacing tokens.
  *
- * Names the ladder an interface sets a thing apart from what surrounds it on, whether on a margin, a padding or a gap,
- * so the spacing of an interface is retuned from one place.
+ * Names the ladder margins, paddings and gaps set a thing apart on, so an interface's spacing retunes from one place.
  *
  * @remarks
  *
- * The number is the multiple of the text size the step carries, `spacing100` matching the text it sits beside. Every
- * step is stated in `em`, so a subtree given a size of its own takes the rhythm along.
+ * Each step is the multiple of the text size its number names, stated in `em` so a resized subtree takes it along.
  *
  * A step sizing a thing against the text rather than spacing it from its neighbour belongs to the
  * {@link scalings scaling ladder} instead: a glyph, a spinner, a swatch or a dot is scaled, not spaced.
+ *
+ * **Padding** — `padding` is not a step but the padding of the element it is assigned to, set from a step: no rule
+ * reads it, and assigning it through {@link index.css css} pads that element alone, leaving what it holds unpadded.
  *
  * @module spacings
  */
@@ -45,6 +46,8 @@ export const spacings = {
 	spacing100: "--tile--spacing-100",
 	spacing150: "--tile--spacing-150",
 	spacing200: "--tile--spacing-200",
-	spacing250: "--tile--spacing-250"
+	spacing250: "--tile--spacing-250",
+
+	padding: "--tile--padding"
 
 } as const;

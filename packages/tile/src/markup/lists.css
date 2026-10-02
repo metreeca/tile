@@ -33,10 +33,10 @@ ul, ol {
             margin-bottom: var(--tile--spacing-050);
         }
 
-    }
+        & + li {
+            margin-top: var(--tile--spacing-025);
+        }
 
-    & > li + li {
-        margin-top: var(--tile--spacing-025);
     }
 
 }
@@ -56,7 +56,10 @@ dl {
     & > dt {
 
         margin-bottom: var(--tile--spacing-050);
-        font-weight: var(--tile--font-weight-strong);
+
+        font-size: var(--tile--scaling-090);
+        font-weight: var(--tile--font-weight-heavy);
+        color: var(--tile--color-label);
 
         & > p:only-child {
             margin: 0;

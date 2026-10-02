@@ -17,8 +17,7 @@
 /**
  * Motion tokens.
  *
- * Names how long a change takes and how it accelerates, so a transition states what kind of change it is rather than
- * a number, and a whole interface slows down or speeds up from one place.
+ * Names how long a change takes and how it accelerates, by kind rather than by number, retuned from one place.
  *
  * @remarks
  *

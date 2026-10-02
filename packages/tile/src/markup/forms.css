@@ -57,10 +57,7 @@ input {
         outline: var(--tile--outline-focus);
         outline-offset: calc(-2 * var(--tile--border-width));
 
-        /*
-         * A box too small to be marked from within is marked from without: an inset ring on a tick box would close
-         * over what it encloses.
-         */
+        /* A box too small to be marked from within is marked from without, an inset ring closing over a tick. */
 
         &[type=checkbox],
         &[type=radio] {

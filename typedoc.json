@@ -3,7 +3,7 @@
     "packages/*"
   ],
   "entryPointStrategy": "packages",
-  "name": "Metreeca Tile",
+  "name": "@metreeca/tile",
   "out": "docs",
   "readme": "README.md",
   "hostedBaseUrl": "https://metreeca.github.io/tile/",
@@ -47,7 +47,8 @@
     "shell",
     "typescript",
     "tsx",
-    "css"
+    "css",
+    "html"
   ],
   "packageOptions": {
     "entryPoints": [
@@ -55,8 +56,9 @@
     ],
     "exclude": [
       "**/packages/tile/src/**/*.core.ts",
-      "**/*.pack.ts",
+      "**/packages/tile-cell/src/icon.core.ts",
       "**/*.test.ts",
+      "**/*.test.tsx",
       "**/*.test-d.ts"
     ],
     "tsconfig": "./tsconfig.build.json",

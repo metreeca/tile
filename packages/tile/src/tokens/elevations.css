@@ -50,6 +50,14 @@
     inherits: true;
 }
 
+/* The shadow of the one element it is assigned to, set from a step and read by no rule, none if unassigned. */
+
+@property --tile--box-shadow {
+    syntax: "*";
+    inherits: true;
+    initial-value: none;
+}
+
 /*
  * Every value stands on the page anchors, so one derivation serves both schemes. Lightening the page lifts a surface
  * on a dark scheme and clamps to the page itself on a light scheme whose page is already white, which is why the

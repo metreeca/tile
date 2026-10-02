@@ -102,8 +102,7 @@ tile-tabs {
      * and the tab order while the measurement deciding when the labels fit again still stands: the box is as wide
      * as it ever was, which is all the measurement asks of it.
      *
-     * It is closed rather than lifted out of the flow, since a box taken out of the flow is a positioned box, and a
-     * positioned box paints over the band a page hangs from its header.
+     * It is closed rather than taken out of the flow, where it would become a positioned box painting over the header.
      */
 
     &[collapsed] > nav {
@@ -206,10 +205,7 @@ tile-tabs {
             border-bottom-style: none;
         }
 
-        /*
-         * With no rule to stand clear of, the label closes the room below it to the step below, which is what draws
-         * the mark the chosen tab wears up against the word it marks.
-         */
+        /* With no rule to clear, the label tightens the room below it, drawing the chosen mark up against its word. */
 
         & > nav > label {
             padding-bottom: var(--tile--spacing-025);

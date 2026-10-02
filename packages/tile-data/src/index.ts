@@ -21,8 +21,7 @@
  * being handed it. The contexts and hooks themselves come from their own modules, leaving a component with the ones it
  * is wired to and nothing else.
  *
- * Importing this module reads the document, so it belongs to a browser: a consumer without one, a test or a server
- * render, has to supply a DOM before the import runs.
+ * Importing this module reads the document, so a test or a server render has to supply a DOM before importing it.
  *
  * @module index
  */
@@ -34,8 +33,7 @@ import { immutable } from "@metreeca/core/values";
 /**
  * What the app says about itself, as its document states it.
  *
- * Read once as the module is imported and immutable thereafter: a consumer sees the same values for the lifetime of
- * the page, and a later edit to the document is not picked up.
+ * Read once on import and immutable thereafter, so a later edit to the document is never picked up.
  */
 export const app = immutable({
 
@@ -45,8 +43,7 @@ export const app = immutable({
 	root: resolve(location.href, "/"),
 
 	/**
-	 * The absolute base URL the app is published at, with a trailing slash, as the `<base>` tag states it, or the site
-	 * root if the tag is missing.
+	 * The absolute base URL the app is published at, with a trailing slash, as `<base>` states it, or the site root.
 	 */
 	base: resolve(resolve(location.href, "/"),
 		(document.querySelector("base")?.href || "/").replace(/\/*$/, "/")
@@ -63,14 +60,12 @@ export const app = immutable({
 	icon: document.querySelector<HTMLLinkElement>("link[rel=icon]")?.href || undefined,
 
 	/**
-	 * The app description, as the `<meta name="description">` tag states it, or `undefined` if the tag is missing
-	 * or empty.
+	 * The app description, as the `<meta name="description">` tag states it, or `undefined` if missing or empty.
 	 */
 	info: document.querySelector<HTMLMetaElement>("meta[name=description]")?.content || undefined,
 
 	/**
-	 * The app copyright, as the `<meta name="copyright">` tag states it, or `undefined` if the tag is missing or
-	 * empty.
+	 * The app copyright, as the `<meta name="copyright">` tag states it, or `undefined` if missing or empty.
 	 */
 	copy: document.querySelector<HTMLMetaElement>("meta[name=copyright]")?.content || undefined
 

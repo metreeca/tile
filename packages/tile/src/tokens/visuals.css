@@ -20,8 +20,7 @@
  * through a style query, there being no other way for a rule to branch on a value. Each carries the register an
  * interface takes where nothing assigns it as its registered default.
  *
- * What a widget means is never settled here: a meaning belongs to the one widget that carries it, so it is stated at
- * the widget and inherited by nothing.
+ * What a widget means is never settled here: a meaning belongs to the widget carrying it and is inherited by nothing.
  */
 
 @property --tile--look {

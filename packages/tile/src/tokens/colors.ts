@@ -23,11 +23,19 @@
  *
  * @remarks
  *
- * **Colour schemes** — the stylesheet ships a light value for each anchor and restates only the dark one, so an
- * interface follows the platform with no work from the app. An app pinning a scheme sets `data-theme` to `light` or
- * `dark` on any element, and the subtree below it takes that scheme whatever the platform says, which is what lets a
- * dark panel sit on a light page. An app supplying its brand states a value per scheme too, and rechecks that the text
- * roles still hold AA contrast against the page and the striped row in both.
+ * **Colour schemes** — the stylesheet ships each anchor as a `light-dark()` pair, so an interface follows the platform
+ * with no work from the app. An app pinning a scheme sets `data-theme` to `light` or `dark` on any element, and the
+ * subtree below it takes that scheme whatever the platform says, which is what lets a dark panel sit on a light page.
+ * An app supplying its brand states a value per scheme too, as a single `light-dark()` pair on `:root` that every
+ * scheme and every pinned subtree follows, and rechecks that the text roles still hold AA contrast against the page
+ * and the striped row in both:
+ *
+ * ```css
+ * :root {
+ *     --tile--color-subtle: light-dark(#1C275D, #9AB);
+ *     --tile--color-strong: light-dark(#D60, #F80);
+ * }
+ * ```
  *
  * **Accents** — `colorSubtle` is the quieter of the brand pair and `colorStrong` the louder. The pair states an
  * emphasis relative to each other and nothing else: which elements read them, and in which state, is settled by the
@@ -46,8 +54,7 @@
  * not a step: it paints nothing and leaves the ordinary page colours. A widget maps its remaining values onto the
  * steps and states that mapping in its own documentation.
  *
- * How loud a widget appears is a separate axis, carried by its `look` attribute and told in placement, size and
- * weight rather than in colour, so the two never compete for the same channel.
+ * How loud a widget appears is a separate axis, its `look`, told in placement, size and weight and never in colour.
  *
  * The four stand apart as anchors rather than derivations of an accent, so a meaning keeps reading as itself
  * whatever an app brands with, and each pairs with a `backgroundColor*` role tinting a notice. A step is never told

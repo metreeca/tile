@@ -48,8 +48,7 @@ export const AutoSize = 10;
 /**
  * Names the classes in force.
  *
- * Renders a conditional class list as the value a `class` attribute takes, so a component states which classes apply
- * rather than assembling the string that says so.
+ * Lets a component state which classes apply, rather than assembling the `class` attribute string that says so.
  *
  * @param classes The candidate class names, each against the state deciding whether it is in force
  *

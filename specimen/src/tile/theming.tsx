@@ -77,9 +77,9 @@ export function Theming() {
 
 		</div>
 
-		<p>Only the custom properties follow a pinned subtree. Native controls, scrollbars and the caret answer
-			to <code>color-scheme</code>, which the stylesheet states alongside, so the widgets above are drawn dark
-			too.</p>
+		<p>The pinned subtree takes the dark side of every anchor, the app's own overrides included, since the
+			stylesheet settles it through <code>color-scheme</code>. Native controls, scrollbars and the caret answer
+			to the same property, so the widgets above are drawn dark too.</p>
 
 	</>;
 }

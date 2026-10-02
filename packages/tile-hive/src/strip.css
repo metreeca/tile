@@ -14,32 +14,23 @@
  * limitations under the License.
  */
 
-import { classes } from "@metreeca/view";
-import { createElement, ReactNode } from "react";
-import "./hint.css";
-
-
-/**
- * Content hint.
+/*
+ * The strip is a row and nothing else. The alignment, the gaps, the growth and the wrapping are settled by the widget
+ * on the element, being chosen by whoever renders the strip rather than by a rule written ahead of time. Only the
+ * split placements live here, as they reach the item set apart rather than the strip.
  */
-export function TileHint({
 
-	border,
+tile-strip {
 
-	children
+    display: flex;
+    flex-direction: row;
 
-}: {
+    &[place="head"] > :first-child {
+        margin-inline-end: auto;
+    }
 
-	border?: boolean
-
-	children?: ReactNode
-
-}) {
-
-	return createElement("tile-hint", {
-
-		class: classes({ border })
-
-	}, children);
+    &[place="tail"] > :last-child {
+        margin-inline-start: auto;
+    }
 
 }

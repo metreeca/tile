@@ -48,7 +48,7 @@ Override any token to restyle the interface:
 
 ```css
 :root {
-    --tile--color-strong: #D60;
+    --tile--color-strong: light-dark(#D60, #F80);
     --tile--font-family: Inter, sans-serif;
 }
 ```
@@ -62,13 +62,32 @@ Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-colo
 and elevation surfaces derive from them and follow. The accents ship brand-agnostic, so an app supplies its own,
 a quieter value and a louder one per colour scheme, and rechecks that the text roles still hold AA contrast against
 the page and the striped row in both. The status four take values of their own rather than derivations of an accent,
-so an outcome keeps reading as itself whatever an app brands with. An override the browser cannot parse leaves the
-interface on the default rather than unstyled.
+so an outcome keeps reading as itself whatever an app brands with.
+
+A malformed override is caught only where the token has a fixed type: a weight, a duration or an opacity the browser
+cannot parse stays on its default. Most tokens, the colour anchors and the sizes among them, take an override as
+written, so a malformed value leaves whatever reads it unstyled rather than on the default.
+
+A colour differing by scheme is stated once, as a `light-dark()` pair, and every scheme and every pinned subtree
+follows it with no rule restated per scheme:
+
+```html
+<style>
+    :root {
+        --tile--color-subtle: light-dark(#1C275D, #9AB);
+        --tile--color-strong: light-dark(#D60, #F80);
+    }
+</style>
+```
+
+An override in the document head, as above, is in force from the first frame, so a loader painted before the
+stylesheet arrives already reads the brand; one in an app stylesheet takes effect once that stylesheet loads.
 
 An interface follows the platform colour scheme on its own. An app that has to pin one sets `data-theme` to `light` or
 `dark`, on the root element or on any subtree that has to differ from the page around it, which a
-`prefers-color-scheme` query cannot express; the stylesheet states `color-scheme` alongside, so native controls and
-scrollbars follow a pinned subtree too.
+`prefers-color-scheme` query cannot express. The pinned subtree takes its side of every `light-dark()` pair, the app's
+overrides included, and the stylesheet states `color-scheme` alongside, so native controls and scrollbars follow it
+too.
 
 ## Modes
 

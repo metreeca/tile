@@ -17,16 +17,13 @@
 /**
  * Scaling tokens.
  *
- * Names the ladder an interface sizes what is measured against the text on, a glyph, a spinner, a swatch or a dot, so
- * a mark keeps its proportion to the text it sits in wherever the two are placed.
+ * Names the ladder a glyph, a spinner, a swatch or a dot is sized on, keeping its proportion to the text it sits in.
  *
  * @remarks
  *
- * The number is the multiple of the text size the step carries, `scaling100` matching the text it sits in. Every step
- * is stated in `em`, so a subtree given a size of its own takes the ladder along.
+ * Each step is the multiple of the text size its number names, stated in `em` so a resized subtree takes it along.
  *
- * A step setting a thing apart from its neighbour rather than sizing it belongs to the {@link spacings spacing
- * ladder} instead: a margin, a padding or a gap is spaced, not scaled.
+ * A margin, a padding or a gap sets a thing apart rather than sizing it, and takes the {@link spacings spacing ladder}.
  *
  * @module scalings
  */

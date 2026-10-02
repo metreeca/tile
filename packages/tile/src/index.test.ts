@@ -28,8 +28,7 @@ describe("tile", () => {
 		.map(name => readFileSync(new URL(`./${ name }`, import.meta.url), "utf-8"));
 
 	/*
-	 * A media query and the rules nested in it, and a rule an app forces a scheme with, so a scheme variant is told
-	 * apart from an unconditional definition however the scheme is settled.
+	 * A media query with its nested rules, or a rule forcing a scheme: each form a scheme variant can take.
 	 */
 
 	const query = /@media[^{]*\{(?:[^{}]*\{[^{}]*})*[^{}]*}/g;
@@ -39,17 +38,11 @@ describe("tile", () => {
 	const conditional = stylesheets.flatMap(text => [ ...text.match(query) ?? [], ...text.match(forced) ?? [] ]);
 
 	/*
-	 * The scheme a conditional rule states, read off the query it sits in or the attribute it is the subject of. A
-	 * pinned attribute counts only where the rule selects it, never where a guard excludes it: the dark query selects
-	 * `:root:not([data-theme="light"])`, and naming light there says which scheme the rule is *not* for.
+	 * A rule settled by the colour scheme, whether the platform or a pinned attribute decides it. A token stated there
+	 * is one an app would have to restate per scheme, and again per pinning, to override.
 	 */
 
-	const scheme = (name: string) => (rule: string): boolean =>
-		new RegExp(`prefers-color-scheme:\\s*${ name }`).test(rule)
-		|| new RegExp(`(?:^|})\\s*\\[data-theme="${ name }"]\\s*\\{`).test(rule);
-
-	const dark = conditional.filter(scheme("dark"));
-	const light = conditional.filter(scheme("light"));
+	const schemed = conditional.filter(rule => /prefers-color-scheme|\[data-theme/.test(rule));
 
 	const assignments = (texts: ReadonlyArray<string>): ReadonlyArray<readonly [string, string]> => texts
 		.flatMap(text => Array.from(text.matchAll(/(?::root|\[data-theme)[^{}]*\{([^}]*)}/g), ([ , rule ]) => rule))
@@ -81,14 +74,6 @@ describe("tile", () => {
 	const defined = (token: string): number => (anchored.includes(token) ? 1 : 0)
 		+ defaults.filter(assignment => assignment === token).length;
 
-	/*
-	 * A token whose value differs by colour scheme states each scheme for itself and carries no unconditional
-	 * definition, so it is settled by covering both rather than by being defined once.
-	 */
-
-	const schemed = (token: string): boolean => assignments(light).some(([ name ]) => name === token)
-		&& assignments(dark).some(([ name ]) => name === token);
-
 
 	it("names every token the stylesheets read", () => {
 
@@ -104,19 +89,13 @@ describe("tile", () => {
 
 	it("defines every token in exactly one place", () => {
 
-		expect(declared.filter(token => !schemed(token) && defined(token) !== 1)).toEqual([]);
+		expect(declared.filter(token => defined(token) !== 1)).toEqual([]);
 
 	});
 
-	it("settles every token a colour scheme states, in both schemes or unconditionally", () => {
+	it("states no token per colour scheme, so a single override reaches every scheme", () => {
 
-		expect(variants.filter(token => !schemed(token) && defined(token) !== 1)).toEqual([]);
-
-	});
-
-	it("states both schemes for a token that carries no unconditional value", () => {
-
-		expect(declared.filter(token => defined(token) === 0 && !schemed(token))).toEqual([]);
+		expect(assignments(schemed).map(([ token ]) => token)).toEqual([]);
 
 	});
 
@@ -195,6 +174,42 @@ describe("css", () => {
 
 	});
 
+	it("paints an area in the colours it is given, the page reading them only for itself", () => {
+
+		expect(css({
+
+			color: "colorStrong",
+			backgroundColor: "backgroundColorRaised"
+
+		})).toEqual({
+
+			"--tile--color": "var(--tile--color-strong)", "color": "var(--tile--color-strong)",
+			"--tile--background-color": "var(--tile--background-color-raised)",
+			"background-color": "var(--tile--background-color-raised)"
+
+		});
+
+	});
+
+	it("shapes the box of the element it is given, no rule reading the box tokens", () => {
+
+		expect(css({
+
+			padding: "spacing100",
+			borderRadius: "borderRadius050",
+			boxShadow: "boxShadowRaised"
+
+		})).toEqual({
+
+			"--tile--padding": "var(--tile--spacing-100)", "padding": "var(--tile--spacing-100)",
+			"--tile--border-radius": "var(--tile--border-radius-050)",
+			"border-radius": "var(--tile--border-radius-050)",
+			"--tile--box-shadow": "var(--tile--box-shadow-raised)", "box-shadow": "var(--tile--box-shadow-raised)"
+
+		});
+
+	});
+
 	it("sets a token from another named as the value", () => {
 
 		expect(css({ fontSize: "fontSizeLarge" })).toEqual({
@@ -263,12 +278,19 @@ describe("css", () => {
 
 				...Object.values(tile).map(property => [ property, "value" ]),
 
-				// the four the page carries its own typography in are written as well as assigned
+				// the tokens the page alone reads, and the box tokens no rule reads, are applied as well as assigned
 
 				[ "font-family", "value" ],
 				[ "font-size", "value" ],
 				[ "font-weight", "value" ],
-				[ "line-height", "value" ]
+				[ "line-height", "value" ],
+
+				[ "color", "value" ],
+				[ "background-color", "value" ],
+
+				[ "padding", "value" ],
+				[ "border-radius", "value" ],
+				[ "box-shadow", "value" ]
 
 			]));
 

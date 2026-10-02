@@ -71,20 +71,17 @@ export function Button({
 	name?: string
 
 	/**
-	 * Whether the button is inactive, greyed and out of the tab order as the platform leaves a disabled control; live
-	 * if omitted.
+	 * Whether the button is inactive, greyed and out of the tab order like any disabled control; live if omitted.
 	 */
 	disabled?: boolean
 
 	/**
-	 * The glyph marking the action, shown before the label and kept out of the accessibility tree, unless it carries
-	 * a label of its own, so that the button is named once.
+	 * The glyph marking the action, shown before the label and hidden from assistive technology unless labelled itself.
 	 */
 	icon?: ComponentChildren
 
 	/**
-	 * The text the button shows, naming it unless `name` states otherwise; omitted only where `name` or `title` names a
-	 * glyph standing alone.
+	 * The text the button shows, naming it unless `name` does; omitted only where `name` or `title` names the glyph.
 	 */
 	label?: string
 

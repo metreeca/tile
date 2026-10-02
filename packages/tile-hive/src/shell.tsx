@@ -40,7 +40,8 @@ import "./shell.css";
  *
  * Waiting is stated by the shell itself: while the {@link @metreeca/tile-data!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark at the end of the
- * content header, in place of whatever navigation sits there. Nothing else moves while it stands: a screen with no
+ * content header, in place of whatever navigation sits there, and `done` is taken off show along with it, so no way
+ * out is offered while the exchange it would abandon is running. Nothing else moves while it stands: a screen with no
  * content header is not given one for the duration, and a header that stands keeps the height it had. No call site
  * takes part, so a screen states waiting by performing its exchanges through that client and nothing else. Nothing is
  * taken out of reach meanwhile: the content is on its way out rather than unavailable, and a gesture that must not be
@@ -76,10 +77,11 @@ export function Shell({
 	tray,
 	info,
 
-	done,
-	back,
 	head,
 	menu,
+	done,
+	back,
+	copy,
 	foot,
 
 	children
@@ -111,12 +113,12 @@ export function Shell({
 
 
 	/**
-	 * The mark the app is recognised by, standing at the head of the tray.
+	 * The mark the app is recognised by, standing at the top of the tray, in view however the tray scrolls.
 	 */
 	logo?: ComponentChildren
 
 	/**
-	 * What stands opposite the mark at the head of the tray, such as the release on show or a standing control.
+	 * What stands opposite the mark at the top of the tray, in view however it scrolls, such as the release on show.
 	 */
 	meta?: ComponentChildren
 
@@ -128,38 +130,46 @@ export function Shell({
 	tray?: ComponentChildren
 
 	/**
-	 * What stands at the foot of the tray, such as the reader signed in and the way out.
+	 * What stands at the bottom of the tray, in view however it scrolls, such as the reader signed in and the way out.
 	 */
 	info?: ComponentChildren
 
 
 	/**
-	 * The way out of the content of the moment, standing at the head of the content column in place of `head` and
-	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
-	 * they simply arrived at.
-	 */
-	done?: ComponentChildren
-
-	/**
-	 * The control returning to the step before, standing at the end of the content header and taking the place `menu`
-	 * would have had; it gives way to the turning mark while an exchange is in flight.
-	 */
-	back?: ComponentChildren
-
-	/**
-	 * What the content of the moment is called. It heads the content column unless `done` stands there instead, and
-	 * names the content landmark either way, so a reader arriving at it hears which screen they are on.
+	 * What the content of the moment is called. It stands at the top of the shell, in view however the content
+	 * scrolls, unless `done` stands there instead, and names the content landmark either way, so a reader arriving at
+	 * it hears which screen they are on.
 	 */
 	head?: ComponentChildren
 
 	/**
 	 * The control opening whatever the screen holds back, standing at the end of the content header where `back` is
-	 * left out; it gives way to the turning mark while an exchange is in flight.
+	 * left out. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
 	 */
 	menu?: ComponentChildren
 
 	/**
-	 * What stands at the foot of the content, such as the copyright and the terms.
+	 * The way out of the content of the moment, standing at the top of the shell in place of `head` and
+	 * naming the content landmark while it does: a screen offering it is one the reader finishes rather than one
+	 * they simply arrived at. It is taken off show while an exchange is in flight, and comes back once it settles.
+	 */
+	done?: ComponentChildren
+
+	/**
+	 * The control returning to the step before, standing at the end of the content header and taking the place `menu`
+	 * would have had. It gives way to the turning mark while an exchange is in flight, and comes back once it settles.
+	 */
+	back?: ComponentChildren
+
+	/**
+	 * What closes the content itself, such as a copyright notice. It scrolls with the content rather than standing
+	 * in a bar: where the content is short it rests at the bottom of the shell, just above `foot` if one stands,
+	 * and where the content runs longer it follows on after it.
+	 */
+	copy?: ComponentChildren
+
+	/**
+	 * What stands at the bottom of the shell, in view however the content scrolls, such as the terms.
 	 */
 	foot?: ComponentChildren
 
@@ -178,8 +188,7 @@ export function Shell({
 	const lead = done ?? head;
 	const tail = back ?? menu;
 
-	// the content landmark is named by the heading already on show, so the reference and what it points at stand or
-	// fall on the same condition and the reference is never left dangling
+	// the landmark is named by the heading on show, so the reference stands or falls with its target and never dangles
 
 	const title = lead ? `${id}-title` : undefined;
 
@@ -217,7 +226,7 @@ export function Shell({
 		<main aria-labelledby={title}>
 
 			<header>
-				{lead && <span id={title}>{lead}</span>}
+				{lead && <span id={title} inert={fetching && lead === done}>{lead}</span>}
 				{tail && <span inert={fetching}>{tail}</span>}
 			</header>
 
@@ -237,7 +246,10 @@ export function Shell({
 				<Button icon={<Icon.RefreshCw/>} look="subtle" name="Waiting"/>
 			</span>}
 
-			<section>{children}</section>
+			<section>
+				<div>{children}</div>
+				{copy && <footer>{copy}</footer>}
+			</section>
 
 			<footer>{foot}</footer>
 

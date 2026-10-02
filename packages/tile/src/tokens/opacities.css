@@ -15,8 +15,7 @@
  */
 
 /*
- * How far a thing is faded when it is present but not available. Fading the container carries its border, its icon and
- * whatever it encloses along, which a colour role cannot reach.
+ * How far a thing present but not available fades, taking along the border, icon and contents a colour role misses.
  *
  * The three steps are a ladder of reach. Content being replaced fades least, since it is still worth reading while it
  * is on its way out. A disabled control fades further, being there to be understood rather than read. A region put out

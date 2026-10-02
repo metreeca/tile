@@ -17,8 +17,7 @@
 /**
  * Opacity tokens.
  *
- * Names how far a thing is faded when it is present but not available, so a whole composite dims at once rather than
- * each of its parts taking a colour role of its own.
+ * Names how far a thing present but not available fades, so a composite dims at once rather than part by part.
  *
  * @remarks
  *

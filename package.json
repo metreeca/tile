@@ -1,5 +1,6 @@
 {
   "private": true,
+  "description": "Minimalist model-driven UI toolkit for linked data resources.",
   "type": "module",
   "workspaces": [
     "packages/*"

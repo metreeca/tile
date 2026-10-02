@@ -17,12 +17,12 @@
 /**
  * Logo.
  *
- * Offers the mark an app is recognised by, taken from what its own document states, so a screen carries the app
- * identity without being handed it.
+ * Offers the mark an app is recognised by, taken from its own document, so a screen carries it without being handed it.
  *
  * @module
  */
 
+import { opt } from "@metreeca/core";
 import { app } from "@metreeca/tile-data";
 import { createElement } from "preact";
 import "./logo.css";
@@ -36,8 +36,7 @@ import "./logo.css";
  * than as something dropped into it. The mark is fitted to that square whatever its proportions, so a wide or a tall
  * one is shown whole rather than cropped.
  *
- * A document stating no icon leaves nothing behind, so a screen assembled around the mark closes up rather than
- * holding a gap for it.
+ * A document stating no icon leaves nothing behind, so a screen closes up rather than holding a gap for the mark.
  *
  * The mark is left out of the accessibility tree unless `name` states what it stands for, so a logo standing beside
  * the app name is read once. It survives a forced colour scheme and a printed page, where a background image would be
@@ -61,8 +60,8 @@ export function Logo({
 
 }) {
 
-	return app.icon === undefined ? undefined : createElement("tile-logo", {},
-		<img alt={name ?? ""} src={app.icon}/>
-	);
+	return opt(app.icon, icon => createElement("tile-logo", {},
+		<img alt={name ?? ""} src={icon}/>
+	));
 
 }

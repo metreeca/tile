@@ -42,3 +42,37 @@
     column-gap: var(--tile--spacing-200);
     margin-bottom: var(--tile--spacing-100);
 }
+
+
+/**** Frames **********************************************************************************************************/
+
+/*
+ * A frame sets a layout in a dashed outline, so the room left over around its items shows. No frame states a size:
+ * each one is as large as what it holds, or as the layout it sits in stretches it to. The frame is a column, so a
+ * layout inside it takes the full width, and a stack told to grow takes the full height as well.
+ */
+
+.frames {
+    margin-bottom: var(--tile--spacing-100);
+}
+
+.frame {
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--tile--spacing-050);
+
+    & > div {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: var(--tile--spacing-050);
+        border-style: dashed;
+        border-radius: var(--tile--border-radius-025);
+    }
+
+    & > figcaption {
+        color: var(--tile--color-label);
+    }
+
+}

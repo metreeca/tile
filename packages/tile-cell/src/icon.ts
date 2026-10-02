@@ -28,8 +28,8 @@
  * > Glyphs are provided by Lucide under the ISC and MIT licences. Redistribution, including within a bundled
  * > application, must preserve the copyright and permission notices reproduced in [Notices](./icon.md).
  *
- * An icon is hidden from assistive technology unless given a `role`, a `title` or an `aria-*` attribute, leaving the
- * control it marks to carry the accessible name.
+ * An icon is hidden from assistive technology unless given a `role`, a `title` or an `aria-*` attribute: the control
+ * it marks carries the accessible name, and a glyph read out beside it would only name the control a second time.
  *
  * > [!IMPORTANT]
  * >
@@ -42,8 +42,7 @@
  *
  * **Standard Glyphs**
  *
- * Import the namespace once, then mark a control with a glyph: every glyph Lucide draws is there, under the name
- * Lucide gives it.
+ * Import the namespace once, then mark a control with any glyph Lucide draws, under the name Lucide gives it.
  *
  * ```tsx
  * import { Icon } from "@metreeca/tile-cell/icon";
@@ -94,10 +93,12 @@
  * | `Update`         | edits the resource on show                                   |
  * | `Save`           | writes the edits back                                        |
  * | `Delete`         | destroys it                                                  |
+ * | `Reload`         | retrieves it again, after a failure or a change              |
  * | **Confirmation** | what becomes of what was entered                             |
  * | `Accept`         | commits it                                                   |
  * | `Cancel`         | abandons it, leaving things as they stood                    |
  * | `Close`          | dismisses what is on show, deciding nothing                  |
+ * | `Dismiss`        | sets aside a notice or a failure, returning to the screen    |
  * | **Modes**        | entering and leaving a way of working                        |
  * | `Menu`           | opens what a screen keeps out of the way until asked         |
  * | `Done`           | leaves a mode, whatever it was entered for                   |
@@ -155,4 +156,4 @@
 import "./icon.css";
 
 
-export * as Icon from "./icon.pack.js";
+export * as Icon from "./icon.core.js";

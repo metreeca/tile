@@ -40,11 +40,11 @@
  * import "@metreeca/tile/index.css";
  * ```
  *
- * Override any token to restyle the whole interface:
+ * Override any token to restyle the whole interface, stating a colour for both schemes as a `light-dark()` pair:
  *
  * ```css
  * :root {
- *     --tile--color-strong: #D60;
+ *     --tile--color-strong: light-dark(#D60, #F80);
  *     --tile--font-family: Inter, sans-serif;
  * }
  * ```
@@ -74,21 +74,27 @@
  * more specific. An app whose own rules are layered orders its layer after `tile`.
  *
  * **Missing and malformed values** — a token carrying a literal states it as the registered default of its custom
- * property, so the value lives in one place and an override the browser cannot parse leaves the interface on the
- * default rather than unstyled. A component styled against a token it cannot count on, because the stylesheet may not
+ * property, so the value lives in one place. A malformed override is caught only where the token has a fixed type: a
+ * weight, a duration or an opacity the browser cannot parse stays on its default. Most tokens, the colour anchors and
+ * the sizes among them, take an override as written, so a malformed value leaves whatever reads it unstyled rather
+ * than on the default. A component styled against a token it cannot count on, because the stylesheet may not
  * be loaded at all, names its own fallback in the reference it writes by hand: `var(--tile--color-strong, #06C)`,
  * which is the one case {@link css css.var} does not cover.
  *
  * **First paint** — the stylesheet has to reach the document before it is painted, or the first frame shows the
  * unstyled markup: an app bundling it from the entry point is served by the bundler, while one assembling its own HTML
- * links it in the document head.
+ * links it in the document head. An override stated in a `<style>` in the document head is in force from the first
+ * frame, so a loader painted before the stylesheet arrives already reads the app's brand.
  *
  * **Values outside the cascade** — a consumer painting where a reference doesn't reach, on a canvas or against an API
  * taking a colour as text, takes the value a token resolves to for the element it applies to, rather than a copy of
- * the default, and so keeps whatever the app overrode and whichever colour scheme is in force:
+ * the default, and so keeps whatever the app overrode and whichever colour scheme is in force. A colour token holds a
+ * `light-dark()` pair or a mix until something paints with it, so it is resolved through a colour property of an
+ * element in the subtree:
  *
  * ```typescript
- * getComputedStyle(element).getPropertyValue(tile.colorStrong)
+ * probe.style.color = css.var(tile.colorStrong);
+ * getComputedStyle(probe).color
  * ```
  *
  * @module index
@@ -110,24 +116,32 @@ import { visuals } from "./tokens/visuals.js";
 
 
 /**
- * The CSS property a token is applied through as well as assigned, for a token the page alone reads.
+ * The CSS property a token is applied through as well as assigned, for a token no rule below the page reads.
  *
  * Every other token is read by a rule on the elements that take it, so assigning it anywhere is enough to restyle
- * what stands below. A token listed here is read a single time, where the page sets its own defaults, and an element
- * further down takes the property it inherits rather than looking the token up again. Assigning one of them to an
- * area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to predict from the
- * name. Applying the property alongside the assignment makes the area behave as every other token already leads them
- * to expect.
+ * what stands below. A token listed here is read at most a single time, where the page sets its own defaults, and an
+ * element further down takes the property it inherits rather than looking the token up again. Assigning one of them to
+ * an area would therefore do nothing at all, which is the one outcome a consumer cannot be expected to predict from
+ * the name. Applying the property alongside the assignment makes the area behave as every other token already leads
+ * them to expect.
  *
- * A token joins the list on that condition alone, whatever it decides: the page is its only reader, and the entry
- * names the property the page states it through, which is what carries an override down the subtree.
+ * A token joins the list on that condition alone, whatever it decides, and the entry names the property it is applied
+ * through: an inherited one carries an override down the subtree, as the typography and the colours do, while the box
+ * tokens name properties that do not inherit, so each shapes the element it is assigned to and nothing inside it.
  */
-const inherited: Readonly<Record<string, string>> = {
+const applied: Readonly<Record<string, string>> = {
 
 	fontFamily: "font-family",
 	fontSize: "font-size",
 	fontWeight: "font-weight",
-	lineHeight: "line-height"
+	lineHeight: "line-height",
+
+	color: "color",
+	backgroundColor: "background-color",
+
+	padding: "padding",
+	borderRadius: "border-radius",
+	boxShadow: "box-shadow"
 
 };
 
@@ -165,16 +179,14 @@ export const tile = {
 /**
  * An inline style declaration.
  *
- * Assignable as-is to the `style` prop of a rendering layer that accepts one, with no cast: overriding a token for a
- * subtree is a style declaration like any other.
+ * Assignable with no cast to the `style` prop of a rendering layer, a token override being a style like any other.
  */
 export type Style = Readonly<Record<string, string>>
 
 /**
  * The custom property carrying the value of a design system token.
  *
- * Addresses a token wherever CSS reads one, as given by {@link tile}: it is what {@link css css.var} takes and what a
- * computed-style read is keyed by.
+ * As given by {@link tile}: what {@link css css.var} takes, and what a computed-style read is keyed by.
  */
 export type Property = typeof tile[Token]
 
@@ -204,8 +216,7 @@ export type Token = keyof typeof tile
 /**
  * The value a design system token is assigned.
  *
- * Admits what the token in hand can carry and nothing else, as three alternatives, two of them named by types this
- * reference leaves out:
+ * Admits only what the token in hand can carry, as three alternatives, two named by types left out of this reference:
  *
  * - `Alias<K>` — the {@link Token token names} `K` may be set from, being the ladder it belongs to and no other: a
  *   colour offers colours, a text size the type and scaling ladders and not the spacing one, though all are lengths.
@@ -227,14 +238,36 @@ export type Token = keyof typeof tile
  */
 export type Value<K extends Token = Token> = undefined | Alias<K> | Literal<K>
 
+export type {
+	Palette,
+	Ink,
+	Fill,
+	Type,
+	Scaling,
+	Spacing,
+	Radius,
+	Stroke,
+	Tracking,
+	Weight,
+	Opacity,
+	Layer,
+	Timing,
+	Easing,
+	Shadow,
+	Family,
+	Flag,
+	Padding,
+	Rounding,
+	Lifting
+} from "./index.core.js";
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Overrides design system tokens for a subtree.
  *
- * Assigns each named token the value given for it, restyling the elements that read it without touching the ones that
- * don't:
+ * Assigns each named token its value, restyling the elements that read it and leaving the rest untouched:
  *
  * ```tsx
  * <section style={css({ colorStrong: "#D60" })}>
@@ -257,16 +290,22 @@ export type Value<K extends Token = Token> = undefined | Alias<K> | Literal<K>
  * it, since the page states each of them once and nothing below reads them again; an area given one of the four is
  * therefore written in it, rather than assigning a value nothing would consult. What an area holds inherits them as
  * it inherits any other, so a size stated on an area compounds with a size stated on an area inside it, exactly as
- * CSS has it.
+ * CSS has it. The text and background colours are applied the same way, so an area given either is painted in it.
  *
- * Reading a token where a single CSS value is written by hand, rather than assigning one, goes through
- * {@link css css.var} instead.
+ * The box tokens, `padding`, `borderRadius` and `boxShadow`, are read by no rule at all, and are applied to the
+ * element they are assigned to alone, padding, rounding or lifting it without reaching what it holds:
+ *
+ * ```tsx
+ * <section style={css({ padding: "spacing100", borderRadius: "borderRadius050" })}>
+ * ```
+ *
+ * Reading a token where a CSS value is written by hand goes through {@link css css.var} instead.
  *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *
  * @returns An immutable {@link Style style declaration} assigning the {@link Property custom property} of each token
  * given a defined value in `tokens` its text form, or a reference to the token it names, and applying the CSS
- * property as well for the four the page carries its own typography in
+ * property as well for the typography and the colours the page carries its own defaults in, and for the box tokens
  */
 export const css = Object.assign(
 
@@ -278,7 +317,7 @@ export const css = Object.assign(
 			.filter(([, value]) => value !== undefined)
 			.flatMap(([token, value]) => {
 
-				const property = inherited[token];
+				const property = applied[token];
 
 				// a value naming a token stands for what that token carries; no CSS value is spelt as a token name,
 				// the names being camel-cased identifiers and CSS values keywords, numbers, colours and functions
@@ -312,8 +351,7 @@ export const css = Object.assign(
 		 * through {@link css} itself instead, and a consumer that cannot count on the stylesheet being loaded at all
 		 * writes the reference by hand, naming in it the fallback it wants.
 		 *
-		 * @param property The {@link Property custom property} carrying the value of the token to be read, as given
-		 * by {@link tile}
+		 * @param property The {@link Property custom property} of the token to be read, as given by {@link tile}
 		 *
 		 * @returns A `var()` reference resolving to the value `property` carries on the element reading it
 		 */

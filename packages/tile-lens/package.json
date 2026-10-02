@@ -33,16 +33,14 @@
       "default": "./dist/index.js"
     },
     "./*": {
-      "@metreeca/source": [
-        "./src/*.ts",
-        "./src/*.tsx"
-      ],
+      "@metreeca/source": "./src/*.ts",
       "default": "./dist/*.js"
     },
     "./*.css": {
       "@metreeca/source": "./src/*.css",
       "default": "./dist/*.css"
-    }
+    },
+    "./*.core": null
   },
   "files": [
     "README.md",

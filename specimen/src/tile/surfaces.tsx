@@ -109,6 +109,22 @@ export function Surfaces() {
 			<span class="card" style={{ boxShadow: css.var(property) }}/>
 		}/>
 
+		<h3>Boxes</h3>
+
+		<p>The box tokens shape the one element they are assigned to, set from a step of the ladder each belongs
+			to: <code>padding</code> from the spacing ladder, <code>borderRadius</code> from the radius ladder
+			and <code>boxShadow</code> from the shadows above. No rule reads them, so they pad, round and lift that
+			element and nothing inside it, whichever element a screen assigns them to:</p>
+
+		<div class="boxed" style={css({
+			backgroundColor: "backgroundColorRaised",
+			boxShadow: "boxShadowRaised",
+			borderRadius: "borderRadius050",
+			padding: "spacing100"
+		})}>
+			<p>A plain element given a raised surface, its shadow, a rounding and a padding.</p>
+		</div>
+
 		<h3>Blankets</h3>
 
 		<p>A blanket is translucent, so it dims what it covers rather than replacing it, and the page stays visible

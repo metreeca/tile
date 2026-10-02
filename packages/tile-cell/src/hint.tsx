@@ -15,7 +15,7 @@
  */
 
 /**
- * Hint.
+ * Missing content placeholder.
  *
  * Offers the placeholder an area shows while it has no content of its own, whether still loading, left empty or
  * unable to fetch what it was to show, filling the space the content would take.

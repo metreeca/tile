@@ -15,7 +15,7 @@
  */
 
 /**
- * Shell.
+ * Screen frame.
  *
  * Offers the frame a whole screen is laid out in: a tray of standing controls beside the content of the moment, each
  * with a header and a footer of its own, so an app states what goes in the slots rather than arranging them.

@@ -15,7 +15,7 @@
  */
 
 /**
- * Button.
+ * Action control.
  *
  * Offers the control an action is taken with, shown as a glyph, a label, or both, with the activation, the focus
  * handling and the disabled state the platform already carries on a native button.

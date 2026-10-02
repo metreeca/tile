@@ -15,7 +15,7 @@
  */
 
 /**
- * Logo.
+ * App mark.
  *
  * Offers the mark an app is recognised by, taken from its own document, so a screen carries it without being handed it.
  *

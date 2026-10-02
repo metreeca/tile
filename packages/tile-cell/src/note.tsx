@@ -15,7 +15,7 @@
  */
 
 /**
- * Note.
+ * Centred notice.
  *
  * Offers the notice a screen shows where it has nothing else to put, whether an aside, a failure or a question,
  * centred in the space it is given and marked with a glyph unless the reader is asked to answer it.

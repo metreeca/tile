@@ -15,7 +15,7 @@
  */
 
 /**
- * Fault.
+ * Failure notice.
  *
  * Offers the notice a screen shows in place of a resource an exchange failed to bring back, telling a reader what
  * they can act on in their own terms and handing them, where there is nothing to act on, what to pass on instead.

@@ -15,7 +15,7 @@
  */
 
 /**
- * Icons.
+ * Role-named glyphs.
  *
  * Provides the glyph a control is marked with under the name of the role it stands for: a screen asks for
  * `Icon.Create` rather than for a plus sign, so retuning what a role looks like across an interface is a change to

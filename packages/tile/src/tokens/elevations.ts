@@ -41,6 +41,11 @@
  * **Blankets** — `backgroundColorBlanket` is a translucent value, so it dims whatever it covers rather than replacing
  * it. It pairs with the {@link layers `zIndexBlanket`} slot, which decides what it covers.
  *
+ * **Glass** — `backgroundColorGlass` is a translucent ground a step darker than the page, gathering surfaces that float
+ * over the page into one group without a shadow to set them apart, such as a stack of transient notices. It carries no
+ * text of its own: the surfaces set on it do, painted with `backgroundColorOverlay`, which stands out from it in either
+ * scheme, so their text keeps its contrast whatever the glass lets through.
+ *
  * @module elevations
  */
 
@@ -56,6 +61,7 @@ export const elevations = {
 	backgroundColorOverlay: "--tile--background-color-overlay",
 	backgroundColorSunken: "--tile--background-color-sunken",
 	backgroundColorBlanket: "--tile--background-color-blanket",
+	backgroundColorGlass: "--tile--background-color-glass",
 
 	boxShadowRaised: "--tile--box-shadow-raised",
 	boxShadowOverlay: "--tile--box-shadow-overlay",

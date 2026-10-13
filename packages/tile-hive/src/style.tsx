@@ -15,7 +15,7 @@
  */
 
 /**
- * Styled area.
+ * Token override scope.
  *
  * Restyles everything an area holds by assigning design system tokens to it, laying nothing out and taking no room.
  *

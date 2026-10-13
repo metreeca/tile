@@ -61,8 +61,10 @@ emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
-`tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-lens` and `tile-form` for
-the views and forms built over them). A binding package adds observation and rendering over state it never redefines:
+`tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-move` for the items a
+reader moves and the drag and drop bindings behind them, `tile-lens` and `tile-form` for the views and forms built over
+them). The drag and drop library behind `tile-move` appears **ONLY** there, and is **NEVER** handed out: a consumer
+moves items through the `tile-move` widgets. A binding package adds observation and rendering over state it never redefines:
 behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour
 without restating it.
 
@@ -79,8 +81,7 @@ Every package states its summary in three places, which **MUST** be kept aligned
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
-The suffix names the family a package belongs to, so `@metreeca/tile` itself names the project instead, as
-`<summary> for Metreeca Tile interfaces.`, rather than pointing at itself.
+The suffix names the project repository as `@metreeca/tile`, for `@metreeca/tile` itself as for every other package.
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the
@@ -125,7 +126,12 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
 - A transition starts from the state the render read and notifies asynchronously: two calls in one handler land where
   one does, and the data read alongside keeps the earlier value until the next render.
 - The factory runs on the first render only, so the model keeps the props as they stood then: a prop changing later
-  **NEVER** reaches it.
+  **NEVER** reaches it, unless it is listed as a dependency. A model created from props lists them, and is created
+  again from the factory whenever one changes, losing the state it reached:
+
+  ```tsx
+  const { model: slice, focus } = useModel(() => createWindow({ model }), [model]); // a new query starts from the first items
+  ```
 - Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
   the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
 
@@ -140,6 +146,16 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 
 `@metreeca/tile` is the exception, its `*.core.ts` modules holding what the design system surface stands on without
 offering it: `typedoc.json` leaves the modules out of the reference as well.
+
+A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
+never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
+`"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
+stylesheet, which the module imports. `tile-move` keeps there the item a reader moves by its grip or by its whole
+surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
+
+`tile-move` keeps the drag and drop bindings its widgets are built on in `index.core.ts`, the one core module allowed
+to depend on Preact: it holds Preact hooks over dnd-kit rather than a headless component, offers consumers nothing,
+and so is left out of the reference by `typedoc.json` as well as blocked by the `"./*.core"` entry.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
 module, another exception left out of the reference by `typedoc.json`, which names each such module: the documented
@@ -161,10 +177,10 @@ is, so the next reader doesn't take it for an oversight.
 
 # Testing
 
-The root `vitest.config.ts` aliases all workspace `@metreeca/tile*` packages to their TypeScript source via regex, so
-vitest transpiles directly from `src/` without requiring a prior build step. The resolver maps each `@metreeca/tile*`
-specifier to `packages/<package>/src`; the aliases are convention-based and require no manual updates when adding
-packages or subpath exports.
+The root `vitest.config.ts` resolves workspace imports through the `@metreeca/source` export condition, as
+`tsconfig.json` does, so tests run against the `src/` of every sibling without a prior build. A subpath reaches source
+only if its `exports` entry carries the condition: an entry without it falls back to `dist`, and tests then see the
+sibling as it was last built.
 
 Headless state is tested without a DOM: a test that needs one belongs to a binding package, which supplies its own
 environment.

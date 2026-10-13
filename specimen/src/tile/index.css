@@ -41,3 +41,26 @@
     border-color: var(--tile--border-color);
     border-radius: var(--tile--border-radius-025);
 }
+
+/* A row of controls sets them apart, so two samples side by side read as two controls rather than one run of text. */
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tile--spacing-100);
+}
+
+/*
+ * A framed control takes the border and the padding of a field and leaves its display alone, so a menu goes on laying
+ * out its label and its arrow as it does unframed: what the box shows is where the padding lands around the arrow.
+ */
+
+.framed {
+    padding: var(--tile--spacing-050) var(--tile--spacing-075);
+
+    border-style: var(--tile--border-style);
+    border-width: var(--tile--border-width);
+    border-color: var(--tile--border-color);
+    border-radius: var(--tile--border-radius-025);
+}

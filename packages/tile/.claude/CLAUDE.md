@@ -32,8 +32,8 @@ only place either side of the family is revised:
 - `colors` — the eight colour anchors, each registered as a `light-dark()` pair where it varies by scheme, and the
   text, status, state and surface roles derived from them
 - `borders` — the line, the radii, the focus ring, the invalid outline and the vector stroke width
-- `elevations` — the surfaces a thing lifted off the page is painted on, the shadows pairing with them and the
-  blanket dimming what a modal covers
+- `elevations` — the surfaces a thing lifted off the page is painted on, the shadows pairing with them, the
+  translucent glass ground gathering floating surfaces without a shadow, and the blanket dimming what a modal covers
 - `palettes` — the four ten-step colour scales, the nine series slots and the four area classes, the three
   accent-derived scales following the anchors and the heat scale, the slots and the classes stated as literals
 - `layers` — the stacking order two things overlapping the page are settled by
@@ -261,6 +261,7 @@ put the same meaning on different steps and the learned scale breaks:
 ```
 tile-note    level   info → info    highlight → pass    warning → warn    critical → fail
 tile-button  mode    safe → info    commit → pass       alert → warn      danger → fail
+tile-toast   status  pending → info success → pass      warning → warn    failure → fail
 ```
 
 ### Which attribute a widget takes
@@ -324,16 +325,16 @@ toolbar.
   has to stay the exception or green-plus-prominence becomes the default and means nothing.
 - **`pending` and `info` share the `info` step.** A pending that must read as *moving* rather than merely unjudged
   adds the loading opacity and the motion tokens on top of the hue, not instead of it.
-- **`level` and `status` collapse at the attribute level today.** `tile-note` carries both, an authored empty-state
-  aside and a `Fault`. `pending` is the value that will force them apart, since an authored admonition is never
-  pending.
+- **A failure can be told by either attribute.** `tile-note` takes `level="critical"` for a failure shown in place of
+  the content, and `tile-toast` takes `status="failure"` for one floated over the screen. Both land on `fail`. Only
+  `status` carries `pending`, since an authored admonition is never pending.
 - **`highlight` is the thinnest cell.** A passage reporting that something *went* well is really reporting a
   `status`, so it earns its place only for a passage singled out as worth having.
 
 > [!WARNING]
 >
 > `--tile--color-warn` is a **fill, never a stroke**, and it carries **one value in both colour schemes**. A
-> caution paints a filled badge with it and sets its message in the dark page anchor over it, at 11.0:1. Stroking it
+> caution paints a filled badge with it and sets its message in the dark page anchor over it, at 10.1:1. Stroking it
 > on the page gives **1.73:1** and is a defect.
 >
 > This is forced by the colour space, **NOT** chosen. Red reaches full saturation at a middling lightness, so
@@ -344,10 +345,10 @@ toolbar.
 > 0.132. As a fill it reaches **chroma 0.151** against the failure's 0.218, and separates from it by **ΔE 25.8 deutan
 > and 42.7 protan**.
 >
-> Retuning it for a better stroke contrast walks straight back into the mud. If a caution ever genuinely needs
-> coloured text, that is a **second token**, not a change to this one.
+> Retuning it for a better stroke contrast walks straight back into the mud. A caution needing coloured text or a
+> mark takes the **second token**, `--tile--color-warn-stroke`, never a change to this one.
 >
-> `--tile--color-fail` alone holds 4.5:1 and serves as either text or mark. `--tile--color-info` and
+> `--tile--color-fail` alone holds 4.5:1 on the page and serves as either text or mark there. `--tile--color-info` and
 > `--tile--color-pass` are **marks at 3:1**, not text: cyan and green are chroma-starved at the lightness 4.5:1
 > forces, so holding them to it left `info` at chroma 0.090 against the failure's 0.218, reading as dull beside
 > every other step. At the mark budget they reach 0.107 and 0.202 and lift from L 0.52 to L 0.61. They paint the
@@ -356,6 +357,23 @@ toolbar.
 > Do **NOT** drop `--tile--color-fail` to the mark budget to match them: `markup/forms.css` and
 > `tile-cell/src/note.css` both paint text with it, and red is the one hue reaching full chroma at a lightness dark
 > enough to carry a sentence.
+
+Text painted in the colour of a step over its tint takes the step's **stroke role**, `--tile--color-info-stroke`,
+`--tile--color-pass-stroke`, `--tile--color-warn-stroke` or `--tile--color-fail-stroke`, and **NEVER** the anchor:
+the anchors are marks or a fill, and even the failure red drops below AA once a control deepens its tint. Each role is
+the anchor carried towards `--tile--color`, the caution further turning its hue 12° towards orange and asking its
+chroma back. Its share is pinned by the deepest status fill a control reaches, the tint with a further 24% of the
+anchor, where it still holds AA in both schemes:
+
+| Role   | Share | Light page | Light stripe | Light pressed | Dark page | Dark stripe | Dark pressed |
+|--------|-------|------------|--------------|---------------|-----------|-------------|--------------|
+| `info` | 74%   | 7.05:1     | 6.28:1       | 4.85:1        | 11.1:1    | 10.4:1      | 5.91:1       |
+| `pass` | 74%   | 7.15:1     | 6.36:1       | 4.90:1        | 10.7:1    | 10.1:1      | 5.82:1       |
+| `warn` | 64%   | 6.30:1     | 5.61:1       | 4.83:1        | 11.2:1    | 10.5:1      | 6.09:1       |
+| `fail` | 86%   | 7.98:1     | 7.10:1       | 4.83:1        | 7.61:1    | 7.16:1      | 4.65:1       |
+
+A widget deepening a status fill under the pointer or the press keeps the label as it stands: it **NEVER** retints the
+label per state, deepens past the 24% the shares are pinned by, or restates a derivation inline.
 
 Every other colour derives from them through `color-mix(in oklab, …)` or `oklch(from …)`, so an app retuning the
 anchors carries the whole interface along.
@@ -388,6 +406,8 @@ the focus ring holds 3:1. The exceptions a contrast check is allowed to pass ove
 - `--tile--color-info` and `--tile--color-pass`, marks at 3:1, since the hues cannot hold chroma at the lightness
   4.5:1 forces
 - `--tile--color-warn`, a fill, at 1.73:1 stroked
+
+The stroke roles are the text roles standing in for all four.
 
 # Palettes
 

@@ -1,0 +1,451 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The stack floats over the screen, raised as an overlay, hanging from the edge it is placed on with its toasts piled
+ * away from it, newest nearest the edge, and answers no gesture but the dismiss control on each toast, leaving the
+ * pointer to the screen beneath. A status colours the mark alone, so a message reads the same whatever it tells.
+ */
+
+
+/**** Registrations ***************************************************************************************************/
+
+/*
+ * The width every toast takes past a narrow screen, so the stack reads as one column with its edges lined up, a
+ * message too long for it wrapping onto more lines rather than widening its toast. It is a measure of the text the
+ * toasts carry, so it grows with the type, and is held to the room the screen leaves.
+ */
+
+@property --tile-toast-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 24rem;
+}
+
+
+/**** Stack ***********************************************************************************************************/
+
+tile-toast {
+
+    /*
+     * The stack is a single tray of glass gathering its toasts, rounded a full step, as wide as its toasts and
+     * kept within the screen with the same margin at the sides as at its edge; on a narrow screen it spans the whole
+     * width. The glass is darker than the page and lets it show through, so the tray reads as one group
+     * floating over it in either scheme, and the toasts set on it stand out without a shadow.
+     */
+
+    position: fixed;
+    inset-inline: var(--tile--spacing-100);
+    z-index: var(--tile--z-index-toast);
+
+    display: flex;
+    align-items: stretch;
+
+    padding: var(--tile--spacing-100);
+
+    background-color: var(--tile--background-color-glass);
+
+    /*
+     * A faint blur below the scale, just enough to soften what shows through so it does not compete with the toasts
+     * while staying recognisable, which is what tells the tray as glass; any step of the spacing ladder flattens it.
+     */
+
+    backdrop-filter: blur(0.5px);
+
+    border-radius: var(--tile--border-radius-100);
+
+    pointer-events: none;
+
+    /*
+     * A tray with nothing on it is not drawn, its padding and its glass going with the last toast. The element stays
+     * in the page all the same, as the live region the toasts are read out from.
+     */
+
+    &:not(:has(> div:not([hidden]))) {
+        padding: 0;
+        background-color: transparent;
+        backdrop-filter: none;
+    }
+
+    /*
+     * The edge decides which way the stack grows, where the gap between toasts falls and where a toast slides in
+     * from. The order the toasts come in stays newest first, so a reader moving through them meets the newest first
+     * wherever it is drawn.
+     */
+
+    &[edge="top"] {
+
+        top: var(--tile--spacing-100);
+        flex-direction: column;
+
+        /* The gap after the last toast is part of its slot, so the tray closes on what is left of its padding. */
+
+        padding-block-end: calc(var(--tile--spacing-100) - var(--tile--spacing-050));
+
+        --tile-toast-before: 0;
+        --tile-toast-after: var(--tile--spacing-050);
+        --tile-toast-shift: calc(-1 * var(--tile--spacing-050));
+
+    }
+
+    &[edge="bottom"] {
+
+        bottom: var(--tile--spacing-100);
+        flex-direction: column-reverse;
+
+        /* The gap before the topmost toast is part of its slot, so the tray opens on what is left of its padding. */
+
+        padding-block-start: calc(var(--tile--spacing-100) - var(--tile--spacing-050));
+
+        --tile-toast-before: var(--tile--spacing-050);
+        --tile-toast-after: 0;
+        --tile-toast-shift: var(--tile--spacing-050);
+
+    }
+
+    /*
+     * Each toast sits in a slot as tall as the toast and the gap away from the edge, which opens as the toast slides in
+     * and closes as it fades out, so the toasts beyond move along with it rather than jumping once it has gone.
+     */
+
+    & > div {
+
+        display: grid;
+        grid-template-rows: 1fr;
+
+        margin-block: var(--tile-toast-before) var(--tile-toast-after);
+
+        /*
+         * The reset hands every element the background of the one around it, which would lay the glass again under
+         * each toast, deepening it to an opaque rectangle behind every rounded card.
+         */
+
+        background-color: transparent;
+
+        /*
+         * The slot cuts off whatever part of the toast it no longer has room for, the toast keeping its full height
+         * inside it, so a closing slot wipes the toast away rather than squeezing it.
+         */
+
+        overflow: clip;
+
+        /*
+         * The slot stays in the flow until the fade is over. The duration is held to a millisecond at least, so the
+         * fade still ends, and the stack lets the toast go, where the reader asked for less motion and the durations
+         * collapse to zero: a transition taking no time at all never ends.
+         */
+
+        transition-property: grid-template-rows, margin-block, opacity, translate, display;
+        transition-duration: max(var(--tile--duration-normal), 1ms);
+        transition-timing-function: var(--tile--easing-enter);
+        transition-behavior: allow-discrete;
+
+        @starting-style {
+            grid-template-rows: 0fr;
+            margin-block: 0;
+            opacity: 0;
+            translate: 0 var(--tile-toast-shift);
+        }
+
+        /* The display above is unlayered and outranks the reset hiding a hidden element, so the rule is restated here. */
+
+        &[hidden] {
+            display: none;
+            grid-template-rows: 0fr;
+            margin-block: 0;
+            opacity: 0;
+            transition-timing-function: var(--tile--easing-exit);
+        }
+
+        /*
+         * The bare wrapper the slot sizes on asks for no room of its own, so the slot can close all the way, while the
+         * toast inside keeps the height of what it carries.
+         */
+
+        & > div {
+            min-height: 0;
+            background-color: transparent;
+        }
+
+        & > div > div {
+
+            /*
+             * The mark and the dismiss control keep to the first line of the message, where reading starts, rather than
+             * to the middle of a message running over several lines, so they stay together and in the same place
+             * from one toast to the next whatever the length of what each says.
+             */
+
+            display: flex;
+            align-items: start;
+            column-gap: var(--tile--spacing-050);
+
+            padding: var(--tile--spacing-050) var(--tile--spacing-100);
+
+            /* The dismiss control closing the toast carries room of its own, so the edge it sits on takes the step below. */
+
+            padding-inline-end: var(--tile--spacing-050);
+
+            /*
+             * Each toast is a card of its own on the glass, lighter than the page where the glass is darker, rounded
+             * well short of the tray so the cards read as nested within it, with the glass showing in the gap between.
+             * A neutral border, the same whatever the status, sets the card off from the glass.
+             */
+
+            --tile-toast-tint: var(--tile--background-color-overlay);
+
+            background-color: color-mix(in oklab, var(--tile-toast-tint) 60%, var(--tile--background-color-overlay));
+            border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+            border-radius: var(--tile--border-radius-050);
+
+            /* The mark is centred on the first line, the space a line takes beyond the glyph split above and below it. */
+
+            & > svg {
+                flex: none;
+                margin-block: calc((1lh - 1em) / 2);
+            }
+
+            /* The message takes the room the mark and the dismiss control leave, wrapping within it. */
+
+            & > span {
+
+                flex: 1;
+                min-width: 0;
+                overflow-wrap: anywhere;
+
+                /*
+                 * The message of an actionable post is a native button, so it takes the focus and the keys a control
+                 * answers to, drawn as a quiet link: in the weight and the ink of the message around it, told from
+                 * plain text by a hairline underline in the colour of a rule, and taking the link colour only once the
+                 * pointer is on it. It
+                 * alone in the message answers the pointer.
+                 */
+
+                & > button {
+
+                    all: unset;
+
+                    pointer-events: auto;
+                    cursor: pointer;
+
+                    text-decoration-line: underline;
+                    text-decoration-color: var(--tile--border-color);
+                    text-decoration-thickness: var(--tile--border-width);
+                    text-underline-offset: 0.3em; /* Optical nudge held off the descenders, as links are. */
+
+                    &:hover {
+                        color: var(--tile--color-hover);
+                        text-decoration-color: currentColor;
+                    }
+
+                    &:focus-visible {
+                        outline: var(--tile--outline-focus);
+                    }
+
+                }
+
+            }
+
+            /*
+             * The dismiss control alone answers the pointer, the rest of the stack leaving it to the screen beneath. It
+             * is set a step below the message and in the ink a field label takes, so it reads as an aside to the
+             * message rather than as a control competing with it. The button floors its target on the text it is set
+             * in, so the smaller text draws a smaller target, held clear of its neighbours by the gap around the toast.
+             */
+
+            & > div {
+
+                /* One line of the message tall, so the control is centred on the first line whatever its own size. */
+
+                flex: none;
+                display: flex;
+                align-items: center;
+                height: 1lh;
+
+                & > tile-button {
+                    pointer-events: auto;
+                    font-size: var(--tile--scaling-075);
+                    color: var(--tile--color-label);
+                }
+
+            }
+
+        }
+
+        /*
+         * A pending toast turns its mark on top of the hue, so it reads as moving rather than merely unjudged. A turn
+         * takes two slow durations, slow enough to read as progress rather than alarm, and stops altogether where the
+         * reader asked for less motion.
+         */
+
+        /*
+         * A card telling of a status is laid in the tint of its step, the fill the design system gives a notice on the
+         * meaning scale, mixed well down into the bare surface so it only hints at the status the mark tells, its
+         * message keeping the ink of the text; a plain post keeps the bare surface.
+         */
+
+        &[status="pending"] > div > div {
+
+            --tile-toast-tint: var(--tile--background-color-info);
+            & > svg {
+                color: var(--tile--color-info);
+                animation: tile-toast-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+            }
+
+        }
+
+        &[status="success"] > div > div {
+
+            --tile-toast-tint: var(--tile--background-color-pass);
+            & > svg {
+                color: var(--tile--color-pass);
+            }
+
+        }
+
+        &[status="warning"] > div > div {
+
+            --tile-toast-tint: var(--tile--background-color-warn);
+            /* The caution anchor is a fill holding 1.73:1 on the page, so the mark takes its stroke role instead. */
+
+            & > svg {
+                color: var(--tile--color-warn-stroke);
+            }
+
+        }
+
+        &[status="failure"] > div > div {
+
+            --tile-toast-tint: var(--tile--background-color-fail);
+            & > svg {
+                color: var(--tile--color-fail);
+            }
+
+        }
+
+    }
+
+    /*
+     * The control dismissing every toast shown is a small round button centred on a corner of the tray, no larger
+     * than its mark needs, set apart from the tray as described below. Its mark is set like the controls on the cards,
+     * a step below the message in the ink of a label, and alone answers the pointer.
+     *
+     * The corner is the one the tray is anchored by, on the edge the stack hangs from and the side it keeps to, so the
+     * button stays put while toasts come and go and the tray grows and shrinks away from it: the top end corner by
+     * default, a bottom corner for a stack hanging from the bottom, a start corner for a stack kept to the start.
+     */
+
+    & > footer {
+
+        /*
+         * The corner of a rounded tray is the middle of its curve, which lies in from either edge by the radius less
+         * its projection at 45 degrees; the button is centred halfway between there and the corner of the box, so it
+         * sits a little outside the curve, shifted by half its own size outwards on either axis.
+         */
+
+        --tile-toast-corner: calc(var(--tile--border-radius-100) * (1 - cos(45deg)) / 2);
+        --tile-toast-x: 50%;
+        --tile-toast-y: -50%;
+
+        position: absolute;
+        inset-block-start: var(--tile-toast-corner);
+        inset-inline-end: var(--tile-toast-corner);
+
+        translate: var(--tile-toast-x) var(--tile-toast-y);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        /*
+         * The button is the glass of the tray made opaque, the tint the tray is laid in at full strength, so it reads
+         * a shade darker than the tray whatever the tray lets through, and ringed in the colour of the page, so a
+         * narrow band of page sets it apart from the tray rather than letting it melt into it.
+         */
+
+        background-color: oklch(from var(--tile--background-color-glass) l c h / 1);
+        border: calc(2 * var(--tile--border-width)) var(--tile--border-style) var(--tile--background-color);
+
+        /* Half the side rounds the square to a circle whatever the side measures, clipping the button fill with it. */
+
+        border-radius: 50%;
+        overflow: hidden;
+
+        /* The inline end lies on the left where the writing runs right to left, so the outward shift turns with it. */
+
+        &:dir(rtl) {
+            translate: calc(-1 * var(--tile-toast-x)) var(--tile-toast-y);
+        }
+
+        /* The mark takes the colour of the ring, so the two read as one control cut out of the tray. */
+
+        & > tile-button {
+            pointer-events: auto;
+            font-size: var(--tile--scaling-075);
+            color: var(--tile--background-color);
+        }
+
+    }
+
+    &[edge="bottom"] > footer {
+        inset-block: auto var(--tile-toast-corner);
+        --tile-toast-y: 50%;
+    }
+
+    &[side="start"] > footer {
+        inset-inline: var(--tile-toast-corner) auto;
+        --tile-toast-x: -50%;
+    }
+
+}
+
+/*
+ * Past the phone held upright, every toast takes the same width, held to the room the screen leaves, and the tray
+ * shrinks to them, keeping to the side it is placed on by taking up the room on the other side, the start and the end
+ * following the writing direction.
+ */
+
+@container style(--tile--viewport-small: on) {
+
+    tile-toast {
+
+        width: fit-content;
+
+        & > div {
+            width: var(--tile-toast-width);
+            max-width: 100%;
+        }
+
+        &[side="start"] {
+            margin-inline-end: auto;
+        }
+
+        &[side="center"] {
+            margin-inline: auto;
+        }
+
+        &[side="end"] {
+            margin-inline-start: auto;
+        }
+
+    }
+
+}
+
+@keyframes tile-toast-turn {
+    to {
+        rotate: 1turn;
+    }
+}

@@ -1,0 +1,106 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A movable item carries only what moving it needs: the grip beside the content it moves, the cursors saying what a
+ * press does, the focus ring an item that is its own handle owes, and the fade marking an item waiting for its move
+ * to be settled. How an item looks is left to the design system and to the application.
+ */
+
+li.tile-movable {
+
+    display: flex;
+    align-items: stretch;
+
+    & > button {
+        cursor: grab;
+    }
+
+    /* The content takes the room the grip leaves, and shrinks with the item rather than spilling past its edge. */
+
+    & > div {
+        flex-grow: 1;
+        min-inline-size: 0;
+    }
+
+    /*
+     * An item dragged by its whole surface is its own handle, so it takes the grab cursor the grip would carry and a
+     * focus ring of its own, since the design system draws one around native controls only. A field in its content
+     * keeps the pointer to itself, as listed in `index.tsx`, so it keeps its own cursor as well; the two lists are
+     * kept alike.
+     */
+
+    &[data-surface] {
+
+        cursor: grab;
+
+        &:focus-visible {
+            outline: var(--tile--outline-focus);
+            outline-offset: var(--tile--border-width);
+        }
+
+        & :is(
+            input:not([disabled], [type="button"], [type="checkbox"], [type="color"], [type="file"], [type="image"],
+                [type="radio"], [type="reset"], [type="submit"]),
+            select:not([disabled]),
+            textarea:not([disabled]),
+            [contenteditable]:not([contenteditable="false"]),
+            [role~="combobox"], [role~="scrollbar"], [role~="searchbox"], [role~="slider"], [role~="spinbutton"],
+            [role~="textbox"]
+        ) {
+            cursor: auto;
+        }
+
+    }
+
+    &[data-state="dragging"] > button,
+    &[data-state="dragging"][data-surface] {
+        cursor: grabbing;
+    }
+
+    /* The content of an item waiting for its move to be settled fades by the loading step, the handle left alone. */
+
+    &[data-state="pending"] > div {
+        opacity: var(--tile--opacity-loading);
+    }
+
+}
+
+/* A group waiting for a move to be settled takes no other, and says so wherever an item is pointed at. */
+
+[aria-busy="true"] li.tile-movable > button {
+    cursor: progress;
+}
+
+
+/*
+ * The status announcing a move refused is read out but never shown, the item going back telling the same story on
+ * screen. The literal sizes are the smallest box assistive technology still reads, not measures of the layout.
+ */
+
+p.tile-status {
+
+    position: absolute;
+
+    inline-size: 1px;
+    block-size: 1px;
+    margin: 0;
+
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+
+}

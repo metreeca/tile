@@ -15,7 +15,7 @@
  */
 
 /**
- * Note.
+ * Centred notice.
  *
  * Offers the notice a screen shows where it has nothing else to put, whether an aside, a failure or a question,
  * centred in the space it is given and marked with a glyph unless the reader is asked to answer it.
@@ -75,8 +75,8 @@ export function Note({
 
 	/**
 	 * The glyph marking the notice, kept out of the accessibility tree unless it carries a label of its own, so that
-	 * the note is read by its headline; the mark matching the kind of notice if omitted, that is an alert where the
-	 * passage carries a caution or tells of a failure and an information mark otherwise. A note the reader answers
+	 * the note is read by its headline; the mark matching the level if omitted, that is a check for a highlight, a
+	 * warning sign for a caution, an alert for a failure and an information mark otherwise. A note the reader answers
 	 * shows no mark at all, so what is given here plays no part alongside `onAccept`.
 	 */
 	icon?: ComponentChildren
@@ -110,7 +110,11 @@ export function Note({
 
 } & ({ onAccept?: undefined } | { text: string })) {
 
-	const $icon = icon ?? (level === "warning" || level === "critical" ? <Icon.Alert/> : <Icon.Info/>);
+	const $icon = icon ?? (level === "highlight" ? <Icon.CircleCheck/>
+			: level === "warning" ? <Icon.Alert/>
+				: level === "critical" ? <Icon.CircleAlert/>
+					: <Icon.Info/>
+	);
 
 	/*
 	 * The element states the level, which a stylesheet has no other way to read.

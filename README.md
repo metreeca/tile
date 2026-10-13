@@ -28,14 +28,15 @@ Add a binding package for each component layer an app assembles its screens from
 it as a peer dependency: check the package README for what each one expects. The design system package is optional and
 styles whatever a binding renders.
 
-| Package               | Description            |
-|-----------------------|------------------------|
-| [@metreeca/tile]      | Design system          |
-| [@metreeca/tile-data] | Contexts and hooks     |
-| [@metreeca/tile-cell] | Widgets and controls   |
-| [@metreeca/tile-hive] | Layouts and containers |
-| [@metreeca/tile-lens] | Linked data views      |
-| [@metreeca/tile-form] | Linked data forms      |
+| Package               | Description                          |
+|-----------------------|--------------------------------------|
+| [@metreeca/tile]      | Design system                        |
+| [@metreeca/tile-data] | Contexts and hooks                   |
+| [@metreeca/tile-cell] | Widgets and controls                 |
+| [@metreeca/tile-hive] | Layouts and containers               |
+| [@metreeca/tile-move] | Movable items and the move lifecycle |
+| [@metreeca/tile-lens] | Linked data views                    |
+| [@metreeca/tile-form] | Linked data forms                    |
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
@@ -44,6 +45,8 @@ styles whatever a binding renders.
 [@metreeca/tile-cell]: https://metreeca.github.io/tile/modules/_metreeca_tile-cell.html
 
 [@metreeca/tile-hive]: https://metreeca.github.io/tile/modules/_metreeca_tile-hive.html
+
+[@metreeca/tile-move]: https://metreeca.github.io/tile/modules/_metreeca_tile-move.html
 
 [@metreeca/tile-lens]: https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html
 

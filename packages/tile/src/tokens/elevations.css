@@ -40,6 +40,11 @@
     inherits: true;
 }
 
+@property --tile--background-color-glass {
+    syntax: "*";
+    inherits: true;
+}
+
 @property --tile--box-shadow-raised {
     syntax: "*";
     inherits: true;
@@ -74,6 +79,14 @@
     --tile--background-color-overlay: oklch(from var(--tile--background-color) calc(l + 0.06) c h);
     --tile--background-color-sunken: oklch(from var(--tile--background-color) calc(l - 0.03) c h);
     --tile--background-color-blanket: color-mix(in oklab, var(--tile--color) 50%, transparent);
+
+    /*
+     * A translucent ground a step darker than the page, so it reads against a light page that is already white as
+     * much as against a dark one, while what it covers still shows through. It carries no text of its own: the
+     * surfaces set on it do, and stand out from it in either scheme, being lighter than the page where it is darker.
+     */
+
+    --tile--background-color-glass: oklch(from var(--tile--background-color) calc(l - 0.3) c h / 0.75);
 
     --tile--box-shadow-raised: 0 1px 2px color-mix(in oklab, var(--tile--color) 20%, transparent);
     --tile--box-shadow-overlay: 0 4px 12px color-mix(in oklab, var(--tile--color) 25%, transparent);

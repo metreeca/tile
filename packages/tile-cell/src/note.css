@@ -106,18 +106,10 @@ tile-note {
         color: var(--tile--color-pass);
     }
 
-    /*
-     * The caution cannot paint the mark in its own anchor, the amber holding 1.73:1 on the page, so it paints a
-     * darkened one: the anchor carried towards the page ink, which darkens it on a light page and lightens it on a
-     * dark one, so one expression holds in both schemes where a fixed lightness would pass in one and fail in the
-     * other. The mix costs the amber its chroma, so the hue is turned towards the orange the eye still takes for a
-     * caution and as much chroma as the gamut holds is asked back. This is the expression a button in its alert
-     * mode paints its label with, which reads on the page at 5.19:1 in the light scheme and 10.8:1 in the dark one.
-     */
+    /* The caution anchor is a fill holding 1.73:1 on the page, so the mark takes its stroke role instead. */
 
     &[level="warning"] > :first-child > :first-child {
-        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
-        l calc(c * 1.8) calc(h - 12));
+        color: var(--tile--color-warn-stroke);
     }
 
     &[level="critical"] > :first-child > :first-child {

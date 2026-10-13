@@ -5,7 +5,8 @@
 Preact contexts and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 A consumer reaches what the app states about itself, the ambient services a subtree inherits, the accessors a component
-reads them back with, and the adoption of a headless state object as the state of a component. Nothing here renders, so
+reads them back with, the adoption of a headless state object as the state of a component, and values kept in browser
+storage across reloads and pages. Nothing here renders, so
 what a component shows stays a separate decision from what it is wired to.
 
 The shared fetch client an app publishes once is a plain `fetch` function, so a deployment hands over one of its own:

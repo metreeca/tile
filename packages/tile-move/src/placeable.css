@@ -1,0 +1,63 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The board leaves its layout and its looks to the consumer, who places the cells in a grid of its own, and carries
+ * only what dropping a card onto a cell needs.
+ */
+
+tile-placeable {
+
+    display: block;
+
+    position: relative; /* holds the status announcing a move refused, which would otherwise escape a scrolled board */
+
+    /*
+     * A cell fills the box the layout puts it in, so a card is dropped anywhere in it, and keeps the height of two
+     * lines when empty, which is what leaves an empty cell a place to drop a card onto.
+     */
+
+    & tile-placeable-cell {
+
+        display: flex;
+        flex-direction: column;
+
+        block-size: 100%;
+        min-inline-size: 0;
+
+        & > ul {
+
+            flex-grow: 1;
+
+            min-block-size: 2lh;
+            padding: 0;
+
+            list-style-type: none;
+
+            /*
+             * A cell a card is dragged over takes the provisional tint, telling where the card would land: stated,
+             * not settled, which is what the info step says, where the accent would read as a warning.
+             */
+
+            &[data-target] {
+                background-color: var(--tile--background-color-info);
+            }
+
+        }
+
+    }
+
+}

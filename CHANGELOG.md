@@ -7,6 +7,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.4.0](https://github.com/metreeca/tile/compare/v0.3.0...HEAD)
 
+### Added
+
+- `@metreeca/tile-move` — new package of movable items: `Placeable` card boards moving cards between grid cells and
+  `Sortable` lists reordering items within and across lists, dragged by a grip or by their whole surface with the
+  pointer, by touch or with the keyboard, with moves handed to `onMove` and dropped items gliding into place
+- `@metreeca/tile-data/board` — shared status board (`Board`, `useBoard`, `usePosts`) collecting posts by status and
+  raising failures as posts
+- `@metreeca/tile-data/storage` — `useStorage` hook binding a component to a Web Storage entry
+- `@metreeca/tile-data/model` — `useModel` takes a dependency list and creates the model again whenever a dependency
+  changes, compared for deep equality
+- `@metreeca/tile-hive/toast` — `Toast` stack showing the posts on the shared board as transient notices
+- `@metreeca/tile-cell/more` — `More` incremental loading trigger, firing as it scrolls into view
+- `@metreeca/tile-lens/sheet` — `Sheet` incremental collection list, virtualised over a sliding window of items
+- `@metreeca/tile-cell/note` — check mark for highlight notes and a distinct alert for critical ones
+- `@metreeca/tile` — `colorInfoStroke`, `colorPassStroke`, `colorWarnStroke` and `colorFailStroke` status text
+  tokens, the `backgroundColorGlass` elevation token, and select menus drawn with a chevron
+
+### Changed
+
+- `@metreeca/tile` — `colorInfo` and `colorPass` hold mark contrast (3:1) rather than text contrast in the light
+  scheme: status text takes the matching stroke token
+- `@metreeca/tile-cell/button` — status button labels hold AA contrast through the stroke roles
+
+### Removed
+
+- `@metreeca/tile-data/faults` — **breaking**: `Faults`, `useFaults` and `useRaise` removed in favour of the shared
+  status board (`useRaise()(issue)` → `useBoard().raise(issue)`)
+- `@metreeca/tile-cell/fault` — **breaking**: `Fault` removed in favour of the `Toast` stack in
+  `@metreeca/tile-hive/toast`
+- `@metreeca/tile-lens` — **breaking**: root entry point and the empty placeholder modules removed
+
 ## [0.3.0](https://github.com/metreeca/tile/releases/tag/v0.3.0) - 2026-10-02
 
 ### Added

@@ -14,49 +14,20 @@
  * limitations under the License.
  */
 
-import { Immutable, isArray } from "mesh";
-import React, { createElement, Fragment, ReactNode } from "react";
+import { createElement, ReactNode } from "react";
 import "./#grid.css";
 
 
-export interface Entry {
-
-	label: ReactNode,
-	value: ReactNode
-
-}
-
-
 export function TileGrid({
-
-	large=false,
-	small=false,
 
 	children
 
 }: {
 
-	large?: boolean
-	small?: boolean
-
-	children: { [label: string]: ReactNode } | Immutable<Array<null | Entry>>
+	children: ReactNode
 
 }) {
 
-	const entries=isArray(children) ? children : Object.entries(children).map(([label, value]) =>
-		({ label, value })
-	);
-
-	return createElement("tile-grid", {
-
-		large: large ? "" : undefined,
-		small: small ? "" : undefined
-
-	}, entries.map((entry, index) => entry === null ? <hr key={index}/> : <Fragment key={index}>
-
-		<dt>{entry.label}</dt>
-		<dd>{entry.value}</dd>
-
-	</Fragment>));
+	return createElement("tile-grid", {}, children);
 
 }

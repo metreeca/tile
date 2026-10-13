@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
-Design system for [Metreeca Tile](https://github.com/metreeca/tile) interfaces.
+Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
 An app includes the stylesheet and gets a coherent look across every Tile component: a token layer defining colour,
 type, spacing, sizing and focus affordances, and base rules applying them to plain document markup. Redefining a token
@@ -150,7 +150,9 @@ The two attributes together read as how it appears and what it means:
 >
 > A step is never told by colour alone: an icon and the wording carry the same meaning, since the two ends of the
 > ramp are the pair colour vision deficiency collapses most readily. `--tile--color-warn` is a fill rather than a
-> stroke, so a caution paints a badge and sets its message in the page colour over it.
+> stroke, so a caution paints a badge and sets its message in the page colour over it. Text in the colour of a step
+> takes its stroke role, `--tile--color-info-stroke`, `--tile--color-pass-stroke`, `--tile--color-warn-stroke` or
+> `--tile--color-fail-stroke`, which holds AA contrast on the page, the striped row and the step's tint.
 
 A thing lifted off the page takes a surface and the shadow that goes with it together, `--tile--background-color-raised`
 with `--tile--box-shadow-raised` for a card that stays in the flow and `--tile--background-color-overlay` with

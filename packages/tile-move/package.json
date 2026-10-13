@@ -1,0 +1,77 @@
+{
+  "name": "@metreeca/tile-move",
+  "version": "0.4.0",
+  "description": "Preact movable items and the move lifecycle for @metreeca/tile interfaces.",
+  "keywords": [
+    "typescript",
+    "preact",
+    "drag-and-drop",
+    "model-driven",
+    "ui"
+  ],
+  "homepage": "https://metreeca.github.io/tile/",
+  "bugs": {
+    "url": "https://github.com/metreeca/tile/issues",
+    "email": "info@metreeca.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Metreeca",
+    "email": "info@metreeca.com",
+    "url": "https://www.metreeca.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metreeca/tile.git",
+    "directory": "packages/tile-move"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    "./*": {
+      "@metreeca/source": "./src/*.tsx",
+      "default": "./dist/*.js"
+    },
+    "./*.css": {
+      "@metreeca/source": "./src/*.css",
+      "default": "./dist/*.css"
+    },
+    "./*.core": null,
+    "./index": null
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json && cp src/*.css dist/",
+    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
+  },
+  "dependencies": {
+    "@dnd-kit/abstract": "^0.5.0",
+    "@dnd-kit/collision": "^0.5.0",
+    "@dnd-kit/dom": "^0.5.0",
+    "@dnd-kit/state": "^0.5.0",
+    "@metreeca/core": "^0.12.0",
+    "@metreeca/tile": "^0.4.0",
+    "@metreeca/tile-cell": "^0.4.0",
+    "@metreeca/tile-data": "^0.4.0"
+  },
+  "devDependencies": {
+    "happy-dom": "^20.0.0",
+    "preact": "^10.29.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  },
+  "peerDependencies": {
+    "preact": "^10.27.2"
+  }
+}

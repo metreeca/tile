@@ -54,5 +54,21 @@ export function Forms() {
 			<button type="button" disabled>Disabled</button>
 		</p>
 
+		<p>A menu keeps its arrow clear of the label, and a box given to it closes its padding in on the arrow from the
+			end as it does on the label from the start.</p>
+
+		<p class="row">
+			<select aria-label="Plain menu">
+				<option>Spring</option>
+				<option>Summer</option>
+				<option>Autumn</option>
+			</select>
+			<select aria-label="Framed menu" class="framed">
+				<option>Spring</option>
+				<option>Summer</option>
+				<option>Autumn</option>
+			</select>
+		</p>
+
 	</>;
 }

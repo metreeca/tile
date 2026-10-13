@@ -184,21 +184,14 @@ tile-button {
     /*
      * What activating the control will do is told in colour, on the four-step scale every meaning in the interface
      * lands on: `safe` takes the unjudged step, `commit`, `alert` and `danger` the verdict ramp. Every step is built
-     * the same way, a tint filling the control and the step itself painting the label, so four controls side by side
-     * read as one family and a row of them is ordered by hue alone. A step that shouted past its neighbours would
-     * say more about the widget than about the action.
+     * the same way, a tint filling the control and the step's stroke role painting the label, so four controls side
+     * by side read as one family and a row of them is ordered by hue alone. A step that shouted past its neighbours
+     * would say more about the widget than about the action.
      *
-     * Three steps paint their label in the anchor itself. The caution cannot, the amber holding 1.82:1 on its own
-     * tint, so it paints a darkened one: the anchor carried towards the page ink, which darkens it on a light page
-     * and lightens it on a dark one, so one expression holds in both schemes where a fixed lightness would pass in
-     * one and fail in the other. The mix costs the amber its chroma, so the hue is turned towards the orange the eye
-     * still takes for a caution and as much chroma as the gamut holds is asked back; the multiplier asks for more
-     * than sRGB can give and is clipped to the boundary, which is the point of asking. Both nudges ride on the mixed
-     * colour rather than on the anchor, where the chroma has none to give.
-     *
-     * The darkened amber reads on the fill and on the bare page alike, at 4.54:1 and 5.19:1 in the light scheme and
-     * 9.16:1 and 10.8:1 in the dark one, which is what lets the quiet step drop the fill and keep the same ink
-     * instead of owing a colour of its own.
+     * The anchors cannot paint the label themselves: the information and pass colours are marks at 3:1, the amber is a
+     * fill at 1.82:1 on its own tint, and the failure red drops below AA once the fill deepens. A stroke role holds on
+     * the fill in every state and on the bare page alike, which is what lets the quiet step drop the fill and keep the
+     * same ink instead of owing a colour of its own.
      *
      * A step paints a control that is live, and one that is not leaves it to the disabled colour the design system
      * greys every control with, which is why each rule is held to `:enabled`.
@@ -237,7 +230,7 @@ tile-button {
 
     &[mode="safe"] > button:enabled {
 
-        color: var(--tile--color-info);
+        color: var(--tile--color-info-stroke);
         background-color: var(--tile--background-color-info);
 
         &:hover {
@@ -252,7 +245,7 @@ tile-button {
 
     &[mode="commit"] > button:enabled {
 
-        color: var(--tile--color-pass);
+        color: var(--tile--color-pass-stroke);
         background-color: var(--tile--background-color-pass);
 
         &:hover {
@@ -267,8 +260,7 @@ tile-button {
 
     &[mode="alert"] > button:enabled {
 
-        color: oklch(from color-mix(in oklab, var(--tile--color-warn) 70%, var(--tile--color))
-        l calc(c * 1.8) calc(h - 12));
+        color: var(--tile--color-warn-stroke);
         background-color: var(--tile--background-color-warn);
 
         &:hover {
@@ -283,7 +275,7 @@ tile-button {
 
     &[mode="danger"] > button:enabled {
 
-        color: var(--tile--color-fail);
+        color: var(--tile--color-fail-stroke);
         background-color: var(--tile--background-color-fail);
 
         &:hover {

@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile",
   "version": "0.4.0",
-  "description": "Design system for Metreeca Tile interfaces.",
+  "description": "Design system for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
     "css",
@@ -55,7 +55,7 @@
   "scripts": {
     "clean": "rm -rf dist docs node_modules *.tsbuildinfo",
     "build": "tsc -b tsconfig.build.json && rsync -a --include=\"*/\" --include=\"*.css\" --exclude=\"*\" src/ dist/",
-    "check": "npx vitest --typecheck --passWithNoTests run"
+    "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "devDependencies": {
     "@types/node": "^22.20.4",

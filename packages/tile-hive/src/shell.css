@@ -369,12 +369,17 @@ tile-shell {
 
                 /*
                  * A button brings the air around its glyph along with it, so a run of buttons stands as it is and every
-                 * other pair of neighbours, such as two links or a button and a link, is set apart.
+                 * other pair of neighbours, such as a button and a link, is set apart. Two neighbours neither of which
+                 * is a button, such as two links, bring no air at all, and are set further apart.
                  */
 
                 & > :not(tile-button) + *,
                 & > * + :not(tile-button) {
                     margin-left: var(--tile--spacing-050);
+                }
+
+                & > :not(tile-button) + :not(tile-button) {
+                    margin-left: var(--tile--spacing-075);
                 }
 
             }

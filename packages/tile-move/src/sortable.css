@@ -1,0 +1,68 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The lists stand side by side in equal shares, so moving an item leaves them as wide as they were, and carry only
+ * what dropping an item into a list needs; how they look is left to the design system and to the application.
+ */
+
+tile-sortable {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    position: relative; /* holds the status announcing a move refused, which would otherwise escape scrolled lists */
+
+    gap: var(--tile--spacing-150);
+
+    & > section {
+
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 0;
+
+        /*
+         * The list fills the share under its label, so an item is dropped anywhere in it, and keeps the height of a
+         * line when empty, which is what leaves an empty list a place to drop an item onto. It lays its items out as
+         * a column of flex items, since the order under way as an item is dragged is shown through their flex order.
+         */
+
+        & > ul {
+
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+
+            min-block-size: 2lh;
+            padding: 0;
+
+            list-style-type: none;
+
+            /*
+             * A list an item is dragged over takes the provisional tint, the item landing there telling the same
+             * story in place: where the item would land is stated, not settled, which is what the info step says,
+             * where the accent would read as a warning.
+             */
+
+            &[data-target] {
+                background-color: var(--tile--background-color-info);
+            }
+
+        }
+
+    }
+
+}

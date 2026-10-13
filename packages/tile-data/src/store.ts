@@ -113,7 +113,7 @@ export function useStore(): Store {
  * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
  * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
  * is reported through the binding alone and never reaches the page: only a missing {@link Store} context or an
- * unforeseen failure does, for an enclosing {@link "faults"!Faults Faults} context to take up.
+ * unforeseen failure does, for an enclosing {@link "board"!Board Board} context to take up.
  *
  * The template may be fixed or replaced at runtime, and a different one has the resource retrieved again:
  *
@@ -230,7 +230,6 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 
 	}
 
-
 }> {
 
 	const store = useStore();
@@ -257,7 +256,6 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 	}));
 
 }
-
 
 /**
  * Binds a component to a collection held by the shared store.
@@ -370,7 +368,6 @@ export function useCollection<S extends Lazy<ResourceShape>, T extends Slice<S, 
 		reload(): Promise<void>
 
 	}
-
 
 }> {
 

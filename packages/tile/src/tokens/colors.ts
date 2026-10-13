@@ -61,10 +61,16 @@
  * in colour alone: an icon or a word carries it too, since the two ends of the ramp are the pair colour vision
  * deficiency collapses most readily.
  *
- * **What a status colour may paint** — `colorInfo`, `colorPass` and `colorFail` hold AA contrast on the page,
- * the striped row and their own tint, so they paint text or a mark. `colorWarn` is a **fill**: a caution
- * paints a filled badge with it and sets its message in the dark page anchor over it, at 11.0:1. Stroking it on the
- * page gives 1.73:1 and is a defect.
+ * **What a status colour may paint** — `colorFail` holds AA contrast on the page, the striped row and its own
+ * tint, so it paints text or a mark. `colorInfo` and `colorPass` are **marks**, holding 3:1 rather than 4.5:1 in
+ * the light colour scheme: they paint a glyph, a rule or a fill, and text over their tint takes `color`.
+ * `colorWarn` is a **fill**: a caution paints a filled badge with it and sets its message in the dark page anchor
+ * over it, at 10.1:1. Stroking it on the page gives 1.73:1 and is a defect.
+ *
+ * **Status text** — `colorInfoStroke`, `colorPassStroke`, `colorWarnStroke` and `colorFailStroke` paint text in
+ * the colour of a step. Each holds AA contrast in both colour schemes on the page, the striped row and its step's
+ * tint, and on that tint deepened by a further 24% of the step, so a control deepening its fill under the pointer
+ * or the press keeps its label as it stands.
  *
  * The asymmetry is forced by the colour space rather than chosen. Red reaches full saturation at a middling
  * lightness, so the failure colour is dark enough to read on white and loud at once; yellow reaches full saturation
@@ -120,6 +126,11 @@ export const colors = {
 	colorPass: "--tile--color-pass",
 	colorWarn: "--tile--color-warn",
 	colorFail: "--tile--color-fail",
+
+	colorInfoStroke: "--tile--color-info-stroke",
+	colorPassStroke: "--tile--color-pass-stroke",
+	colorWarnStroke: "--tile--color-warn-stroke",
+	colorFailStroke: "--tile--color-fail-stroke",
 
 	colorLabel: "--tile--color-label",
 	colorPlaceholder: "--tile--color-placeholder",

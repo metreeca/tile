@@ -36,8 +36,10 @@
  *
  * A caution therefore paints a filled badge and sets its message in the dark page anchor over it, at 10.1:1, exactly
  * as the heat scale has text take one page anchor or the other according to the step beneath it. Stroking this
- * colour on the page instead gives 1.73:1 and is a defect. The other three statuses hold 4.5:1 and serve as either
- * text or mark.
+ * colour on the page instead gives 1.73:1 and is a defect: a caution painting text or a mark takes the stroke role
+ * derived from it below. The failure holds 4.5:1 and serves as either text or mark. The information and pass colours
+ * are marks held to 3:1, at 3.57:1 and 3.63:1 on the light page: cyan and green are chroma-starved at the lightness
+ * 4.5:1 forces, so text over their tint takes the page text, or the stroke role derived from each below.
  *
  * One value serves both colour schemes, as a series slot does: a hazard yellow that dimmed on the dark page would
  * stop being one, and the dark page anchor sitting over it stays dark in either scheme.
@@ -158,6 +160,26 @@
     inherits: true;
 }
 
+@property --tile--color-info-stroke {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-pass-stroke {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-warn-stroke {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-fail-stroke {
+    syntax: "*";
+    inherits: true;
+}
+
 @property --tile--background-color-edit {
     syntax: "*";
     inherits: true;
@@ -233,6 +255,29 @@
     --tile--color-over: light-dark(var(--tile--color), var(--tile--background-color));
 
     /*
+     * Status text takes a stroke role: the status anchor carried towards the page text, which darkens it on a light
+     * page and lightens it on a dark one, so one value holds in both schemes. Each share is set by the deepest status
+     * fill a control reaches, the tint with a further 24% of the anchor laid over it, where every stroke still holds
+     * AA contrast: a widget deepening the fill under the pointer or the press keeps its label as it stands. The page
+     * and the stripe, lighter in the light scheme and darker in the dark one, hold more.
+     *
+     *              light: page  stripe  pressed   dark: page  stripe  pressed
+     *     info            7.05  6.28    4.85            11.1  10.4    5.91
+     *     pass            7.15  6.36    4.90            10.7  10.1    5.82
+     *     warn            6.30  5.61    4.83            11.2  10.5    6.09
+     *     fail            7.98  7.10    4.83            7.61  7.16    4.65
+     *
+     * The mix costs the amber its chroma, so the caution further turns its hue towards the orange the eye still takes
+     * for a caution and asks back as much chroma as the gamut holds.
+     */
+
+    --tile--color-info-stroke: color-mix(in oklab, var(--tile--color-info) 74%, var(--tile--color));
+    --tile--color-pass-stroke: color-mix(in oklab, var(--tile--color-pass) 74%, var(--tile--color));
+    --tile--color-warn-stroke:
+        oklch(from color-mix(in oklab, var(--tile--color-warn) 64%, var(--tile--color)) l calc(c * 1.8) calc(h - 12));
+    --tile--color-fail-stroke: color-mix(in oklab, var(--tile--color-fail) 86%, var(--tile--color));
+
+    /*
      * A placeholder takes the disabled colour rather than a mix of its own. Both stand for text the reader has not
      * supplied and neither carries meaning, so a contrast check passes over both; what tells a disabled control from
      * an empty one is the background it sits on, never the weight of the text. Anything darker read as an entered
@@ -270,9 +315,10 @@
         color-mix(in oklab, var(--tile--color-strong) 14%, var(--tile--background-color));
 
     /*
-     * A status tint takes the same share whichever outcome it carries, so four notices read as one family. Every
-     * status colour holds AA contrast on its own tint, 4.88:1 at the worst in the light scheme and 5.80:1 in the dark
-     * one, and the page text holds far more, so a notice states its outcome in either.
+     * A status tint takes the same share whichever outcome it carries, so four notices read as one family. The
+     * failure colour holds AA contrast on its own tint, at 4.95:1 in the light scheme and 5.78:1 in the dark one. The
+     * information and pass colours hold their 3:1 mark budget on theirs, at 3.13:1 and 3.18:1 in the light scheme,
+     * so a notice paints its mark in them and its text in the page text, which holds far more, or in a stroke role.
      */
 
     --tile--background-color-info:

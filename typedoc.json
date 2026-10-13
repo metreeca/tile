@@ -15,14 +15,22 @@
     "global": {
       "Error": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
       "RangeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+      "SyntaxError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
       "TypeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
       "URL": "https://developer.mozilla.org/en-US/docs/Web/API/URL"
     },
     "typescript": {
       "Error": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
       "RangeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+      "SyntaxError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
       "TypeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
       "URL": "https://developer.mozilla.org/en-US/docs/Web/API/URL"
+    },
+    "@dnd-kit/abstract": {
+      "*": "https://dndkit.com/"
+    },
+    "@dnd-kit/dom": {
+      "*": "https://dndkit.com/"
     },
     "@metreeca/core": {
       "*": "https://metreeca.github.io/core/"
@@ -57,11 +65,14 @@
     "exclude": [
       "**/packages/tile/src/**/*.core.ts",
       "**/packages/tile-cell/src/icon.core.ts",
+      "**/packages/tile-move/src/index.core.ts",
+      "**/packages/tile-move/src/index.tsx",
       "**/*.test.ts",
       "**/*.test.tsx",
       "**/*.test-d.ts"
     ],
     "tsconfig": "./tsconfig.build.json",
+    "excludeExternals": true,
     "includeVersion": true,
     "sortEntryPoints": false,
     "sort": [

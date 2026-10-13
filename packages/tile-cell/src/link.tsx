@@ -15,7 +15,7 @@
  */
 
 /**
- * Link.
+ * Route navigation control.
  *
  * Offers the control a reader moves to another route with, followed in place by the enclosing router or left to the
  * browser, and marked on request while the route it points at is current.

@@ -1,0 +1,149 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Movables ********************************************************************************************************/
+
+/*
+ * The samples give the movable widgets the looks they leave to the application. The rules sit under the class wrapping
+ * the samples, so they outrank the widget stylesheets whatever order the bundler emits the sheets in.
+ */
+
+.movables {
+
+    /*
+     * A movable item is raised above the well it is dropped into, and lifted further while dragged, so it stands above
+     * whatever it is carried over. Its grip stays quieter than the content it moves.
+     */
+
+    & li.tile-movable {
+
+        margin: 0;
+
+        background-color: var(--tile--background-color-raised);
+        box-shadow: var(--tile--box-shadow-raised);
+        border-radius: var(--tile--border-radius);
+
+        &[data-state="dragging"] {
+            box-shadow: var(--tile--box-shadow-overlay);
+        }
+
+        & > button {
+            flex-shrink: 0;
+            padding: var(--tile--spacing-075) var(--tile--spacing-025);
+            color: var(--tile--color-label);
+        }
+
+        /*
+         * The content breaks a word too long for the item rather than spilling past its edge, and eases into the fade
+         * marking an item waiting for its move to be settled.
+         */
+
+        & > div {
+
+            overflow-wrap: anywhere;
+
+            padding: var(--tile--spacing-075) var(--tile--spacing-100) var(--tile--spacing-075) 0;
+
+            transition-property: opacity;
+            transition-duration: var(--tile--duration-normal);
+            transition-timing-function: var(--tile--easing-standard);
+
+        }
+
+        /* An item drawn without a grip pads its content on both sides. */
+
+        &[data-surface] > div {
+            padding-inline-start: var(--tile--spacing-100);
+        }
+
+    }
+
+    /* A list or a cell is sunk into the page, so it reads as a well items are dropped into, and stacks them apart. */
+
+    & tile-sortable > section > ul,
+    & tile-placeable-cell > ul {
+
+        display: flex;
+        flex-direction: column;
+
+        row-gap: var(--tile--spacing-050);
+
+        padding: var(--tile--spacing-075);
+        margin: 0;
+
+        background-color: var(--tile--background-color-sunken);
+        border-radius: var(--tile--border-radius);
+
+        transition-property: background-color;
+        transition-duration: var(--tile--duration-fast);
+        transition-timing-function: var(--tile--easing-standard);
+
+        /* The well an item is dragged over keeps the tint the widget gives it. */
+
+        &[data-target] {
+            background-color: var(--tile--background-color-info);
+        }
+
+    }
+
+    /* A set of lists keeps each list as wide as its widest item, and labels it quieter than the items it holds. */
+
+    & tile-sortable {
+
+        &:not(:last-child) {
+            margin-bottom: var(--tile--spacing-100);
+        }
+
+        & > section {
+
+            min-inline-size: max-content;
+
+            row-gap: var(--tile--spacing-050);
+
+            & > header {
+                font-size: var(--tile--font-size-small);
+                font-weight: var(--tile--font-weight-heavy);
+                color: var(--tile--color-label);
+            }
+
+        }
+
+    }
+
+}
+
+
+/**** Boards **********************************************************************************************************/
+
+/*
+ * A board grid sets a heading column beside one column per state, in equal shares, and stretches every cell to the
+ * height of its row, so an empty cell offers as much room to drop a card onto as the fullest one beside it.
+ */
+
+.board {
+
+    display: grid;
+    grid-template-columns: max-content repeat(3, minmax(0, 1fr));
+    gap: var(--tile--spacing-075);
+    margin-bottom: var(--tile--spacing-100);
+
+    & > header {
+        font-size: var(--tile--font-size-small);
+        font-weight: var(--tile--font-weight-heavy);
+        color: var(--tile--color-label);
+    }
+
+}

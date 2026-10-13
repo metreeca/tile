@@ -16,6 +16,8 @@
 
 import { TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
 import { TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
+import { TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
+import { TileMovePath } from "@metreeca/specimen/tile-move/index.js";
 import { TilePath } from "@metreeca/specimen/tile/index.js";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
@@ -108,6 +110,8 @@ export function Page({
 			<Link active look="strong" href={`${TilePath}*`}>Design System</Link>
 			<Link active look="strong" href={`${TileCellPath}*`}>Widgets and Controls</Link>
 			<Link active look="strong" href={`${TileHivePath}*`}>Layouts and Containers</Link>
+			<Link active look="strong" href={`${TileMovePath}*`}>Movable Items</Link>
+			<Link active look="strong" href={`${TileLensPath}*`}>Linked Data Views</Link>
 
 		</>}
 

@@ -104,6 +104,7 @@
 
 import { eager, type Lazy } from "@metreeca/core";
 import { type Instance, manageState, type State } from "@metreeca/core/state";
+import { equals } from "@metreeca/core/values";
 import { useState } from "preact/hooks";
 
 
@@ -114,16 +115,51 @@ import { useState } from "preact/hooks";
  *
  * @typeParam T The state interface
  *
- * @param model The model, or a factory creating it; resolved once, when the component first renders, so a factory
- * may be written inline and close over props, at the cost of capturing them as they stood then: a prop changing
- * later never reaches the model
+ * A model resolved from props is kept in step with them by listing them as dependencies: whenever one of them changes,
+ * the model is created again from the factory and the state it reached is discarded, so a list handed a new query
+ * starts again from its first page. The new model is the one returned by the render the change shows up in.
+ *
+ * @param model The model, or a factory creating it; resolved when the component first renders, and again whenever
+ * one of `dependencies` changes, so a factory may be written inline and close over props: a prop left out of
+ * `dependencies` reaches the model as it stood when the model was last created
+ * @param dependencies The values the model is created from, compared for {@link equals deep equality} with the ones
+ * of the previous render; the model is kept for the lifetime of the component if omitted
  *
  * @returns The model as it stands for this render, superseded by the next after every transition that changes something
  */
-export function useModel<T extends State<T>>(model: Lazy<Instance<T>>): Instance<T> {
+export function useModel<T extends State<T>>(model: Lazy<Instance<T>>, dependencies?: readonly unknown[]): Instance<T> {
 
-	const [current, setCurrent] = useState(() => manageState(eager(model)).attach(state => setCurrent(state)));
+	const [entry, setEntry] = useState(create);
 
-	return current;
+	const current = equals(entry.key, dependencies) ? entry : create();
+
+	/*
+	 * A model created again is returned by this very render rather than the next one, so the component never shows
+	 * the state it is discarding alongside the props that discarded it; storing it here keeps it for the renders after.
+	 */
+
+	if ( current !== entry ) {
+		setEntry(current);
+	}
+
+	return current.model;
+
+
+	/*
+	 * Every notification carries the key the model was created under, so one arriving from a model already superseded
+	 * leaves the entry in place: transitions do not survive the model they were taken on.
+	 */
+
+	function create() {
+		return {
+
+			key: dependencies,
+
+			model: manageState(eager(model)).attach(state => setEntry(entry =>
+				entry.key === dependencies ? { ...entry, model: state } : entry
+			))
+
+		};
+	}
 
 }

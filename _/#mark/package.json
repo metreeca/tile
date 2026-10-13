@@ -52,9 +52,9 @@
   "devDependencies": {
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "postcss-nesting": "^12.1.5",
     "typescript": "^5.4.5",
-    "vite": "^5.4.11"
+    "vite": "^6.4.3"
   }
 }

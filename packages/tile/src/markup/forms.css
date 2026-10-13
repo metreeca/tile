@@ -101,6 +101,58 @@ button {
 
 }
 
+/*
+ * A menu draws its arrow as a part of its own content, so the padding a rule states on the menu closes in on the
+ * arrow from the end, as it does on the label from the start. The arrow keeps a room of its own clear of the label,
+ * in place of the gap the platform sets, and still stands at the end of a menu stretched past its label. The platform list keeps its native look, the picker not being opted in. A browser
+ * without the base appearance keeps the native control whole, the arrow then taking whatever room the platform
+ * reserves for it.
+ */
+
+select {
+
+    appearance: base-select;
+
+    column-gap: var(--tile--spacing-075);
+
+    /*
+     * The arrow is drawn as the lucide down chevron a component marks a disclosure with, at the height and stroke of
+     * an icon, and painted in the colour of the label through a mask cut to the box the icon takes. The box is
+     * centred on the label rather than hung from the top of the line, and is cropped to the stroke, round caps
+     * included, so the empty sides of the glyph add nothing to the room before it or to the padding after it: the
+     * menu is spaced by what its rules state rather than by the drawing. The stroke is stated in the glyph at the
+     * width the stroke token ships with, a mask having no way to read a custom property. The arrow keeps the colour of
+     * the label under forced colours, which would otherwise paint the box it is cut from in the page colour and leave
+     * nothing on show.
+     */
+
+    &::picker-icon {
+
+        content: "";
+
+        align-self: center;
+        margin-inline-start: auto;
+
+        /*
+         * An optical nudge below the spacing scale, in units of the grid the glyph is drawn on. A chevron carries its
+         * weight at the point, leaving its ends thin, so cropped to its stroke it still reads as standing clear of the
+         * end of the menu. Pressed two units into the padding after it, it reads as level with the label at the start.
+         */
+
+        margin-inline-end: calc(var(--tile--scaling-100) * -2 / 24);
+
+        width: calc(var(--tile--scaling-100) * 14 / 24); /* The stroke spans 14 of the 24 units the glyph is drawn on. */
+        height: var(--tile--scaling-100);
+
+        background-color: currentColor;
+        forced-color-adjust: none;
+
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5 0 14 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat;
+
+    }
+
+}
+
 *::placeholder {
     color: var(--tile--color-placeholder);
 }

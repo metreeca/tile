@@ -3,20 +3,11 @@
     "paths": {
       "@metreeca/specimen/*": [
         "./src/*"
-      ],
-      "@metreeca/tile*": [
-        "../packages/tile*/src/index.ts"
-      ],
-      "@metreeca/tile-cell/*": [
-        "../packages/tile-cell/src/*"
-      ],
-      "@metreeca/tile-data/*": [
-        "../packages/tile-data/src/*"
-      ],
-      "@metreeca/tile-hive/*": [
-        "../packages/tile-hive/src/*"
       ]
     },
+    "customConditions": [
+      "@metreeca/source"
+    ],
     "noEmit": true,
     "strict": true,
     "target": "ES2022",

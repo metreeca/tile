@@ -1,20 +1,22 @@
 {
   "private": true,
+  "version": "0.4.0",
   "description": "Minimalist model-driven UI toolkit for linked data resources.",
   "type": "module",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "clean": "npm run clean --workspaces && rm -rf dist docs node_modules",
+    "clean": "npm run clean --workspaces && rm dist docs node_modules",
     "prime": "npm ci",
-    "setup": "npm ci && sh package.sh",
-    "build": "npm run build --workspaces && rm -rf docs && npx typedoc",
+    "setup": "npm ci && ln",
+    "build": "npm run build --workspaces && rm docs && npx typedoc",
     "check": "npm run check --workspaces",
     "proof": "npm run build && npx wds --root-dir docs --open",
     "watch": "npm --prefix specimen run watch"
   },
   "devDependencies": {
+    "@metreeca/rack": "^0.4.0",
     "@web/dev-server": "^1.0.0",
     "typedoc": "^0.28.20",
     "vitest": "^5.0.1"

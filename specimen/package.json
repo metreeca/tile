@@ -6,7 +6,7 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "clean": "rm -rf dist node_modules",
+    "clean": "rm dist node_modules",
     "setup": "npm ci",
     "build": "vite build",
     "watch": "vite --open"

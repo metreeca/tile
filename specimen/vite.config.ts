@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { symlinks } from "@metreeca/rack/vite";
 import preact from "@preact/preset-vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
@@ -29,7 +30,10 @@ export default defineConfig(() => ({ // https://vite.dev/config/
         VERSION: JSON.stringify(pkg.version)
     },
 
-    plugins: [preact()],
+    plugins: [
+        symlinks({ conditions: "@metreeca/source" }), // workspace packages from their sources
+        preact()
+    ],
 
     build: {
 
@@ -44,13 +48,8 @@ export default defineConfig(() => ({ // https://vite.dev/config/
     },
 
     resolve: {
-
-        dedupe: ["preact"],
-
         alias: [
-            { find: /^@metreeca\/specimen\/(.*)$/, replacement: resolve("src", "$1") },
-            { find: /^@metreeca\/(tile[^/]*)$/, replacement: resolve("../packages/$1/src/index.ts") },
-            { find: /^@metreeca\/(tile[^/]*)\/(.*)$/, replacement: resolve("../packages/$1/src/$2") }
+            { find: /^@metreeca\/specimen\/(.*)$/, replacement: resolve("src", "$1") }
         ]
     }
 

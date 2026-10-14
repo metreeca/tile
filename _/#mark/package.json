@@ -28,7 +28,7 @@
     "dist/index.svg"
   ],
   "scripts": {
-    "clean": "rm -rf node_modules dist",
+    "clean": "rm node_modules dist",
     "setup": "npm install",
     "start": "vite --open",
     "build": "vite build",

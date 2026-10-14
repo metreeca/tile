@@ -14,30 +14,14 @@
  * limitations under the License.
  */
 
+import { symlinks } from "@metreeca/rack/vite";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 
-	/**
-	 * Resolves workspace package imports to the TypeScript source their exports declare, as `tsconfig.json` does
-	 * through `customConditions`, so tests run build-free against the working tree rather than against `dist`.
-	 */
-	ssr: {
-		resolve: {
-			conditions: ["@metreeca/source"]
-		}
-	},
-
-	/**
-	 * Resolves workspace package imports to their TypeScript source in DOM environments as well, which resolve as a
-	 * browser does rather than through the `ssr` conditions above, and shared dependencies to a single copy, so sibling
-	 * repositories linked by `npm run setup` share the classes this workspace checks against and a single Preact, whose
-	 * hooks fail across copies.
-	 */
-	resolve: {
-		conditions: ["@metreeca/source"],
-		dedupe: ["preact", "@metreeca/core", "@metreeca/qest"]
-	},
+	plugins: [
+		symlinks({ conditions: "@metreeca/source" })
+	],
 
 	test: {
 
@@ -45,6 +29,20 @@ export default defineConfig({
 		 * Allows workspace packages without test files to pass cleanly during `npm run check --workspaces`.
 		 */
 		passWithNoTests: true,
+
+		/**
+		 * Keeps DOM tests off the network: a link a test leaves to its default behaviour, such as one targeting
+		 * `_blank`, would otherwise open a page loading its URL from a server that does not exist.
+		 */
+		environmentOptions: {
+			happyDOM: {
+				settings: {
+					navigation: {
+						disableChildPageNavigation: true
+					}
+				}
+			}
+		},
 
 		/**
 		 * Type-tests each package against its own compiler options: `npm run check` runs vitest from every workspace

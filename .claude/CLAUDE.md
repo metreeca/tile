@@ -177,10 +177,15 @@ is, so the next reader doesn't take it for an oversight.
 
 # Testing
 
-The root `vitest.config.ts` resolves workspace imports through the `@metreeca/source` export condition, as
-`tsconfig.json` does, so tests run against the `src/` of every sibling without a prior build. A subpath reaches source
-only if its `exports` entry carries the condition: an entry without it falls back to `dist`, and tests then see the
-sibling as it was last built.
+The root `vitest.config.ts` resolves imports of symlinked `@metreeca/*` packages, both workspace packages and siblings
+linked by `npm run setup`, to the TypeScript source their `@metreeca/source` export entries declare, so tests run
+against `src/` without a prior build. Packages installed from the registry keep resolving to their published `dist`.
+An export entry lacking the condition falls back to `dist` as well, and tests then see that package as last built.
+
+> [!CAUTION]
+> **NEVER** enable `@metreeca/source` through vitest `resolve.conditions`. Published manifests carry the condition
+> while their packages ship no `src/`, and Vite does not fall back to `default` on a missing target, so a global
+> condition breaks every package installed from the registry that declares it, as happens under `npm ci` in CI.
 
 Headless state is tested without a DOM: a test that needs one belongs to a binding package, which supplies its own
 environment.

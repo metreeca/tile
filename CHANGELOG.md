@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0](https://github.com/metreeca/tile/compare/v0.4.0...HEAD)
+## [Unreleased](https://github.com/metreeca/tile/compare/v0.5.0...HEAD)
+
+## [0.5.0](https://github.com/metreeca/tile/compare/v0.4.0...v0.5.0) - 2026-10-14
 
 ### Added
 
@@ -17,8 +19,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `@metreeca/tile-data/board` — **breaking**: `Status` gains a `defect` member for faults of the interface itself,
   and `raise` posts errors and any other value that is not problem details as a `defect` instead of a `failure`
+  (migration: add a `defect` branch to every exhaustive `switch` over `Status`, and match `"defect"` wherever raised
+  issues are picked out by `status === "failure"`, since broken scripts and failed renders now reach the board so)
 - `@metreeca/tile-data/board` — only the outermost `Board` takes up broken scripts and unhandled rejections, so a
   page issue is stated once however many boards are nested, while each board keeps the posts of its own components
+- `@metreeca/tile-cell` — no longer depends on `@metreeca/http`, which none of its modules imports
 
 ## [0.4.0](https://github.com/metreeca/tile/compare/v0.3.0...v0.4.0) - 2026-10-14
 

@@ -63,7 +63,6 @@
   },
   "dependencies": {
     "@metreeca/core": "^0.12.1",
-    "@metreeca/http": "^0.4.1",
     "@metreeca/tile": "^0.5.0",
     "@metreeca/tile-data": "^0.5.0",
     "lucide-preact": "^1.47.0"

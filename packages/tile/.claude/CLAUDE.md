@@ -242,11 +242,11 @@ scale does not carry is stated in words.
 three-step ramp. Three kinds of meaning share it, chosen by what the widget **is**, so no widget carries two:
 `level` on content, `mode` on controls, `status` on reported things:
 
-| Attribute | `normal`            | `info`    | `pass`      | `warn`    | `fail`     |
-|-----------|---------------------|-----------|-------------|-----------|------------|
-| `level`   | an ordinary passage | `info`    | `highlight` | `warning` | `critical` |
-| `mode`    | an ordinary control | `safe`    | `commit`    | `alert`   | `danger`   |
-| `status`  | nothing to report   | `pending` | `success`   | `warning` | `failure`  |
+| Attribute | `normal`            | `info`    | `pass`      | `warn`    | `fail`                |
+|-----------|---------------------|-----------|-------------|-----------|-----------------------|
+| `level`   | an ordinary passage | `info`    | `highlight` | `warning` | `critical`            |
+| `mode`    | an ordinary control | `safe`    | `commit`    | `alert`   | `danger`              |
+| `status`  | nothing to report   | `pending` | `success`   | `warning` | `failure` or `defect` |
 
 **`normal` is the default of all three, and it is NOT a step**: it carries no colour coding at all, leaving the
 ordinary page colours. A widget that states nothing is `normal`, and a `level="normal"` passage is **NOT** a blue
@@ -261,7 +261,7 @@ put the same meaning on different steps and the learned scale breaks:
 ```
 tile-note    level   info → info    highlight → pass    warning → warn    critical → fail
 tile-button  mode    safe → info    commit → pass       alert → warn      danger → fail
-tile-toast   status  pending → info success → pass      warning → warn    failure → fail
+tile-toast   status  pending → info success → pass      warning → warn    failure → fail    defect → fail
 ```
 
 ### Which attribute a widget takes
@@ -328,6 +328,8 @@ toolbar.
 - **A failure can be told by either attribute.** `tile-note` takes `level="critical"` for a failure shown in place of
   the content, and `tile-toast` takes `status="failure"` for one floated over the screen. Both land on `fail`. Only
   `status` carries `pending`, since an authored admonition is never pending.
+- **`failure` and `defect` share the `fail` step.** A fault of the interface itself is a failure all the same to the
+  reader, so the two are told apart by glyph and wording, never by a fifth colour the scale cannot carry.
 - **`highlight` is the thinnest cell.** A passage reporting that something *went* well is really reporting a
   `status`, so it earns its place only for a passage singled out as worth having.
 

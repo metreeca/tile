@@ -326,11 +326,17 @@ tile-toast {
 
         }
 
-        &[status="failure"] > div > div {
+        /* A defect of the interface is a failure all the same, told apart from an ordinary one by its glyph alone. */
 
-            --tile-toast-tint: var(--tile--background-color-fail);
-            & > svg {
-                color: var(--tile--color-fail);
+        &[status="failure"], &[status="defect"] {
+
+            & > div > div {
+
+                --tile-toast-tint: var(--tile--background-color-fail);
+                & > svg {
+                    color: var(--tile--color-fail);
+                }
+
             }
 
         }

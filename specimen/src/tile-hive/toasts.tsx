@@ -33,7 +33,8 @@ const Samples: readonly Required<Pick<Post, "status" | "message">>[] = [
 	{ status: "pending", message: "Saving the changes…" },
 	{ status: "success", message: "Changes saved" },
 	{ status: "warning", message: "Changes saved, two fields left empty" },
-	{ status: "failure", message: "Changes not saved" }
+	{ status: "failure", message: "Changes not saved" },
+	{ status: "defect", message: "The editor stopped working" }
 ];
 
 

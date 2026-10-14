@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.5.0](https://github.com/metreeca/tile/compare/v0.4.0...HEAD)
 
+### Added
+
+- `@metreeca/tile-hive/guard` — `Guard` failure boundary showing a fallback in place of a component that failed to
+  render, and raising the failure on the shared board while the rest of the screen keeps working
+- `@metreeca/tile-hive/toast` — bug glyph marking `defect` posts, painted on the fail step like ordinary failures
+
+### Changed
+
+- `@metreeca/tile-data/board` — **breaking**: `Status` gains a `defect` member for faults of the interface itself,
+  and `raise` posts errors and any other value that is not problem details as a `defect` instead of a `failure`
+- `@metreeca/tile-data/board` — only the outermost `Board` takes up broken scripts and unhandled rejections, so a
+  page issue is stated once however many boards are nested, while each board keeps the posts of its own components
+
 ## [0.4.0](https://github.com/metreeca/tile/compare/v0.3.0...v0.4.0) - 2026-10-14
 
 ### Added

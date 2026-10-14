@@ -172,6 +172,26 @@ describe("Board()", () => {
 
 	});
 
+	it("should raise a broken script as a defect", async () => {
+
+		mount();
+		broken({ error: new TypeError("broken") });
+		broken({ message: "broken" });
+
+		expect(standing().map(({ status }) => status)).toEqual(["defect", "defect"]);
+
+	});
+
+	it("should raise an unhandled rejection carrying problem details as a failure", async () => {
+
+		mount();
+
+		act(() => { window.dispatchEvent(Object.assign(new Event("unhandledrejection"), { reason: { status: 503 } })); });
+
+		expect(standing()[0]?.status).toBe("failure");
+
+	});
+
 	it("should stop raising page issues once unmounted", async () => {
 
 		mount();
@@ -180,6 +200,32 @@ describe("Board()", () => {
 		broken({ error: new TypeError("broken") });
 
 		expect(standing()).toHaveLength(1);
+
+	});
+
+	it("should raise page issues on the outermost board alone", async () => {
+
+		const outer = vi.fn<(posts: readonly Post[]) => void>();
+
+		function Outer() {
+
+			outer(usePosts());
+
+			return null;
+
+		}
+
+		act(() => render(createElement(Board, {
+			children: createElement(Fragment, {},
+				createElement(Outer, {}),
+				createElement(Board, { children: createElement(Probe, {}) })
+			)
+		}), document.body));
+
+		broken({ error: new TypeError("broken") });
+
+		expect(outer.mock.lastCall?.[0]).toHaveLength(1);
+		expect(standing()).toEqual([]);
 
 	});
 
@@ -301,6 +347,16 @@ describe("useBoard()", () => {
 			raise({ status: 500 });
 
 			expect(standing().map(({ status }) => status)).toEqual(["pending", "failure"]);
+
+		});
+
+		it("should state an issue other than problem details last as a defect", async () => {
+
+			mount();
+			post(saving);
+			raise(new TypeError("broken"), { code: 42 }, "broken");
+
+			expect(standing().map(({ status }) => status)).toEqual(["pending", "defect", "defect", "defect"]);
 
 		});
 

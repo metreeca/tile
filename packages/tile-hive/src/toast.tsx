@@ -25,7 +25,7 @@
 
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
-import { type Post, type Status, usePosts, useBoard } from "@metreeca/tile-data/board";
+import { type Post, type Status, useBoard, usePosts } from "@metreeca/tile-data/board";
 import { createElement } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import "./toast.css";
@@ -35,9 +35,9 @@ import "./toast.css";
  * Creates a toast stack.
  *
  * Floats the posts standing on the enclosing {@link @metreeca/tile-data!board.Board Board} over an edge of the screen,
- * one toast each, newest nearest the edge, each marked by a glyph telling its status, so an interface tells the reader how its
- * operations are going without laying out room for them. A post updated on the board is updated where it stands, a
- * post put up slides in, and a post cleared fades out while the others stay put.
+ * one toast each, newest nearest the edge, each marked by a glyph telling its status, so an interface tells the reader
+ * how its operations are going without laying out room for them. A post updated on the board is updated where it
+ * stands, a post put up slides in, and a post cleared fades out while the others stay put.
  *
  * Where given a `timeout`, a toast telling of nothing more pressing than a plain or completed post is taken away on
  * its own once it is up, while the post stays on the board for any other reader; any other toast stays until whoever
@@ -79,10 +79,10 @@ export function Toast({
 
 	/**
 	 * The milliseconds the toast of a `normal` or `success` post is shown before it is taken away, counted from the
-	 * moment the post was put up or last updated; the post itself stays on the board. The toasts of `pending`, `warning`
-	 * and `failure` posts stay until their posts are cleared, as do those of actionable posts whatever their status
-	 * where an `onAction` handler is given, so nothing still under way, asking for attention or waiting to be acted on
-	 * goes unseen. No toast is taken away on its own if not positive.
+	 * moment the post was put up or last updated; the post itself stays on the board. The toasts of `pending`,
+	 * `warning`, `failure` and `defect` posts stay until their posts are cleared, as do those of actionable posts
+	 * whatever their status where an `onAction` handler is given, so nothing still under way, asking for attention or
+	 * waiting to be acted on goes unseen. No toast is taken away on its own if not positive.
 	 *
 	 * @defaultValue 0
 	 */
@@ -148,10 +148,10 @@ export function Toast({
 		/>)}
 
 		{visible.length > 1 && <footer>
-			<Button name="Dismiss all" icon={<Icon.Dismiss/>} title="Dismiss all" look="subtle"
-				onClick={() => board.clear(visible)}
-			/>
-		</footer>}
+            <Button name="Dismiss all" icon={<Icon.Dismiss/>} title="Dismiss all" look="subtle"
+                onClick={() => board.clear(visible)}
+            />
+        </footer>}
 
 	</>);
 
@@ -163,9 +163,9 @@ export function Toast({
  *
  * @param options The toast configuration
  *
- * @returns The toast telling `post`, hidden if `hidden`, notifying `onExpire` once `timeout` is up for a post that
- * is plain or completed, still shown and offered for no action, `onAction` when its message is activated, and `onFaded` once a hidden
- * toast has faded out
+ * @returns The toast telling `post`, hidden if `hidden`. It notifies `onAction` when its message is activated and
+ * `onFaded` once it has faded out while hidden. For a plain or completed post still shown and offered for no action,
+ * it also notifies `onExpire` once `timeout` is up, so the toast is taken away while the post stays on the board
  */
 function Item({
 
@@ -217,20 +217,22 @@ function Item({
 		onTransitionEnd: ({ target, currentTarget, propertyName }: TransitionEvent) =>
 			hidden && target === currentTarget && propertyName === "opacity" && onFaded?.()
 
-	}, <div><div>
-
-		{glyph(post.status)}
-
-		<span>{onAction
-			? <button type="button" onClick={onAction}>{post.message}</button>
-			: post.message
-		}</span>
-
+	}, <div>
 		<div>
-			<Button name="Dismiss" icon={<Icon.Dismiss/>} title="Dismiss" look="subtle" onClick={onDismiss}/>
-		</div>
 
-	</div></div>);
+			{glyph(post.status)}
+
+			<span>{onAction
+				? <button type="button" onClick={onAction}>{post.message}</button>
+				: post.message
+			}</span>
+
+			<div>
+				<Button name="Dismiss" icon={<Icon.Dismiss/>} title="Dismiss" look="subtle" onClick={onDismiss}/>
+			</div>
+
+		</div>
+	</div>);
 
 }
 
@@ -301,12 +303,13 @@ function refreshed({ shown, expired }: Stack, posts: readonly Post[]): Stack {
  *
  * @param status The status of a post
  *
- * @returns The glyph telling `status`, the same glyph a note marks the matching level with
+ * @returns The glyph telling `status`: the one a note marks the matching level with, or a bug for a `defect`
  */
 function glyph(status: Status) {
 	return status === "pending" ? <Icon.RefreshCw/>
 		: status === "success" ? <Icon.CircleCheck/>
 			: status === "warning" ? <Icon.Alert/>
 				: status === "failure" ? <Icon.CircleAlert/>
-					: <Icon.Info/>;
+					: status === "defect" ? <Icon.Bug/>
+						: <Icon.Info/>;
 }

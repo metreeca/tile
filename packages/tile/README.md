@@ -133,11 +133,11 @@ ordinary page colours, so a widget that states nothing is `normal` and a `level=
 admonition. Only the marked values reach the scale. The widget maps those onto the steps and states that mapping in
 its own documentation.
 
-| Attribute | `normal`            | `info`    | `pass`      | `warn`    | `fail`     |
-|-----------|---------------------|-----------|-------------|-----------|------------|
-| `level`   | an ordinary passage | `info`    | `highlight` | `warning` | `critical` |
-| `mode`    | an ordinary control | `safe`    | `commit`    | `alert`   | `danger`   |
-| `status`  | nothing to report   | `pending` | `success`   | `warning` | `failure`  |
+| Attribute | `normal`            | `info`    | `pass`      | `warn`    | `fail`                |
+|-----------|---------------------|-----------|-------------|-----------|-----------------------|
+| `level`   | an ordinary passage | `info`    | `highlight` | `warning` | `critical`            |
+| `mode`    | an ordinary control | `safe`    | `commit`    | `alert`   | `danger`              |
+| `status`  | nothing to report   | `pending` | `success`   | `warning` | `failure` or `defect` |
 
 The two attributes together read as how it appears and what it means:
 

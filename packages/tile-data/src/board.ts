@@ -26,7 +26,8 @@
  * as its operation moves on, and a reader tells a new post from one it has already shown.
  *
  * Issues nothing in the interface caught are taken up as well: a broken script and an unhandled rejection are raised
- * as they reach the page, so an exchange whose rejection went unattended is shown rather than logged.
+ * on the outermost board as they reach the page, so an exchange whose rejection went unattended is shown rather than
+ * logged, and once only however many boards are nested, since no component inside any of them can claim it.
  *
  * Posting and reading are offered apart, so a component only posting never renders because posts change.
  *
@@ -37,16 +38,15 @@ import { assert } from "@metreeca/core";
 import { some, type Some } from "@metreeca/core/arrays";
 import type { IRI } from "@metreeca/core/resource";
 import { equals } from "@metreeca/core/values";
-import { type Problem, toProblem } from "@metreeca/http/success";
+import { isProblem, type Problem, toProblem } from "@metreeca/http/success";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 
 
 /**
- * The board provided by the enclosing {@link Board}, as returned by {@link useBoard}; outside any, one posting nowhere,
- * logging raised issues to the console and clearing nothing.
+ * The board seen outside any {@link Board}, posting nowhere, logging raised issues to the console and clearing nothing.
  */
-const BoardContext = createContext<Board>({
+const nowhere: Board = {
 
 	post: toPost,
 
@@ -60,7 +60,12 @@ const BoardContext = createContext<Board>({
 
 	clear: () => {}
 
-});
+};
+
+/**
+ * The board provided by the enclosing {@link Board}, as returned by {@link useBoard}; outside any, {@link nowhere}.
+ */
+const BoardContext = createContext<Board>(nowhere);
 
 /**
  * The posts standing on the enclosing {@link Board}, oldest first, as returned by {@link usePosts}; outside any, none.
@@ -98,17 +103,29 @@ export interface Board {
 	post(post: Partial<Post> & Pick<Post, "message">): Post;
 
 	/**
-	 * Raises an issue.
+	 * Raises an unexpected issue.
 	 *
-	 * Puts up the issue as caught, from a rejected exchange, a broken script or an unhandled rejection alike, as a new
-	 * `failure` post carrying it as {@link Post.problem | problem details}:
+	 * Puts up an issue nothing in the interface was prepared for, such as a broken script, a component failing to
+	 * render or a rejection nobody attended, as a new post carrying it as {@link Post.problem | problem details}.
 	 *
-	 * - problem details, that is an object carrying at least one of `type`, `title`, `status`, `detail`, `instance`
-	 *   or `report`, are kept as they are, so an issue reported by {@link @metreeca/http!success success} keeps the
-	 *   status and the explanation its source gave it
+	 * An operation failing as operations may, such as an exchange the server rejected, is never raised: the source
+	 * running it catches the failure and tells how its operation went with {@link Board.post | post}, as a `failure`
+	 * post carrying the problem details it caught, so the reader sees it as the outcome of that operation.
+	 *
+	 * The post tells from the shape of the issue what went wrong:
+	 *
+	 * - problem details, that is an object carrying at least one of `type`, `title`, `status`, `detail`, `instance` or
+	 *   `report`, are kept as they are, so an issue reported by {@link @metreeca/http!success success} keeps the status
+	 *   and the explanation its source gave it, and make the post a `failure`: an operation that did not complete
 	 * - an {@link !Error Error} becomes `status` 0, with its name as `title` and its message as `detail`, the stack
-	 *   left out as a post is expected to travel beyond the page that raised it
-	 * - anything else becomes `status` 0, carried as `report` if it is JSON data and as `detail` otherwise
+	 *   left out as a post is expected to travel beyond the page that raised it, and makes the post a `defect`
+	 * - anything else becomes `status` 0, carried as `report` if it is JSON data and as `detail` otherwise, and makes
+	 *   the post a `defect` as well, being a value the interface threw rather than one it reported on purpose
+	 *
+	 * Every failed exchange reaches the board as problem details through {@link @metreeca/http!success success},
+	 * transport failures included, so a rejection nobody attended is still told as the failure it was, and `defect` is
+	 * left to whatever the interface threw on its own account; a client lacking that middleware has its transport
+	 * failures stated as defects, since they reach the board as plain errors rather than as problem details.
 	 *
 	 * The post carries the explanation of the problem as its message, or failing that its summary, and a standing
 	 * English wording where the problem states neither.
@@ -164,7 +181,7 @@ export interface Post {
 	readonly message: string;
 
 	/**
-	 * The problem details of the issue the post was raised from; none if it was put up by a source.
+	 * The problem details of the issue the post tells of; none if it tells of no issue.
 	 *
 	 * @see {@link https://www.rfc-editor.org/rfc/rfc9457 RFC 9457 - Problem Details for HTTP APIs}
 	 */
@@ -177,14 +194,16 @@ export interface Post {
  * What the system says has happened.
  *
  * The scale the design system states for reported things: `pending` is still under way, `success` completed as
- * intended, `warning` completed with caveats, `failure` failed to complete, and `normal` has nothing to report.
+ * intended, `warning` completed with caveats, `failure` failed to complete, `defect` broke through a fault of the
+ * interface itself rather than of anything it was asked to do, and `normal` has nothing to report.
  */
 export type Status =
 	| "normal"
 	| "pending"
 	| "success"
 	| "warning"
-	| "failure";
+	| "failure"
+	| "defect";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,9 +211,12 @@ export type Status =
 /**
  * Offers a shared status board to nested components.
  *
- * Takes up the issues the page raises on its own account, that is broken scripts and unhandled rejections, and
- * states them among the others: a rejected exchange nobody attended reaches a reader with the status and the
- * explanation its source gave it, rather than as a console entry.
+ * The outermost context takes up the issues the page raises on its own account, that is broken scripts and unhandled
+ * rejections, and states them among the others: a rejected exchange nobody attended reaches a reader with the status
+ * and the explanation its source gave it, rather than as a console entry only developers ever read.
+ *
+ * Nested contexts behave as error boundaries do: each holds the posts and the issues of the components it encloses.
+ * The issues of the page belong to no component, so they are stated once, however many contexts are nested.
  *
  * Posts stand for as long as the context lives and are cleared by whoever put them up or showed them, so a post is
  * never dropped by a later one; the oldest is dropped on its own where posts stand beyond `limit`.
@@ -230,6 +252,8 @@ export function Board({
 
 	const $limit = assert(limit, limit => Number.isInteger(limit), `illegal limit <${limit}>`);
 
+	const outermost = useContext(BoardContext) === nowhere;
+
 	const [posts, setPosts] = useState<readonly Post[]>([]);
 
 	const [board] = useState<Board>(() => {
@@ -252,22 +276,10 @@ export function Board({
 
 	});
 
-	useEffect(() => { // window issues outlive the render, so they are taken up for as long as the context lives
+	// window issues outlive the render, so they are taken up for as long as the context lives; page issues are owned
+	// by no component, so the outermost context alone takes them up, as nested ones would state each of them again
 
-		const failed = (event: ErrorEvent) => board.raise(event.error ?? event.message);
-		const rejected = (event: PromiseRejectionEvent) => board.raise(event.reason);
-
-		window.addEventListener("error", failed);
-		window.addEventListener("unhandledrejection", rejected);
-
-		return () => {
-
-			window.removeEventListener("error", failed);
-			window.removeEventListener("unhandledrejection", rejected);
-
-		};
-
-	}, [board]);
+	useEffect(() => outermost ? listen(board) : undefined, [outermost, board]);
 
 	return createElement(BoardContext.Provider, { value: board },
 		createElement(PostsContext.Provider, { value: posts, children })
@@ -327,22 +339,46 @@ function toPost({
 }
 
 /**
- * Converts a caught issue into a failure post.
+ * Converts a caught issue into a post telling of it.
  *
  * @param issue The issue as given to {@link Board.raise}
  *
- * @returns A `failure` post with a fresh identity, carrying `issue` as problem details and their explanation, or
- * failing that their summary, as its message
+ * @returns A post with a fresh identity, carrying `issue` as problem details and their explanation, or failing that
+ * their summary, as its message: a `failure` if `issue` already was problem details, and a `defect` otherwise
  */
 function toFailure(issue: unknown): Post {
 
 	const problem = toProblem(issue);
 
 	return toPost({
-		status: "failure",
+		status: isProblem(issue) ? "failure" : "defect",
 		message: problem.detail ?? problem.title ?? "Unexpected error",
 		problem
 	});
+
+}
+
+/**
+ * Raises the issues the page raises on its own account.
+ *
+ * @param board The board broken scripts and unhandled rejections are raised on
+ *
+ * @returns A function that stops raising them
+ */
+function listen(board: Board): () => void {
+
+	const failed = (event: ErrorEvent) => board.raise(event.error ?? event.message);
+	const rejected = (event: PromiseRejectionEvent) => board.raise(event.reason);
+
+	window.addEventListener("error", failed);
+	window.addEventListener("unhandledrejection", rejected);
+
+	return () => {
+
+		window.removeEventListener("error", failed);
+		window.removeEventListener("unhandledrejection", rejected);
+
+	};
 
 }
 

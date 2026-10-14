@@ -62,8 +62,8 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.12.0",
-    "@metreeca/http": "^0.4.0",
+    "@metreeca/core": "^0.12.1",
+    "@metreeca/http": "^0.4.1",
     "@metreeca/tile": "^0.4.0",
     "@metreeca/tile-data": "^0.4.0",
     "lucide-preact": "^1.47.0"

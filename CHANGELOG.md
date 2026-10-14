@@ -26,6 +26,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Upgrade `@metreeca/core` to `^0.12.1`
+- Upgrade `@metreeca/blue` to `^0.12.1`
+- Upgrade `@metreeca/http` to `^0.4.1`
+- Upgrade `@metreeca/qest` to `^0.12.1`
+- Upgrade `@metreeca/keep` to `^0.11.1`
+- Upgrade `@metreeca/keep-rest` to `^0.11.1`
 - `@metreeca/tile` — `colorInfo` and `colorPass` hold mark contrast (3:1) rather than text contrast in the light
   scheme: status text takes the matching stroke token
 - `@metreeca/tile-cell/button` — status button labels hold AA contrast through the stroke roles

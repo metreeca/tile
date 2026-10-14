@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-move",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Preact movable items and the move lifecycle for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -60,9 +60,9 @@
     "@dnd-kit/dom": "^0.5.0",
     "@dnd-kit/state": "^0.5.0",
     "@metreeca/core": "^0.12.1",
-    "@metreeca/tile": "^0.5.0",
-    "@metreeca/tile-cell": "^0.5.0",
-    "@metreeca/tile-data": "^0.5.0"
+    "@metreeca/tile": "^0.5.1",
+    "@metreeca/tile-cell": "^0.5.1",
+    "@metreeca/tile-data": "^0.5.1"
   },
   "devDependencies": {
     "happy-dom": "^20.0.0",

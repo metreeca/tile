@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Minimalist model-driven UI toolkit for linked data resources.",
   "type": "module",
   "workspaces": [

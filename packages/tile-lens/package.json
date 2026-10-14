@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-lens",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Preact linked data views for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -62,9 +62,9 @@
     "@metreeca/core": "^0.12.1",
     "@metreeca/http": "^0.4.1",
     "@metreeca/qest": "^0.12.1",
-    "@metreeca/tile": "^0.4.0",
-    "@metreeca/tile-cell": "^0.4.0",
-    "@metreeca/tile-data": "^0.4.0"
+    "@metreeca/tile": "^0.5.0",
+    "@metreeca/tile-cell": "^0.5.0",
+    "@metreeca/tile-data": "^0.5.0"
   },
   "devDependencies": {
     "@metreeca/keep": "^0.11.0",

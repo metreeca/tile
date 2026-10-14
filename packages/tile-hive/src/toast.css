@@ -210,11 +210,15 @@ tile-toast {
             border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
             border-radius: var(--tile--border-radius-050);
 
-            /* The mark is centred on the first line, the space a line takes beyond the glyph split above and below it. */
+            /*
+             * The mark is centred on the first line, the space a line takes beyond the glyph split above and below it,
+             * and held a step further off the message than the gap alone, so it reads as a marker set apart from it.
+             */
 
             & > svg {
                 flex: none;
                 margin-block: calc((1lh - 1em) / 2);
+                margin-inline-end: var(--tile--spacing-025);
             }
 
             /* The message takes the room the mark and the dismiss control leave, wrapping within it. */

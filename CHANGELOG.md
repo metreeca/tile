@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/compare/v0.5.0...HEAD)
 
+### Fixed
+
+- `@metreeca/tile-cell/icon` — glyph sizing kept in production bundles, which dropped the icon stylesheet and left
+  glyphs at the oversized Lucide defaults wherever `Icon` was imported, toasts and the shell included
+
 ## [0.5.0](https://github.com/metreeca/tile/compare/v0.4.0...v0.5.0) - 2026-10-14
 
 ### Added

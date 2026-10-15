@@ -249,6 +249,16 @@ import { css, tile } from "@metreeca/tile";
 A component that cannot count on the stylesheet being loaded writes the reference by hand instead, naming in it the
 fallback it wants, as above.
 
+Tint a surface with a colour rather than paint it in one, to class an area as the columns of a board along its flow or
+the lanes of a swimlane by type. The colour is washed into the sunken surface by the share given, so at a low share the
+text the area holds stays readable on the page colour, in either colour scheme, with no `color` of its own:
+
+```tsx
+import { css, tile } from "@metreeca/tile";
+
+<div style={css({ backgroundColor: css.tint(tile.colorHeat030, 20) })}>
+```
+
 Where a reference doesn't reach, on a canvas or against an API taking a colour as text, take the value a token resolves
 to for the element it applies to, rather than a copy of the default, and keep whatever the app overrode along with the
 colour scheme in force:

@@ -112,6 +112,13 @@ describe("css", () => {
 
 	});
 
+	it("takes a palette step as a fill classifying a surface", () => {
+
+		expectTypeOf(css({ backgroundColor: "colorHeat030" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ backgroundColorSunken: "colorArea1" })).toEqualTypeOf<Style>();
+
+	});
+
 	it("takes a step off the ladder a box token is shaped on", () => {
 
 		expectTypeOf(css({ padding: "spacing100" })).toEqualTypeOf<Style>();
@@ -154,6 +161,9 @@ describe("css", () => {
 
 		// @ts-expect-error a scale step where an ink goes
 		css({ colorStrong: "colorGray050" });
+
+		// @ts-expect-error a fill where a scale step goes
+		css({ colorHeat050: "backgroundColorRaised" });
 
 	});
 
@@ -264,6 +274,32 @@ describe("css.var", () => {
 
 		// @ts-expect-error unknown custom property
 		css.var("--tile--nope");
+
+	});
+
+});
+
+describe("css.tint", () => {
+
+	it("produces a fill value off any colour token", () => {
+
+		expectTypeOf(css.tint(tile.colorHeat030, 20)).toExtend<Value<"backgroundColor">>();
+		expectTypeOf(css.tint(tile.colorStrong, 20)).toExtend<Value<"backgroundColor">>();
+		expectTypeOf(css.tint(tile.backgroundColorInfo, 20)).toExtend<Value<"backgroundColor">>();
+
+	});
+
+	it("rejects a token carrying no colour", () => {
+
+		// @ts-expect-error a spacing has no colour to tint with
+		css.tint(tile.spacing100, 20);
+
+	});
+
+	it("rejects a token name in place of a custom property", () => {
+
+		// @ts-expect-error token name rather than custom property
+		css.tint("colorHeat030", 20);
 
 	});
 

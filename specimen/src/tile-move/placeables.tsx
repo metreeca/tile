@@ -20,6 +20,8 @@
  * @module
  */
 
+import { css, tile } from "@metreeca/tile";
+import { Style } from "@metreeca/tile-hive/style";
 import { Placeable } from "@metreeca/tile-move/placeable";
 import { Fragment } from "preact";
 import { useState } from "preact/hooks";
@@ -27,7 +29,14 @@ import "./index.css";
 
 
 const types = ["Bug", "Task"];
-const states = ["To do", "Doing", "Done"];
+
+// each state tints its column along the flow, from cool to hot
+
+const states = [
+	{ label: "To do", tint: tile.colorHeat010 },
+	{ label: "Doing", tint: tile.colorHeat060 },
+	{ label: "Done", tint: tile.colorHeat080 }
+];
 
 const issues = [
 	{ id: "1", row: "Bug", column: "To do", title: "Fix the login timeout" },
@@ -76,11 +85,13 @@ export function Placeables() {
 			<div class="board">
 
 				<header/>
-				{states.map(state => <header key={state}>{state}</header>)}
+				{states.map(({ label }) => <header key={label}>{label}</header>)}
 
 				{types.map(type => <Fragment key={type}>
 					<header>{type}</header>
-					{states.map(state => <Fragment key={state}>{cell({ row: type, column: state }, `${type}, ${state}`)}</Fragment>)}
+					{states.map(({ label, tint }) => <Style key={label} css={{ backgroundColor: css.tint(tint, 20) }}>
+						{cell({ row: type, column: label }, `${type}, ${label}`)}
+					</Style>)}
 				</Fragment>)}
 
 			</div>

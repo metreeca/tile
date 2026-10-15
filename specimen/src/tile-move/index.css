@@ -146,4 +146,10 @@
         color: var(--tile--color-label);
     }
 
+    /* A cell paints its well in the tint its column assigns, where a list keeps the sunken surface. */
+
+    & tile-placeable-cell > ul {
+        background-color: var(--tile--background-color);
+    }
+
 }

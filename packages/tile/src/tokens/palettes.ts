@@ -53,6 +53,15 @@
  * fifth colour. The two pale classes stay under 3:1 against the light page, so a map keeps its boundaries drawn and
  * names its classes in the legend.
  *
+ * **Classified surfaces** — a step, a slot or a class may fill a surface rather than paint a mark, tinting an area by
+ * the class it belongs to: the columns of a board along its flow, the lanes of a swimlane by type. The fill takes
+ * the place of the page background for everything the area holds, so the area **always** assigns `color` too: text
+ * left on the page colour may lose contrast over the fill, as it does over the heat scale from `080` on, and over
+ * its brighter steps wherever the dark scheme sets that colour light. Inside the area, `backgroundColor` names the
+ * fill itself, so text meant to take the page background is given a colour of its own rather than that token. A
+ * colour washed out through {@link index.css.tint css.tint} keeps the area close to the page instead, so at a low
+ * share the text it holds stays readable on the page colour, in either colour scheme, with no `color` of its own.
+ *
  * @module palettes
  */
 

@@ -325,3 +325,34 @@ describe("css.var", () => {
 	});
 
 });
+
+describe("css.tint", () => {
+
+	it("mixes a colour token into the sunken surface by the share given", () => {
+
+		expect(css.tint(tile.colorHeat030, 20)).toBe(
+			"color-mix(in oklab, var(--tile--color-heat-030) 20%, var(--tile--background-color-sunken))"
+		);
+
+	});
+
+	it("keeps the token as given at full share and the surface alone at none", () => {
+
+		expect(css.tint(tile.colorArea1, 100)).toBe(
+			"color-mix(in oklab, var(--tile--color-area-1) 100%, var(--tile--background-color-sunken))"
+		);
+
+		expect(css.tint(tile.colorArea1, 0)).toBe(
+			"color-mix(in oklab, var(--tile--color-area-1) 0%, var(--tile--background-color-sunken))"
+		);
+
+	});
+
+	it("is taken as a fill", () => {
+
+		expect(css({ backgroundColor: css.tint(tile.colorHeat090, 15) })[tile.backgroundColor])
+			.toBe(css.tint(tile.colorHeat090, 15));
+
+	});
+
+});

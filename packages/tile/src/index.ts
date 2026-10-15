@@ -100,7 +100,7 @@
  * @module index
  */
 
-import type { Alias, Literal } from "./index.core.js";
+import type { Alias, Fill, Ink, Literal, Palette } from "./index.core.js";
 import { borders } from "./tokens/borders.js";
 import { colors } from "./tokens/colors.js";
 import { elevations } from "./tokens/elevations.js";
@@ -152,8 +152,8 @@ const applied: Readonly<Record<string, string>> = {
  * The custom property behind every design system token.
  *
  * Resolves each {@link Token token name} to the {@link Property custom property} carrying its value, which is what
- * {@link css css.var} reads a token through and what a value taken outside the cascade is looked up by; assigning a token
- * to a subtree goes through {@link css} instead. Gathers every token group, so a consumer names a token without
+ * {@link css css.var} reads a token through and what a value taken outside the cascade is looked up by; assigning a
+ * token to a subtree goes through {@link css} instead. Gathers every token group, so a consumer names a token without
  * knowing which one it belongs to.
  */
 export const tile = {
@@ -218,8 +218,9 @@ export type Token = keyof typeof tile
  *
  * Admits only what the token in hand can carry, as three alternatives, two named by types left out of this reference:
  *
- * - `Alias<K>` — the {@link Token token names} `K` may be set from, being the ladder it belongs to and no other: a
- *   colour offers colours, a text size the type and scaling ladders and not the spacing one, though all are lengths.
+ * - `Alias<K>` — the {@link Token token names} `K` may be set from, taken off the ladders it belongs to and no other:
+ *   a colour offers colours, a surface fill the palette colours as well, classing an area by its colour, and a text
+ *   size the type and scaling ladders and not the spacing one, though all are lengths.
  *   An alias stands for whatever the token it names carries, so `colorStrong: "colorSubtle"` assigns a reference to
  *   that token rather than the text of its name. A token belonging to no ladder, a flag or a keyword, has no alias
  *   at all.
@@ -299,7 +300,8 @@ export type {
  * <section style={css({ padding: "spacing100", borderRadius: "borderRadius050" })}>
  * ```
  *
- * Reading a token where a CSS value is written by hand goes through {@link css css.var} instead.
+ * Reading a token where a CSS value is written by hand goes through {@link css css.var} instead, and tinting a
+ * surface with a colour rather than painting it in one goes through {@link css css.tint}, which this call accepts.
  *
  * @param tokens The value each token takes, keyed by {@link Token token name}
  *
@@ -308,7 +310,6 @@ export type {
  * property as well for the typography and the colours the page carries its own defaults in, and for the box tokens
  */
 export const css = Object.assign(
-
 	function css(tokens: Tokens): Style {
 
 		const properties: Readonly<Record<string, Property>> = tile; // keyed by string, matching the entries below
@@ -357,10 +358,37 @@ export const css = Object.assign(
 		 */
 		var(property: Property): string {
 
-			return `var(${ property })`;
+			return `var(${property})`;
+
+		},
+
+		/**
+		 * Washes a colour token out into a surface fill.
+		 *
+		 * Gives the value a surface takes to be tinted by a colour rather than painted in it: the columns of a board
+		 * tinted along its flow from the heat scale, the lanes of a swimlane by type from the area classes. The
+		 * colour is mixed into the sunken surface, so a low share keeps the area close to the page and the text it
+		 * holds readable on the page colour, in either colour scheme, with no `color` of its own:
+		 *
+		 * ```tsx
+		 * <Box css={{ backgroundColor: css.tint(tile.colorHeat030, 20) }}>
+		 * ```
+		 *
+		 * The text an area holds still needs a `color` of its own wherever a higher share takes the fill far from
+		 * the page. The value reads the sunken surface where it is assigned, so it is never assigned to
+		 * `backgroundColorSunken` itself, which it would then be made of, leaving the fill to resolve to nothing.
+		 *
+		 * @param property The {@link Property custom property} of the colour to tint with, as given by {@link tile}
+		 * @param share The share of colour in the mix, in percent: `0` leaves the bare sunken surface, `100` the colour
+		 *
+		 * @returns A `color-mix()` value carrying `share` percent of `property` into the sunken surface, resolving
+		 * wherever it is read, so it follows whatever an app overrode and whichever colour scheme is in force
+		 */
+		tint(property: typeof tile[Palette | Ink | Fill], share: number): `color-mix(${string})` {
+
+			return `color-mix(in oklab, var(${property}) ${share}%, var(${tile.backgroundColorSunken}))`;
 
 		}
 
 	}
-
 );

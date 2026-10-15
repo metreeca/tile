@@ -40,10 +40,11 @@ import "./toast.css";
  * stands, a post put up slides in, and a post cleared fades out while the others stay put.
  *
  * Where given a `timeout`, a toast telling of nothing more pressing than a plain or completed post is taken away on
- * its own once it is up, while the post stays on the board for any other reader; any other toast stays until whoever
- * put its post up clears it, or until the reader dismisses it through the quiet control beside the message, hinted as
- * it is pointed at, which clears the post from the board for every reader. Away from those controls the stack answers
- * no gesture, leaving the pointer to the screen beneath.
+ * its own once it is up, while the post stays on the board for any other reader. Any other toast stays until whoever
+ * put its post up clears it, or until the reader deals with it: by dismissing it through the quiet control beside the
+ * message, hinted as it is pointed at, or by following the message of an actionable post where an `onAction` handler
+ * is given. Either way the post is cleared from the board for every reader. Away from those controls the stack answers
+ * no gesture, leaving the pointer to the screen beneath it, so the toasts never stand in the way of what they cover.
  *
  * Every toast takes the same width, so the stack reads as one column, a long message wrapping rather than widening
  * its toast; the width is retuned through the `--tile-toast-width` custom property, `24rem` unless restated, and
@@ -92,8 +93,8 @@ export function Toast({
 	/**
 	 * What an actionable post is handed to when the reader activates its message, for instance to open what it tells
 	 * of or to retry what failed; supplying it turns the message of every actionable post into a control, drawn as a
-	 * link. The post stays on the board, so whoever handles it clears it once it has nothing more to tell. Messages
-	 * stay plain text if omitted.
+	 * link. Acting on a post deals with it, so the post is cleared from the board for every reader before it is handed
+	 * over, and a handler putting it up again keeps it standing. Messages stay plain text if omitted.
 	 */
 	onAction?: (post: Post) => void
 
@@ -143,7 +144,12 @@ export function Toast({
 			timeout={timeout}
 			onDismiss={() => board.clear(post)}
 			onExpire={() => expire(post)}
-			onAction={post.actionable && onAction ? () => onAction(post) : undefined}
+			onAction={post.actionable && onAction ? () => {
+
+				board.clear(post);
+				onAction(post);
+
+			} : undefined}
 			onFaded={gone(post) ? () => drop(post) : undefined}
 		/>)}
 

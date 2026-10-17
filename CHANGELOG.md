@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/compare/v0.5.1...HEAD)
 
+### Changed
+
+- Upgrade `@metreeca/core` to `^0.13.0`
+
 ## [0.5.1](https://github.com/metreeca/tile/compare/v0.5.0...v0.5.1) - 2026-10-14
 
 ### Fixed

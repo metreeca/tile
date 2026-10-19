@@ -61,7 +61,7 @@
     "@metreeca/blue": "^0.12.1",
     "@metreeca/core": "^0.13.0",
     "@metreeca/http": "^0.5.0",
-    "@metreeca/qest": "^0.12.1",
+    "@metreeca/qest": "^0.13.0",
     "@metreeca/tile": "^0.6.0",
     "@metreeca/tile-cell": "^0.6.0",
     "@metreeca/tile-data": "^0.6.0"

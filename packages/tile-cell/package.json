@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-cell",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Preact widgets and controls for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -63,9 +63,9 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.12.1",
-    "@metreeca/tile": "^0.5.1",
-    "@metreeca/tile-data": "^0.5.1",
+    "@metreeca/core": "^0.13.0",
+    "@metreeca/tile": "^0.6.0",
+    "@metreeca/tile-data": "^0.6.0",
     "lucide-preact": "^1.47.0"
   },
   "devDependencies": {

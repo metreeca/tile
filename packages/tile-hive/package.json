@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-hive",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Preact layouts and containers for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -58,10 +58,10 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.12.1",
-    "@metreeca/tile": "^0.5.1",
-    "@metreeca/tile-cell": "^0.5.1",
-    "@metreeca/tile-data": "^0.5.1"
+    "@metreeca/core": "^0.13.0",
+    "@metreeca/tile": "^0.6.0",
+    "@metreeca/tile-cell": "^0.6.0",
+    "@metreeca/tile-data": "^0.6.0"
   },
   "devDependencies": {
     "happy-dom": "^20.0.0",

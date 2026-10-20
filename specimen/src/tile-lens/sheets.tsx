@@ -24,6 +24,7 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { isNumber, isObject } from "@metreeca/core";
+import { by, locale, reverse } from "@metreeca/core/order";
 import { getIRIBase } from "@metreeca/core/resource";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
@@ -54,6 +55,8 @@ const items = Array.from({ length: 1000 }, (_, index) => ({
 	label: `Item ${String(index + 1).padStart(4, "0")}`
 }));
 
+const byLabel = by((item: { readonly label: string }) => item.label, locale());
+
 
 /**
  * Answers a collection query over the sample items, sorted and sliced as the query asks, with no member the query
@@ -64,13 +67,13 @@ async function serve(request: Request): Promise<Response> {
 	const query = decodeTemplate(new URL(request.url).search.slice(1), { base: getIRIBase(entry) });
 	const members: { readonly [key: string]: unknown } = isObject(query.members) ? query.members : {};
 
-	const order = members["^label"] === "desc" ? -1 : 1;
+	const order = members["^label"] === "desc" ? reverse(byLabel) : byLabel;
 	const offset = isNumber(members["@"]) ? members["@"] : 0;
 	const limit = isNumber(members["#"]) && members["#"] > 0 ? members["#"] : items.length;
 
 	return Response.json({
 		members: "count=count:" in members ? [{ count: items.length }] : [...items]
-			.sort((x, y) => order * x.label.localeCompare(y.label))
+			.sort(order)
 			.slice(offset, offset + limit)
 	});
 

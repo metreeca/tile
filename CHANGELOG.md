@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/compare/v0.6.0...HEAD)
 
+### Security
+
+- Upgrade the `vite` development dependency to `^8.3.5`, fixing GHSA-587h-7wmj-h5pm, GHSA-r825-w8mm-5pxw and
+  GHSA-698v-4r3x-3vcv in the build and specimen tooling; published packages are not affected
+- Upgrade the `markdown-it` documentation tooling dependency to `14.3.3`, fixing GHSA-gfr2-rv44-r23c and
+  GHSA-vfgh-jcmw-g37q in the API reference build; published packages are not affected
+
 ## [0.6.0](https://github.com/metreeca/tile/compare/v0.5.1...v0.6.0) - 2026-10-20
 
 ### Changed

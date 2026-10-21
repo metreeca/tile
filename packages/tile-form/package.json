@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/tile-form",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Preact linked data forms for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
@@ -56,12 +56,12 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/tile": "^0.6.0"
+    "@metreeca/tile": "^0.6.1"
   },
   "devDependencies": {
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
-    "vite": "^8.3.0",
+    "vite": "^8.3.5",
     "vitest": "^5.0.1"
   },
   "peerDependencies": {

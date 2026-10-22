@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "name": "@metreeca/tile-specimen",
   "version": "0.1.0",
   "type": "module",
   "engines": {
@@ -7,8 +7,8 @@
   },
   "scripts": {
     "clean": "rm dist node_modules",
-    "setup": "npm ci",
     "build": "vite build",
+    "check": "tsc --noEmit",
     "watch": "vite --open"
   },
   "devDependencies": {
@@ -16,5 +16,6 @@
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
-  }
+  },
+  "private": true
 }

@@ -4,7 +4,8 @@
   "description": "Minimalist model-driven UI toolkit for linked data resources.",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "specimen"
   ],
   "scripts": {
     "clean": "npm run clean --workspaces && rm dist docs node_modules",

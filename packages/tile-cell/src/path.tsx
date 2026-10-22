@@ -29,8 +29,8 @@ import "./path.css";
 /**
  * Creates a breadcrumb path.
  *
- * Shows its steps in a row, from the outermost level to the current page. The separators between steps are supplied
- * by the widget and never announced, so a step carries no separator of its own, only its link or its plain text.
+ * Shows its steps in a row, from the outermost level to the current page. The separators between steps, and after a
+ * lone step, are supplied by the widget and never announced: a step carries only its link or its plain text.
  *
  * The trail is a navigation landmark holding an ordered list, and its last step is announced as the current page. A
  * reader thus learns where they stand whether or not they see the trail. A trail too long for its row clips its last

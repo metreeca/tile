@@ -26,7 +26,7 @@ tile-path {
         display: contents;
     }
 
-    /* The list drops the markers, indent and trailing gap the design system gives running text. */
+    /* The list drops the markers, indent and gaps the design system gives running text. */
 
     & > nav > ol {
 
@@ -47,11 +47,13 @@ tile-path {
 
         flex-shrink: 0;
 
+        margin: 0;
+
         white-space: nowrap;
 
-        /* The separator carries empty alternative text, so it is drawn without being announced as a step of its own. */
+        /* Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never announced. */
 
-        &:not(:first-child)::before {
+        &:not(:first-child)::before, &:only-child::after {
             content: "›" / "";
             padding: 0 var(--tile--spacing-050);
             color: var(--tile--color-label);

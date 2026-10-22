@@ -31,6 +31,24 @@
 }
 
 
+/**** Paths ***********************************************************************************************************/
+
+/* Trails stack down the page, the narrow one held to a fraction of the measure so that it has to clip. */
+
+.paths {
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--tile--spacing-100);
+    margin-bottom: var(--tile--spacing-100);
+
+    &.narrow {
+        max-width: calc(16 * var(--tile--spacing-100));
+    }
+
+}
+
+
 /**** Notices *********************************************************************************************************/
 
 /*

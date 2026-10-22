@@ -99,12 +99,15 @@ tile-card {
         font-style: normal;
         color: var(--tile--color-label);
 
-        /* An enlarged picture is left to the design system rule showing it over the viewport, which this would beat. */
+        /*
+         * A picture is aligned on the top of the line the description opens with rather than on its capitals: a hard
+         * edge set level with lettering reads as lower than it. An enlarged picture is left alone, since this rule
+         * would otherwise beat the design system one showing it over the viewport at a size of its own.
+         */
 
         & > img:not([active]) {
             max-width: 100%;
             height: auto;
-            margin-top: var(--tile--spacing-025);
         }
 
     }

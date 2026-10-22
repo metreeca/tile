@@ -384,6 +384,15 @@ tile-shell {
 
             }
 
+            /*
+             * The heading is drawn back by the extra side bearing its larger size carries, so its first letter stands
+             * on the edge the body text below it starts from rather than visibly to the right of it.
+             */
+
+            & > span[id] {
+                text-indent: -0.04em; /* Optical nudge, below the spacing scale. */
+            }
+
         }
 
         & > section {

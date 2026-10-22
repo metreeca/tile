@@ -73,10 +73,10 @@ small {
 }
 
 /*
- * An image carrying the `active` attribute is lifted out of the text and shown over most of the viewport, fitted
- * without cropping on a rounded panel in the page background. A margin of the blanket a modal dims the page with is
- * left around the panel. Setting and clearing the attribute is left to whoever renders the page, as the Tile router
- * does on a click, restoring the image on `Escape` or as soon as the focus moves.
+ * An image carrying the `active` attribute is lifted out of the text and centred over the viewport at its natural size,
+ * scaled down without cropping where it would not fit, on a rounded panel in the page background hugging the picture.
+ * A margin of the blanket a modal dims the page with is left around the panel. Whoever renders the page sets and
+ * clears the attribute, as the Tile router does on a click, restoring the image on `Escape` or once the focus moves.
  */
 
 img:not(a img) {
@@ -86,19 +86,23 @@ img:not(a img) {
 img[active] {
 
     position: fixed;
-    inset: var(--tile--spacing-200);
+    inset: var(--tile--spacing-150);
     z-index: var(--tile--z-index-modal);
 
-    width: calc(100% - 2 * var(--tile--spacing-200));
-    height: calc(100% - 2 * var(--tile--spacing-200));
-    max-width: none;
-    max-height: none;
+    /*
+     * Both sizes are left to the picture and capped by the room inside the margin, so the panel keeps the picture's
+     * proportions wherever the cap bites. The automatic margins centre what the cap leaves smaller than that room.
+     */
 
-    margin: 0;
+    width: auto;
+    height: auto;
+    max-width: calc(100% - 2 * var(--tile--spacing-150));
+    max-height: calc(100% - 2 * var(--tile--spacing-150));
+
+    margin: auto;
     padding: var(--tile--spacing-100);
     border-radius: var(--tile--border-radius-050);
 
-    object-fit: contain;
     background-color: var(--tile--background-color);
 
     /* A spread past any viewport, so the blanket covers the whole page around the panel. */

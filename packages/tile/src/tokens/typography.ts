@@ -34,7 +34,8 @@
  * `letterSpacingHeading` ships neutral and lets the brand face decide, so an app supplying a condensed or a wide face
  * corrects the tracking without restating the rule.
  *
- * **Weights** — `fontWeight` is text at rest, `fontWeightStrong` a run marked out, `fontWeightHeavy` a title or header.
+ * **Weights** — `fontWeight` is text at rest, `fontWeightStrong` a run marked out, `fontWeightLabel` a label standing
+ * on its own such as a navigation entry or a strong link, and `fontWeightHeavy` a title, a tab or a table header.
  *
  * @module typography
  */
@@ -61,6 +62,7 @@ export const typography = {
 
 	fontWeight: "--tile--font-weight",
 	fontWeightStrong: "--tile--font-weight-strong",
+	fontWeightLabel: "--tile--font-weight-label",
 	fontWeightHeavy: "--tile--font-weight-heavy"
 
 } as const;

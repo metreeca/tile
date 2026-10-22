@@ -71,6 +71,7 @@ const weights: ReadonlyArray<Entry> = [
 
 	[ tile.fontWeight, "body copy" ],
 	[ tile.fontWeightStrong, "headings, links, terms and strong words" ],
+	[ tile.fontWeightLabel, "labels standing on their own, such as strong links" ],
 	[ tile.fontWeightHeavy, "table headers" ]
 
 ];

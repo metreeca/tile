@@ -98,6 +98,12 @@
     initial-value: 400;
 }
 
+@property --tile--font-weight-label {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 500;
+}
+
 @property --tile--font-weight-heavy {
     syntax: "<number>";
     inherits: true;

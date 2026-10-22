@@ -13,7 +13,8 @@ system over an area so a toolbar, a panel or a whole screen is written in a sing
 it repeating the same value, and a widget asking for something of its own still getting it. Another sets them on a box
 of its own, padded, rounded, lifted and painted from the design system, so a card, a panel or a well needs no rule
 written for it. A third lists the properties of a resource, each value beside the label naming it, so a sidebar or the
-body of a page shows what is known about the resource without a table laid out for the purpose.
+body of a page shows what is known about the resource without a table laid out for the purpose. A fourth sums up a
+resource as a card, its title, tags and description beside an image, so a list of results reads as a run of entries.
 
 Styling is structural only: what an arrangement needs to work, with the values behind colour, type and spacing left to
 [@metreeca/tile](https://www.npmjs.com/package/@metreeca/tile) or to whoever styles the app.

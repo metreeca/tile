@@ -1,0 +1,142 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A card lays its parts out as a two-column grid: the title over the description in a main column, the tags over the
+ * image in a side column kept to the start or to the end of the card, its width retunable through the knobs below.
+ */
+
+/*
+ * The width of the side column, one knob for each side it may keep to: an image at the start leads into the entry and
+ * stays narrow, one at the end trails it and is given more room. They are properties of this layout rather than design
+ * system tokens, so a single dash keeps them apart from the `--tile--` contract.
+ */
+
+@property --tile-card-start-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 10rem;
+}
+
+@property --tile-card-end-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 15rem;
+}
+
+tile-card {
+
+    display: grid;
+    grid-template-rows: min-content min-content;
+    align-items: start;
+    gap: var(--tile--spacing-050) var(--tile--spacing-100);
+
+    /* Consecutive cards are set a step apart, so a run of them reads as a list of entries. */
+
+    & + & {
+        margin-top: var(--tile--spacing-100);
+    }
+
+    /* The title and the tags share the first row, sitting on a common baseline as a property panel entry does. */
+
+    & > span {
+        grid-row: 1;
+        align-self: baseline;
+    }
+
+    & > div,
+    & > i {
+        grid-row: 2;
+    }
+
+    & > span:not(.tags),
+    & > div {
+        justify-self: stretch;
+    }
+
+    /*
+     * Tags are guidance rather than text, rendered as the labels of a property panel are: they take the size and weight
+     * of the title beside them, set apart by the label colour alone, which holds 4.5:1 in both schemes, and are kept to
+     * one line, clipped with an ellipsis where they outrun the side column rather than wrapping the row.
+     */
+
+    & > .tags {
+
+        justify-self: end;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: end;
+        color: var(--tile--color-label);
+
+    }
+
+    /* An image given as initials or an icon rather than a picture is set in the label colour, as the tags are. */
+
+    & > i {
+
+        justify-self: end;
+        font-style: normal;
+        color: var(--tile--color-label);
+
+        & > img {
+            margin-top: var(--tile--spacing-025);
+        }
+
+    }
+
+    &[side="start"] {
+
+        grid-template-columns: var(--tile-card-start-width) 1fr;
+
+        & > .tags,
+        & > i {
+            grid-column: 1;
+        }
+
+        & > span:not(.tags),
+        & > div {
+            grid-column: 2;
+        }
+
+    }
+
+    &[side="end"] {
+
+        grid-template-columns: 1fr var(--tile-card-end-width);
+
+        & > .tags,
+        & > i {
+            grid-column: 2;
+        }
+
+        & > span:not(.tags),
+        & > div {
+            grid-column: 1;
+        }
+
+    }
+
+    /*
+     * At the end, a description with no image beneath the side column runs on under the tags, after the side rule it
+     * overrides. At the start it keeps to the main column, so it never slips under the tags leading into the entry.
+     */
+
+    &[side="end"] > div:last-child {
+        grid-column: 1 / -1;
+    }
+
+}

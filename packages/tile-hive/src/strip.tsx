@@ -87,13 +87,13 @@ export function Strip({
 	 * Where the items sit along the row, when the strip is wider than they are: at the `start`, in the `center`, at
 	 * the `end`, `spread` from edge to edge, the leftover room shared out between them, or split with the first item
 	 * alone at the start and the others at the end (`head`), or the last item alone at the end and the others at the
-	 * start (`tail`).
+	 * start (`tail`); at the start if omitted, packed against the leading edge as plain document flow leaves them.
 	 */
 	place?: "start" | "center" | "end" | "spread" | "head" | "tail"
 
 	/**
 	 * Where each item sits across the row: against the `start` edge, in the `center`, against the `end` edge, on the
-	 * text `baseline` shared with the other items, or `stretch`ed to the full height of the row.
+	 * text `baseline` shared with the other items, or `stretch`ed to the row height; at the `start` if omitted.
 	 */
 	align?: "start" | "center" | "end" | "baseline" | "stretch"
 

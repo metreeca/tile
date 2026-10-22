@@ -72,9 +72,7 @@ export function Toast({
 	 * `end` following the writing direction; centred on the edge if only the edge is given. The newest toast sits
 	 * nearest the edge and slides in from it. On a narrow screen the stack spans the edge whatever the side, so it
 	 * keeps every toast legible. One placement serves a whole interface, chosen where its layout leaves room, clear of
-	 * the navigation and the main actions.
-	 *
-	 * @defaultValue "top"
+	 * the navigation and the main actions; if omitted, the stack hangs from the top edge, centred on it.
 	 */
 	position?: "top" | "bottom" | readonly ["top" | "bottom", "start" | "center" | "end"]
 
@@ -83,9 +81,7 @@ export function Toast({
 	 * moment the post was put up or last updated; the post itself stays on the board. The toasts of `pending`,
 	 * `warning`, `failure` and `defect` posts stay until their posts are cleared, as do those of actionable posts
 	 * whatever their status where an `onAction` handler is given, so nothing still under way, asking for attention or
-	 * waiting to be acted on goes unseen. No toast is taken away on its own if not positive.
-	 *
-	 * @defaultValue 0
+	 * waiting to be acted on goes unseen. No toast is taken away on its own if not positive, or if omitted.
 	 */
 	timeout?: number
 

@@ -32,13 +32,16 @@ tile-info {
         border-top-style: var(--tile--border-style);
     }
 
-    /* A run of panels is set off from what surrounds it by a step above the first and below the last. */
+    /*
+     * A run of panels is set off from what surrounds it by a step above the first and below the last. A run opening or
+     * closing its container takes no step on that side, so it lines up with the edge the container already pads.
+     */
 
-    &:not(& + &) {
+    &:not(& + &):not(:first-child) {
         padding-top: var(--tile--spacing-050);
     }
 
-    &:not(:has(+ &)) {
+    &:not(:has(+ &)):not(:last-child) {
         padding-bottom: var(--tile--spacing-050);
     }
 

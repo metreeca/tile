@@ -36,11 +36,20 @@ tile-link {
         text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
     }
 
-    /* The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it. */
+    /*
+     * The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it until
+     * the pointer reaches it, when it turns to the hover colour as the other steps do.
+     */
 
     &[look="subtle"] > a {
+
         color: inherit;
         text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
     }
 
     /*
@@ -71,8 +80,14 @@ tile-link {
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a {
+
         color: inherit;
         text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
     }
 
 }

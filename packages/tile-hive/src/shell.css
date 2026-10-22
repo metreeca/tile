@@ -385,12 +385,14 @@ tile-shell {
             }
 
             /*
-             * The heading is drawn back by the extra side bearing its larger size carries, so its first letter stands
-             * on the edge the body text below it starts from rather than visibly to the right of it.
+             * The heading is drawn back a little past the extra side bearing its larger size carries, so its first
+             * letter reads as standing on the edge the body text below it starts from, not to its right. The row itself
+             * is moved, through a margin no descendant inherits, so the heading lands in one place, plain text or a
+             * trail of links alike, and a control opening the row moves with it.
              */
 
             & > span[id] {
-                text-indent: -0.04em; /* Optical nudge, below the spacing scale. */
+                margin-left: calc(-1 * var(--tile-shell-ring-room) - 0.07em); /* Optical nudge, below the scale. */
             }
 
         }

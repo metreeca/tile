@@ -51,12 +51,38 @@ tile-path {
 
         white-space: nowrap;
 
-        /* Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never announced. */
+        /*
+         * Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never announced.
+         * Each is the lucide right chevron, a little shorter than a lowercase letter and centred on the x-height, so
+         * it reads as a mark between the words rather than as a letter among them at any size. It is painted in the
+         * label colour through a mask cropped to the stroke, round caps included. The stroke is stated in the glyph,
+         * a mask having no way to read a custom property, at a width close to the stem of the light text weight. The
+         * chevron keeps the label colour under forced colours, which would otherwise paint the box it is cut from.
+         */
 
         &:not(:first-child)::before, &:only-child::after {
-            content: "›" / "";
-            padding: 0 var(--tile--spacing-050);
-            color: var(--tile--color-label);
+
+            --tile-path-chevron-height: 0.9ex;
+
+            content: "" / "";
+
+            display: inline-block;
+
+            /* The stroke spans 8 by 14 of the units the glyph is drawn on. */
+
+            width: calc(var(--tile-path-chevron-height) * 8 / 14);
+            height: var(--tile-path-chevron-height);
+            margin: 0 calc((var(--tile--spacing-025) + var(--tile--spacing-050)) / 2); /* Between the two steps. */
+
+            /* Raised off the baseline by half the room the x-height leaves around it. */
+
+            vertical-align: calc((1ex - var(--tile-path-chevron-height)) / 2);
+
+            background-color: var(--tile--color-label);
+            forced-color-adjust: none;
+
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='8 5 8 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat;
+
         }
 
         &:last-child {

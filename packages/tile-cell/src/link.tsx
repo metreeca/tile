@@ -72,9 +72,10 @@ export function Link({
 
 	/**
 	 * How loud the link appears: `subtle` reads as the text around it, font and colour alike, `normal` adds the
-	 * link colour and an underline, and `strong` stands as a label of its own, smaller and heavier in the text colour
-	 * with no underline, as a navigation entry does. However loud, a marked link is underlined in the accent colour,
-	 * thick except for `subtle`, where the mark is thinner and closer to the text.
+	 * link colour and an underline, and `strong` stands as a label of its own, heavier in the link colour with no
+	 * underline, as a navigation entry does. Every look keeps the face and size of the text around it, and holds its
+	 * colour through the press. However loud, a marked link is underlined in the accent colour, thick except for
+	 * `subtle`, where the mark is thinner and drawn closer to the text it sits under.
 	 *
 	 * A link stating nothing takes the look the area around it is written in, from the `--tile--look` token the
 	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.

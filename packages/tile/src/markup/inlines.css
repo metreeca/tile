@@ -24,8 +24,14 @@ a, a:visited {
 
     cursor: pointer;
 
+    /*
+     * A link answers the pointer by turning to the hover colour, and keeps it through the press rather than flashing a
+     * colour of its own. The focus is marked by the outline a native control carries, which no underline rule clears.
+     */
+
     &:focus-visible {
-        text-decoration: underline;
+        outline: var(--tile--outline-focus);
+        outline-offset: var(--tile--border-width);
     }
 
     &:hover {
@@ -34,7 +40,6 @@ a, a:visited {
 
     &:active {
         text-decoration: underline;
-        color: var(--tile--color-focus);
     }
 
 }

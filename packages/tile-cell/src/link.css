@@ -15,9 +15,9 @@
  */
 
 /*
- * A link starts from the colour and the hover the design system gives any anchor, and this sheet says how loud it
- * appears on top of that. The ordinary step reads as the text around it, underlined so that it is told from that text
- * wherever colour does not reach.
+ * A link starts from the colour and the focus mark the design system gives any anchor, and this sheet says how loud
+ * it appears on top of that. Every step keeps the face and size of the text around it, and holds its colour through
+ * the press. The ordinary step is underlined, so that it is told from that text wherever colour does not reach.
  */
 
 tile-link {
@@ -44,21 +44,13 @@ tile-link {
     }
 
     /*
-     * The loud step stands as a label of its own, set as a tab label is, in the text colour rather than the link one:
-     * it is read as an entry of a menu rather than as a passage of the text.
+     * The loud step stands as a label of its own, set as a tab label is: heavier and with no underline, it is read as
+     * an entry of a menu rather than as a passage of the text, while the link colour still says it leads somewhere.
      */
 
     &[look="strong"] > a {
-
-        font-weight: var(--tile--font-weight-heavy);
-        color: var(--tile--color);
-
+        font-weight: var(--tile--font-weight-label);
         text-decoration-line: none;
-
-        &:hover {
-            color: var(--tile--color-hover);
-        }
-
     }
 
 }
@@ -79,7 +71,6 @@ tile-link {
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a {
-        font-family: var(--tile--font-family-heading);
         color: inherit;
         text-decoration-line: none;
     }
@@ -89,17 +80,8 @@ tile-link {
 @container style(--tile--look: strong) {
 
     tile-link:not([look]) > a {
-
-        font-size: var(--tile--font-size-small);
-        font-weight: var(--tile--font-weight-heavy);
-        color: var(--tile--color);
-
+        font-weight: var(--tile--font-weight-label);
         text-decoration-line: none;
-
-        &:hover {
-            color: var(--tile--color-hover);
-        }
-
     }
 
 }

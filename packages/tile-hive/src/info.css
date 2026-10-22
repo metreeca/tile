@@ -1,0 +1,138 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A panel lays its definition list out as a two-column grid, labels in the first column and values in the second. In
+ * a sidebar the labels keep to the left edge and the values to the right one; in the body of a page the two columns
+ * share the width and meet at its middle.
+ */
+
+tile-info {
+
+    display: block;
+
+    /* Consecutive panels are set apart by a rule, so a screen groups properties by panel. */
+
+    & + & {
+        margin-top: var(--tile--spacing-100);
+        padding-top: var(--tile--spacing-100);
+        border-top-style: var(--tile--border-style);
+    }
+
+    /* A run of panels is set off from what surrounds it by a step above the first and below the last. */
+
+    &:not(& + &) {
+        padding-top: var(--tile--spacing-050);
+    }
+
+    &:not(:has(+ &)) {
+        padding-bottom: var(--tile--spacing-050);
+    }
+
+    & > dl {
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: baseline;
+        gap: var(--tile--spacing-025) var(--tile--spacing-050);
+
+        margin: 0;
+
+        /*
+         * Spacing between entries comes from the grid gap, replacing the margins the base list rules set. Labels and
+         * values are kept to one line each, clipped with an ellipsis where they outrun their column, so one long value
+         * neither wraps the row nor widens the panel.
+         */
+
+        & > dt,
+        & > dd {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        /*
+         * Labels are guidance rather than text, so they differ from their values by colour alone: they take the size
+         * and weight of the values beside them, sharing their line, in the label colour the base list rules give a
+         * term, which holds the 4.5:1 a text role owes in both schemes.
+         */
+
+        & > dt {
+            text-align: end;
+            text-transform: capitalize;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        & > dd {
+
+            /* A value listing several items sets them one per line, each marked unless it stands alone. */
+
+            & > ul {
+
+                padding: 0;
+
+                list-style-type: none;
+
+                & > li {
+
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    /*
+                     * The chevron is drawn on the x-height, so it sits low beside an item opening on a capital. It is
+                     * lifted by half the gap between the x-height and the cap height, which centres it on the cap
+                     * height, read off the font in use through the ex and cap units so the lift follows any face;
+                     * relative positioning leaves the line box as it was.
+                     */
+
+                    &:not(:only-child)::before {
+                        content: "›";
+                        position: relative;
+                        top: calc((1ex - 1cap) / 2);
+                        padding-right: var(--tile--spacing-050);
+                        color: var(--tile--color-disabled);
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    /*
+     * Spread, labels keep to the left edge and values to the right one. Labels take the width they need up to half the
+     * panel, so a long label is clipped rather than crowding out the values it is there to introduce.
+     */
+
+    &[place="spread"] > dl {
+
+        grid-template-columns: minmax(0, max-content) minmax(50%, 1fr);
+
+        & > dt {
+            text-align: start;
+        }
+
+        & > dd {
+            text-align: end;
+        }
+
+    }
+
+}

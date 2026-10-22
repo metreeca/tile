@@ -16,6 +16,7 @@
 
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Boxes } from "@metreeca/specimen/tile-hive/boxes.js";
+import { Infos } from "@metreeca/specimen/tile-hive/infos.js";
 import { Layouts } from "@metreeca/specimen/tile-hive/layouts.js";
 import { Shells } from "@metreeca/specimen/tile-hive/shells.js";
 import { Stacks } from "@metreeca/specimen/tile-hive/stacks.js";
@@ -42,6 +43,7 @@ export function TileHive() {
 		Strip: <Strips/>,
 		Box: <Boxes/>,
 		Layout: <Layouts/>,
+		Info: <Infos/>,
 		Style: <Styles/>,
 		Toast: <Toasts/>,
 		Empty: <></>

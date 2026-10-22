@@ -12,7 +12,8 @@ A container need not place anything. One may instead settle how the widgets it e
 system over an area so a toolbar, a panel or a whole screen is written in a single register rather than every widget in
 it repeating the same value, and a widget asking for something of its own still getting it. Another sets them on a box
 of its own, padded, rounded, lifted and painted from the design system, so a card, a panel or a well needs no rule
-written for it.
+written for it. A third lists the properties of a resource, each value beside the label naming it, so a sidebar or the
+body of a page shows what is known about the resource without a table laid out for the purpose.
 
 Styling is structural only: what an arrangement needs to work, with the values behind colour, type and spacing left to
 [@metreeca/tile](https://www.npmjs.com/package/@metreeca/tile) or to whoever styles the app.

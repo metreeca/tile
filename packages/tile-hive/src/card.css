@@ -99,7 +99,9 @@ tile-card {
         font-style: normal;
         color: var(--tile--color-label);
 
-        & > img {
+        /* An enlarged picture is left to the design system rule showing it over the viewport, which this would beat. */
+
+        & > img:not([active]) {
             max-width: 100%;
             height: auto;
             margin-top: var(--tile--spacing-025);

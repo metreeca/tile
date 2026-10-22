@@ -31,10 +31,10 @@ import "./logo.css";
 /**
  * Creates a logo.
  *
- * Shows the app icon as a square measured against the capitals beside it and sitting on their baseline, so a heading,
- * a toolbar or a footer carries the mark without a measure of its own and the mark reads as part of the line rather
- * than as something dropped into it. The mark is fitted to that square whatever its proportions, so a wide or a tall
- * one is shown whole rather than cropped.
+ * Shows the app icon as a square measured against the capitals beside it and centred on them, whether the row it
+ * stands in centres its items or aligns them on the baseline. A heading, a toolbar or a footer thus carries the mark
+ * without a measure of its own, and the mark reads as part of the line rather than as something dropped into it. The
+ * mark is fitted to that square whatever its proportions, so a wide or a tall one is shown whole rather than cropped.
  *
  * A document stating no icon leaves nothing behind, so a screen closes up rather than holding a gap for the mark.
  *

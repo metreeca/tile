@@ -37,8 +37,8 @@ export function Logos() {
 	return <>
 
 		<p>A logo takes the app mark from what the document already states. The mark is centred on the capitals around
-			it and sits on their baseline, so it takes the size of the line it is set in rather than carrying a measure
-			of its own.</p>
+			it, however the row it stands in aligns its items, and takes the size of the line it is set in rather than
+			carrying a measure of its own.</p>
 
 		<div class="controls">
 			<span><Logo/> {app.name}</span>

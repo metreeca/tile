@@ -81,20 +81,4 @@ describe("Card", () => {
 
 	});
 
-	describe("side", () => {
-
-		it("defaults to start", async () => {
-
-			expect(rendered(<Card title="Title"/>)?.getAttribute("side")).toBe("start");
-
-		});
-
-		it("keeps to the side given", async () => {
-
-			expect(rendered(<Card title="Title" side="end"/>)?.getAttribute("side")).toBe("end");
-
-		});
-
-	});
-
 });

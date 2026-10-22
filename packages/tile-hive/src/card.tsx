@@ -31,10 +31,10 @@ import "./card.css";
 /**
  * Creates a resource summary card.
  *
- * Sets the title over the description in a main column, and the tags over the image in a side column at the start or
- * at the end of the card, as wide as what it holds up to the cap the `--tile-card-side-max-width` knob sets.
- * At the end, a description with no image beneath the side column runs on under the tags. Consecutive cards are set a
- * spacing step apart, so a run of them reads as a list of entries rather than as one block of text.
+ * Sets the title over the description in a main column, and the tags over the image in a side column at the end of
+ * the card, sized to its content up to the cap set by the `--tile-card-side-max-width` knob. A description with no
+ * image beneath the side column runs on under the tags. Consecutive cards are set a spacing step apart, so a run of
+ * them reads as a list of entries rather than as one block of text, with no layout written for each entry.
  *
  * Empty parts are left out, and a card left with none renders nothing, so a screen hands over whatever it knows about
  * a resource without first checking what is missing. A part is empty when it is `undefined`, `null`, an empty string
@@ -46,8 +46,6 @@ import "./card.css";
  */
 export function Card({
 
-	side = "start",
-
 	title,
 	tags,
 	image,
@@ -55,13 +53,6 @@ export function Card({
 	children
 
 }: {
-
-	/**
-	 * The edge of the card the side column holding the tags and the image keeps to: the `start`, the default, as fits a
-	 * narrow mark leading into the entry such as an acronym, or the `end`, as fits a picture trailing a search result.
-	 */
-	side?: "start" | "end"
-
 
 	/**
 	 * The title naming the resource, at the top of the main column.
@@ -92,11 +83,7 @@ export function Card({
 		return part !== undefined && part !== null && part !== "" && !isBoolean(part);
 	}
 
-	return [title, tags, image, children].some(shown) ? createElement("tile-card", {
-
-		side
-
-	}, <>
+	return [title, tags, image, children].some(shown) ? createElement("tile-card", {}, <>
 
 		{shown(title) && <span>{title}</span>}
 		{shown(tags) && <span class="tags">{tags}</span>}

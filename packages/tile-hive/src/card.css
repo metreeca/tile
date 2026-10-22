@@ -16,7 +16,7 @@
 
 /*
  * A card lays its parts out as a two-column grid: the title over the description in a main column, the tags over the
- * image in a side column kept to the start or to the end of the card, as wide as what it holds up to the cap below.
+ * image in a side column kept to the end of the card, as wide as what it holds up to the cap set below.
  */
 
 /*
@@ -34,6 +34,7 @@
 tile-card {
 
     display: grid;
+    grid-template-columns: 1fr fit-content(var(--tile-card-side-max-width));
     grid-template-rows: min-content min-content;
     align-items: start;
     gap: var(--tile--spacing-050) var(--tile--spacing-100);
@@ -58,7 +59,14 @@ tile-card {
 
     & > span:not(.tags),
     & > div {
+        grid-column: 1;
         justify-self: stretch;
+    }
+
+    /* A description with no image beneath the side column runs on under the tags. */
+
+    & > div:last-child {
+        grid-column: 1 / -1;
     }
 
     /*
@@ -69,6 +77,7 @@ tile-card {
 
     & > .tags {
 
+        grid-column: 2;
         justify-self: end;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -85,6 +94,7 @@ tile-card {
         /* The image may shrink below its own width, so a picture wider than the cap leaves the column as capped. */
 
         min-width: 0;
+        grid-column: 2;
         justify-self: end;
         font-style: normal;
         color: var(--tile--color-label);
@@ -95,47 +105,6 @@ tile-card {
             margin-top: var(--tile--spacing-025);
         }
 
-    }
-
-    &[side="start"] {
-
-        grid-template-columns: fit-content(var(--tile-card-side-max-width)) 1fr;
-
-        & > .tags,
-        & > i {
-            grid-column: 1;
-        }
-
-        & > span:not(.tags),
-        & > div {
-            grid-column: 2;
-        }
-
-    }
-
-    &[side="end"] {
-
-        grid-template-columns: 1fr fit-content(var(--tile-card-side-max-width));
-
-        & > .tags,
-        & > i {
-            grid-column: 2;
-        }
-
-        & > span:not(.tags),
-        & > div {
-            grid-column: 1;
-        }
-
-    }
-
-    /*
-     * At the end, a description with no image beneath the side column runs on under the tags, after the side rule it
-     * overrides. At the start it keeps to the main column, so it never slips under the tags leading into the entry.
-     */
-
-    &[side="end"] > div:last-child {
-        grid-column: 1 / -1;
     }
 
 }

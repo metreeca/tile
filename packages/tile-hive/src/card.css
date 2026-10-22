@@ -16,25 +16,19 @@
 
 /*
  * A card lays its parts out as a two-column grid: the title over the description in a main column, the tags over the
- * image in a side column kept to the start or to the end of the card, its width retunable through the knobs below.
+ * image in a side column kept to the start or to the end of the card, as wide as what it holds up to the cap below.
  */
 
 /*
- * The width of the side column, one knob for each side it may keep to: an image at the start leads into the entry and
- * stays narrow, one at the end trails it and is given more room. They are properties of this layout rather than design
- * system tokens, so a single dash keeps them apart from the `--tile--` contract.
+ * The widest the side column grows: 15rem on a wide card and a third of a narrow one, the share taken of the card
+ * where the knob is read, so the main column keeps at least two thirds of the card at any width. Past it, tags are
+ * clipped and a picture is scaled down. A single dash keeps this layout knob apart from the `--tile--` contract.
  */
 
-@property --tile-card-start-width {
+@property --tile-card-side-max-width {
     syntax: "*";
     inherits: true;
-    initial-value: 10rem;
-}
-
-@property --tile-card-end-width {
-    syntax: "*";
-    inherits: true;
-    initial-value: 15rem;
+    initial-value: min(15rem, 33%);
 }
 
 tile-card {
@@ -88,11 +82,16 @@ tile-card {
 
     & > i {
 
+        /* The image may shrink below its own width, so a picture wider than the cap leaves the column as capped. */
+
+        min-width: 0;
         justify-self: end;
         font-style: normal;
         color: var(--tile--color-label);
 
         & > img {
+            max-width: 100%;
+            height: auto;
             margin-top: var(--tile--spacing-025);
         }
 
@@ -100,7 +99,7 @@ tile-card {
 
     &[side="start"] {
 
-        grid-template-columns: var(--tile-card-start-width) 1fr;
+        grid-template-columns: fit-content(var(--tile-card-side-max-width)) 1fr;
 
         & > .tags,
         & > i {
@@ -116,7 +115,7 @@ tile-card {
 
     &[side="end"] {
 
-        grid-template-columns: 1fr var(--tile-card-end-width);
+        grid-template-columns: 1fr fit-content(var(--tile-card-side-max-width));
 
         & > .tags,
         & > i {

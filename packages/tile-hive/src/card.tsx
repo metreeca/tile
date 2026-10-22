@@ -32,7 +32,7 @@ import "./card.css";
  * Creates a resource summary card.
  *
  * Sets the title over the description in a main column, and the tags over the image in a side column at the start or
- * at the end of the card, its width retuned through the `--tile-card-start-width` and `--tile-card-end-width` knobs.
+ * at the end of the card, as wide as what it holds up to the cap the `--tile-card-side-max-width` knob sets.
  * At the end, a description with no image beneath the side column runs on under the tags. Consecutive cards are set a
  * spacing step apart, so a run of them reads as a list of entries rather than as one block of text.
  *

@@ -52,11 +52,11 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/blue": "^0.13.0",
+    "@metreeca/blue": "^0.13.1",
     "@metreeca/core": "^0.13.0",
     "@metreeca/http": "^0.5.0",
-    "@metreeca/keep": "^0.12.0",
-    "@metreeca/keep-rest": "^0.12.0",
+    "@metreeca/keep": "^0.12.2",
+    "@metreeca/keep-rest": "^0.12.2",
     "@metreeca/qest": "^0.13.0"
   },
   "devDependencies": {

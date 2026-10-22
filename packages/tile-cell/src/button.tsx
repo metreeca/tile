@@ -51,13 +51,13 @@ export function Button({
 
 	disabled,
 
-	icon,
-	label,
-	title,
-
 	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 	mode = "normal",
 	type = "button",
+
+	icon,
+	label,
+	title,
 
 	onClick
 
@@ -74,27 +74,6 @@ export function Button({
 	 * Whether the button is inactive, greyed and out of the tab order like any disabled control; live if omitted.
 	 */
 	disabled?: boolean
-
-	/**
-	 * The glyph marking the action, shown before the label and hidden from assistive technology unless labelled itself.
-	 */
-	icon?: ComponentChildren
-
-	/**
-	 * The text the button shows, naming it unless `name` does; omitted only where `name` or `title` names the glyph.
-	 */
-	label?: string
-
-	/**
-	 * The hint the platform shows on resting the pointer on the button, such as the shortcut it answers to or what a
-	 * glyph stands for at greater length than its name; no hint if omitted.
-	 *
-	 * Beside a label or a `name` it names nothing. On a glyph standing alone with no `name` it names the button, and is
-	 * then spoken as a name rather than as an aside, so it states what the button does before any shortcut. Either
-	 * way it reaches neither a reader who never rests the pointer nor one on a touch screen, so whatever a reader has
-	 * to take in to use the control belongs in the label or beside it rather than here.
-	 */
-	title?: string
 
 	/**
 	 * How loud the button appears, told in weight, rule and room rather than in colour, so it stays legible wherever
@@ -123,6 +102,27 @@ export function Button({
 	 * leaves it alone, so that a button inside a form behaves as one outside it unless asked otherwise.
 	 */
 	type?: "button" | "submit" | "reset"
+
+	/**
+	 * The glyph marking the action, shown before the label and hidden from assistive technology unless labelled itself.
+	 */
+	icon?: ComponentChildren
+
+	/**
+	 * The text the button shows, naming it unless `name` does; omitted only where `name` or `title` names the glyph.
+	 */
+	label?: string
+
+	/**
+	 * The hint the platform shows on resting the pointer on the button, such as the shortcut it answers to or what a
+	 * glyph stands for at greater length than its name; no hint if omitted.
+	 *
+	 * Beside a label or a `name` it names nothing. On a glyph standing alone with no `name` it names the button, and is
+	 * then spoken as a name rather than as an aside, so it states what the button does before any shortcut. Either
+	 * way it reaches neither a reader who never rests the pointer nor one on a touch screen, so whatever a reader has
+	 * to take in to use the control belongs in the label or beside it rather than here.
+	 */
+	title?: string
 
 	/**
 	 * What activating the button is handed to, whether the activation comes from a pointer, from `Enter` or from

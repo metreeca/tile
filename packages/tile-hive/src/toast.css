@@ -247,7 +247,8 @@ tile-toast {
                     text-decoration-line: underline;
                     text-decoration-color: var(--tile--border-color);
                     text-decoration-thickness: var(--tile--border-width);
-                    text-underline-offset: 0.3em; /* Optical nudge held off the descenders, as links are. */
+                    text-underline-position: under; /* Hung below the descenders, as links are. */
+                    text-underline-offset: 0.1em;
 
                     &:hover {
                         color: var(--tile--color-hover);

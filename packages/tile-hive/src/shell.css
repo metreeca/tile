@@ -526,7 +526,7 @@ tile-shell {
 
             & > h1 {
 
-                font-weight: var(--tile--font-weight-heavy);
+                font-weight: var(--tile--font-weight-strong);
 
                 & + h1 {
                     margin-top: var(--tile--spacing-025);

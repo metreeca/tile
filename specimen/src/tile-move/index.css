@@ -115,7 +115,7 @@
 
             & > header {
                 font-size: var(--tile--font-size-small);
-                font-weight: var(--tile--font-weight-heavy);
+                font-weight: var(--tile--font-weight-strong);
                 color: var(--tile--color-label);
             }
 
@@ -142,7 +142,7 @@
 
     & > header {
         font-size: var(--tile--font-size-small);
-        font-weight: var(--tile--font-weight-heavy);
+        font-weight: var(--tile--font-weight-strong);
         color: var(--tile--color-label);
     }
 

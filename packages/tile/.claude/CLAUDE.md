@@ -285,7 +285,7 @@ without the readings interfering.
 
 | Value    | Means                                                          |
 |----------|----------------------------------------------------------------|
-| `subtle` | recedes: lighter weight, no border, less room                  |
+| `subtle` | recedes: ordinary weight, no border, less room                 |
 | `normal` | ordinary weight, ordinary room                                 |
 | `strong` | carries the moment: heavier weight, a border, more room, first |
 

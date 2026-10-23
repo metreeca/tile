@@ -38,44 +38,6 @@ const spacings: ReadonlyArray<Entry> = [
 
 ];
 
-const faces: ReadonlyArray<Entry> = [
-
-	[ tile.fontFamily, "body copy, and everything not named below" ],
-	[ tile.fontFamilyHeading, "a title" ],
-	[ tile.fontFamilyMono, "a code span, and a figure aligning down a column" ]
-
-];
-
-const sizes: ReadonlyArray<Entry> = [
-
-	[ tile.fontSizeSmall, "small print and table text" ],
-	[ tile.fontSize, "body copy, relative to the reader's own setting" ],
-	[ tile.fontSizeLarge, "the page heading" ],
-	[ tile.fontSizeHeading, "every heading below the first, which all share it" ]
-
-];
-
-const tracking: ReadonlyArray<Entry> = [
-
-	[ tile.letterSpacingHeading, "the tracking a heading takes, neutral until a brand face asks otherwise" ]
-
-];
-
-const leadings: ReadonlyArray<Entry> = [
-
-	[ tile.lineHeight, "the leading every line of text is set on" ]
-
-];
-
-const weights: ReadonlyArray<Entry> = [
-
-	[ tile.fontWeight, "body copy" ],
-	[ tile.fontWeightStrong, "headings, links, terms and strong words" ],
-	[ tile.fontWeightLabel, "labels standing on their own, such as strong links" ],
-	[ tile.fontWeightHeavy, "table headers" ]
-
-];
-
 const rules: ReadonlyArray<Entry> = [
 
 	[ tile.borderStyle, "the line a border is drawn as" ],
@@ -142,9 +104,9 @@ export const scalings: ReadonlyArray<Entry> = [
 /**
  * Creates the scales section.
  *
- * Shows the ladders an interface is measured on: the spacing a thing is set apart by, the type it is written in, the
- * scaling a mark beside the text is sized on, the line and the radii a box is edged with, the marks a control wears
- * when it is reached or rejected, and the durations and curves a change is timed by, which run under the pointer.
+ * Shows the ladders an interface is measured on: the spacing a thing is set apart by, the scaling a mark beside the
+ * text is sized on, the line and the radii a box is edged with, the marks a control wears when it is reached or
+ * rejected, and the durations and curves a change is timed by, which run under the pointer.
  *
  * @returns The scales section
  */
@@ -152,41 +114,12 @@ export function Scales() {
 	return <>
 
 		<p>The spacing, scaling and radius ladders are stated in <code>em</code>, so a subtree given a size of its own
-			takes its rhythm along. The body size stands apart, stated in <code>rem</code>, so a page holds its rhythm
-			wherever it is embedded.</p>
+			takes its rhythm along, and the page sets them all from the body size the type section shows.</p>
 
 		<h3>Spacing</h3>
 
 		<Samples entries={spacings} sample={property =>
 			<span class="bar" style={{ width: css.var(property) }}/>
-		}/>
-
-		<h3>Type</h3>
-
-		<p>Three faces carry the whole interface, each a brand face ahead of a generic stack that covers it until it
-			loads, so an app supplying a face of its own keeps the fallbacks by restating them.</p>
-
-		<Samples entries={faces} sample={property =>
-			<span style={{ fontFamily: css.var(property) }}>Aa</span>
-		}/>
-
-		<p>The small and large steps are relative, taking the size of whatever they sit in along. Headings below the
-			first share one size, their hierarchy carried by the face, the weight and the room around them.</p>
-
-		<Samples entries={sizes} sample={property =>
-			<span style={{ fontSize: css.var(property) }}>Aa</span>
-		}/>
-
-		<Samples entries={weights} sample={property =>
-			<span style={{ fontWeight: css.var(property) }}>Aa</span>
-		}/>
-
-		<Samples entries={tracking} sample={property =>
-			<span style={{ letterSpacing: css.var(property) }}>Aa</span>
-		}/>
-
-		<Samples entries={leadings} sample={property =>
-			<span class="leading" style={{ lineHeight: css.var(property) }}>Aa<br/>Aa</span>
 		}/>
 
 		<h3>Scaling</h3>

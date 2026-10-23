@@ -1,0 +1,203 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Cards ***********************************************************************************************************/
+
+/*
+ * A face and a weight are each shown on a card of their own, laid out as a grid that wraps to one column on a narrow
+ * page. The minimum card width is stated outright, a patch standing for nothing the ladders size.
+ */
+
+.faces,
+.weights {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+    gap: var(--tile--spacing-100);
+    margin-bottom: var(--tile--spacing-150);
+
+    & > figure {
+
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--tile--spacing-075);
+        padding: var(--tile--spacing-100);
+        margin: 0;
+
+        background-color: var(--tile--background-color-raised);
+
+        border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+        border-radius: var(--tile--border-radius-050);
+
+    }
+
+    /* The glyphs are set at a display size the type scale never reaches, which is what lets a face be judged. */
+
+    & .letters {
+        font-size: 4em;
+        line-height: 1;
+        background-color: transparent;
+    }
+
+    & .charset {
+        overflow-wrap: anywhere;
+        background-color: transparent;
+    }
+
+    /* The caption is set alike on every card, whatever face or weight the card itself is showing. */
+
+    & figcaption {
+
+        margin-top: auto;
+
+        font-family: var(--tile--font-family);
+        font-size: var(--tile--font-size-small);
+        font-weight: var(--tile--font-weight);
+        color: var(--tile--color-label);
+
+        background-color: transparent;
+
+        & > strong {
+            color: var(--tile--color);
+        }
+
+        & > code {
+            display: block;
+            margin-top: var(--tile--spacing-025);
+            background-color: transparent;
+        }
+
+    }
+
+}
+
+/* A weight states its value, read off the token through the counter its card is reset to, so the two never drift. */
+
+.weights .value::after {
+    content: counter(weight);
+    font-variant-numeric: tabular-nums;
+}
+
+
+/**** Sizes ***********************************************************************************************************/
+
+/*
+ * The size ladder is set as lines of text running from the largest step to the smallest, each beside the name of its
+ * token, so the steps are compared on what they do to a sentence rather than to a pair of letters. A line too long
+ * for the column is cut rather than wrapped, keeping one line per step. The name column is stated outright.
+ */
+
+.sizes {
+
+    padding-left: 0;
+    margin-bottom: var(--tile--spacing-150);
+    list-style: none;
+
+    & > li {
+
+        display: grid;
+        grid-template-columns: 14em minmax(0, 1fr);
+        column-gap: var(--tile--spacing-100);
+        align-items: baseline;
+
+        padding-block: var(--tile--spacing-075);
+        margin: 0;
+
+        border-top: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+
+        &:last-child {
+            border-bottom: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+        }
+
+    }
+
+    & .meta {
+
+        display: flex;
+        flex-direction: column;
+
+        font-size: var(--tile--font-size-small);
+        color: var(--tile--color-label);
+
+        & > strong {
+            color: var(--tile--color);
+        }
+
+    }
+
+    & .line {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+}
+
+
+/**** Leading *********************************************************************************************************/
+
+/*
+ * Leading is shown as a band painted under every other line box, which is the one way to see the height a line is
+ * given rather than the height its glyphs take. The band is one lh tall, so it follows the token wherever it is
+ * retuned. The passage is held to a measure of about 66 characters, the length a line of body copy is read at.
+ */
+
+.leading {
+
+    max-inline-size: 66ch;
+    margin: 0 0 var(--tile--spacing-150);
+
+    & > p {
+        background-image: repeating-linear-gradient(
+            to bottom,
+            var(--tile--background-color-stripe) 0 1lh,
+            transparent 1lh 2lh
+        );
+    }
+
+    & > figcaption {
+        font-size: var(--tile--font-size-small);
+        color: var(--tile--color-label);
+    }
+
+}
+
+
+/**** Composition *****************************************************************************************************/
+
+/* A composed page sits on a raised sheet, so it reads as a document set into the specimen rather than as more of it. */
+
+.composition {
+
+    max-inline-size: 66ch;
+    padding: var(--tile--spacing-150) var(--tile--spacing-200);
+    margin-bottom: var(--tile--spacing-150);
+
+    background-color: var(--tile--background-color-raised);
+    box-shadow: var(--tile--box-shadow-raised);
+
+    border-radius: var(--tile--border-radius-075);
+
+    & > .lead {
+        font-size: var(--tile--font-size-large);
+        color: var(--tile--color-label);
+    }
+
+    & > :last-child {
+        margin-bottom: 0;
+    }
+
+}

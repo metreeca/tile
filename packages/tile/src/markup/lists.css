@@ -58,7 +58,7 @@ dl {
         margin-bottom: var(--tile--spacing-050);
 
         font-size: var(--tile--scaling-090);
-        font-weight: var(--tile--font-weight-heavy);
+        font-weight: var(--tile--font-weight-strong);
         color: var(--tile--color-label);
 
         & > p:only-child {

@@ -35,13 +35,6 @@ tile-button {
         display: inline-flex;
 
         /*
-         * A control is set a step above the copy around it, whatever it is asked to look like, so a label stays
-         * legible at the size a button holds it at. The loud step goes further still.
-         */
-
-        font-weight: var(--tile--font-weight-strong);
-
-        /*
          * A flex row takes its baseline from the first thing it carries, which is the glyph where a button is marked
          * with one, so a row of buttons would sit at as many heights as it holds kinds. They line up on their middles
          * instead, which is the one anchor a glyph and a label share.
@@ -116,7 +109,7 @@ tile-button {
      * the quiet step keeps no rule and reads as part of that text. The rule is the neutral one the design system
      * draws every boundary with: the control says what it means through its ink, and a second colour on the edge
      * would state it twice. The loud step is the one exception, stating its meaning on the edge as well, since a
-     * control a row is meant to lead with is read before it is read closely. It is set heaviest on top of the rule,
+     * control a row is meant to lead with is read before it is read closely. It is set strong on top of the rule,
      * which is what carries it where a row holds several controls and only one of them is the one to take.
      */
 
@@ -129,12 +122,12 @@ tile-button {
 
         & > button {
 
-            font-weight: var(--tile--font-weight-heavy);
+            font-weight: var(--tile--font-weight-strong);
 
             /*
-             * A glyph carries no weight of its own, so the heavier setting would leave the mark reading lighter than
+             * A glyph carries no weight of its own, so the strong setting would leave the mark reading lighter than
              * the label beside it. The stroke is drawn half again as thick, which is the nudge that puts the two back
-             * on the same footing rather than a measure the ladder carries.
+             * on the same footing rather than a measure the design system ladder carries.
              */
 
             & .lucide {
@@ -144,7 +137,7 @@ tile-button {
         }
 
         /*
-         * A mark standing alone gives the rule nothing to lean on, where a label set at the heaviest weight already
+         * A mark standing alone gives the rule nothing to lean on, where a label set at the strong weight already
          * bounds the control from inside, so the hairline the design system draws every boundary with reads as an
          * empty box around the glyph. It is carried twice as far into the ink there, staying the same neutral, which
          * is what an ordinary control falls back on where it has no step to state.
@@ -334,7 +327,7 @@ tile-button {
         & > button {
 
             border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
-            font-weight: var(--tile--font-weight-heavy);
+            font-weight: var(--tile--font-weight-strong);
 
             & .lucide {
                 stroke-width: calc(1.5 * var(--tile--stroke-width));

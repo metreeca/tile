@@ -33,7 +33,15 @@ tile-link {
 
         font-weight: inherit;
         text-decoration-line: underline;
-        text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
+
+        /*
+         * The underline is hung from the bottom of the descenders rather than from the baseline, so no offset is left
+         * for a descender to cross, whatever the face and the size. The offset is the optical gap below them.
+         */
+
+        text-underline-position: under;
+        text-underline-offset: 0.1em;
+
     }
 
     /*
@@ -53,13 +61,21 @@ tile-link {
     }
 
     /*
-     * The loud step stands as a label of its own, set as a tab label is: heavier and with no underline, it is read as
-     * an entry of a menu rather than as a passage of the text, while the link colour still says it leads somewhere.
+     * The loud step stands as a label of its own, set as a tab label is: strong, in the ink of the text around it and
+     * with no underline, it is read as an entry of a menu rather than as a passage of the text. Like the quiet step, it
+     * keeps that ink until the pointer reaches it, when it turns to the hover colour as the other steps do.
      */
 
     &[look="strong"] > a {
-        font-weight: var(--tile--font-weight-label);
+
+        font-weight: var(--tile--font-weight-strong);
+        color: inherit;
         text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
     }
 
 }
@@ -95,8 +111,15 @@ tile-link {
 @container style(--tile--look: strong) {
 
     tile-link:not([look]) > a {
-        font-weight: var(--tile--font-weight-label);
+
+        font-weight: var(--tile--font-weight-strong);
+        color: inherit;
         text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
     }
 
 }
@@ -122,14 +145,14 @@ tile-link > a[active] {
 
 tile-link[look="subtle"] > a[active] {
     text-decoration-thickness: calc(2 * var(--tile--border-width));
-    text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+    text-underline-offset: 0.05em; /* Optical nudge, half the ordinary gap below the descenders. */
 }
 
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a[active] {
         text-decoration-thickness: calc(2 * var(--tile--border-width));
-        text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+        text-underline-offset: 0.05em; /* Optical nudge, half the ordinary gap below the descenders. */
     }
 
 }

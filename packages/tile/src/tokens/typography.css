@@ -37,12 +37,16 @@
     initial-value: "Roboto Mono", Courier, monospace;
 }
 
-/* The base size is absolute, holding its rhythm wherever embedded, the two variants relative to what they sit in. */
+/*
+ * The base size follows the reader's own setting and the window rather than what it sits in, holding its rhythm
+ * wherever embedded. It grows by an eighth from a laptop window to a desktop one, where text read from further away
+ * would otherwise look small, and is capped there; the two variants stay relative to what they sit in.
+ */
 
 @property --tile--font-size {
     syntax: "*";
     inherits: true;
-    initial-value: 1.125rem;
+    initial-value: clamp(1rem, 0.75rem + 0.3125vw, 1.125rem);
 }
 
 @property --tile--font-size-small {
@@ -83,29 +87,19 @@
 @property --tile--line-height {
     syntax: "<number>";
     inherits: true;
-    initial-value: 1.2;
+    initial-value: 1.3;
 }
+
+/* Two weights carry every text: one at rest and one marking a thing out, set far enough apart to read at a glance. */
 
 @property --tile--font-weight {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 300;
-}
-
-@property --tile--font-weight-strong {
     syntax: "<number>";
     inherits: true;
     initial-value: 400;
 }
 
-@property --tile--font-weight-label {
+@property --tile--font-weight-strong {
     syntax: "<number>";
     inherits: true;
-    initial-value: 500;
-}
-
-@property --tile--font-weight-heavy {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 700;
+    initial-value: 600;
 }

@@ -72,7 +72,7 @@ export function Link({
 
 	/**
 	 * How loud the link appears: `subtle` reads as the text around it, font and colour alike, `normal` adds the link
-	 * colour and an underline, and `strong` stands as a label of its own, heavier in the link colour with no underline,
+	 * colour and an underline, and `strong` stands as a label of its own, heavier in the text colour with no underline,
 	 * as a navigation entry does. Every look keeps the face and size of the text around it, turns to the hover colour
 	 * under the pointer and holds it through the press. However loud, a marked link is underlined in the accent colour,
 	 * thick except for `subtle`, where the mark is thinner and drawn closer to the text it sits under.

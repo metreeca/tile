@@ -78,8 +78,7 @@ export function Button({
 	/**
 	 * How loud the button appears, told in weight, rule and room rather than in colour, so it stays legible wherever
 	 * colour does not reach: `subtle` keeps no rule and reads as part of the text around it, `strong` is bounded and
-	 * set heaviest, and `normal` sits between the two. The appearance is independent of what the button means, which
-	 * `mode` states.
+	 * set in the strong weight, and `normal` sits between the two. What the button means is stated apart, by `mode`.
 	 *
 	 * A button stating nothing takes the look the area around it is written in, from the `--tile--look` token the
 	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone,

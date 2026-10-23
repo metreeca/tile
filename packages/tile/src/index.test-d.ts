@@ -83,6 +83,12 @@ describe("css", () => {
 		// @ts-expect-error unknown token name
 		css({ colorUnknown: "#000" });
 
+		// @ts-expect-error retired token name
+		css({ fontWeightLabel: 600 });
+
+		// @ts-expect-error retired token name
+		css({ fontWeightHeavy: 600 });
+
 	});
 
 	it("rejects a custom property in place of a token name", () => {
@@ -102,7 +108,7 @@ describe("css", () => {
 		expectTypeOf(css({ scaling100: "scaling200" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ spacing100: "spacing250" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ borderRadius025: "borderRadius050" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ fontWeight: "fontWeightHeavy" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontWeight: "fontWeightStrong" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ opacityLoading: "opacityDisabled" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ zIndexModal: "zIndexToast" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ durationFast: "durationSlow" })).toEqualTypeOf<Style>();

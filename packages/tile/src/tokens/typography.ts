@@ -25,7 +25,8 @@
  * the one a code span or a figure aligns on. Each ships as a brand face ahead of a generic stack covering it until it
  * loads, so an app supplying a face of its own keeps the fallbacks by restating them.
  *
- * **Sizes** — `fontSize` is absolute, while `fontSizeSmall` and `fontSizeLarge` follow what they sit in.
+ * **Sizes** — `fontSize` follows the reader's setting and grows slightly on a desktop-sized window, while
+ * `fontSizeSmall` and `fontSizeLarge` follow whatever they sit in, keeping their ratio inside a subtree sized apart.
  *
  * **Headings** — `fontSizeHeading` sizes every heading level, so an app resizing it resizes all headings together. The
  * first level scales up from it, while the levels below take it as it stands, since their hierarchy is carried by the
@@ -34,8 +35,8 @@
  * `letterSpacingHeading` ships neutral and lets the brand face decide, so an app supplying a condensed or a wide face
  * corrects the tracking without restating the rule.
  *
- * **Weights** — `fontWeight` is text at rest, `fontWeightStrong` a run marked out, `fontWeightLabel` a label standing
- * on its own such as a navigation entry or a strong link, and `fontWeightHeavy` a title, a tab or a table header.
+ * **Weights** — `fontWeight` is text at rest and `fontWeightStrong` anything marked out from it, from a link or a term
+ * to a heading, a label, a tab or a table header, so emphasis reads the same wherever it occurs in the interface.
  *
  * @module typography
  */
@@ -61,8 +62,6 @@ export const typography = {
 	letterSpacingHeading: "--tile--letter-spacing-heading",
 
 	fontWeight: "--tile--font-weight",
-	fontWeightStrong: "--tile--font-weight-strong",
-	fontWeightLabel: "--tile--font-weight-label",
-	fontWeightHeavy: "--tile--font-weight-heavy"
+	fontWeightStrong: "--tile--font-weight-strong"
 
 } as const;

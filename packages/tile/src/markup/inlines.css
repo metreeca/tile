@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+/* A link is set strong in the link colour, and the pointer adds an underline hung below the descenders. */
+
 a, a:visited {
 
-    text-decoration: none;
+    text-decoration-line: none;
     text-decoration-thickness: 1px;
+    text-underline-position: under;
+    text-underline-offset: 0.1em;
 
     font-weight: var(--tile--font-weight-strong);
     color: var(--tile--color-enabled);
@@ -35,11 +39,8 @@ a, a:visited {
     }
 
     &:hover {
+        text-decoration-line: underline;
         color: var(--tile--color-hover);
-    }
-
-    &:active {
-        text-decoration: underline;
     }
 
 }
@@ -60,10 +61,7 @@ code {
 
     white-space: nowrap;
 
-    /* Optical nudges: the mono face reads larger and thinner than the text around it at the same size and weight. */
-
-    font-size: 80%;
-    font-weight: var(--tile--font-weight-strong);
+    font-size: 80%; /* Optical nudge: the mono face reads larger than the text around it at the same size. */
 
 }
 
@@ -73,10 +71,10 @@ small {
 }
 
 /*
- * An image carrying the `active` attribute is lifted out of the text and centred over the viewport at its natural size,
- * scaled down without cropping where it would not fit, on a rounded panel in the page background hugging the picture.
- * A margin of the blanket a modal dims the page with is left around the panel. Whoever renders the page sets and
- * clears the attribute, as the Tile router does on a click, restoring the image on `Escape` or once the focus moves.
+ * An image carrying the `active` attribute is lifted out of the text onto a rounded panel in the page background,
+ * covering the viewport but for a margin of the blanket a modal dims the page with. The picture is scaled to the room
+ * the panel leaves, up or down and without cropping, so it uses all the screen it is given. Whoever renders the page
+ * sets and clears the attribute, as the Tile router does on a click, restoring the image on `Escape` or a focus move.
  */
 
 img:not(a img) {
@@ -90,16 +88,17 @@ img[active] {
     z-index: var(--tile--z-index-modal);
 
     /*
-     * Both sizes are left to the picture and capped by the room inside the margin, so the panel keeps the picture's
-     * proportions wherever the cap bites. The automatic margins centre what the cap leaves smaller than that room.
+     * The panel takes the whole room inside the margin, the sizes the page set inline for the image in the text
+     * notwithstanding, and the picture is fitted within it keeping its proportions.
      */
 
-    width: auto;
-    height: auto;
-    max-width: calc(100% - 2 * var(--tile--spacing-150));
-    max-height: calc(100% - 2 * var(--tile--spacing-150));
+    width: calc(100% - 2 * var(--tile--spacing-150));
+    height: calc(100% - 2 * var(--tile--spacing-150));
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
 
-    margin: auto;
+    margin: 0;
     padding: var(--tile--spacing-100);
     border-radius: var(--tile--border-radius-050);
 

@@ -3,9 +3,6 @@
     "paths": {
       "@metreeca/specimen/*": [
         "./src/*"
-      ],
-      "vite": [
-        "./node_modules/vite/dist/node/index.d.ts"
       ]
     },
     "customConditions": [

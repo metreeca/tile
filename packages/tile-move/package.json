@@ -50,8 +50,8 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "clean": "rm dist docs node_modules '*.tsbuildinfo'",
-    "build": "tsc -b tsconfig.build.json && cp dist 'src/*.css'",
+    "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
+    "build": "tsc -b tsconfig.build.json && ush cp dist 'src/*.css'",
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {

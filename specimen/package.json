@@ -1,5 +1,4 @@
 {
-  "name": "@metreeca/tile-specimen",
   "version": "0.1.0",
   "type": "module",
   "engines": {
@@ -7,13 +6,26 @@
   },
   "scripts": {
     "clean": "ush rm dist node_modules",
+    "setup": "npm ci && ush ln ../..",
     "build": "vite build",
-    "check": "tsc --noEmit",
     "watch": "vite --open"
   },
+  "dependencies": {
+    "@metreeca/blue": "^0.13.1",
+    "@metreeca/core": "^0.13.0",
+    "@metreeca/http": "^0.5.0",
+    "@metreeca/qest": "^0.13.0",
+    "@metreeca/tile": "^0.6.1",
+    "@metreeca/tile-cell": "^0.6.1",
+    "@metreeca/tile-data": "^0.6.1",
+    "@metreeca/tile-hive": "^0.6.1",
+    "@metreeca/tile-lens": "^0.6.1",
+    "@metreeca/tile-move": "^0.6.1",
+    "preact": "^10.29.8"
+  },
   "devDependencies": {
+    "@metreeca/rack": "^0.6.0",
     "@preact/preset-vite": "^2.10.6",
-    "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"
   },

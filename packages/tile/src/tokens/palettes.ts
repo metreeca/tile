@@ -59,7 +59,7 @@
  * left on the page colour may lose contrast over the fill, as it does over the heat scale from `080` on, and over
  * its brighter steps wherever the dark scheme sets that colour light. Inside the area, `backgroundColor` names the
  * fill itself, so text meant to take the page background is given a colour of its own rather than that token. A
- * colour washed out through {@link index.css.tint css.tint} keeps the area close to the page instead, so at a low
+ * colour washed out through {@link index.css css.tint} keeps the area close to the page instead, so at a low
  * share the text it holds stays readable on the page colour, in either colour scheme, with no `color` of its own.
  *
  * @module palettes

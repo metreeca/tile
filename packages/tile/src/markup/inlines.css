@@ -71,10 +71,10 @@ small {
 }
 
 /*
- * An image carrying the `active` attribute is lifted out of the text onto a rounded panel in the page background,
- * covering the viewport but for a margin of the blanket a modal dims the page with. The picture is scaled to the room
- * the panel leaves, up or down and without cropping, so it uses all the screen it is given. Whoever renders the page
- * sets and clears the attribute, as the Tile router does on a click, restoring the image on `Escape` or a focus move.
+ * An image carrying the `active` attribute is lifted out of the text over the blanket a modal dims the page with, and
+ * scaled up or down without cropping to the viewport less a margin, so it uses all the screen it is given. Whoever
+ * renders the page sets and clears the attribute, as the Tile router does on a click, restoring the image on `Escape`
+ * or on a focus move, either of which puts the image back where it stood in the text it was lifted from.
  */
 
 img:not(a img) {
@@ -88,7 +88,7 @@ img[active] {
     z-index: var(--tile--z-index-modal);
 
     /*
-     * The panel takes the whole room inside the margin, the sizes the page set inline for the image in the text
+     * The box takes the whole room inside the margin, the sizes the page set inline for the image in the text
      * notwithstanding, and the picture is fitted within it keeping its proportions.
      */
 
@@ -99,13 +99,13 @@ img[active] {
     object-fit: contain;
 
     margin: 0;
-    padding: var(--tile--spacing-100);
-    border-radius: var(--tile--border-radius-050);
 
-    background-color: var(--tile--background-color);
+    /*
+     * The room the picture leaves inside the box is painted with the blanket, as is a spread past any viewport around
+     * it, so the picture alone stands out over a page dimmed evenly from edge to edge.
+     */
 
-    /* A spread past any viewport, so the blanket covers the whole page around the panel. */
-
+    background-color: var(--tile--background-color-blanket);
     box-shadow: 0 0 0 100vmax var(--tile--background-color-blanket);
 
     cursor: zoom-out;

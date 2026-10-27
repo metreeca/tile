@@ -23,7 +23,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { isNumber, isObject } from "@metreeca/core";
+import { isNumber, isObject, isString } from "@metreeca/core";
 import { by, locale, reverse } from "@metreeca/core/order";
 import { getIRIBase } from "@metreeca/core/resource";
 import { createFetch } from "@metreeca/http";
@@ -33,7 +33,8 @@ import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile-data/store";
+import { useQuery } from "@metreeca/tile-data/query";
+import { type Collection, Store, useCollection, useKeywords, useMembers } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useState } from "preact/hooks";
 
@@ -52,18 +53,19 @@ const byLabel = by((item: { readonly label: string }) => item.label, locale());
 
 
 /**
- * Answers a collection query over the sample items, sorted and limited as the query asks.
+ * Answers a collection query over the sample items, narrowed by label keywords, sorted and limited as the query asks.
  */
 async function serve(request: Request): Promise<Response> {
 
 	const query = decodeTemplate(new URL(request.url).search.slice(1), { base: getIRIBase(entry) });
 	const members: { readonly [key: string]: unknown } = isObject(query.members) ? query.members : {};
 
+	const keywords = isString(members["~label"]) ? members["~label"].toLowerCase() : "";
 	const order = members["^label"] === "desc" ? reverse(byLabel) : byLabel;
 	const limit = isNumber(members["#"]) && members["#"] > 0 ? members["#"] : items.length;
 
 	return Response.json({
-		members: [...items].sort(order).slice(0, limit)
+		members: items.filter(({ label }) => label.toLowerCase().includes(keywords)).sort(order).slice(0, limit)
 	});
 
 }
@@ -73,20 +75,23 @@ async function serve(request: Request): Promise<Response> {
  * Creates the sheets section.
  *
  * Shows a collection listed a batch at a time from a store answering after a delay, growing as the reader scrolls to
- * its end, and a list starting again from the first items when the order changes.
+ * its end, narrowed by keywords kept in the location, and starting again from the first items when the order changes.
  *
  * @returns The sheets section
  */
 export function Sheets() {
 
-	const collection = useCollection({ entry, shape: Catalogue });
+	const [query, setQuery] = useQuery();
+
+	const collection = useCollection({ entry, shape: Catalogue, sieve: query, onChange: setQuery });
 
 	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
 
 		<Store>
 
 			<p>A sheet lists the members of a collection held by the store, closed by a trigger fetching the next
-				batch as the reader scrolls to it, and starts again from the first items when the order changes.</p>
+				batch as the reader scrolls to it, and starts again from the first items when the order changes. The
+				keywords narrowing it are kept in the location, so they survive a reload.</p>
 
 			<Listing collection={collection}/>
 
@@ -98,7 +103,7 @@ export function Sheets() {
 
 
 /**
- * Lists the sample collection, sorted as the reader picks.
+ * Lists the sample collection, narrowed and sorted as the reader picks.
  */
 function Listing({
 
@@ -113,10 +118,15 @@ function Listing({
 	const [order, setOrder] = useState<"asc" | "desc">("asc");
 
 	const members = useMembers(collection, { model: { id: {}, label: {} }, order: { label: order } });
+	const { text, search, commit } = useKeywords(collection, "label");
 
 	return <>
 
 		<div class="controls">
+			<input type="search" placeholder="Keywords" value={text}
+				onInput={event => search(event.currentTarget.value)}
+				onKeyDown={event => event.key === "Enter" && commit()}
+			/>
 			<Button
 				icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}
 				label={order === "asc" ? "Increasing" : "Decreasing"}

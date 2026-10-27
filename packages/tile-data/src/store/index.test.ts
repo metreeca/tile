@@ -25,7 +25,9 @@ import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
-import { Store, useCollection, useResource, useStore } from "./store.js";
+import { useCollection } from "./collection.js";
+import { Store, useStore } from "./index.js";
+import { useResource } from "./resource.js";
 
 
 const entry = "https://example.com/resource";

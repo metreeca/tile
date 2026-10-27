@@ -63,6 +63,7 @@
     "exclude": [
       "**/packages/tile/src/**/*.core.ts",
       "**/packages/tile-cell/src/icon.core.ts",
+      "**/packages/tile-data/src/store/index.core.ts",
       "**/packages/tile-move/src/index.core.ts",
       "**/packages/tile-move/src/index.tsx",
       "**/*.test.ts",

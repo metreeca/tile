@@ -144,21 +144,14 @@ entry, so a consumer meets its types only through the published signatures namin
 carries it like any other module, a type declared there being public wherever a published signature names it: TypeDoc
 drops a symbol whose module is excluded, re-exported or not, so excluding these would leave a public type undocumented.
 
-`@metreeca/tile` is the exception, its `*.core.ts` modules holding what the design system surface stands on without
-offering it: `typedoc.json` leaves the modules out of the reference as well.
-
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
 stylesheet, which the module imports. `tile-move` keeps there the item a reader moves by its grip or by its whole
 surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
 
-`tile-move` keeps the drag and drop bindings its widgets are built on in `index.core.ts`, the one core module allowed
-to depend on Preact: it holds Preact hooks over dnd-kit rather than a headless component, offers consumers nothing,
-and so is left out of the reference by `typedoc.json` as well as blocked by the `"./*.core"` entry.
-
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
-module, another exception left out of the reference by `typedoc.json`, which names each such module: the documented
+module, left out of the reference by `typedoc.json`, which names each such module: the documented
 module beside it is the only path a consumer imports, and carries the comment the catalogue is described by. `icon.ts`
 documents the `Icon` namespace it hands out, `icon.core.ts` names the glyph each role stands for.
 

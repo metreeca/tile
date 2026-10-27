@@ -84,6 +84,9 @@ earned nothing but a test policing its own duplicate.
 A widget changing shape because of the space it was **given** states a `@container` size query against its own inline
 size and takes no breakpoint at all. These four are for the page-level decisions a container query cannot answer.
 
+The `*.core.ts` modules are an exception to the repository rule on core modules: they hold what the design system
+surface stands on without offering it, so `typedoc.json` leaves them out of the reference as well.
+
 `src/markup/` — base rules for plain document markup, carrying **no** `.ts` side and declaring no token of their own:
 
 - `reset.css`, then `headings.css`, `inlines.css`, `blocks.css`, `lists.css`, `tables.css`, `forms.css` — one group

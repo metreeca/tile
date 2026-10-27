@@ -119,7 +119,7 @@ describe("useMembers()", () => {
 		}));
 	}
 
-	function mount(lookup: unknown, scope = {}): {
+	function mount(lookup: unknown, criteria = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
 		members: () => Binding
@@ -131,7 +131,7 @@ describe("useMembers()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope });
+			const collection = useCollection({ entry, shape: Catalogue, criteria });
 
 			collections(collection);
 
@@ -332,7 +332,7 @@ describe("useMembers()", () => {
 
 	});
 
-	it("should start again from the first batch as the sieve changes", async () => {
+	it("should start again from the first batch as the criteria change", async () => {
 
 		const lookup = catalogue(3*batch);
 		const { collection, members } = mount(lookup);

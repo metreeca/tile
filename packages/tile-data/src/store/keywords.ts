@@ -98,7 +98,7 @@ export function useKeywords<S extends Lazy<ResourceShape>, P extends Collections
 ): Keywords {
 
 	const key: `~${Expression}` = `~${expression}`;
-	const applied = collection.sieve[key] ?? "";
+	const applied = collection.criteria[key] ?? "";
 
 	// the typed text is dropped as the keywords narrowing the collection change elsewhere
 

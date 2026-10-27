@@ -110,49 +110,42 @@ describe("createCollection()", () => {
 
 			const collection = createCollection({ entry, shape: Catalogue });
 
-			expect(collection.scope).toEqual({});
-			expect(collection.sieve).toEqual({});
+			expect(collection).not.toHaveProperty("scope");
+			expect(collection.criteria).toEqual({});
 
 		});
 
 		it("should start from the criteria given", async () => {
 
-			const collection = createCollection({
-				entry,
-				shape: Catalogue,
-				scope: { "?university": ["https://example.com/u/1"] },
-				sieve: { "~label": "chemistry" }
-			});
+			const collection = createCollection({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
 
-			expect(collection.scope).toEqual({ "?university": ["https://example.com/u/1"] });
-			expect(collection.sieve).toEqual({ "~label": "chemistry" });
+			expect(collection.criteria).toEqual({ "~label": "chemistry" });
 
 		});
 
 		it.each([
 			["order", { "^label": 1 }],
 			["focus", { "+label": ["one"] }]
-		])("should reject %s criteria in the scope or the reader's criteria", async (_, criteria) => {
-			expect(() => createCollection({ entry, shape: Catalogue, scope: criteria })).toThrow(TypeError);
-			expect(() => createCollection({ entry, shape: Catalogue, sieve: criteria })).toThrow(TypeError);
+		])("should reject %s criteria", async (_, criteria) => {
+			expect(() => createCollection({ entry, shape: Catalogue, criteria: criteria })).toThrow(TypeError);
 		});
 
 	});
 
 	describe("filter()", () => {
 
-		const chemistry = () => createCollection({ entry, shape: Catalogue, sieve: { "~label": "chemistry" } });
+		const chemistry = () => createCollection({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
 
 		it("should merge criteria into the reader's ones", async () => {
-			expect(chemistry().filter({ ">=credits": 6 }).sieve).toEqual({ "~label": "chemistry", ">=credits": 6 });
+			expect(chemistry().filter({ ">=credits": 6 }).criteria).toEqual({ "~label": "chemistry", ">=credits": 6 });
 		});
 
 		it("should replace a criterion on the same key", async () => {
-			expect(chemistry().filter({ "~label": "physics" }).sieve).toEqual({ "~label": "physics" });
+			expect(chemistry().filter({ "~label": "physics" }).criteria).toEqual({ "~label": "physics" });
 		});
 
 		it("should remove a criterion set to undefined", async () => {
-			expect(chemistry().filter({ "~label": undefined }).sieve).toEqual({});
+			expect(chemistry().filter({ "~label": undefined }).criteria).toEqual({});
 		});
 
 		it("should leave the collection as it stands where nothing changes", async () => {
@@ -171,14 +164,6 @@ describe("createCollection()", () => {
 
 		});
 
-		it("should leave the scope in place", async () => {
-
-			const scoped = createCollection({ entry, shape: Catalogue, scope: { "?university": ["u"] } });
-
-			expect(scoped.filter({ "~label": "chemistry" }).scope).toEqual({ "?university": ["u"] });
-
-		});
-
 		it.each([
 			["order", { "^label": 1 }],
 			["focus", { "+label": ["one"] }]
@@ -190,19 +175,11 @@ describe("createCollection()", () => {
 
 	describe("clear()", () => {
 
-		it("should remove every criterion the reader set, leaving the scope in place", async () => {
+		it("should remove every criterion the reader set", async () => {
 
-			const collection = createCollection({
-				entry,
-				shape: Catalogue,
-				scope: { "?university": ["u"] },
-				sieve: { "~label": "chemistry" }
-			});
+			const collection = createCollection({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
 
-			const cleared = collection.clear();
-
-			expect(cleared.sieve).toEqual({});
-			expect(cleared.scope).toEqual({ "?university": ["u"] });
+			expect(collection.clear().criteria).toEqual({});
 
 		});
 
@@ -239,7 +216,7 @@ describe("useCollection()", () => {
 
 			seen(collection);
 
-			return createElement("output", {}, JSON.stringify(collection.sieve));
+			return createElement("output", {}, JSON.stringify(collection.criteria));
 
 		}
 
@@ -276,8 +253,7 @@ describe("useCollection()", () => {
 
 		expect(collection.target).toEqual({ entry, shape: Catalogue, field: "members" });
 		expect(collection.target.shape).toBe(Catalogue);
-		expect(collection.scope).toEqual({});
-		expect(collection.sieve).toEqual({});
+		expect(collection.criteria).toEqual({});
 
 	});
 
@@ -297,19 +273,19 @@ describe("useCollection()", () => {
 
 	describe("onChange", () => {
 
-		function observed(sieve = {}): {
+		function observed(criteria = {}): {
 
 			collection: () => Collection<typeof Catalogue, "members">
-			changes: ReturnType<typeof vi.fn<(sieve: object) => void>>
+			changes: ReturnType<typeof vi.fn<(criteria: object) => void>>
 
 		} {
 
 			const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
-			const changes = vi.fn<(sieve: object) => void>();
+			const changes = vi.fn<(criteria: object) => void>();
 
 			function Probe() {
 
-				collections(useCollection({ entry, shape: Catalogue, sieve, onChange: changes }));
+				collections(useCollection({ entry, shape: Catalogue, criteria, onChange: changes }));
 
 				return null;
 

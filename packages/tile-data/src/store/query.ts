@@ -26,7 +26,7 @@
  * ```tsx
  * const [query, setQuery] = useQuery();
  *
- * const courses = useCollection({ entry: "/courses/", shape: Course, sieve: query, onChange: setQuery });
+ * const courses = useCollection({ entry: "/courses/", shape: Course, criteria: query, onChange: setQuery });
  * ```
  *
  * @module

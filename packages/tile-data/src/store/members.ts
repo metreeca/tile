@@ -176,9 +176,9 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 
 	const store = useStore();
 
-	const { target: { entry, shape, field }, scope, sieve } = collection;
+	const { target: { entry, shape, field }, criteria } = collection;
 
-	const members = useModel(() => createMembers({ order, batch }), [entry, field, scope, sieve, model, order, batch]);
+	const members = useModel(() => createMembers({ order, batch }), [entry, field, criteria, model, order, batch]);
 
 	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the items are typed by the
 											   // signature
@@ -186,8 +186,7 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 	const slice: Template = {
 		[field]: {
 			...model,
-			...scope,
-			...sieve,
+			...criteria,
 			...ranks(members.order),
 			"#": members.limit
 		}

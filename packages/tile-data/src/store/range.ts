@@ -144,7 +144,7 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	const store = useStore();
 
-	const { target: { entry, shape, field }, scope, sieve } = collection;
+	const { target: { entry, shape, field }, criteria } = collection;
 
 	const lower: `>=${Expression}` = `>=${expression}`;
 	const upper: `<=${Expression}` = `<=${expression}`;
@@ -152,8 +152,7 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the range is typed by the signature
 	const model: Template = {
 		[field]: {
-			...scope,
-			...sieve,
+			...criteria,
 			[`min=min:${expression}`]: {},
 			[`max=max:${expression}`]: {}
 		}
@@ -170,8 +169,8 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 		modify: () => ({
 
-			lower: sieve[lower],
-			upper: sieve[upper],
+			lower: criteria[lower],
+			upper: criteria[upper],
 
 			narrow: (bounds: { readonly lower?: null | Literal, readonly upper?: null | Literal }) => void collection.filter({
 				...(bounds.lower === undefined ? {} : { [lower]: bounds.lower ?? undefined }),

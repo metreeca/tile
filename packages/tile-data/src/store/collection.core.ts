@@ -17,10 +17,10 @@
 /**
  * Shared collection state.
  *
- * Holds what lenses showing the same collection agree on: which collection it is, the criteria fixed as it is
- * created, and the criteria the reader narrows it by. Lenses read the state to build their own retrievals
- * and write the reader's criteria back through its transitions, so that a facet narrowing the collection narrows what
- * every other lens shows, counters and lists alike, with no wiring between the lenses themselves.
+ * Holds what lenses showing the same collection agree on: which collection it is, and the criteria the reader narrows
+ * it by. Lenses read the state to build their own retrievals and write the reader's criteria back through its
+ * transitions, so that a facet narrowing the collection narrows what every other lens shows, counters and lists
+ * alike, with no wiring between the lenses themselves beyond the collection they are all handed.
  *
  * @module
  */
@@ -111,17 +111,9 @@ export interface Collection<S extends Lazy<ResourceShape>, P extends Collections
 
 
 	/**
-	 * The criteria fixed as the collection is created, bounding every retrieval a lens makes, the counts a facet offers
-	 * included, so that no lens ever reaches, lists or counts an item the collection was created to leave out.
-	 *
-	 * Never revised by the reader: {@link clear} leaves them in place.
-	 */
-	readonly scope: Criteria
-
-	/**
 	 * The criteria the reader narrows the collection by.
 	 */
-	readonly sieve: Criteria
+	readonly criteria: Criteria
 
 
 	/**
@@ -136,9 +128,9 @@ export interface Collection<S extends Lazy<ResourceShape>, P extends Collections
 	filter(criteria: Partial<Criteria>): this
 
 	/**
-	 * Removes every criterion the reader set, leaving the {@link scope} in place.
+	 * Removes every criterion the reader set.
 	 *
-	 * @returns The collection under its scope alone, or the same collection if the reader set no criterion
+	 * @returns The collection narrowed by no criterion, or the same collection if the reader set none
 	 */
 	clear(): this
 
@@ -160,10 +152,10 @@ export interface Collection<S extends Lazy<ResourceShape>, P extends Collections
  *
  * @param options The collection to be shown and the criteria it starts from
  *
- * @returns A collection narrowed by `scope` and by the reader's `sieve`
+ * @returns A collection narrowed by the reader's `criteria`
  *
  * @throws {@link !TypeError TypeError} If `field` is omitted and the shape holds no collection of resources, or
- *     several of them, or if `scope` or `sieve` state anything other than narrowing criteria
+ *     several of them, or if `criteria` states anything other than narrowing criteria
  */
 export function createCollection<S extends Lazy<ResourceShape>, P extends Collections<S> = Sole<S>>({
 
@@ -171,8 +163,7 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	shape,
 	field,
 
-	scope = {},
-	sieve = {}
+	criteria = {}
 
 }: {
 
@@ -193,14 +184,9 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	readonly field?: Optional<P>
 
 	/**
-	 * The criteria fixed for the lifetime of the collection.
-	 */
-	readonly scope?: Optional<Criteria>
-
-	/**
 	 * The reader's criteria the collection starts from.
 	 */
-	readonly sieve?: Optional<Criteria>
+	readonly criteria?: Optional<Criteria>
 
 }): Collection<S, P> {
 
@@ -212,21 +198,20 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 			field: field ?? collection(shape) as P // ;(cast) the field inferred from the shape is Sole<S>, P's default
 		},
 
-		scope: narrowing(scope),
-		sieve: narrowing(sieve),
+		criteria: narrowing(criteria),
 
 		filter(criteria: Partial<Criteria>) {
 
-			const revised = Object.fromEntries(Object.entries({ ...this.sieve, ...narrowing(criteria) })
+			const revised = Object.fromEntries(Object.entries({ ...this.criteria, ...narrowing(criteria) })
 				.filter(([, value]) => value !== undefined)
 			) as Criteria; // ;(cast) fromEntries widens keys to strings: they are criteria keys narrowing() checked
 
-			return equals(revised, this.sieve) ? {} : { sieve: revised };
+			return equals(revised, this.criteria) ? {} : { criteria: revised };
 
 		},
 
 		clear() {
-			return Object.keys(this.sieve).length === 0 ? {} : { sieve: {} };
+			return Object.keys(this.criteria).length === 0 ? {} : { criteria: {} };
 		}
 
 	});

@@ -124,8 +124,8 @@ describe("useOptions()", () => {
 	}
 
 	/**
-	 * A store answering the options retrieved under the scope alone with `baseline`, and those retrieved under the
-	 * `?region` criterion too with `matching`.
+	 * A store answering the options retrieved under no criteria with `baseline`, and those retrieved under the `?region`
+	 * criterion with `matching`, so that a test tells the two retrievals apart by what they hand over.
 	 */
 	function options(
 		baseline: readonly { value: string, count: number }[],
@@ -141,10 +141,9 @@ describe("useOptions()", () => {
 		return lookup.mock.calls.map(([{ model }]) => model);
 	}
 
-	function mount(store: Backend, { scope = {}, sieve = {}, model, text, size }: {
+	function mount(store: Backend, { criteria = {}, model, text, size }: {
 
-		readonly scope?: Criteria
-		readonly sieve?: Criteria
+		readonly criteria?: Criteria
 
 		readonly model?: Template
 		readonly text?: string
@@ -162,7 +161,7 @@ describe("useOptions()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope, sieve });
+			const collection = useCollection({ entry, shape: Catalogue, criteria });
 
 			collections(collection);
 			bindings(useOptions(collection, "category", {
@@ -198,15 +197,14 @@ describe("useOptions()", () => {
 
 	describe("retrieval", () => {
 
-		it("should retrieve the options under the collection scope alone", async () => {
+		it("should retrieve the options under no criteria", async () => {
 
 			const lookup = options([]);
 
-			mount(backend(lookup), { scope: { "?university": ["u1"] }, sieve: { "?region": ["r1"] } });
+			mount(backend(lookup), { criteria: { "?region": ["r1"] } });
 
 			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
 				members: {
-					"?university": ["u1"],
 					"value=category": {}, "count=count:": {},
 					"^count:": -2,
 					"@": 0, "#": 0
@@ -219,14 +217,11 @@ describe("useOptions()", () => {
 
 			const lookup = options([]);
 
-			mount(backend(lookup), {
-				scope: { "?university": ["u1"] },
-				sieve: { "?region": ["r1"], "?category": ["c1"] }
-			});
+			mount(backend(lookup), { criteria: { "?region": ["r1"], "?category": ["c1"] } });
 
 			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
 				members: {
-					"?university": ["u1"], "?region": ["r1"],
+					"?region": ["r1"],
 					"value=category": {}, "count=count:": {},
 					"^count:": -2, "+category": ["c1"],
 					"@": 0, "#": 0
@@ -239,7 +234,7 @@ describe("useOptions()", () => {
 
 			const lookup = options([]);
 
-			mount(backend(lookup), { sieve: { "?category": ["c1", "c2"] } });
+			mount(backend(lookup), { criteria: { "?category": ["c1", "c2"] } });
 
 			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
 				members: expect.objectContaining({ "+category": ["c1", "c2"] })
@@ -313,7 +308,7 @@ describe("useOptions()", () => {
 			const { options: binding } = mount(backend(options(
 				[{ value: "a", count: 9 }, { value: "b", count: 8 }, { value: "c", count: 7 }, { value: "d", count: 6 }],
 				[{ value: "b", count: 5 }, { value: "c", count: 2 }]
-			)), { sieve: { "?region": ["r1"], "?category": ["a", "b"] } });
+			)), { criteria: { "?region": ["r1"], "?category": ["a", "b"] } });
 
 			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
 				{ value: "b", count: 5, selected: true },
@@ -359,27 +354,27 @@ describe("useOptions()", () => {
 
 		it("should narrow the collection to the items holding the selected values", async () => {
 
-			const { collection, options: binding } = mount(backend(options([])), { sieve: { "?category": ["a"] } });
+			const { collection, options: binding } = mount(backend(options([])), { criteria: { "?category": ["a"] } });
 
 			await ready(binding);
 
 			act(() => binding()({ ready: ({ select }) => select("b", true) }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({ "?category": ["a", "b"] }));
+			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?category": ["a", "b"] }));
 
 		});
 
 		it("should stop narrowing the collection once no value is selected", async () => {
 
 			const { collection, options: binding } = mount(backend(options([])), {
-				sieve: { "?region": ["r1"], "?category": ["a"] }
+				criteria: { "?region": ["r1"], "?category": ["a"] }
 			});
 
 			await ready(binding);
 
 			act(() => binding()({ ready: ({ select }) => select("a", false) }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({ "?region": ["r1"] }));
+			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?region": ["r1"] }));
 
 		});
 
@@ -391,7 +386,7 @@ describe("useOptions()", () => {
 
 			const lookup = options([]);
 			const { collection, options: binding } = mount(backend(lookup), {
-				sieve: { "?region": ["r1"], "?category": ["a", "b"] },
+				criteria: { "?region": ["r1"], "?category": ["a", "b"] },
 				size: 10
 			});
 
@@ -403,7 +398,7 @@ describe("useOptions()", () => {
 			await act(async () => binding()({ ready: ({ seek }) => seek(20) }));
 			await act(async () => binding()({ ready: ({ clear }) => clear() }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({ "?region": ["r1"] }));
+			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?region": ["r1"] }));
 			await vi.waitFor(() => expect(binding()({ ready: ({ keywords, offset }) => [keywords, offset] })).toEqual(["", 0]));
 
 		});

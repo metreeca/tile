@@ -46,7 +46,7 @@ describe("useCount()", () => {
 		return vi.fn(async () => immutable({ id: entry, members: [{ count }] }));
 	}
 
-	function mount(store: Backend, scope = {}): {
+	function mount(store: Backend, criteria = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
 		count: () => Relay<CountCases>
@@ -58,7 +58,7 @@ describe("useCount()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope });
+			const collection = useCollection({ entry, shape: Catalogue, criteria });
 
 			collections(collection);
 			counts(useCount(collection));

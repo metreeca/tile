@@ -140,7 +140,7 @@ export type OptionsCases = {
 
 		/**
 		 * Deselects every value and shows the options as they stood when first retrieved, with no keywords and from the
-		 * first one, leaving the other criteria narrowing the collection, its scope included, in place.
+		 * first one, leaving the other criteria narrowing the collection in place, as the other facets set them.
 		 */
 		clear(): void
 
@@ -175,9 +175,9 @@ export type OptionsCases = {
  * Binds a component to the options of a shared collection.
  *
  * Retrieves through the store offered by the innermost enclosing {@link "store"!Store Store} context the values the
- * items hold for `expression` and the number of items holding each, twice: under the collection scope alone, so that
- * the list of values stays stable as other facets narrow the collection, and under the collection criteria other than
- * its own, for the counts. Selected values are kept on top of both, whatever the keywords and the page on show.
+ * items hold for `expression` and the number of items holding each, twice: under no criteria, so that the list of
+ * values stays stable as other facets narrow the collection, and under the collection criteria other than its own,
+ * for the counts. Selected values are kept on top of both, whatever the keywords and the page on show.
  *
  * > [!WARNING]
  * > Selected values are kept on top through qest focus, which qest admits only on literal values for the time being
@@ -237,14 +237,14 @@ export function useOptions<S extends Lazy<ResourceShape>, P extends Collections<
 
 	const store = useStore();
 
-	const { target: { entry, shape, field }, scope, sieve } = collection;
+	const { target: { entry, shape, field }, criteria } = collection;
 
 	const key: `?${Expression}` = `?${expression}`;
 
-	const options = useModel(() => createOptions({ size }), [entry, field, scope, expression, size]);
+	const options = useModel(() => createOptions({ size }), [entry, field, expression, size]);
 
-	const selected = values(sieve[key]);
-	const others = Object.fromEntries(Object.entries(sieve).filter(([criterion]) => criterion !== key));
+	const selected = values(criteria[key]);
+	const others = Object.fromEntries(Object.entries(criteria).filter(([criterion]) => criterion !== key));
 
 	const specs = {
 
@@ -262,8 +262,8 @@ export function useOptions<S extends Lazy<ResourceShape>, P extends Collections<
 
 	};
 
-	const baseline = useChoices({ ...scope, ...specs });
-	const matching = useChoices({ ...scope, ...others, ...specs });
+	const baseline = useChoices(specs);
+	const matching = useChoices({ ...others, ...specs });
 
 	return createRelay(baseline<Outcome<OptionsCases>>({
 
@@ -287,12 +287,12 @@ export function useOptions<S extends Lazy<ResourceShape>, P extends Collections<
 	 *
 	 * The generic shape and template accept any model: the options are typed by the signature instead.
 	 *
-	 * @param criteria The criteria and the bindings the options are retrieved under
+	 * @param slot The criteria and the bindings the options are retrieved under
 	 */
-	function useChoices(criteria: object) {
+	function useChoices(slot: object) {
 
 		const holder: Lazy<ResourceShape> = shape;
-		const model: Template = { [field]: criteria };
+		const model: Template = { [field]: slot };
 
 		return createRelay(useEntry({
 
@@ -320,7 +320,7 @@ export function useOptions<S extends Lazy<ResourceShape>, P extends Collections<
 
 	/**
 	 * Lists the options on show: selected first, then the others, those the other criteria let through leading each
-	 * set; the options they leave out are retrieved under the scope alone and count no items.
+	 * set; the options they leave out are retrieved under no criteria and count no items.
 	 */
 	function merge(base: readonly Row[], match: readonly Row[]): readonly Choice[] {
 

@@ -42,8 +42,8 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  * Creates the {@link Collection} the lenses rendered by the component share, held for the lifetime of the component:
  * the component renders again after every revision that changes the reader's criteria, and the lenses handed the
  * collection follow along. The collection is created again, and the reader's criteria start over, whenever the
- * resource, the shape, the collecting property or the scope change, so that a component moving on to another
- * collection never carries over the criteria the reader set on the previous one, which may not even apply to it.
+ * resource, the shape or the collecting property change, so that a component moving on to another collection never
+ * carries over the criteria the reader set on the previous one, which may not even apply to it.
  *
  * The collecting property may be left for the shape to settle, as
  * {@link "store/collection.core"!createCollection createCollection} does, and is typed against the shape: only a
@@ -56,20 +56,20 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  * ```tsx
  * const [query, setQuery] = useQuery();
  *
- * const courses = useCollection({ entry: "/courses/", shape: Course, sieve: query, onChange: setQuery });
+ * const courses = useCollection({ entry: "/courses/", shape: Course, criteria: query, onChange: setQuery });
  * ```
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property collecting the items, inferred from `field` or, where omitted, from the shape
  *
- * @param options The collection to be shown and the criteria it starts from; `sieve` is read as the component first
- *     renders and whenever the collection is created again
+ * @param options The collection to be shown and the criteria it starts from; `criteria` is read as the component first
+ *     renders and whenever the collection is created again, as for another resource, shape or collecting property
  *
  * @returns The shared collection, as it stands for this render
  *
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  * @throws {@link !TypeError TypeError} If `field` is omitted and the shape holds no collection of resources, or
- *     several of them, or if `scope` or `sieve` state anything other than narrowing criteria
+ *     several of them, or if `criteria` states anything other than narrowing criteria
  */
 export function useCollection<S extends Lazy<ResourceShape>, P extends Collections<S> = Sole<S>>({
 
@@ -77,8 +77,7 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	shape,
 	field,
 
-	scope,
-	sieve,
+	criteria,
 
 	onChange
 
@@ -102,44 +101,37 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 
 
 	/**
-	 * The criteria fixed for the lifetime of the collection, bounding every retrieval a lens makes; compared by
-	 * content, so that it may be written inline at the call site without the collection being created again on every
-	 * render, which would otherwise reset the criteria the reader has set at each render.
-	 */
-	readonly scope?: Criteria
-
-	/**
 	 * The reader's criteria the collection starts from, read as it is created: criteria handed over later, as those
 	 * written back by `onChange`, leave the collection as it stands until it is created again for another reason.
 	 */
-	readonly sieve?: Criteria
+	readonly criteria?: Criteria
+
 
 	/**
 	 * Takes the reader's criteria whenever they change, so that a page may keep them wherever it likes, as in the
-	 * location through {@link "store/query"!useQuery useQuery}; never called with the criteria the collection is created with.
+	 * location through {@link "store/query"!useQuery useQuery}; never called with the criteria the collection is
+	 * created with, which the page handed over itself and so already keeps wherever it took them from.
 	 */
-	readonly onChange?: (sieve: Criteria) => void
+	readonly onChange?: (criteria: Criteria) => void
 
 } & ([Sole<S>] extends [never] ? { readonly field: P } : unknown)): Collection<S, P> {
 
 	const entry = resolve(location.href, relative);
 
-	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, scope, sieve }), [
-		entry, shape, field, scope
-	]);
+	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, criteria }), [entry, shape, field]);
 
 	// the criteria last handed over, from those the collection is created with, so that only changes reach onChange
 
-	const [notified, setNotified] = useState(collection.sieve);
+	const [notified, setNotified] = useState(collection.criteria);
 
 	useEffect(() => {
 
-		if ( !equals(notified, collection.sieve) ) {
-			setNotified(collection.sieve);
-			onChange?.(collection.sieve);
+		if ( !equals(notified, collection.criteria) ) {
+			setNotified(collection.criteria);
+			onChange?.(collection.criteria);
 		}
 
-	}, [collection.sieve]);
+	}, [collection.criteria]);
 
 	return collection;
 

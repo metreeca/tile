@@ -47,10 +47,9 @@ describe("useRange()", () => {
 		return vi.fn(async () => immutable({ id: entry, members: [{ min, max }] }));
 	}
 
-	function mount(store: Backend, { scope = {}, sieve = {} }: {
+	function mount(store: Backend, { criteria = {} }: {
 
-		readonly scope?: Criteria
-		readonly sieve?: Criteria
+		readonly criteria?: Criteria
 
 	} = {}): {
 
@@ -64,7 +63,7 @@ describe("useRange()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope, sieve });
+			const collection = useCollection({ entry, shape: Catalogue, criteria });
 
 			collections(collection);
 			ranges(useRange(collection, "year"));
@@ -94,7 +93,7 @@ describe("useRange()", () => {
 
 		const lookup = spanning(1, 9);
 
-		mount(backend(lookup), { scope: { "?university": ["u1"] }, sieve: { ">=year": 3 } });
+		mount(backend(lookup), { criteria: { "?university": ["u1"], ">=year": 3 } });
 
 		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
 			entry,
@@ -129,7 +128,7 @@ describe("useRange()", () => {
 
 	it("should hand over the bounds narrowing the collection", async () => {
 
-		const { range } = mount(backend(spanning(1, 9)), { sieve: { ">=year": 3, "<=year": 7 } });
+		const { range } = mount(backend(spanning(1, 9)), { criteria: { ">=year": 3, "<=year": 7 } });
 
 		await vi.waitFor(() => expect(range()({ ready: ({ lower, upper }) => [lower, upper] })).toEqual([3, 7]));
 
@@ -139,13 +138,13 @@ describe("useRange()", () => {
 
 		it("should set the bounds given", async () => {
 
-			const { collection, range } = mount(backend(spanning(1, 9)), { sieve: { "?university": ["u1"] } });
+			const { collection, range } = mount(backend(spanning(1, 9)), { criteria: { "?university": ["u1"] } });
 
 			await vi.waitFor(() => expect(range()({ ready: () => true })).toBe(true));
 
 			act(() => range()({ ready: ({ narrow }) => narrow({ lower: 3, upper: 7 }) }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({
+			await vi.waitFor(() => expect(collection().criteria).toEqual({
 				"?university": ["u1"], ">=year": 3, "<=year": 7
 			}));
 
@@ -153,25 +152,25 @@ describe("useRange()", () => {
 
 		it("should leave a bound left undefined as it stands", async () => {
 
-			const { collection, range } = mount(backend(spanning(1, 9)), { sieve: { ">=year": 3, "<=year": 7 } });
+			const { collection, range } = mount(backend(spanning(1, 9)), { criteria: { ">=year": 3, "<=year": 7 } });
 
 			await vi.waitFor(() => expect(range()({ ready: () => true })).toBe(true));
 
 			act(() => range()({ ready: ({ narrow }) => narrow({ upper: 8 }) }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({ ">=year": 3, "<=year": 8 }));
+			await vi.waitFor(() => expect(collection().criteria).toEqual({ ">=year": 3, "<=year": 8 }));
 
 		});
 
 		it("should remove a bound set to null", async () => {
 
-			const { collection, range } = mount(backend(spanning(1, 9)), { sieve: { ">=year": 3, "<=year": 7 } });
+			const { collection, range } = mount(backend(spanning(1, 9)), { criteria: { ">=year": 3, "<=year": 7 } });
 
 			await vi.waitFor(() => expect(range()({ ready: () => true })).toBe(true));
 
 			act(() => range()({ ready: ({ narrow }) => narrow({ lower: null }) }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({ "<=year": 7 }));
+			await vi.waitFor(() => expect(collection().criteria).toEqual({ "<=year": 7 }));
 
 		});
 
@@ -182,14 +181,14 @@ describe("useRange()", () => {
 		it("should remove both bounds, leaving the other criteria in place", async () => {
 
 			const { collection, range } = mount(backend(spanning(1, 9)), {
-				sieve: { "?university": ["u1"], ">=year": 3, "<=year": 7 }
+				criteria: { "?university": ["u1"], ">=year": 3, "<=year": 7 }
 			});
 
 			await vi.waitFor(() => expect(range()({ ready: () => true })).toBe(true));
 
 			act(() => range()({ ready: ({ clear }) => clear() }));
 
-			await vi.waitFor(() => expect(collection().sieve).toEqual({ "?university": ["u1"] }));
+			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?university": ["u1"] }));
 
 		});
 

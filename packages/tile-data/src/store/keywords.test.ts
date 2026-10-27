@@ -36,7 +36,7 @@ describe("useKeywords()", () => {
 	const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
 
-	function mount(sieve: Criteria = {}): {
+	function mount(criteria: Criteria = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
 		keywords: () => Keywords
@@ -48,7 +48,7 @@ describe("useKeywords()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, sieve });
+			const collection = useCollection({ entry, shape: Catalogue, criteria });
 
 			collections(collection);
 			keywords(useKeywords(collection, "label", { delay }));
@@ -134,7 +134,7 @@ describe("useKeywords()", () => {
 			await step(() => keywords().search("item"));
 			await step(() => vi.advanceTimersByTime(delay-1));
 
-			expect(collection().sieve).toEqual({});
+			expect(collection().criteria).toEqual({});
 
 		});
 
@@ -145,7 +145,7 @@ describe("useKeywords()", () => {
 			await step(() => keywords().search(" item "));
 			await step(() => vi.advanceTimersByTime(delay));
 
-			expect(collection().sieve).toEqual({ "~label": "item" });
+			expect(collection().criteria).toEqual({ "~label": "item" });
 
 		});
 
@@ -158,11 +158,11 @@ describe("useKeywords()", () => {
 			await step(() => keywords().search("item"));
 			await step(() => vi.advanceTimersByTime(delay-1));
 
-			expect(collection().sieve).toEqual({});
+			expect(collection().criteria).toEqual({});
 
 			await step(() => vi.advanceTimersByTime(1));
 
-			expect(collection().sieve).toEqual({ "~label": "item" });
+			expect(collection().criteria).toEqual({ "~label": "item" });
 
 		});
 
@@ -173,7 +173,7 @@ describe("useKeywords()", () => {
 			await step(() => keywords().search("  "));
 			await step(() => vi.advanceTimersByTime(delay));
 
-			expect(collection().sieve).toEqual({ "?university": ["u1"] });
+			expect(collection().criteria).toEqual({ "?university": ["u1"] });
 
 		});
 
@@ -188,7 +188,7 @@ describe("useKeywords()", () => {
 			await step(() => keywords().search("item"));
 			await step(() => keywords().commit());
 
-			expect(collection().sieve).toEqual({ "~label": "item" });
+			expect(collection().criteria).toEqual({ "~label": "item" });
 
 		});
 
@@ -201,7 +201,7 @@ describe("useKeywords()", () => {
 			await step(() => collection().filter({ "~label": "other" }));
 			await step(() => vi.advanceTimersByTime(delay));
 
-			expect(collection().sieve).toEqual({ "~label": "other" });
+			expect(collection().criteria).toEqual({ "~label": "other" });
 
 		});
 

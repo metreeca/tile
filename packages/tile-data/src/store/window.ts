@@ -15,21 +15,21 @@
  */
 
 /**
- * Sliding collection window.
+ * Growing collection window.
  *
- * Binds a list or a table to a window over a shared collection, so that it retrieves only the items the reader can see
- * and the batches around them, while learning the room the whole collection takes.
+ * Binds a list or a table to a window over a shared collection, so that it retrieves the items batch by batch as the
+ * reader scrolls through them, rather than the whole collection at once, however long it grows.
  *
  * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { type Items, items, type Slice } from "@metreeca/blue/value";
-import { isNumber, isObject, type Lazy, opt, type Optional } from "@metreeca/core";
+import { type Lazy, opt } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
-import type { Criteria, Template } from "@metreeca/qest/model";
+import type { Template } from "@metreeca/qest/model";
 import { useModel } from "../model.js";
 import type { Collection, Collections } from "./collection.core.js";
 import { useEntry } from "./index.core.js";
@@ -52,7 +52,7 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
 
 
 /**
- * Sliding collection window cases.
+ * Growing collection window cases.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
@@ -71,34 +71,23 @@ export type WindowCases<S extends Lazy<ResourceShape>, P extends Collections<S>,
 	readonly ready: {
 
 		/**
-		 * The items in the window, narrowed to the values the model asks for.
+		 * The first items of the collection, narrowed to the values the model asks for.
 		 */
 		readonly state: Items<S, { readonly [K in P]: T }>
 
-		/**
-		 * The index of the first item of `state` in the collection.
-		 */
-		readonly offset: number
 
 		/**
-		 * The number of items the collection criteria let through, once counted.
-		 */
-		readonly total: Optional<number>
-
-
-		/**
-		 * Brings the window over the items in view.
+		 * Grows the window by one batch; offered while the collection may hold more items, so that a view closes the
+		 * list with a trigger handed `more` for as long as it is offered; a call while a batch is on its way is ignored:
 		 *
-		 * @param first The index of the first item in view
-		 * @param last The index of the last item in view
-		 *
-		 * @throws {@link !TypeError TypeError} If `first` or `last` isn't a non-negative integer, or if `last` precedes
-		 *     `first`
+		 * ```tsx
+		 * {window({ ready: ({ more }) => more && <More onLoad={more}/> })}
+		 * ```
 		 */
-		move(first: number, last: number): void
+		readonly more?: () => void
 
 		/**
-		 * Sorts the items again, starting over the first ones.
+		 * Sorts the items again, starting over the first batch.
 		 *
 		 * @param order The sort order replacing the current one
 		 */
@@ -132,12 +121,12 @@ export type WindowCases<S extends Lazy<ResourceShape>, P extends Collections<S>,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Binds a component to a sliding window over a shared collection.
+ * Binds a component to a growing window over a shared collection.
  *
- * Retrieves from the store offered by the innermost enclosing {@link "store"!Store Store} context the items in view and
- * a batch on either side, narrowed by the collection criteria, and counts the items those criteria let through. The
- * window starts over the first items, and again whenever the collection criteria, the model or the sort order change;
- * the model and the sort order are compared by content, so they may be written inline.
+ * Retrieves from the store offered by the innermost enclosing {@link "store"!Store Store} context the first items of
+ * the collection, narrowed by the collection criteria, one more batch each time the view asks for more. The window
+ * starts over the first batch, and again whenever the collection criteria, the model or the sort order change; the
+ * model and the sort order are compared by content, so they may be written inline.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
@@ -192,30 +181,41 @@ export function useWindow<S extends Lazy<ResourceShape>, P extends Collections<S
 
 	const window = useModel(() => createWindow({ order, batch }), [entry, field, scope, sieve, model, order, batch]);
 
-	const criteria: Criteria = { ...scope, ...sieve };
+	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the items are typed by the signature
 
-	const slice = useSlot({
-		...model,
-		...criteria,
-		...ranks(window.order),
-		"@": window.lower,
-		"#": window.upper-window.lower
-	}, { offset: window.lower }); // the offset of the slice this render asks for, as the items it retrieves answer it
+	const slice: Template = {
+		[field]: {
+			...model,
+			...scope,
+			...sieve,
+			...ranks(window.order),
+			"#": window.limit
+		}
+	};
 
-	const count = useSlot({ ...criteria, "count=count:": {} }, {});
+	const binding = createRelay(useEntry({
 
-	return createRelay(slice<Option<WindowCases<S, P, T>>>({
+		store,
+		entry,
+		model: slice,
+
+		lookup: () => store.lookup({ entry, shape: holder, model: slice })
+			.then(match => opt(match, match => items(match, slice))),
+
+		modify: () => ({ limit: window.limit }) // the limit this render asks for, as the items it retrieves answer it
+
+	}));
+
+	return createRelay(binding<Option<WindowCases<S, P, T>>>({
 
 		blank: () => ({ blank: undefined }),
 
-		ready: ({ state, offset }) => immutable({
+		ready: ({ state, limit }) => immutable({
 			ready: {
 
 				state: state as Items<S, { readonly [K in P]: T }>, // ;(cast) retrieved under the model typing T
-				offset,
-				total: count({ ready: ({ state }) => size(state) }),
 
-				move: (first: number, last: number) => void window.move(first, last),
+				...(state.length < limit ? {} : { more: () => limit === window.limit ? void window.more() : undefined }),
 				sort: (order: Ordering) => void window.sort(order)
 
 			}
@@ -224,35 +224,6 @@ export function useWindow<S extends Lazy<ResourceShape>, P extends Collections<S
 		error: error => ({ error })
 
 	}));
-
-
-	/**
-	 * Binds the items of the collection a slot model asks for.
-	 *
-	 * The generic shape and template accept any model: the items are typed by the signature instead.
-	 *
-	 * @param slot The template or projection, with its criteria, retrieved from each item
-	 * @param extras The values handed over along with the items once retrieved
-	 */
-	function useSlot<W extends object>(slot: object, extras: W) {
-
-		const holder: Lazy<ResourceShape> = shape;
-		const model: Template = { [field]: slot };
-
-		return createRelay(useEntry({
-
-			store,
-			entry,
-			model,
-
-			lookup: () => store.lookup({ entry, shape: holder, model })
-				.then(match => opt(match, match => items(match, model))),
-
-			modify: () => extras
-
-		}));
-
-	}
 
 }
 
@@ -268,15 +239,4 @@ export function useWindow<S extends Lazy<ResourceShape>, P extends Collections<S
  */
 function ranks(order: Ordering): object {
 	return Object.fromEntries(Object.entries(order).map(([expression, direction]) => [`^${expression}`, direction]));
-}
-
-/**
- * Reads the size of a collection off its count.
- *
- * @param items The items retrieved for the count of a collection
- *
- * @returns The count carried by the single item retrieved, if it carries one
- */
-function size(items: readonly unknown[]): Optional<number> {
-	return opt(items[0], item => isObject(item) && isNumber(item.count) ? item.count : undefined);
 }

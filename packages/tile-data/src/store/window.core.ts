@@ -15,10 +15,10 @@
  */
 
 /**
- * Sliding collection window state.
+ * Growing collection window state.
  *
- * Holds where a list or a table stands in a long collection and the order it shows the items in, so that the view
- * reads a long collection without retrieving it all at once.
+ * Holds how far a list or a table has read into a long collection and the order it shows the items in, so that the
+ * view reads a long collection as the reader scrolls through it rather than retrieving it all at once.
  *
  * @module
  */
@@ -30,7 +30,7 @@ import type { Expression, Order } from "@metreeca/qest/model";
 
 
 /**
- * Sliding collection window.
+ * Growing collection window.
  */
 export interface Window {
 
@@ -41,35 +41,24 @@ export interface Window {
 
 
 	/**
-	 * The index of the first item in the window.
+	 * The number of first items in the window; the collection may end before it.
 	 */
-	readonly lower: number
-
-	/**
-	 * The index past the last item in the window; the collection may end before it.
-	 */
-	readonly upper: number
+	readonly limit: number
 
 
 	/**
-	 * Brings the window over the items in view, with one more batch on either side.
+	 * Grows the window by one batch.
 	 *
-	 * @param first The index of the first item in view
-	 * @param last The index of the last item in view
-	 *
-	 * @returns The window over the items in view, or the same window if it is unchanged
-	 *
-	 * @throws {@link !TypeError TypeError} If `first` or `last` isn't a non-negative integer, or if `last` precedes
-	 *     `first`
+	 * @returns The window over the items it held and the batch after them
 	 */
-	move(first: number, last: number): this
+	more(): this
 
 	/**
-	 * Sorts the items again, starting over the first ones.
+	 * Sorts the items again, starting over the first batch.
 	 *
 	 * @param order The sort order replacing the current one
 	 *
-	 * @returns The window over the first items in the new order, or the same window if the order is unchanged
+	 * @returns The window over the first batch in the new order, or the same window if the order is unchanged
 	 */
 	sort(order: Ordering): this
 
@@ -91,11 +80,11 @@ export type Ordering = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates a sliding collection window over the first batch and the one after it.
+ * Creates a growing collection window over the first batch.
  *
  * @param options The sort order the items start in and the number of items in each batch
  *
- * @returns A window over the first items
+ * @returns A window over the first batch
  *
  * @throws {@link !TypeError TypeError} If `batch` isn't a positive integer
  */
@@ -117,25 +106,14 @@ export function createWindow({
 
 		order,
 
-		lower: 0,
-		upper: 2*$batch,
+		limit: $batch,
 
-		move(first: number, last: number) {
-
-			const [$first, $last] = assert([first, last], ([first, last]) =>
-					Number.isInteger(first) && Number.isInteger(last) && 0 <= first && first <= last,
-				`illegal window range <${first}, ${last}>`
-			);
-
-			const lower = Math.max(0, Math.floor($first/$batch)-1)*$batch;
-			const upper = (Math.floor($last/$batch)+2)*$batch;
-
-			return lower === this.lower && upper === this.upper ? {} : { lower, upper };
-
+		more() {
+			return { limit: this.limit+$batch };
 		},
 
 		sort(order: Ordering) {
-			return equals(order, this.order) ? {} : { order, lower: 0, upper: 2*$batch };
+			return equals(order, this.order) ? {} : { order, limit: $batch };
 		}
 
 	});

@@ -31,8 +31,9 @@ import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
+import { More } from "@metreeca/tile-cell/more";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { Store, useCollection } from "@metreeca/tile-data/store";
+import { type Collection, Store, useCollection, useWindow } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useState } from "preact/hooks";
 
@@ -51,8 +52,7 @@ const byLabel = by((item: { readonly label: string }) => item.label, locale());
 
 
 /**
- * Answers a collection query over the sample items, sorted and sliced as the query asks, with no member the query
- * didn't ask for, or their count if the query asks for it.
+ * Answers a collection query over the sample items, sorted and limited as the query asks.
  */
 async function serve(request: Request): Promise<Response> {
 
@@ -60,13 +60,10 @@ async function serve(request: Request): Promise<Response> {
 	const members: { readonly [key: string]: unknown } = isObject(query.members) ? query.members : {};
 
 	const order = members["^label"] === "desc" ? reverse(byLabel) : byLabel;
-	const offset = isNumber(members["@"]) ? members["@"] : 0;
 	const limit = isNumber(members["#"]) && members["#"] > 0 ? members["#"] : items.length;
 
 	return Response.json({
-		members: "count=count:" in members ? [{ count: items.length }] : [...items]
-			.sort(order)
-			.slice(offset, offset + limit)
+		members: [...items].sort(order).slice(0, limit)
 	});
 
 }
@@ -75,8 +72,8 @@ async function serve(request: Request): Promise<Response> {
 /**
  * Creates the sheets section.
  *
- * Shows a collection listed a window at a time from a store answering after a delay, and a list starting again from the
- * first items when the order changes.
+ * Shows a collection listed a batch at a time from a store answering after a delay, growing as the reader scrolls to
+ * its end, and a list starting again from the first items when the order changes.
  *
  * @returns The sheets section
  */
@@ -84,35 +81,55 @@ export function Sheets() {
 
 	const collection = useCollection({ entry, shape: Catalogue });
 
-	const [order, setOrder] = useState<"asc" | "desc">("asc");
-
 	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
 
 		<Store>
 
-			<p>A sheet lists the items of a collection held by the store, fetching only the items in view and the
-				batches around them while taking the room of the whole collection, and starts again from the first items
-				when the order changes.</p>
+			<p>A sheet lists the items of a collection window held by the store, closed by a trigger fetching the next
+				batch as the reader scrolls to it, and starts again from the first items when the order changes.</p>
 
-			<div class="controls">
-				<Button
-					icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}
-					label={order === "asc" ? "Increasing" : "Decreasing"}
-					onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
-				/>
-			</div>
-
-			<Sheet
-				collection={collection}
-				model={{ id: {}, label: {} }}
-				order={{ label: order }}
-				placeholder={<Icon.List/>}
-			>{item =>
-				<div>{item.label}</div>
-			}</Sheet>
+			<Listing collection={collection}/>
 
 		</Store>
 
 	</Fetch>;
+
+}
+
+
+/**
+ * Lists the sample collection, sorted as the reader picks.
+ */
+function Listing({
+
+	collection
+
+}: {
+
+	collection: Collection<typeof Catalogue, "members">
+
+}) {
+
+	const [order, setOrder] = useState<"asc" | "desc">("asc");
+
+	const window = useWindow(collection, { model: { id: {}, label: {} }, order: { label: order } });
+
+	return <>
+
+		<div class="controls">
+			<Button
+				icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}
+				label={order === "asc" ? "Increasing" : "Decreasing"}
+				onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+			/>
+		</div>
+
+		<Sheet window={window} placeholder={<Icon.List/>}>{item =>
+			<div>{item.label}</div>
+		}</Sheet>
+
+		{window({ ready: ({ more }) => more && <More onLoad={more}/> })}
+
+	</>;
 
 }

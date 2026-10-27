@@ -15,38 +15,40 @@
  */
 
 /**
- * Windowed collection list.
+ * Collection list.
  *
- * Offers the list a screen shows the items of a collection in, fetching from the shared store only the items in view
- * and the batches around them, while taking the room of the whole collection, so a long collection is read without
- * being retrieved all at once and the scrollbar still tells where the reader stands in it.
+ * Offers the list a screen shows the items of a collection window in, so that a long collection is read as the reader
+ * scrolls through it, a trigger placed after the list asking the window for the next batch.
  *
  * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Frame } from "@metreeca/blue/value";
-import { isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
+import { isObject, isString, type Lazy } from "@metreeca/core";
+import type { Relay } from "@metreeca/core/relay";
 import { Hint } from "@metreeca/tile-cell/hint";
 import { Note } from "@metreeca/tile-cell/note";
-import type { Collection, Collections } from "@metreeca/tile-data/store/collection";
-import { type Admitted, type Ordering, useWindow } from "@metreeca/tile-data/store/window";
+import type { Collections } from "@metreeca/tile-data/store/collection";
+import type { WindowCases } from "@metreeca/tile-data/store/window";
 import { type ComponentChildren, createElement, Fragment } from "preact";
-import { useEffect, useId, useState } from "preact/hooks";
 import "./sheet.css";
 
 
 /**
- * Creates a windowed collection list.
+ * Creates a collection list.
  *
- * Lists the items of a shared collection, rendering each through `children`, and keeps in step with the store. Only
- * the items in view are retrieved, in batches of 100 together with the batch before and the one after them, while the
- * list takes the room the whole collection would, as estimated from the height of the rows on show, so the scrollbar
- * of whatever area the list scrolls in spans the collection; the items on show stay where they stand while the
- * batches for a new position are on their way.
+ * Lists the items of a collection window, rendering each through `children`, and keeps in step with the window: the
+ * items on show stay where they stand while a grown, sorted or narrowed window is on its way. Growing the window is
+ * left to the screen, which closes the list with a {@link @metreeca/tile-cell!more.More More} trigger handed `more`:
  *
- * The list shows the items the collection criteria let through, in the sort order given, and starts again from the
- * first items whenever the criteria, the model or the sort order change.
+ * ```tsx
+ * const window = useWindow(collection, { model: { id: {}, label: {} } });
+ *
+ * <Sheet window={window}>{item => <div>{item.label}</div>}</Sheet>
+ *
+ * {window({ ready: ({ more }) => more && <More onLoad={more}/> })}
+ * ```
  *
  * Where a `placeholder` is supplied, a list with nothing to show fills its area with it, worded as still loading or as
  * matching nothing. A failed exchange is shown as a critical {@link @metreeca/tile-cell!note.Note note} in place of the
@@ -62,10 +64,7 @@ import "./sheet.css";
  */
 export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T extends object>({
 
-	collection,
-
-	model,
-	order,
+	window,
 
 	placeholder,
 	children
@@ -73,20 +72,9 @@ export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 }: {
 
 	/**
-	 * The collection listed, as handed by {@link @metreeca/tile-data!store/collection.useCollection useCollection}.
+	 * The collection window listed, as handed by {@link @metreeca/tile-data!store/window.useWindow useWindow}.
 	 */
-	collection: Collection<S, P>
-
-	/**
-	 * The template or projection stating the values wanted from each item; compared by content, so it may be written
-	 * inline and a copy stating the same leaves the list where it stands.
-	 */
-	model: T & Admitted<S, P, T>
-
-	/**
-	 * The sort order the items are listed in, as expressions mapped to their direction: `{ label: "asc" }`.
-	 */
-	order?: Ordering
+	window: Relay<WindowCases<S, P, T>>
 
 
 	/**
@@ -101,17 +89,17 @@ export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 }) {
 
-	const window = useWindow<S, P, T>(collection, { model, order });
-
 	return window({
 
 		blank: () => placeholder && <Hint>{placeholder}<span>Loading…</span></Hint>,
 
-		ready: ({ state, offset, total, move }) => state.length === 0 && offset === 0
+		ready: ({ state }) => state.length === 0
 
 			? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
 
-			: <Rows items={state} offset={offset} total={total} move={move}>{children}</Rows>,
+			: createElement("tile-sheet", {}, state.map(item =>
+				<Fragment key={key(item)}>{children(item)}</Fragment>
+			)),
 
 		error: () => <Note level="critical"><div>Not Available</div></Note>
 
@@ -121,99 +109,6 @@ export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Lays out a window of a collection in the room of the whole collection.
- *
- * @param options The items in the window, the index of the first of them, the size of the collection, the transition
- *     bringing the window over the items in view, and the renderer of an item
- *
- * @returns The `<tile-sheet>` element holding the items, padded above and below by the room of the items outside the
- *     window
- */
-function Rows<I>({
-
-	items,
-	offset,
-	total,
-
-	move,
-
-	children
-
-}: {
-
-	items: readonly I[]
-	offset: number
-	total: Optional<number>
-
-	move: (first: number, last: number) => void
-
-	children: (item: I) => ComponentChildren
-
-}) {
-
-	const id = useId();
-
-	// Row height is known to the browser alone, so it is measured off the rows on show.
-
-	const [row, setRow] = useState<number>();
-
-	const size = Math.max(total ?? 0, offset+items.length);
-
-	useEffect(() => opt(document.getElementById(id) ?? undefined, element => {
-
-		const observer = new ResizeObserver(entries => opt(entries.at(-1), ({ contentRect: { height } }) =>
-			setRow(row => height > 0 ? height/items.length : row)
-		));
-
-		observer.observe(element);
-
-		return () => observer.disconnect();
-
-	}), [id, items.length]);
-
-	// Items in view are known to the browser alone, so scrolling is followed on the whole page.
-
-	useEffect(() => opt(row, row => opt(document.getElementById(id) ?? undefined, element => {
-
-		const index = (offset: number) => Math.min(size-1, Math.max(0, Math.floor(offset/row)));
-
-		const track = () => {
-
-			const { top } = element.getBoundingClientRect();
-
-			move(index(-top), index(window.innerHeight-top));
-
-		};
-
-		track();
-
-		window.addEventListener("scroll", track, { capture: true, passive: true });
-		window.addEventListener("resize", track, { passive: true });
-
-		return () => {
-			window.removeEventListener("scroll", track, { capture: true });
-			window.removeEventListener("resize", track);
-		};
-
-	})), [id, row, size, move]);
-
-	return createElement("tile-sheet", {
-
-		id,
-
-		style: opt(row, row => ({
-			paddingTop: `${offset*row}px`,
-			paddingBottom: `${Math.max(0, size-offset-items.length)*row}px`
-		}))
-
-	}, items.map(item =>
-		<Fragment key={key(item)}>{children(item)}</Fragment>
-	));
-
-}
-
 
 /**
  * Identifies an item among its siblings.

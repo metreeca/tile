@@ -40,12 +40,8 @@ describe("createWindow()", () => {
 
 	describe("creation", () => {
 
-		it("should start over the first batch and the one after it", async () => {
-
-			const initial = window();
-
-			expect([initial.lower, initial.upper]).toEqual([0, 2*batch]);
-
+		it("should start over the first batch", async () => {
+			expect(window().limit).toBe(batch);
 		});
 
 		it("should sort the items as given", async () => {
@@ -62,50 +58,22 @@ describe("createWindow()", () => {
 
 	});
 
-	describe("move()", () => {
+	describe("more()", () => {
 
-		it("should span the batches in view and one more on either side", async () => {
-
-			const moved = window().move(3*batch, 4*batch-1);
-
-			expect([moved.lower, moved.upper]).toEqual([2*batch, 5*batch]);
-
-		});
-
-		it("should start from the first item near the top", async () => {
-
-			const moved = window().move(0, batch/2);
-
-			expect([moved.lower, moved.upper]).toEqual([0, 2*batch]);
-
-		});
-
-		it("should leave the window as it stands where the batches in view are unchanged", async () => {
-
-			const initial = window();
-
-			expect(initial.move(1, batch-1)).toBe(initial);
-
-		});
-
-		it.each([
-			["a negative index", -1, 0],
-			["a fractional index", 0, 1.5],
-			["a reversed range", 5, 4]
-		])("should reject %s", async (_, first, last) => {
-			expect(() => window().move(first, last)).toThrow(TypeError);
+		it("should grow the window by one batch", async () => {
+			expect(window().more().more().limit).toBe(3*batch);
 		});
 
 	});
 
 	describe("sort()", () => {
 
-		it("should restart from the first items in the new order", async () => {
+		it("should restart from the first batch in the new order", async () => {
 
-			const sorted = window().move(3*batch, 4*batch-1).sort({ label: "desc" });
+			const sorted = window().more().sort({ label: "desc" });
 
 			expect(sorted.order).toEqual({ label: "desc" });
-			expect([sorted.lower, sorted.upper]).toEqual([0, 2*batch]);
+			expect(sorted.limit).toBe(batch);
 
 		});
 
@@ -115,7 +83,7 @@ describe("createWindow()", () => {
 
 		it("should leave the window as it stands where the order is unchanged", async () => {
 
-			const initial = window();
+			const initial = window().more();
 
 			expect(initial.sort({ label: "asc" })).toBe(initial);
 
@@ -133,8 +101,6 @@ describe("useWindow()", () => {
 	const Item = resource({ id: id(), label: required(string()) });
 	const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
-	const items = Array.from({ length: 3 }, (_, index) => ({ id: `${entry}${index}`, label: `item ${index}` }));
-
 	type Binding = ReturnType<typeof useWindow<typeof Catalogue, "members", { readonly label: {} }>>;
 
 
@@ -142,10 +108,14 @@ describe("useWindow()", () => {
 		return { lookup, observe: () => () => {} } as unknown as Backend; // ;(test stub) only the members called
 	}
 
-	function catalogue() {
-		return vi.fn(async ({ model }: { model: { members: object } }) => immutable({
+	function items(size: number) {
+		return Array.from({ length: size }, (_, index) => ({ id: `${entry}${index}`, label: `item ${index}` }));
+	}
+
+	function catalogue(size: number = batch/2) {
+		return vi.fn(async ({ model }: { model: { members: { "#": number } } }) => immutable({
 			id: entry,
-			members: "count=count:" in model.members ? [{ count: items.length }] : items
+			members: items(Math.min(size, model.members["#"]))
 		}));
 	}
 
@@ -190,8 +160,8 @@ describe("useWindow()", () => {
 		return lookup.mock.calls.map(([{ model }]) => model);
 	}
 
-	function slices(lookup: ReturnType<typeof catalogue>) {
-		return models(lookup).filter(model => !("count=count:" in model.members));
+	function more(window: Binding) {
+		return window({ ready: ({ more }) => more });
 	}
 
 
@@ -212,21 +182,8 @@ describe("useWindow()", () => {
 				label: {},
 				"?university": ["u1"], "~label": "item",
 				"^label": "asc",
-				"@": 0, "#": 2*batch
+				"#": batch
 			}
-		}));
-
-	});
-
-	it("should count the items the collection criteria let through", async () => {
-
-		const lookup = catalogue();
-		const { collection } = mount(lookup, { "?university": ["u1"] });
-
-		act(() => void collection().filter({ "~label": "item" }));
-
-		await vi.waitFor(() => expect(models(lookup)).toContainEqual({
-			members: { "?university": ["u1"], "~label": "item", "count=count:": {} }
 		}));
 
 	});
@@ -262,7 +219,7 @@ describe("useWindow()", () => {
 
 		await act(() => window()({ error: ({ reload }) => reload() }));
 
-		await vi.waitFor(() => expect(window()({ ready: ({ state }) => state })).toEqual(items));
+		await vi.waitFor(() => expect(window()({ ready: ({ state }) => state })).toEqual(items(batch/2)));
 
 	});
 
@@ -298,58 +255,95 @@ describe("useWindow()", () => {
 
 	});
 
-	it("should hand over the items, where they stand and how many there are", async () => {
+	it("should hand over the items in the window", async () => {
 
 		const { window } = mount(catalogue());
 
-		await vi.waitFor(() => expect(window()({ ready: ({ total }) => total })).toBe(items.length));
-
-		expect(window()({ ready: ({ state, offset }) => ({ state, offset }) })).toEqual({ state: items, offset: 0 });
+		await vi.waitFor(() => expect(window()({ ready: ({ state }) => state })).toEqual(items(batch/2)));
 
 	});
 
-	it("should move over the items in view", async () => {
+	describe("more()", () => {
 
-		const lookup = catalogue();
-		const { window } = mount(lookup);
+		it("should be offered while the window is full", async () => {
 
-		await vi.waitFor(() => expect(window()({ ready: () => true })).toBe(true));
+			const { window } = mount(catalogue(3*batch));
 
-		act(() => window()({ ready: ({ move }) => move(3*batch, 4*batch-1) }));
+			await vi.waitFor(() => expect(more(window())).toBeTypeOf("function"));
 
-		await vi.waitFor(() => expect(slices(lookup).at(-1)).toMatchObject({
-			members: { "@": 2*batch, "#": 3*batch }
-		}));
+		});
+
+		it("should be withheld once the collection is exhausted", async () => {
+
+			const { window } = mount(catalogue(batch/2));
+
+			await vi.waitFor(() => expect(window()({ ready: () => true })).toBe(true));
+
+			expect(more(window())).toBeUndefined();
+
+		});
+
+		it("should grow the window by one batch", async () => {
+
+			const lookup = catalogue(3*batch);
+			const { window } = mount(lookup);
+
+			await vi.waitFor(() => expect(more(window())).toBeTypeOf("function"));
+
+			act(() => more(window())!());
+
+			await vi.waitFor(() => expect(window()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+			expect(models(lookup).at(-1)).toMatchObject({ members: { "#": 2*batch } });
+
+		});
+
+		it("should stay on offer while the grown window is retrieved, asking for nothing more", async () => {
+
+			const lookup = vi.fn().mockImplementationOnce(catalogue(3*batch)).mockImplementation(() => new Promise(() => {}));
+
+			const { window } = mount(lookup);
+
+			await vi.waitFor(() => expect(more(window())).toBeTypeOf("function"));
+
+			await act(async () => more(window())!()); // the window notifies its change in a microtask
+			await act(async () => more(window())!());
+
+			expect(window()({ ready: ({ state }) => state.length })).toBe(batch);
+			expect(models(lookup).at(-1)).toMatchObject({ members: { "#": 2*batch } });
+
+		});
 
 	});
 
-	it("should sort the items again from the first ones", async () => {
+	it("should sort the items again from the first batch", async () => {
 
-		const lookup = catalogue();
+		const lookup = catalogue(3*batch);
 		const { window } = mount(lookup);
 
-		await vi.waitFor(() => expect(window()({ ready: () => true })).toBe(true));
+		await vi.waitFor(() => expect(more(window())).toBeTypeOf("function"));
 
+		act(() => more(window())!());
 		act(() => window()({ ready: ({ sort }) => sort({ label: "desc" }) }));
 
-		await vi.waitFor(() => expect(slices(lookup).at(-1)).toMatchObject({
-			members: { "^label": "desc", "@": 0 }
+		await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
+			members: { "^label": "desc", "#": batch }
 		}));
 
 	});
 
-	it("should start again from the first items as the sieve changes", async () => {
+	it("should start again from the first batch as the sieve changes", async () => {
 
-		const lookup = catalogue();
+		const lookup = catalogue(3*batch);
 		const { collection, window } = mount(lookup);
 
-		await vi.waitFor(() => expect(window()({ ready: () => true })).toBe(true));
+		await vi.waitFor(() => expect(more(window())).toBeTypeOf("function"));
 
-		act(() => window()({ ready: ({ move }) => move(5*batch, 6*batch-1) }));
+		act(() => more(window())!());
 		act(() => void collection().filter({ "~label": "item" }));
 
-		await vi.waitFor(() => expect(slices(lookup).at(-1)).toMatchObject({
-			members: { "~label": "item", "@": 0, "#": 2*batch }
+		await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
+			members: { "~label": "item", "#": batch }
 		}));
 
 	});

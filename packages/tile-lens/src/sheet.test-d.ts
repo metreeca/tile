@@ -17,7 +17,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { useCollection } from "@metreeca/tile-data/store";
+import { useCollection, useWindow } from "@metreeca/tile-data/store";
 import { describe, expectTypeOf, it } from "vitest";
 import { Sheet } from "./sheet.js";
 
@@ -28,21 +28,13 @@ const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
 describe("Sheet", () => {
 
-	const collection = useCollection({ entry: "/", shape: Catalogue });
+	const window = useWindow(useCollection({ entry: "/", shape: Catalogue }), { model: { label: {} } });
 
-	it("should type the items with the values the model asks for", async () => {
+	it("should type the items with the values the window model asks for", async () => {
 		Sheet({
-			collection,
-			model: { label: {} },
+			window,
 			children: item => expectTypeOf(item).toEqualTypeOf<{ readonly label: string }>()
 		});
-	});
-
-	it("should reject models naming members the item doesn't hold", async () => {
-
-		// @ts-expect-error unknown item member
-		Sheet({ collection, model: { title: {} }, children: () => null });
-
 	});
 
 });

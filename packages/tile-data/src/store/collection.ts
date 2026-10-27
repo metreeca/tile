@@ -87,6 +87,7 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	 */
 	readonly field?: P
 
+
 	/**
 	 * The criteria fixed for the lifetime of the collection, bounding every retrieval a lens makes; compared by
 	 * content, so that it may be written inline at the call site without the collection being created again on every

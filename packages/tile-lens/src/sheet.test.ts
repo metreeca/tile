@@ -19,7 +19,8 @@ import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
-import { Store } from "@metreeca/tile-data/store";
+import type { Criteria } from "@metreeca/qest/model";
+import { Store, useCollection } from "@metreeca/tile-data/store";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -42,9 +43,7 @@ const entry = "https://example.com/catalogue/";
 const Item = resource({ id: id(), label: required(string()) });
 const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
-const model: { readonly members: { readonly id: {}, readonly label: {}, readonly "^label": "asc" | "desc" } } = {
-	members: { id: {}, label: {}, "^label": "asc" }
-};
+const model = { id: {}, label: {} };
 
 
 function pool(size: number): readonly { id: string, label: string }[] {
@@ -82,17 +81,32 @@ function backend(lookup: unknown): Backend {
 	} as unknown as Backend; // ;(test stub) only the members the binding calls are provided
 }
 
-function mount(lookup: unknown, placeholder?: string, current: typeof model = model): void {
-	act(() => render(createElement(Store, {
-		factory: () => backend(lookup),
-		children: createElement(Sheet<typeof Catalogue, typeof model>, {
-			entry,
-			shape: Catalogue,
-			model: current,
+function mount(lookup: unknown, placeholder?: string, { order = "asc", scope = {} }: {
+
+	readonly order?: "asc" | "desc"
+	readonly scope?: Criteria
+
+} = {}): void {
+
+	function Host() {
+
+		const collection = useCollection({ entry, shape: Catalogue, scope });
+
+		return createElement(Sheet<typeof Catalogue, "members", typeof model>, {
+			collection,
+			model,
+			order: { label: order },
 			placeholder,
 			children: item => createElement("p", {}, item.label)
-		})
+		});
+
+	}
+
+	act(() => render(createElement(Store, {
+		factory: () => backend(lookup),
+		children: createElement(Host, {})
 	}), document.body));
+
 }
 
 function sheet(): HTMLElement {
@@ -166,15 +180,15 @@ describe("Sheet", () => {
 
 	});
 
-	it("should keep the criteria the model states", async () => {
+	it("should list the items in the order given, under the collection criteria", async () => {
 
 		const lookup = catalogue(pool(3));
 
-		mount(lookup);
+		mount(lookup, undefined, { scope: { "~label": "item" } });
 
 		await vi.waitFor(() => expect(slices(lookup)).not.toHaveLength(0));
 
-		expect(slices(lookup).at(-1)).toMatchObject({ members: { "^label": "asc" } });
+		expect(slices(lookup).at(-1)).toMatchObject({ members: { "~label": "item", "^label": "asc" } });
 
 	});
 
@@ -190,7 +204,7 @@ describe("Sheet", () => {
 
 		});
 
-		it("should count the items under the filters the model states", async () => {
+		it("should count the items under the collection criteria", async () => {
 
 			const lookup = catalogue(pool(3));
 
@@ -254,7 +268,7 @@ describe("Sheet", () => {
 
 	});
 
-	describe("model changes", () => {
+	describe("order changes", () => {
 
 		it("should start again from the first window", async () => {
 
@@ -269,7 +283,7 @@ describe("Sheet", () => {
 
 			await vi.waitFor(() => expect(shown()[0]).toBe(`item ${2*batch}`));
 
-			mount(lookup, undefined, { members: { ...model.members, "^label": "desc" } });
+			mount(lookup, undefined, { order: "desc" });
 
 			await vi.waitFor(() => expect(slices(lookup).at(-1)).toMatchObject({
 				members: { "^label": "desc", "@": 0, "#": 2*batch }

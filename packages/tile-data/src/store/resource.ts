@@ -35,76 +35,12 @@ import { useStore } from "./index.js";
 
 
 /**
- * Binds a component to a resource held by the shared store.
- *
- * Retrieves the resource from the store offered by the innermost enclosing {@link "store"!Store Store} context and
- * keeps the component in step with it, so that a view renders what the store holds and writes changes back without
- * driving exchanges of its own: the resource is retrieved again whenever the store signals a change to it, whoever
- * made it.
- *
- * A missing resource, a rejected write and a failed exchange alike move the binding to its `error` state, so that a
- * view shows them where it shows the resource and offers to retry from there; an operation the view called also
- * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
- * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
- * is reported through the binding alone and never reaches the page: only a missing {@link "store"!Store Store} context
- * or an unforeseen failure does, for an enclosing {@link "board"!Board Board} context to take up.
- *
- * The template may be fixed or replaced at runtime, and a different one has the resource retrieved again:
- *
- * - a **fixed** template, declared in code, types the resource exactly with the values it asks for
- * - a **runtime** template, built as the interface runs, for instance as a user picks the values to show, types the
- *   resource only as loosely as the template itself is typed, so a view reads the values it holds by inspecting it
- *
- * > [!CAUTION]
- * > A template is told apart by identity, not content: declare a fixed template once, outside the component, and
- * > hold a runtime one in state of the component's own. A template written inline at the call site is a new object
- * > on every render, and has the resource retrieved again, and the component rendered again, on every render.
+ * Shared resource binding cases.
  *
  * @typeParam S The shape describing the resource
  * @typeParam T The template stating which values of the resource are wanted
- *
- * @param options The resource to be bound, the shape describing it and the values wanted; read as the component
- *     first renders and whenever the store, the resource identifier or the template change, so a view is expected
- *     to keep the shape stable for the lifetime of the component
- *
- * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
- *     until the resource is first retrieved, `ready` with the resource and the operations writing it back to the
- *     store, or `error` with the {@link Problem} that prevented either; a state is kept until the next one supersedes
- *     it, including while the resource is retrieved again after a change, under a new identifier or on reload
- *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
- * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
-export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
-
-	entry: relative,
-	shape,
-	model
-
-}: {
-
-	/**
-	 * The identifier of the resource, either absolute or relative to the current location.
-	 */
-	readonly entry: IRI
-
-	/**
-	 * The shape the retrieved resource is validated against, possibly deferred to break definition cycles.
-	 */
-	readonly shape: S
-
-	/**
-	 * The template stating which values of the resource are retrieved, and nothing wider.
-	 *
-	 * > [!WARNING]
-	 * > Templates are compared by reference: any new object, even with the same content, retrieves the resource
-	 * > again. A template written inline, as in `useResource({ …, model: { name: {} } })`, is a new object on every
-	 * > render, and retrieves the resource on every render: declare it as a constant instead, or keep it in state
-	 * > if it changes at runtime.
-	 */
-	readonly model: T
-
-}): Relay<{
+export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> = {
 
 	/**
 	 * The resource is being retrieved for the first time, with neither a value nor an error to show.
@@ -164,7 +100,75 @@ export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>
 
 	}
 
-}> {
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Binds a component to a resource held by the shared store.
+ *
+ * Retrieves the resource from the store offered by the innermost enclosing {@link "store"!Store Store} context and
+ * keeps the component in step with it, so that a view renders what the store holds and writes changes back without
+ * driving exchanges of its own: the resource is retrieved again whenever the store signals a change to it, whoever
+ * made it.
+ *
+ * A missing resource, a rejected write and a failed exchange alike move the binding to its `error` state, so that a
+ * view shows them where it shows the resource and offers to retry from there; an operation the view called also
+ * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
+ * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
+ * is reported through the binding alone and never reaches the page: only a missing {@link "store"!Store Store} context
+ * or an unforeseen failure does, for an enclosing {@link "board"!Board Board} context to take up.
+ *
+ * The template may be fixed or replaced at runtime, and one stating something different has the resource retrieved
+ * again, while a copy stating the same, as a template written inline at the call site is on every render, retrieves
+ * nothing:
+ *
+ * - a **fixed** template, declared in code, types the resource exactly with the values it asks for
+ * - a **runtime** template, built as the interface runs, for instance as a user picks the values to show, types the
+ *   resource only as loosely as the template itself is typed, so a view reads the values it holds by inspecting it
+ *
+ * @typeParam S The shape describing the resource
+ * @typeParam T The template stating which values of the resource are wanted
+ *
+ * @param options The resource to be bound, the shape describing it and the values wanted; read as the component
+ *     first renders and whenever the store, the resource identifier or the template change, so a view is expected
+ *     to keep the shape stable for the lifetime of the component
+ *
+ * @returns A {@link Relay} over the {@link ResourceCases} of the binding, to be matched by a view with a handler for
+ *     each: `blank` until the resource is first retrieved, `ready` with the resource and the operations writing it back
+ *     to the store, or `error` with the {@link Problem} that prevented either; a state is kept until the next one
+ *     supersedes it, including while the resource is retrieved again after a change, under a new identifier or on
+ *     reload, so that a view never blanks out between retrievals
+ *
+ * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
+ */
+export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
+
+	entry: relative,
+	shape,
+	model
+
+}: {
+
+	/**
+	 * The identifier of the resource, either absolute or relative to the current location.
+	 */
+	readonly entry: IRI
+
+	/**
+	 * The shape the retrieved resource is validated against, possibly deferred to break definition cycles.
+	 */
+	readonly shape: S
+
+	/**
+	 * The template stating which values of the resource are retrieved, and nothing wider; compared by content, so that
+	 * it may be written inline at the call site, and a copy stating the same retrieves nothing.
+	 */
+	readonly model: T
+
+}): Relay<ResourceCases<S, T>> {
 
 	const store = useStore();
 	const entry = resolve(location.href, relative);

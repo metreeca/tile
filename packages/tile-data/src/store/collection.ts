@@ -31,6 +31,8 @@ import type { Criteria } from "@metreeca/qest/model";
 import { useModel } from "../model.js";
 import { type Collection, type Collections, createCollection, type Sole } from "./collection.core.js";
 
+export type { Collection, Collections, Sole } from "./collection.core.js";
+
 
 /**
  * Binds a component to a collection held by the shared store.

@@ -25,7 +25,6 @@ import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
-import { useItems } from "./index.core.js";
 import { Store, useStore } from "./index.js";
 import { useResource } from "./resource.js";
 
@@ -289,6 +288,38 @@ describe("useResource()", () => {
 
 		});
 
+		it("should compare templates by content, retrieving nothing for a copy", async () => {
+
+			const lookup = vi.fn(async () => resource);
+			const store = backend({ lookup });
+
+			function Probe({ model }: { readonly model: Template }) {
+				return createElement("output", {}, useResource({ entry, shape, model })({
+					blank: "blank",
+					ready: ({ state }) => `ready ${JSON.stringify(state)}`
+				}));
+			}
+
+			function bind(model: Template): void {
+				act(() => render(createElement(Store, {
+					factory: () => store,
+					children: createElement(Probe, { model })
+				}), document.body));
+			}
+
+			bind({ label: {} });
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			bind({ label: {} });
+			bind({ label: {} });
+
+			await settled(`ready ${JSON.stringify(resource)}`);
+
+			expect(lookup).toHaveBeenCalledTimes(1);
+
+		});
+
 	});
 
 	describe("change tracking", () => {
@@ -531,249 +562,6 @@ describe("useResource()", () => {
 			await expect(binding()({ error: ({ reload }) => reload() })).rejects.toMatchObject({ status: 503 });
 
 			await settled("error 503");
-
-		});
-
-	});
-
-});
-
-describe("useItems()", () => {
-
-	const Item = shaped({ id: id(), label: required(string()) });
-	const Catalogue = shaped({ id: id(), members: multiple(reference(Item)) });
-
-	const selection = { members: model };
-	const items = [{ id: "https://example.com/resource/1", label: "one" }];
-	const holder = { id: entry, members: items };
-
-	type Collection = ReturnType<typeof useItems<typeof Catalogue, typeof selection>>;
-
-
-	function collection(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
-		return backend({ lookup: async () => holder, ...overrides });
-	}
-
-	function mount(store: Backend, target: string = entry): () => Collection {
-
-		const seen = vi.fn<(binding: Collection) => void>();
-
-		function Probe() {
-
-			const binding = useItems({ entry: target, shape: Catalogue, model: selection });
-
-			seen(binding);
-
-			return createElement("output", {}, binding({
-				blank: "blank",
-				ready: ({ state }) => `ready ${JSON.stringify(state)}`,
-				error: ({ state }) => `error ${state.status}`
-			}));
-
-		}
-
-		act(() => render(createElement(Store, {
-			factory: () => store,
-			children: createElement(Probe, {})
-		}), document.body));
-
-		return () => seen.mock.lastCall![0]; // test harness: Probe has rendered at least once
-	}
-
-
-	it("should throw outside a store context", async () => {
-		expect(orphan(() => useItems({ entry, shape: Catalogue, model: selection })))
-			.toThrow("missing <Store> context");
-	});
-
-	describe("retrieval", () => {
-
-		it("should be blank until the collection is retrieved", async () => {
-
-			mount(collection({ lookup: () => new Promise(() => {}) }));
-
-			expect(text()).toBe("blank");
-
-		});
-
-		it("should retrieve the items from the property collecting them", async () => {
-
-			const lookup = vi.fn(async () => holder);
-
-			mount(collection({ lookup }));
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			expect(lookup).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
-
-		});
-
-		it("should resolve a relative identifier against the current location", async () => {
-
-			vi.stubGlobal("location", { href: "https://example.com/page" });
-
-			const lookup = vi.fn(async () => holder);
-
-			mount(collection({ lookup }), "resource");
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			expect(lookup).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection });
-
-		});
-
-		it("should type the items as the template narrows them", async () => {
-
-			expectTypeOf<Items<typeof Catalogue, typeof selection>>()
-				.toEqualTypeOf<readonly { readonly label: string }[]>();
-
-		});
-
-		it("should type the items of the property named, not of every collecting property", async () => {
-
-			const Tagged = shaped({ id: id(), members: multiple(reference(Item)), tags: multiple(string()) });
-
-			void (() => useItems({ entry, shape: Tagged, model: selection })({
-				ready: ({ state }) => expectTypeOf(state).toEqualTypeOf<readonly { readonly label: string }[]>()
-			}));
-
-		});
-
-		it("should move to error on a missing resource", async () => {
-
-			mount(collection({ lookup: async () => undefined }));
-
-			await settled(`error ${NotFound}`);
-
-		});
-
-		it("should move to error on a failed retrieval", async () => {
-
-			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
-
-			await settled("error 503");
-
-		});
-
-		it("should report a failed retrieval through the binding only", async () => {
-
-			mount(collection({ lookup: async () => { throw { status: 503 }; } }));
-
-			await settled("error 503");
-
-			await new Promise(resolve => setTimeout(resolve)); // an unhandled rejection is detected once the task ends
-
-			expect(unhandled).not.toHaveBeenCalled();
-
-		});
-
-	});
-
-	describe("change tracking", () => {
-
-		it("should observe changes to the resource holding the collection", async () => {
-
-			const observe = vi.fn(() => () => {});
-
-			mount(collection({ observe }));
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			expect(observe).toHaveBeenCalledWith(expect.any(Function), entry);
-
-		});
-
-		it("should keep the items while they are retrieved again", async () => {
-
-			const lookup = vi.fn().mockResolvedValueOnce(holder).mockReturnValue(new Promise(() => {}));
-			const observe = vi.fn((_observer: StoreObserver) => () => {});
-
-			mount(collection({ lookup, observe }));
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			await act(async () => observe.mock.calls.forEach(([observer]) => observer({ [entry]: true })));
-
-			expect(lookup).toHaveBeenCalledTimes(2);
-			expect(text()).toBe(`ready ${JSON.stringify(items)}`);
-
-		});
-
-	});
-
-	describe("create()", () => {
-
-		const item = { label: "two" };
-		const location = "https://example.com/resource/2";
-
-		it("should add the item to the collection, resolving to its identifier", async () => {
-
-			const create = vi.fn(async () => location);
-
-			const binding = mount(collection({ create }));
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			await expect(binding()({ ready: ({ create }) => create(item) })).resolves.toBe(location);
-
-			expect(create).toHaveBeenCalledWith({ entry, shape: Catalogue, model: selection, state: item });
-
-		});
-
-		it("should reject on an existing item, moving to error", async () => {
-
-			const binding = mount(collection({ create: async () => undefined }));
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			await expect(binding()({ ready: ({ create }) => create(item) })).rejects.toMatchObject({ status: Conflict });
-
-			await settled(`error ${Conflict}`);
-
-		});
-
-		it("should reject on a failed creation, moving to error", async () => {
-
-			const binding = mount(collection({ create: async () => { throw { status: 422 }; } }));
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-			await expect(binding()({ ready: ({ create }) => create(item) })).rejects.toMatchObject({ status: 422 });
-
-			await settled("error 422");
-
-		});
-
-	});
-
-	describe("reload()", () => {
-
-		it("should retrieve the collection again, discarding the error", async () => {
-
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValue(holder);
-
-			const binding = mount(collection({ lookup }));
-
-			await settled(`error ${NotFound}`);
-
-			await binding()({ error: ({ reload }) => reload() });
-
-			await settled(`ready ${JSON.stringify(items)}`);
-
-		});
-
-		it("should keep the error while the collection is retrieved again", async () => {
-
-			const lookup = vi.fn().mockResolvedValueOnce(undefined).mockReturnValue(new Promise(() => {}));
-
-			const binding = mount(collection({ lookup }));
-
-			await settled(`error ${NotFound}`);
-
-			act(() => void binding()({ error: ({ reload }) => reload() }));
-
-			expect(lookup).toHaveBeenCalledTimes(2);
-			expect(text()).toBe(`error ${NotFound}`);
 
 		});
 

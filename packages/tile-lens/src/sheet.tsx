@@ -25,47 +25,47 @@
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
-import type { Items, Slice } from "@metreeca/blue/value";
+import type { Frame } from "@metreeca/blue/value";
 import { isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
-import type { IRI } from "@metreeca/core/resource";
 import { Hint } from "@metreeca/tile-cell/hint";
 import { Note } from "@metreeca/tile-cell/note";
+import type { Collection, Collections } from "@metreeca/tile-data/store/collection";
+import { type Admitted, type Ordering, useWindow } from "@metreeca/tile-data/store/window";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
-import { useWindow } from "@metreeca/tile-data/store/_window";
 import "./sheet.css";
 
 
 /**
  * Creates a windowed collection list.
  *
- * Lists the items of a collection held by the {@link @metreeca/tile-data!store.Store shared store}, rendering each
- * through `children`, and keeps in step with the store as {@link @metreeca/tile-data!store.useCollection useCollection}
- * does. Only the items in view are retrieved, in batches of 100 together with the batch before and the one after them,
- * while the list takes the room the whole collection would, as estimated from the height of the rows on show, so the
- * scrollbar of whatever area the list scrolls in spans the collection; the items on show stay where they stand while
- * the batches for a new position are on their way.
+ * Lists the items of a shared collection, rendering each through `children`, and keeps in step with the store. Only
+ * the items in view are retrieved, in batches of 100 together with the batch before and the one after them, while the
+ * list takes the room the whole collection would, as estimated from the height of the rows on show, so the scrollbar
+ * of whatever area the list scrolls in spans the collection; the items on show stay where they stand while the
+ * batches for a new position are on their way.
  *
- * Filters and sort order are stated in the model as criteria on the collection, as the store takes them: the list
- * sets the offset and limit alone, overriding any the model states, and starts again from the first items whenever it
- * is handed a model stating something different.
+ * The list shows the items the collection criteria let through, in the sort order given, and starts again from the
+ * first items whenever the criteria, the model or the sort order change.
  *
  * Where a `placeholder` is supplied, a list with nothing to show fills its area with it, worded as still loading or as
  * matching nothing. A failed exchange is shown as a critical {@link @metreeca/tile-cell!note.Note note} in place of the
  * list.
  *
  * @typeParam S The shape describing the resource holding the collection
- * @typeParam T The model naming the property collecting the items and stating which values of each item are wanted
+ * @typeParam P The property of the resource collecting the items
+ * @typeParam T The template or projection stating the values wanted from each item
  *
  * @param options The widget configuration
  *
  * @returns The list
  */
-export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
+export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T extends object>({
 
-	entry,
-	shape,
+	collection,
+
 	model,
+	order,
 
 	placeholder,
 	children
@@ -73,21 +73,20 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 }: {
 
 	/**
-	 * The identifier of the resource holding the collection, either absolute or relative to the current location.
+	 * The collection listed, as handed by {@link @metreeca/tile-data!store/collection.useCollection useCollection}.
 	 */
-	entry: IRI
+	collection: Collection<S, P>
 
 	/**
-	 * The shape describing the resource holding the collection, possibly deferred to break definition cycles.
+	 * The template or projection stating the values wanted from each item; compared by content, so it may be written
+	 * inline and a copy stating the same leaves the list where it stands.
 	 */
-	shape: S
+	model: T & Admitted<S, P, T>
 
 	/**
-	 * The model naming the multi-valued property collecting the items, stating the values wanted from each item along
-	 * with the criteria filtering and sorting them; compared by content, so a model may be written inline and a copy
-	 * stating the same leaves the list where it stands.
+	 * The sort order the items are listed in, as expressions mapped to their direction: `{ label: "asc" }`.
 	 */
-	model: T
+	order?: Ordering
 
 
 	/**
@@ -98,21 +97,21 @@ export function Sheet<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
 	/**
 	 * Renders an item of the collection.
 	 */
-	children: (item: Items<S, T>[number]) => ComponentChildren
+	children: (item: Frame<S, { readonly [K in P]: T }>) => ComponentChildren
 
 }) {
 
-	const window = useWindow({ entry, shape, model });
+	const window = useWindow<S, P, T>(collection, { model, order });
 
 	return window({
 
 		blank: () => placeholder && <Hint>{placeholder}<span>Loading…</span></Hint>,
 
-		ready: ({ state, offset, total, focus }) => state.length === 0 && offset === 0
+		ready: ({ state, offset, total, move }) => state.length === 0 && offset === 0
 
 			? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
 
-			: <Rows items={state} offset={offset} total={total} focus={focus}>{children}</Rows>,
+			: <Rows items={state} offset={offset} total={total} move={move}>{children}</Rows>,
 
 		error: () => <Note level="critical"><div>Not Available</div></Note>
 
@@ -138,7 +137,7 @@ function Rows<I>({
 	offset,
 	total,
 
-	focus,
+	move,
 
 	children
 
@@ -148,7 +147,7 @@ function Rows<I>({
 	offset: number
 	total: Optional<number>
 
-	focus: (first: number, last: number) => void
+	move: (first: number, last: number) => void
 
 	children: (item: I) => ComponentChildren
 
@@ -184,7 +183,7 @@ function Rows<I>({
 
 			const { top } = element.getBoundingClientRect();
 
-			focus(index(-top), index(window.innerHeight-top));
+			move(index(-top), index(window.innerHeight-top));
 
 		};
 
@@ -198,7 +197,7 @@ function Rows<I>({
 			window.removeEventListener("resize", track);
 		};
 
-	})), [id, row, size, focus]);
+	})), [id, row, size, move]);
 
 	return createElement("tile-sheet", {
 

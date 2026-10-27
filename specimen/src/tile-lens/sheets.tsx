@@ -32,7 +32,7 @@ import { decodeTemplate } from "@metreeca/qest/model";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { Store } from "@metreeca/tile-data/store";
+import { Store, useCollection } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useState } from "preact/hooks";
 
@@ -41,14 +41,6 @@ const entry = "https://example.com/catalogue/";
 
 const Item = resource({ id: id(), label: required(string()) });
 const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
-
-/*
- * The two orders are declared once, so the list is handed the same model on every render and a new one only when the
- * reader switches order.
- */
-
-const Increasing = { members: { id: {}, label: {}, "^label": "asc" } } as const; // ;(literal) the order keeps its literal type
-const Decreasing = { members: { id: {}, label: {}, "^label": "desc" } } as const; // ;(literal) as above
 
 const items = Array.from({ length: 1000 }, (_, index) => ({
 	id: `${entry}${index + 1}`,
@@ -90,25 +82,32 @@ async function serve(request: Request): Promise<Response> {
  */
 export function Sheets() {
 
-	const [model, setModel] = useState<typeof Increasing | typeof Decreasing>(Increasing);
+	const collection = useCollection({ entry, shape: Catalogue });
+
+	const [order, setOrder] = useState<"asc" | "desc">("asc");
 
 	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
 
 		<Store>
 
-			<p>A sheet lists the items of a collection held by the store, fetching only the items in view and the batches
-				around them while taking the room of the whole collection, and starts again from the first items when it
-				is handed a new model, as when the order changes.</p>
+			<p>A sheet lists the items of a collection held by the store, fetching only the items in view and the
+				batches around them while taking the room of the whole collection, and starts again from the first items
+				when the order changes.</p>
 
 			<div class="controls">
 				<Button
-					icon={model === Increasing ? <Icon.Increasing/> : <Icon.Decreasing/>}
-					label={model === Increasing ? "Increasing" : "Decreasing"}
-					onClick={() => setModel(model === Increasing ? Decreasing : Increasing)}
+					icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}
+					label={order === "asc" ? "Increasing" : "Decreasing"}
+					onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
 				/>
 			</div>
 
-			<Sheet entry={entry} model={model} placeholder={<Icon.List/>} shape={Catalogue}>{item =>
+			<Sheet
+				collection={collection}
+				model={{ id: {}, label: {} }}
+				order={{ label: order }}
+				placeholder={<Icon.List/>}
+			>{item =>
 				<div>{item.label}</div>
 			}</Sheet>
 

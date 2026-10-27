@@ -32,7 +32,7 @@ import { Hint } from "@metreeca/tile-cell/hint";
 import { Note } from "@metreeca/tile-cell/note";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
-import { useWindow } from "./_/window.js";
+import { useWindow } from "@metreeca/tile-data/store/_window";
 import "./sheet.css";
 
 

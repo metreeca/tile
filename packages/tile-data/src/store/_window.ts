@@ -32,19 +32,18 @@ import type { IRI } from "@metreeca/core/resource";
 import { createState } from "@metreeca/core/state";
 import type { Problem } from "@metreeca/http/success";
 import type { Reference } from "@metreeca/qest/state";
-import { useModel } from "@metreeca/tile-data/model";
-import { useCollection } from "@metreeca/tile-data/store";
+import { useModel } from "../model.js";
+import { useCollection } from "./collection.js";
 
 
 /**
  * Binds a component to a sliding window over a collection held by the shared store.
  *
- * Retrieves from the store offered by the innermost enclosing {@link @metreeca/tile-data!store.Store Store} context
- * only the items in view and the batches around them, as
- * {@link @metreeca/tile-data!store.useCollection useCollection} retrieves a whole collection, and counts the
- * collection under the filters the model states, so that a view reserves the room of the items outside the window.
- * The window starts over the first items and follows the items in view as the view reports them, the items held
- * staying on show, where they were taken from, until the new window lands.
+ * Retrieves from the store offered by the innermost enclosing {@link "store"!Store Store} context only the items in
+ * view and the batches around them, as {@link "store/collection"!useCollection useCollection} retrieves a whole
+ * collection, and counts the collection under the filters the model states, so that a view reserves the room of the
+ * items outside the window. The window starts over the first items and follows the items in view as the view reports
+ * them, the items held staying on show, where they were taken from, until the new window lands.
  *
  * The model is compared by content, so it may be written inline: a model stating something different, as when a
  * filter changes, starts the window again from the first items.
@@ -59,7 +58,7 @@ import { useCollection } from "@metreeca/tile-data/store";
  *     until the first window is retrieved, `ready` with the items in the window, where it stands and the operations
  *     on the collection, or `error` with what prevented either
  *
- * @throws {@link !Error Error} If called outside any {@link @metreeca/tile-data!store.Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
 export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
@@ -132,7 +131,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 		focus(first: number, last: number): void
 
 		/**
-		 * Adds an item to the collection, as {@link @metreeca/tile-data!store.useCollection useCollection} does.
+		 * Adds an item to the collection, as {@link "store/collection"!useCollection useCollection} does.
 		 *
 		 * @param state The new item, checked against the item shape; its identifier may be left for the store to assign
 		 *

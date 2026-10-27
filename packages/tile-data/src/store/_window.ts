@@ -30,6 +30,7 @@ import { isNumber, isObject, type Lazy, opt, type Optional } from "@metreeca/cor
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import type { IRI } from "@metreeca/core/resource";
 import { createState } from "@metreeca/core/state";
+import { immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
 import type { Reference } from "@metreeca/qest/state";
 import { useModel } from "../model.js";
@@ -131,7 +132,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 		focus(first: number, last: number): void
 
 		/**
-		 * Adds an item to the collection, as {@link "store/collection"!Collection.create Collection.create} does.
+		 * Adds an item to the collection, as {@link "store/members"!useMembers useMembers} does.
 		 *
 		 * @param state The new item, checked against the item shape; its identifier may be left for the store to assign
 		 *
@@ -217,7 +218,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 
 		blank: () => ({ blank: undefined }),
 
-		ready: ready => ({
+		ready: ready => immutable({
 
 			ready: {
 
@@ -226,7 +227,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 				offset: ready.state === stale?.items ? stale.lower : lower,
 				total: total({ ready: ({ state }) => size(state) }),
 
-				focus: (first, last) => focus(first, last, ready.state)
+				focus: (first: number, last: number) => focus(first, last, ready.state)
 
 			}
 

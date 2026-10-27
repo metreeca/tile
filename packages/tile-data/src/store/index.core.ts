@@ -32,6 +32,7 @@ import { type IRI, resolve } from "@metreeca/core/resource";
 import { Conflict, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
+import { immutable } from "@metreeca/core/values";
 import type { Reference } from "@metreeca/qest/state";
 import { useEffect, useState } from "preact/hooks";
 import { useStore } from "./index.js";
@@ -196,7 +197,7 @@ export function useEntry<V, W extends object>({
 	}
 
 	function ready(state: V): void {
-		setOption({ ready: { state, ...modify(settle) } });
+		setOption(immutable({ ready: { state, ...modify(settle) } }));
 	}
 
 
@@ -213,7 +214,7 @@ export function useEntry<V, W extends object>({
 
 				const error = toProblem(issue);
 
-				setOption({ error: { state: error, reload } });
+				setOption(immutable({ error: { state: error, reload } }));
 
 				return Promise.reject(error);
 

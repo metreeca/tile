@@ -37,7 +37,7 @@
 import { assert } from "@metreeca/core";
 import { some, type Some } from "@metreeca/core/arrays";
 import type { IRI } from "@metreeca/core/resource";
-import { equals } from "@metreeca/core/values";
+import { equals, immutable } from "@metreeca/core/values";
 import { isProblem, type Problem, toProblem } from "@metreeca/http/success";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
@@ -266,13 +266,13 @@ export function Board({
 
 		};
 
-		return {
+		return immutable({
 
 			post: post => put(toPost(post)),
 			raise: issue => put(toFailure(issue)),
 			clear: posts => setPosts(standing => cleared(standing, posts))
 
-		};
+		});
 
 	});
 
@@ -334,7 +334,7 @@ function toPost({
 
 }: Partial<Post> & Pick<Post, "message">): Post {
 
-	return { ...rest, instance, status };
+	return immutable({ ...rest, instance, status });
 
 }
 

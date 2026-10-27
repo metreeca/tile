@@ -27,7 +27,9 @@
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Lazy } from "@metreeca/core";
 import { type IRI, resolve } from "@metreeca/core/resource";
+import { equals } from "@metreeca/core/values";
 import type { Criteria } from "@metreeca/qest/model";
+import { useEffect, useState } from "preact/hooks";
 import { useModel } from "../model.js";
 import { type Collection, type Collections, createCollection, type Sole } from "./collection.core.js";
 
@@ -48,6 +50,15 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  * collection of resources the shape holds is accepted, and omitting it fails to compile unless the shape holds exactly
  * one, so that the error reaches the author before it reaches the reader.
  *
+ * The reader's criteria survive reloads and navigation where the page keeps them in the location, handing them over as
+ * the starting criteria and taking them back as the reader revises them, once per catalogue page and with no wiring:
+ *
+ * ```tsx
+ * const [query, setQuery] = useQuery();
+ *
+ * const courses = useCollection({ entry: "/courses/", shape: Course, sieve: query, onChange: setQuery });
+ * ```
+ *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property collecting the items, inferred from `field` or, where omitted, from the shape
  *
@@ -67,7 +78,9 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	field,
 
 	scope,
-	sieve
+	sieve,
+
+	onChange
 
 }: {
 
@@ -96,14 +109,38 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	readonly scope?: Criteria
 
 	/**
-	 * The reader's criteria the collection starts from.
+	 * The reader's criteria the collection starts from, read as it is created: criteria handed over later, as those
+	 * written back by `onChange`, leave the collection as it stands until it is created again for another reason.
 	 */
 	readonly sieve?: Criteria
+
+	/**
+	 * Takes the reader's criteria whenever they change, so that a page may keep them wherever it likes, as in the
+	 * location through {@link "query"!useQuery useQuery}; never called with the criteria the collection is created with.
+	 */
+	readonly onChange?: (sieve: Criteria) => void
 
 } & ([Sole<S>] extends [never] ? { readonly field: P } : unknown)): Collection<S, P> {
 
 	const entry = resolve(location.href, relative);
 
-	return useModel(() => createCollection<S, P>({ entry, shape, field, scope, sieve }), [entry, shape, field, scope]);
+	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, scope, sieve }), [
+		entry, shape, field, scope
+	]);
+
+	// the criteria last handed over, from those the collection is created with, so that only changes reach onChange
+
+	const [notified, setNotified] = useState(collection.sieve);
+
+	useEffect(() => {
+
+		if ( !equals(notified, collection.sieve) ) {
+			setNotified(collection.sieve);
+			onChange?.(collection.sieve);
+		}
+
+	}, [collection.sieve]);
+
+	return collection;
 
 }

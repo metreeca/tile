@@ -295,4 +295,66 @@ describe("useCollection()", () => {
 
 	});
 
+	describe("onChange", () => {
+
+		function observed(sieve = {}): {
+
+			collection: () => Collection<typeof Catalogue, "members">
+			changes: ReturnType<typeof vi.fn<(sieve: object) => void>>
+
+		} {
+
+			const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
+			const changes = vi.fn<(sieve: object) => void>();
+
+			function Probe() {
+
+				collections(useCollection({ entry, shape: Catalogue, sieve, onChange: changes }));
+
+				return null;
+
+			}
+
+			act(() => render(createElement(Probe, {}), document.body));
+
+			return { collection: () => collections.mock.lastCall![0], changes }; // test harness: Probe has rendered
+		}
+
+
+		it("should hand over the reader's criteria as they are revised", async () => {
+
+			const { collection, changes } = observed({ "~label": "art" });
+
+			await act(async () => void collection().filter({ "?university": ["u1"] }));
+
+			expect(changes).toHaveBeenLastCalledWith({ "~label": "art", "?university": ["u1"] });
+
+			await act(async () => void collection().clear());
+
+			expect(changes).toHaveBeenLastCalledWith({});
+
+		});
+
+		it("should leave the criteria the collection is created with alone", async () => {
+
+			const { changes } = observed({ "~label": "art" });
+
+			await act(async () => {});
+
+			expect(changes).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave a revision changing nothing alone", async () => {
+
+			const { collection, changes } = observed({ "~label": "art" });
+
+			await act(async () => void collection().filter({ "~label": "art" }));
+
+			expect(changes).not.toHaveBeenCalled();
+
+		});
+
+	});
+
 });

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { some, type Some, unique } from "@metreeca/core/arrays";
+import { difference, some, type Some, unique } from "@metreeca/core/arrays";
 import { createState } from "@metreeca/core/state";
+import { equals } from "@metreeca/core/values";
 
 
 export interface Selection<T> {
@@ -44,11 +45,11 @@ export function createSelection<T>({
 
 	return createState<Selection<T>>({
 
-		items: unique(some(items)),
+		items: unique(some(items), equals),
 
 		toggle(items: Some<T>, force?: boolean) {
 
-			const delta = unique(some(items));
+			const delta = unique(some(items), equals);
 
 			if ( delta.length === 0 ) {
 
@@ -56,20 +57,20 @@ export function createSelection<T>({
 
 			} else if ( force === false ) { // force exclude: ensure items are absent
 
-				const retained = this.items.filter(item => !delta.includes(item));
+				const retained = difference([this.items, delta], equals);
 
 				return retained.length === this.items.length ? {} : { items: retained };
 
 			} else if ( force === true ) { // force include: ensure items are present
 
-				const inserted = delta.filter(item => !this.items.includes(item));
+				const inserted = difference([delta, this.items], equals);
 
 				return inserted.length > 0 ? { items: [...this.items, ...inserted] } : {};
 
 			} else { // toggle mode: add if absent, remove if present
 
-				const retained = this.items.filter(item => !delta.includes(item));
-				const inserted = delta.filter(item => !this.items.includes(item));
+				const retained = difference([this.items, delta], equals);
+				const inserted = difference([delta, this.items], equals);
 
 				return { items: [...retained, ...inserted] };
 			}

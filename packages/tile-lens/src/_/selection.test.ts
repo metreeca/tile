@@ -505,4 +505,51 @@ describe("Selection", () => {
 
 	});
 
+	describe("Deep equality", () => {
+
+		const apple = () => ({ id: "apple", label: { en: "Apple" } });
+		const banana = () => ({ id: "banana", label: { en: "Banana" } });
+
+		it("should deduplicate deeply equal initial items", async () => {
+
+			const selection = createSelection({ items: [apple(), apple(), banana()] });
+
+			expect(selection.items).toEqual([apple(), banana()]);
+
+		});
+
+		it("should deduplicate deeply equal toggled items", async () => {
+
+			const next = createSelection<ReturnType<typeof apple>>().toggle([apple(), apple()]);
+
+			expect(next.items).toEqual([apple()]);
+
+		});
+
+		it("should remove a deeply equal item on toggle", async () => {
+
+			const next = createSelection({ items: [apple(), banana()] }).toggle(apple());
+
+			expect(next.items).toEqual([banana()]);
+
+		});
+
+		it("should not duplicate a deeply equal item on force include", async () => {
+
+			const selection = createSelection({ items: [apple()] });
+
+			expect(selection.toggle(apple(), true)).toBe(selection);
+
+		});
+
+		it("should remove a deeply equal item on force exclude", async () => {
+
+			const next = createSelection({ items: [apple(), banana()] }).toggle(apple(), false);
+
+			expect(next.items).toEqual([banana()]);
+
+		});
+
+	});
+
 });

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import type { Criteria } from "@metreeca/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -63,16 +62,7 @@ describe("useQuery()", () => {
 			expect(mount()()[0]).toEqual({});
 		});
 
-		it("should read the criteria from the history entry first", async () => {
-
-			history.replaceState({ "~label": "state" } satisfies Criteria, "", `${route}?~label=%22query%22`);
-			sessionStorage.setItem(key, "~label=%22session%22");
-
-			expect(mount()()[0]).toEqual({ "~label": "state" });
-
-		});
-
-		it("should read the criteria from the location query where the history entry holds none", async () => {
+		it("should read the criteria from the location query first", async () => {
 
 			history.replaceState(null, "", `${route}?~label=%22query%22`);
 			sessionStorage.setItem(key, "~label=%22session%22");
@@ -134,14 +124,16 @@ describe("useQuery()", () => {
 
 		});
 
-		it("should keep the criteria written in the history entry, adding none", async () => {
+		it("should add no history entry, leaving the state of the current one alone", async () => {
+
+			history.replaceState({ page: "state" }, "", route);
 
 			const query = mount();
 			const length = history.length;
 
 			act(() => query()[1]({ "~label": "art" }));
 
-			expect(history.state).toEqual({ "~label": "art" });
+			expect(history.state).toEqual({ page: "state" });
 			expect(history.length).toBe(length);
 
 		});

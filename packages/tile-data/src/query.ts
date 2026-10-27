@@ -33,7 +33,7 @@
  */
 
 import type { Optional } from "@metreeca/core";
-import { type Criteria, decodeCriteria, encodeCriteria, isCriteria } from "@metreeca/qest/model";
+import { type Criteria, decodeCriteria, encodeCriteria } from "@metreeca/qest/model";
 import { useEffect, useState } from "preact/hooks";
 import { useRoute } from "./router.js";
 
@@ -43,13 +43,13 @@ import { useRoute } from "./router.js";
  *
  * The criteria are read as the component mounts, from the first place holding them:
  *
- * - the history entry the page stands at, as when the reader comes back to the page through the history
- * - the location query, as when the page is reloaded or reached through a link carrying the criteria
+ * - the location query, as when the page is reloaded, reached through a link carrying the criteria, or reached again
+ *   through the history, whose entry for the page keeps the query last written there
  * - the criteria last written for the route in the session, as when the page is reached through a plain link
  *
- * Writing the criteria replaces them in all three places without adding a history entry, so the history keeps one
- * entry per page however many times the reader narrows it. Criteria written by the component never mount it again:
- * a navigation to another query does, as described by {@link "router"!Routes Routes}.
+ * Writing the criteria replaces them in both places without adding a history entry or touching its state, so the
+ * history keeps one entry per page however many times the reader narrows it. Criteria written by the component never
+ * mount it again: a navigation to another query does, as described by {@link "router"!Routes Routes}.
  *
  * @returns The criteria as they stand for this render, and a setter replacing them; empty criteria leave the location
  *     with no query, the path and the hash staying in place whatever the criteria written
@@ -71,15 +71,14 @@ export function useQuery(): [Criteria, (criteria: Criteria) => void] {
 	}
 
 	function read(): Criteria {
-		return isCriteria(history.state) ? history.state
-			: decode(location.search.substring(1)) ?? decode(sessionStorage.getItem(key) ?? "") ?? {};
+		return decode(location.search.substring(1)) ?? decode(sessionStorage.getItem(key) ?? "") ?? {};
 	}
 
 	function write(criteria: Criteria): void {
 
 		const encoded = encodeCriteria(criteria);
 
-		history.replaceState(criteria, document.title,
+		history.replaceState(history.state, document.title,
 			`${location.pathname}${encoded ? `?${encoded}` : ""}${location.hash}`
 		);
 

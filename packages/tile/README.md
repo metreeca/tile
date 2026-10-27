@@ -4,18 +4,13 @@
 
 Design system for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-An app includes the stylesheet and gets a coherent look across every Tile component: a token layer defining colour,
-type, spacing, sizing and focus affordances, and base rules applying them to plain document markup. Redefining a token
-in a later rule restyles everything that reads it, with no component change.
+A single stylesheet that gives every Tile component and plain document markup a coherent look, following the platform
+light or dark scheme. Overriding a token in a plain rule restyles everything that reads it, with no component change.
 
-The palette stands on five colour anchors, every colour a role carries deriving from them, so retuning the anchors
-carries the whole interface along and the default look follows the platform colour scheme, light or dark, on its own.
-Beside the roles come the colours a chart, a coding or a map reads: ten-step scales, series slots and area classes,
-each holding a separation a reader can rely on.
+Beyond interface roles, the palette offers colour scales and series for charts, codings and maps.
 
-The dependency runs one way and stays optional: components carry only the structural styling they need to work, so an
-app that leaves this package out still gets a usable, plainly structured interface. What both sides honour is the token
-naming contract, published here as typed constants.
+The package is optional: components carry only the structural styling they need, so an app that leaves it out still
+gets a usable, plainly structured interface. Token names are published here as typed constants.
 
 # Installation
 

@@ -4,15 +4,12 @@
 
 Preact movable items and the move lifecycle for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer lets readers move things with the pointer, by touch or with the keyboard alike: cards across the cells of a
-board, or items within and across sortable lists. Every move runs the same course,
-picked up, carried, dropped and then waiting for the application to settle it, so a widget shows a move it has not yet
-been told the outcome of, and puts back one the application refuses, without the consumer tracking any of it.
+Drag and drop for cards across board cells and items within and across sortable lists, by pointer, touch or keyboard.
 
-Screen readers are told in English where an item is picked up, carried and dropped, after the names a reader sees on
-screen.
+A widget shows a pending move until the app settles it and puts back a move the app refuses, with no state to track.
+Moves are announced to screen readers in English, using the names shown on screen.
 
-Gestures are performed by [dnd-kit](https://dndkit.com/), which this package alone depends on.
+Gestures run on [dnd-kit](https://dndkit.com/), which stays internal: consumers never import it.
 
 # Installation
 

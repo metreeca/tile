@@ -4,12 +4,9 @@
 
 Preact linked data views for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer renders a resource without writing a view for it: the shape describing the resource decides which properties
-are shown and which control each one is shown through, so a model change reaches the interface without a matching
-interface change.
+Resource views driven by shapes: a model change reaches the interface with no view code to update.
 
-What a view shows is read through the store the app publishes, sharing the caching, batching and validation the rest of
-the stack relies on.
+Data is read through the [@metreeca/keep](https://github.com/metreeca/keep) store the app provides.
 
 # Installation
 

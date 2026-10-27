@@ -2,15 +2,11 @@
 
 Minimalist model-driven UI toolkit for linked data resources.
 
-**@metreeca/tile** provides specialised Preact components for working with linked data resources served by
-[@metreeca/qest](https://github.com/metreeca/qest) APIs.
+Preact components for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. Resource models shared with
+the server drive what screens show, what forms accept and how values are validated, so neither side restates them.
 
-- **Model-Driven Data**: resource models shared by client and server drive data exchanges and validation, cutting
-  the boilerplate usually required by both
-- **Declarative Screens**: JSX composes general-purpose widgets and layouts with specialised linked data components,
-  such as resource and collection viewers, search facets and property editors
-- **Optional Design System**: design tokens theme every component according to the platform light or dark scheme,
-  and can be left out without breaking any of them
+Screens are composed in JSX from general-purpose widgets and layouts alongside linked data views and forms. The design
+system is optional: components work without it and follow the platform light or dark scheme with it.
 
 # Installation
 

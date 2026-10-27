@@ -33,17 +33,17 @@ import { createState } from "@metreeca/core/state";
 import type { Problem } from "@metreeca/http/success";
 import type { Reference } from "@metreeca/qest/state";
 import { useModel } from "../model.js";
-import { useCollection } from "./collection.js";
+import { useItems } from "./index.core.js";
 
 
 /**
  * Binds a component to a sliding window over a collection held by the shared store.
  *
  * Retrieves from the store offered by the innermost enclosing {@link "store"!Store Store} context only the items in
- * view and the batches around them, as {@link "store/collection"!useCollection useCollection} retrieves a whole
- * collection, and counts the collection under the filters the model states, so that a view reserves the room of the
- * items outside the window. The window starts over the first items and follows the items in view as the view reports
- * them, the items held staying on show, where they were taken from, until the new window lands.
+ * view and the batches around them rather than the whole collection, and counts the collection under the filters the
+ * model states, so that a view reserves the room of the items outside the window. The window starts over the first
+ * items and follows the items in view as the view reports them, the items held staying on show, where they were taken
+ * from, until the new window lands, so that a list never blanks out while the reader scrolls through it.
  *
  * The model is compared by content, so it may be written inline: a model stating something different, as when a
  * filter changes, starts the window again from the first items.
@@ -131,7 +131,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 		focus(first: number, last: number): void
 
 		/**
-		 * Adds an item to the collection, as {@link "store/collection"!useCollection useCollection} does.
+		 * Adds an item to the collection, as {@link "store/collection"!Collection.create Collection.create} does.
 		 *
 		 * @param state The new item, checked against the item shape; its identifier may be left for the store to assign
 		 *
@@ -195,7 +195,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 
 	}), [model]);
 
-	const items = useCollection({
+	const items = useItems({
 
 		entry,
 		shape,
@@ -204,7 +204,7 @@ export function useWindow<S extends Lazy<ResourceShape>, T extends Slice<S, T>>(
 
 	});
 
-	const total = useCollection({
+	const total = useItems({
 
 		entry,
 		shape,

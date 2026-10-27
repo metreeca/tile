@@ -24,13 +24,109 @@
  * @module
  */
 
-import type { Optional } from "@metreeca/core";
-import type { Option } from "@metreeca/core/relay";
-import { NotFound } from "@metreeca/http";
+import type { ResourceShape } from "@metreeca/blue/resource";
+import { type Draft, type Items, items, type Slice } from "@metreeca/blue/value";
+import type { Lazy, Optional } from "@metreeca/core";
+import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
+import { type IRI, resolve } from "@metreeca/core/resource";
+import { Conflict, NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Store } from "@metreeca/keep";
 import type { Reference } from "@metreeca/qest/state";
 import { useEffect, useState } from "preact/hooks";
+import { useStore } from "./index.js";
+
+
+/**
+ * Binds a component to the items of a collection held by the shared store.
+ *
+ * Retrieves the items a multi-valued property of a resource collects from the store offered by the innermost
+ * enclosing {@link "store"!Store Store} context and keeps the component in step with them, so that a lens shows what
+ * the store holds without driving exchanges of its own: the items are retrieved again whenever the store signals a
+ * change to the resource holding them, whichever component or other client made the change.
+ *
+ * A missing resource, a rejected creation and a failed exchange alike move the binding to its `error` state, as for
+ * {@link "store/resource"!useResource useResource}; an operation the view called also rejects with the same
+ * {@link Problem}, while a failed exchange no view called for is reported through the binding alone.
+ *
+ * The model is typed and held stable as for {@link "store/resource"!useResource useResource}, and may likewise be
+ * fixed or replaced at runtime, a different one having the items retrieved again.
+ *
+ * @typeParam S The shape describing the resource holding the collection
+ * @typeParam T The model naming the property collecting the items and stating which values of each item are wanted
+ *
+ * @param options The resource holding the collection, the shape describing it and the model addressing the
+ *     collection; read as the component first renders and again whenever the store, the resource or the model change
+ *
+ * @returns A {@link Relay} over the state of the binding, to be matched by a view with a handler for each: `blank`
+ *     until the items are first retrieved, `ready` with the items and the operation adding one, or `error` with the
+ *     {@link Problem} that prevented either; a state is kept until the next one supersedes it, including while the
+ *     items are retrieved again after a change or on reload, so that a lens never blanks out between retrievals
+ *
+ * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
+ */
+export function useItems<S extends Lazy<ResourceShape>, T extends Slice<S, T>>({
+
+	entry: relative,
+	shape,
+	model
+
+}: {
+
+	/**
+	 * The identifier of the resource holding the collection, either absolute or relative to the current location.
+	 */
+	readonly entry: IRI
+
+	/**
+	 * The shape describing the resource holding the collection, possibly deferred to break definition cycles.
+	 */
+	readonly shape: S
+
+	/**
+	 * The model naming the multi-valued property collecting the items and stating, under that name, the template or
+	 * projection narrowing each item to the values retrieved; compared by reference, so that a model written inline
+	 * at the call site retrieves the items again on every render: declare it as a constant, or keep it in state.
+	 */
+	readonly model: T
+
+}): Relay<{
+
+	readonly blank: void
+
+	readonly ready: {
+		state: Items<S, T>
+		create(state: Draft<S, T>): Promise<Reference>
+	}
+
+	readonly error: {
+		readonly state: Problem
+		reload(): Promise<void>
+	}
+
+}> {
+
+	const store = useStore();
+	const entry = resolve(location.href, relative);
+
+	return createRelay(useEntry({
+
+		store,
+		entry,
+		model,
+
+		lookup: () => store.lookup({ entry, shape, model }).then(holder => holder && items(holder, model)),
+
+		modify: settle => ({
+
+			create: (state: Draft<S, T>) => settle(store.create({ entry, shape, model, state }), Conflict)
+
+		})
+
+	}));
+
+}
 
 
 /**

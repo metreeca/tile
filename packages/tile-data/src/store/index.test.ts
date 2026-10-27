@@ -25,7 +25,7 @@ import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
-import { useCollection } from "./collection.js";
+import { useItems } from "./index.core.js";
 import { Store, useStore } from "./index.js";
 import { useResource } from "./resource.js";
 
@@ -538,7 +538,7 @@ describe("useResource()", () => {
 
 });
 
-describe("useCollection()", () => {
+describe("useItems()", () => {
 
 	const Item = shaped({ id: id(), label: required(string()) });
 	const Catalogue = shaped({ id: id(), members: multiple(reference(Item)) });
@@ -547,7 +547,7 @@ describe("useCollection()", () => {
 	const items = [{ id: "https://example.com/resource/1", label: "one" }];
 	const holder = { id: entry, members: items };
 
-	type Collection = ReturnType<typeof useCollection<typeof Catalogue, typeof selection>>;
+	type Collection = ReturnType<typeof useItems<typeof Catalogue, typeof selection>>;
 
 
 	function collection(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
@@ -560,7 +560,7 @@ describe("useCollection()", () => {
 
 		function Probe() {
 
-			const binding = useCollection({ entry: target, shape: Catalogue, model: selection });
+			const binding = useItems({ entry: target, shape: Catalogue, model: selection });
 
 			seen(binding);
 
@@ -582,7 +582,7 @@ describe("useCollection()", () => {
 
 
 	it("should throw outside a store context", async () => {
-		expect(orphan(() => useCollection({ entry, shape: Catalogue, model: selection })))
+		expect(orphan(() => useItems({ entry, shape: Catalogue, model: selection })))
 			.toThrow("missing <Store> context");
 	});
 
@@ -633,7 +633,7 @@ describe("useCollection()", () => {
 
 			const Tagged = shaped({ id: id(), members: multiple(reference(Item)), tags: multiple(string()) });
 
-			void (() => useCollection({ entry, shape: Tagged, model: selection })({
+			void (() => useItems({ entry, shape: Tagged, model: selection })({
 				ready: ({ state }) => expectTypeOf(state).toEqualTypeOf<readonly { readonly label: string }[]>()
 			}));
 

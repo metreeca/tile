@@ -20,7 +20,7 @@ import { string } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import { More } from "@metreeca/tile-cell/more";
-import { Store, useCollection, useWindow } from "@metreeca/tile-data/store";
+import { Store, useCollection, useMembers } from "@metreeca/tile-data/store";
 import { createElement, Fragment, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -59,10 +59,10 @@ function mount(lookup: unknown, placeholder?: string): void {
 
 	function Host() {
 
-		const window = useWindow(useCollection({ entry, shape: Catalogue }), { model: { id: {}, label: {} } });
+		const members = useMembers(useCollection({ entry, shape: Catalogue }), { model: { id: {}, label: {} } });
 
 		return createElement(Sheet<typeof Catalogue, "members", { id: {}, label: {} }>, {
-			window,
+			members,
 			placeholder,
 			children: item => createElement("p", {}, item.label)
 		});
@@ -88,7 +88,7 @@ afterEach(async () => {
 
 describe("Sheet", () => {
 
-	it("should list the items in the window, rendering each through children", async () => {
+	it("should list the members, rendering each through children", async () => {
 
 		mount(catalogue(pool(3)));
 
@@ -136,14 +136,14 @@ describe("Sheet", () => {
 
 			function Host() {
 
-				const window = useWindow(useCollection({ entry, shape: Catalogue }), { model: { id: {}, label: {} }, batch });
+				const members = useMembers(useCollection({ entry, shape: Catalogue }), { model: { id: {}, label: {} }, batch });
 
 				return createElement(Fragment, {},
 					createElement(Sheet<typeof Catalogue, "members", { id: {}, label: {} }>, {
-						window,
+						members,
 						children: item => createElement("p", {}, item.label)
 					}),
-					window({ ready: ({ more }) => more && createElement(More, { onLoad: more }) })
+					members({ ready: ({ load }) => load && createElement(More, { onLoad: load }) })
 				);
 
 			}

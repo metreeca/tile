@@ -17,54 +17,151 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { Conflict, NotFound } from "@metreeca/http";
+import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { type Collection } from "./collection.core.js";
 import { useCollection } from "./collection.js";
 import { Store } from "./index.js";
+import { createMembers } from "./members.core.js";
 import { useMembers } from "./members.js";
 
 
-const entry = "https://example.com/catalogue/";
+const batch = 10;
 
-const Item = resource({ id: id(), label: required(string()) });
-const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
+
+describe("createMembers()", () => {
+
+	const members = () => createMembers({ order: { label: "asc" }, batch });
+
+
+	describe("creation", () => {
+
+		it("should start over the first batch", async () => {
+			expect(members().limit).toBe(batch);
+		});
+
+		it("should sort the items as given", async () => {
+			expect(members().order).toEqual({ label: "asc" });
+		});
+
+		it("should start unsorted by default", async () => {
+			expect(createMembers().order).toEqual({});
+		});
+
+		it.each([0, -1, 1.5])("should reject a batch size of %s", async batch => {
+			expect(() => createMembers({ batch })).toThrow(TypeError);
+		});
+
+	});
+
+	describe("load()", () => {
+
+		it("should retrieve one more batch", async () => {
+			expect(members().load().load().limit).toBe(3*batch);
+		});
+
+	});
+
+	describe("sort()", () => {
+
+		it("should restart from the first batch in the new order", async () => {
+
+			const sorted = members().load().sort({ label: "desc" });
+
+			expect(sorted.order).toEqual({ label: "desc" });
+			expect(sorted.limit).toBe(batch);
+
+		});
+
+		it("should replace the sort order rather than merge into it", async () => {
+			expect(members().sort({ id: 1 }).order).toEqual({ id: 1 });
+		});
+
+		it("should leave the members as they stand where the order is unchanged", async () => {
+
+			const initial = members().load();
+
+			expect(initial.sort({ label: "asc" })).toBe(initial);
+
+		});
+
+	});
+
+});
 
 
 describe("useMembers()", () => {
 
-	type Members = ReturnType<typeof useMembers<typeof Catalogue, "members">>;
+	const entry = "https://example.com/catalogue/";
+
+	const Item = resource({ id: id(), label: required(string()) });
+	const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
+
+	type Binding = ReturnType<typeof useMembers<typeof Catalogue, "members", { readonly label: {} }>>;
 
 
-	function backend(overrides: { readonly [K in keyof Backend]?: unknown }): Backend {
-		return {
-			lookup: async () => undefined,
-			observe: () => () => {},
-			...overrides
-		} as Backend; // ;(cast) test mock: only the members the hook calls are provided
+	function backend(lookup: unknown): Backend {
+		return { lookup, observe: () => () => {} } as unknown as Backend; // ;(test stub) only the members called
 	}
 
-	function mount(store: Backend): () => Members {
+	function items(size: number) {
+		return Array.from({ length: size }, (_, index) => ({ id: `${entry}${index}`, label: `item ${index}` }));
+	}
 
-		const seen = vi.fn<(members: Members) => void>();
+	function catalogue(size: number = batch/2) {
+		return vi.fn(async ({ model }: { model: { members: { "#": number } } }) => immutable({
+			id: entry,
+			members: items(Math.min(size, model.members["#"]))
+		}));
+	}
+
+	function mount(lookup: unknown, scope = {}): {
+
+		collection: () => Collection<typeof Catalogue, "members">
+		members: () => Binding
+
+	} {
+
+		const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
+		const bindings = vi.fn<(members: Binding) => void>();
 
 		function Probe() {
 
-			seen(useMembers(useCollection({ entry, shape: Catalogue })));
+			const collection = useCollection({ entry, shape: Catalogue, scope });
+
+			collections(collection);
+
+			bindings(useMembers(collection, {
+				model: { label: {} },
+				order: { label: "asc" },
+				batch
+			}));
 
 			return null;
 
 		}
 
 		act(() => render(createElement(Store, {
-			factory: () => store,
+			factory: () => backend(lookup),
 			children: createElement(Probe, {})
 		}), document.body));
 
-		return () => seen.mock.lastCall![0]; // test harness: Probe has rendered at least once
+		return {
+			collection: () => collections.mock.lastCall![0], // test harness: Probe has rendered at least once
+			members: () => bindings.mock.lastCall![0]
+		};
+	}
+
+	function models(lookup: ReturnType<typeof catalogue>) {
+		return lookup.mock.calls.map(([{ model }]) => model);
+	}
+
+	function load(members: Binding) {
+		return members({ ready: ({ load }) => load });
 	}
 
 
@@ -73,11 +170,29 @@ describe("useMembers()", () => {
 	});
 
 
+	it("should retrieve the members narrowed by the collection, arranged by the view", async () => {
+
+		const lookup = catalogue();
+		const { collection } = mount(lookup, { "?university": ["u1"] });
+
+		act(() => void collection().filter({ "~label": "item" }));
+
+		await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+			members: {
+				label: {},
+				"?university": ["u1"], "~label": "item",
+				"^label": "asc",
+				"#": batch
+			}
+		}));
+
+	});
+
 	it("should throw outside a store context", async () => {
 
 		function Probe() {
 
-			useMembers(useCollection({ entry, shape: Catalogue }));
+			useMembers(useCollection({ entry, shape: Catalogue }), { model: { label: {} } });
 
 			return null;
 
@@ -87,87 +202,149 @@ describe("useMembers()", () => {
 
 	});
 
-	describe("create()", () => {
+	it("should be blank until the first batch is retrieved", async () => {
 
-		const item = { label: "two" };
-		const location = "https://example.com/catalogue/2";
+		const { members } = mount(vi.fn(() => new Promise(() => {})));
 
-		it("should add the item to the collection, resolving to its identifier", async () => {
+		expect(members()({ blank: "blank" })).toBe("blank");
 
-			const create = vi.fn(async () => location);
+	});
 
-			await expect(mount(backend({ create }))().create(item)).resolves.toBe(location);
+	it("should move to error on a failed retrieval, retrieving the members again on reload", async () => {
 
-			expect(create).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: {} }, state: item });
+		const lookup = vi.fn().mockRejectedValueOnce({ status: 503 }).mockImplementation(catalogue());
+		const { members } = mount(lookup);
+
+		await vi.waitFor(() => expect(members()({ error: ({ state }) => state.status })).toBe(503));
+
+		await act(() => members()({ error: ({ reload }) => reload() }));
+
+		await vi.waitFor(() => expect(members()({ ready: ({ state }) => state })).toEqual(items(batch/2)));
+
+	});
+
+	it("should retrieve the members again as the store signals a change", async () => {
+
+		const observers: (() => void)[] = [];
+		const lookup = catalogue();
+
+		const store = {
+			lookup,
+			observe: (observer: () => void) => { observers.push(observer); return () => {}; }
+		} as unknown as Backend; // ;(test stub) only the members called
+
+		const bindings = vi.fn<(members: Binding) => void>();
+
+		function Probe() {
+			bindings(useMembers(useCollection({ entry, shape: Catalogue }), { model: { label: {} }, batch }));
+			return null;
+		}
+
+		act(() => render(createElement(Store, {
+			factory: () => store,
+			children: createElement(Probe, {})
+		}), document.body));
+
+		await vi.waitFor(() => expect(bindings.mock.lastCall![0]({ ready: () => true })).toBe(true));
+
+		const calls = lookup.mock.calls.length;
+
+		act(() => observers.forEach(observer => observer()));
+
+		await vi.waitFor(() => expect(lookup.mock.calls.length).toBeGreaterThan(calls));
+
+	});
+
+	it("should hand over the members retrieved", async () => {
+
+		const { members } = mount(catalogue());
+
+		await vi.waitFor(() => expect(members()({ ready: ({ state }) => state })).toEqual(items(batch/2)));
+
+	});
+
+	describe("load()", () => {
+
+		it("should be offered while the last batch is full", async () => {
+
+			const { members } = mount(catalogue(3*batch));
+
+			await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
 
 		});
 
-		it("should reject on an existing item", async () => {
-			await expect(mount(backend({ create: async () => undefined }))().create(item))
-				.rejects.toMatchObject({ status: Conflict });
+		it("should be withheld once the collection is exhausted", async () => {
+
+			const { members } = mount(catalogue(batch/2));
+
+			await vi.waitFor(() => expect(members()({ ready: () => true })).toBe(true));
+
+			expect(load(members())).toBeUndefined();
+
 		});
 
-		it("should reject on a failed creation", async () => {
-			await expect(mount(backend({ create: async () => { throw { status: 422 }; } }))().create(item))
-				.rejects.toMatchObject({ status: 422 });
+		it("should retrieve one more batch", async () => {
+
+			const lookup = catalogue(3*batch);
+			const { members } = mount(lookup);
+
+			await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
+
+			act(() => load(members())!());
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+			expect(models(lookup).at(-1)).toMatchObject({ members: { "#": 2*batch } });
+
+		});
+
+		it("should stay on offer while the next batch is retrieved, asking for nothing more", async () => {
+
+			const lookup = vi.fn().mockImplementationOnce(catalogue(3*batch)).mockImplementation(() => new Promise(() => {}));
+
+			const { members } = mount(lookup);
+
+			await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
+
+			await act(async () => load(members())!()); // the members notify their change in a microtask
+			await act(async () => load(members())!());
+
+			expect(members()({ ready: ({ state }) => state.length })).toBe(batch);
+			expect(models(lookup).at(-1)).toMatchObject({ members: { "#": 2*batch } });
+
 		});
 
 	});
 
-	describe("delete()", () => {
+	it("should sort the items again from the first batch", async () => {
 
-		const one = "https://example.com/catalogue/1";
-		const two = "https://example.com/catalogue/2";
+		const lookup = catalogue(3*batch);
+		const { members } = mount(lookup);
 
-		it("should remove an item, resolving its identifier against the collection", async () => {
+		await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
 
-			const remove = vi.fn(async ({ entry }: { entry: string }) => entry);
+		act(() => load(members())!());
+		act(() => members()({ ready: ({ sort }) => sort({ label: "desc" }) }));
 
-			await expect(mount(backend({ delete: remove }))().delete("1")).resolves.toEqual([one]);
+		await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
+			members: { "^label": "desc", "#": batch }
+		}));
 
-			expect(remove).toHaveBeenCalledWith(expect.objectContaining({ entry: one }));
+	});
 
-		});
+	it("should start again from the first batch as the sieve changes", async () => {
 
-		it("should remove the items given, resolving to their identifiers in order", async () => {
+		const lookup = catalogue(3*batch);
+		const { collection, members } = mount(lookup);
 
-			const remove = vi.fn(async ({ entry }: { entry: string }) => entry);
+		await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
 
-			await expect(mount(backend({ delete: remove }))().delete(["1", two])).resolves.toEqual([one, two]);
+		act(() => load(members())!());
+		act(() => void collection().filter({ "~label": "item" }));
 
-			expect(remove).toHaveBeenCalledTimes(2);
-
-		});
-
-		it("should check removed items against the item shape", async () => {
-
-			const remove = vi.fn(async ({ entry }: { entry: string }) => entry);
-
-			await mount(backend({ delete: remove }))().delete("1");
-
-			expect(remove.mock.lastCall?.[0]).toMatchObject({ shape: { members: { label: {} } } });
-
-		});
-
-		it("should resolve to no identifier for no item", async () => {
-
-			const remove = vi.fn(async ({ entry }: { entry: string }) => entry);
-
-			await expect(mount(backend({ delete: remove }))().delete([])).resolves.toEqual([]);
-
-			expect(remove).not.toHaveBeenCalled();
-
-		});
-
-		it("should reject on a missing item", async () => {
-			await expect(mount(backend({ delete: async () => undefined }))().delete("1"))
-				.rejects.toMatchObject({ status: NotFound });
-		});
-
-		it("should reject on a failed removal", async () => {
-			await expect(mount(backend({ delete: async () => { throw { status: 422 }; } }))().delete("1"))
-				.rejects.toMatchObject({ status: 422 });
-		});
+		await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
+			members: { "~label": "item", "#": batch }
+		}));
 
 	});
 

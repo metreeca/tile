@@ -17,7 +17,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { useCollection, useWindow } from "@metreeca/tile-data/store";
+import { useCollection, useMembers } from "@metreeca/tile-data/store";
 import { describe, expectTypeOf, it } from "vitest";
 import { Sheet } from "./sheet.js";
 
@@ -28,11 +28,11 @@ const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
 describe("Sheet", () => {
 
-	const window = useWindow(useCollection({ entry: "/", shape: Catalogue }), { model: { label: {} } });
+	const members = useMembers(useCollection({ entry: "/", shape: Catalogue }), { model: { label: {} } });
 
-	it("should type the items with the values the window model asks for", async () => {
+	it("should type the items with the values the members model asks for", async () => {
 		Sheet({
-			window,
+			members,
 			children: item => expectTypeOf(item).toEqualTypeOf<{ readonly label: string }>()
 		});
 	});

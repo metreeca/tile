@@ -15,7 +15,7 @@
  */
 
 /**
- * Growing collection window state.
+ * Collection members state.
  *
  * Holds how far a list or a table has read into a long collection and the order it shows the items in, so that the
  * view reads a long collection as the reader scrolls through it rather than retrieving it all at once.
@@ -30,9 +30,9 @@ import type { Expression, Order } from "@metreeca/qest/model";
 
 
 /**
- * Growing collection window.
+ * Collection members.
  */
-export interface Window {
+export interface Members {
 
 	/**
 	 * The sort order the items are shown in.
@@ -41,24 +41,24 @@ export interface Window {
 
 
 	/**
-	 * The number of first items in the window; the collection may end before it.
+	 * The number of first items retrieved; the collection may end before it.
 	 */
 	readonly limit: number
 
 
 	/**
-	 * Grows the window by one batch.
+	 * Retrieves one more batch.
 	 *
-	 * @returns The window over the items it held and the batch after them
+	 * @returns The members over the items retrieved and the batch after them
 	 */
-	more(): this
+	load(): this
 
 	/**
 	 * Sorts the items again, starting over the first batch.
 	 *
 	 * @param order The sort order replacing the current one
 	 *
-	 * @returns The window over the first batch in the new order, or the same window if the order is unchanged
+	 * @returns The members over the first batch in the new order, or the same members if the order is unchanged
 	 */
 	sort(order: Ordering): this
 
@@ -80,15 +80,15 @@ export type Ordering = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates a growing collection window over the first batch.
+ * Creates collection members over the first batch.
  *
  * @param options The sort order the items start in and the number of items in each batch
  *
- * @returns A window over the first batch
+ * @returns The members over the first batch
  *
  * @throws {@link !TypeError TypeError} If `batch` isn't a positive integer
  */
-export function createWindow({
+export function createMembers({
 
 	order = {},
 	batch = 100
@@ -98,17 +98,17 @@ export function createWindow({
 	readonly order?: Optional<Ordering>
 	readonly batch?: Optional<number>
 
-} = {}): Window {
+} = {}): Members {
 
 	const $batch = assert(batch, batch => Number.isInteger(batch) && batch > 0, `illegal batch size <${batch}>`);
 
-	return createState<Window>({
+	return createState<Members>({
 
 		order,
 
 		limit: $batch,
 
-		more() {
+		load() {
 			return { limit: this.limit+$batch };
 		},
 

@@ -33,12 +33,12 @@ import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
 import { useFetch } from "../fetch.js";
 
+export * from "./actions.js";
 export * from "./collection.js";
 export * from "./count.js";
 export * from "./keywords.js";
 export * from "./members.js";
 export * from "./resource.js";
-export * from "./window.js";
 
 
 const Context = createContext<Optional<Store>>(undefined);

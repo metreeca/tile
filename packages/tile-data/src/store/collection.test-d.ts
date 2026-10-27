@@ -18,9 +18,9 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, required, resource, type ResourceShape } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { describe, expectTypeOf, it } from "vitest";
+import { useActions } from "./actions.js";
 import { type Collections, createCollection, type Sole } from "./collection.core.js";
 import { useCollection } from "./collection.js";
-import { useMembers } from "./members.js";
 
 
 const Item = resource({ id: id(), label: required(string()) });
@@ -144,11 +144,11 @@ describe("useCollection()", () => {
 
 });
 
-describe("useMembers()", () => {
+describe("useActions()", () => {
 
 	it("should type new items against the item shape", async () => {
 
-		const { create } = useMembers(useCollection({ entry: "/", shape: Catalogue }));
+		const { create } = useActions(useCollection({ entry: "/", shape: Catalogue }));
 
 		expectTypeOf(create).toBeCallableWith({ label: "item" });
 

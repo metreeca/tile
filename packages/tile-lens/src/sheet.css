@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* A sheet stacks the items in its window. */
+/* A sheet stacks the members retrieved so far. */
 
 tile-sheet {
 

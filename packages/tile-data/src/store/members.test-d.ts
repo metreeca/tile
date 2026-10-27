@@ -19,31 +19,31 @@ import { id, multiple, optional, required, resource } from "@metreeca/blue/resou
 import { string } from "@metreeca/blue/string";
 import { describe, expectTypeOf, it } from "vitest";
 import { useCollection } from "./collection.js";
-import { useWindow } from "./window.js";
+import { useMembers } from "./members.js";
 
 
 const Item = resource({ id: id(), label: required(string()), notes: optional(string()) });
 const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
 
-describe("useWindow()", () => {
+describe("useMembers()", () => {
 
 	const collection = useCollection({ entry: "/", shape: Catalogue });
 
 	it("should accept models naming the item members", async () => {
-		useWindow(collection, { model: { id: {}, label: {} } });
+		useMembers(collection, { model: { id: {}, label: {} } });
 	});
 
 	it("should reject models naming members the item doesn't hold", async () => {
 
 		// @ts-expect-error unknown item member
-		useWindow(collection, { model: { title: {} } });
+		useMembers(collection, { model: { title: {} } });
 
 	});
 
 	it("should type the items with the values the model asks for", async () => {
 
-		useWindow(collection, { model: { label: {} } })({
+		useMembers(collection, { model: { label: {} } })({
 			ready: ({ state }) => expectTypeOf(state).toEqualTypeOf<readonly { readonly label: string }[]>()
 		});
 

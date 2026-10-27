@@ -33,7 +33,7 @@ import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { type Collection, Store, useCollection, useWindow } from "@metreeca/tile-data/store";
+import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useState } from "preact/hooks";
 
@@ -85,7 +85,7 @@ export function Sheets() {
 
 		<Store>
 
-			<p>A sheet lists the items of a collection window held by the store, closed by a trigger fetching the next
+			<p>A sheet lists the members of a collection held by the store, closed by a trigger fetching the next
 				batch as the reader scrolls to it, and starts again from the first items when the order changes.</p>
 
 			<Listing collection={collection}/>
@@ -112,7 +112,7 @@ function Listing({
 
 	const [order, setOrder] = useState<"asc" | "desc">("asc");
 
-	const window = useWindow(collection, { model: { id: {}, label: {} }, order: { label: order } });
+	const members = useMembers(collection, { model: { id: {}, label: {} }, order: { label: order } });
 
 	return <>
 
@@ -124,11 +124,11 @@ function Listing({
 			/>
 		</div>
 
-		<Sheet window={window} placeholder={<Icon.List/>}>{item =>
+		<Sheet members={members} placeholder={<Icon.List/>}>{item =>
 			<div>{item.label}</div>
 		}</Sheet>
 
-		{window({ ready: ({ more }) => more && <More onLoad={more}/> })}
+		{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
 
 	</>;
 

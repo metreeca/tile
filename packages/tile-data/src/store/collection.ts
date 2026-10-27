@@ -116,7 +116,7 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 
 	/**
 	 * Takes the reader's criteria whenever they change, so that a page may keep them wherever it likes, as in the
-	 * location through {@link "query"!useQuery useQuery}; never called with the criteria the collection is created with.
+	 * location through {@link "store/query"!useQuery useQuery}; never called with the criteria the collection is created with.
 	 */
 	readonly onChange?: (sieve: Criteria) => void
 

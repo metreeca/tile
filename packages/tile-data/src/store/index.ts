@@ -39,6 +39,7 @@ export * from "./count.js";
 export * from "./keywords.js";
 export * from "./members.js";
 export * from "./options.js";
+export * from "./query.js";
 export * from "./range.js";
 export * from "./resource.js";
 

@@ -35,7 +35,7 @@
 import type { Optional } from "@metreeca/core";
 import { type Criteria, decodeCriteria, encodeCriteria } from "@metreeca/qest/model";
 import { useEffect, useState } from "preact/hooks";
-import { useRoute } from "./router.js";
+import { useRoute } from "../router.js";
 
 
 /**

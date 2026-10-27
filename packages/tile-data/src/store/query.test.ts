@@ -19,7 +19,7 @@ import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useQuery } from "./query.js";
-import { Router } from "./router.js";
+import { Router } from "../router.js";
 
 
 describe("useQuery()", () => {

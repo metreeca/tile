@@ -33,8 +33,7 @@ import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { useQuery } from "@metreeca/tile-data/query";
-import { type Collection, Store, useCollection, useKeywords, useMembers } from "@metreeca/tile-data/store";
+import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useState } from "preact/hooks";
 

@@ -120,7 +120,7 @@ const ActiveAttribute = "active";
 const TargetAttribute = "target";
 
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * The routing provided by the enclosing {@link Router}.
@@ -133,6 +133,12 @@ const RouterContext = createContext<Readonly<{
 	route: string
 
 	/**
+	 * The route and the query the last navigation moved to, keying the views {@link Routes} renders, so that a
+	 * navigation changing the query alone mounts them afresh, while a query replaced outside the router leaves them.
+	 */
+	place: string
+
+	/**
 	 * The navigator, as returned by {@link useRouter}.
 	 */
 	navigate: Router
@@ -140,6 +146,7 @@ const RouterContext = createContext<Readonly<{
 }>>({
 
 	route: "",
+	place: "",
 
 	navigate: () => {}
 
@@ -263,9 +270,11 @@ export function Router({
 
 }) {
 
-	const [route, setRoute] = useState(() => location.pathname);
+	const [place, setPlace] = useState(here);
 
-	const sync = () => setRoute(location.pathname); // renders again only if the route actually changed
+	const route = place.replace(/\?.*$/, "");
+
+	const sync = () => setPlace(here()); // renders again only if the place actually changed
 
 
 	useEffect(() => {
@@ -413,22 +422,28 @@ export function Router({
 			? history.state
 			: state;
 
+		const moved = $route !== location.href;
+
 		document.title = $title;
 
 		try {
 
-			history[replace || $route === location.href ? "replaceState" : "pushState"]($state, $title, $route);
+			history[replace || !moved ? "replaceState" : "pushState"]($state, $title, $route);
 
 		} finally {
 
-			sync();
+			if ( moved ) {
+				sync();
+			} else {
+				// a title or a state alone leaves the place, as replaced outside the router, in place
+			}
 
 		}
 
 	}, []);
 
 
-	return createElement(RouterContext.Provider, { value: { route, navigate } }, children);
+	return createElement(RouterContext.Provider, { value: { route, place, navigate } }, children);
 
 }
 
@@ -443,6 +458,11 @@ export function Router({
  * Renders below a {@link Router}, which keeps sole charge of the location, the history and the page clicks.
  *
  * Renders nothing during a redirection, so neither it nor a nested {@link Routes} shows a route on its way out.
+ *
+ * Mounts the view afresh whenever a navigation moves the location, the query included, so that a view reads the query
+ * as it mounts: a link from `/courses/` to `/courses/?~label=art` mounts the catalogue again with the new criteria. A
+ * query replaced through `history.replaceState` outside the router, as a view recording its own state in the location
+ * does, leaves the view mounted with the state it reached, until the next navigation moves the location again.
  *
  * @param options The routes configuration
  *
@@ -466,7 +486,7 @@ export function Routes({
 
 }): ComponentChildren {
 
-	const { route, navigate } = useContext(RouterContext);
+	const { route, place, navigate } = useContext(RouterContext);
 	const { path, wild } = useContext(RoutesContext);
 
 	const table = isDefined(children[Wildcard]) || !isDefined(wild)
@@ -518,7 +538,10 @@ export function Routes({
 			: hit.glob === Wildcard ? path
 				: route;
 
-		return createElement(RoutesContext.Provider, { value: { path: opened, wild: table[Wildcard] } }, hit.entry);
+		return createElement(RoutesContext.Provider, {
+			key: place, // a navigation changing the query alone mounts the view afresh
+			value: { path: opened, wild: table[Wildcard] }
+		}, hit.entry);
 
 	} else {
 
@@ -637,4 +660,16 @@ export function useRouter(): Router {
  */
 export function useRoute(): string {
 	return useContext(RouterContext).route;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Identifies the place the browser location stands at.
+ *
+ * @returns The location path and query, the hash left out as it never moves the page to another view
+ */
+function here(): string {
+	return `${location.pathname}${location.search}`;
 }

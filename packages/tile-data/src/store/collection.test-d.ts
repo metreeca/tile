@@ -18,7 +18,9 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, required, resource, type ResourceShape } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { describe, expectTypeOf, it } from "vitest";
-import { type Collections, type Sole, useCollection } from "./collection.js";
+import { type Collections, createCollection, type Sole } from "./collection.core.js";
+import { useCollection } from "./collection.js";
+import { useMembers } from "./members.js";
 
 
 const Item = resource({ id: id(), label: required(string()) });
@@ -87,15 +89,34 @@ describe("Sole", () => {
 
 });
 
+describe("createCollection()", () => {
+
+	it("should infer the collecting property from the shape", async () => {
+		expectTypeOf(createCollection({ entry: "/", shape: Catalogue }).target.field).toEqualTypeOf<"members">();
+	});
+
+	it("should reject properties other than collections of resources", async () => {
+
+		// @ts-expect-error collection of literals
+		createCollection({ entry: "/", shape: Catalogue, field: "tags" });
+
+	});
+
+});
+
 describe("useCollection()", () => {
 
 	it("should infer the collecting property from the shape", async () => {
-		expectTypeOf(useCollection({ entry: "/", shape: Catalogue }).property).toEqualTypeOf<"members">();
+		expectTypeOf(useCollection({ entry: "/", shape: Catalogue }).target.field).toEqualTypeOf<"members">();
 	});
 
 	it("should infer the collecting property from the argument", async () => {
-		expectTypeOf(useCollection({ entry: "/", shape: Shelves, property: "archive" }).property)
+		expectTypeOf(useCollection({ entry: "/", shape: Shelves, field: "archive" }).target.field)
 			.toEqualTypeOf<"archive">();
+	});
+
+	it("should keep the shape it is handed", async () => {
+		expectTypeOf(useCollection({ entry: "/", shape: Catalogue }).target.shape).toEqualTypeOf<typeof Catalogue>();
 	});
 
 	it("should require the collecting property where the shape doesn't settle it", async () => {
@@ -111,19 +132,23 @@ describe("useCollection()", () => {
 	it("should reject properties other than collections of resources", async () => {
 
 		// @ts-expect-error single-valued
-		useCollection({ entry: "/", shape: Catalogue, property: "featured" });
+		useCollection({ entry: "/", shape: Catalogue, field: "featured" });
 
 		// @ts-expect-error collection of literals
-		useCollection({ entry: "/", shape: Catalogue, property: "tags" });
+		useCollection({ entry: "/", shape: Catalogue, field: "tags" });
 
 		// @ts-expect-error unknown
-		useCollection({ entry: "/", shape: Catalogue, property: "unknown" });
+		useCollection({ entry: "/", shape: Catalogue, field: "unknown" });
 
 	});
 
+});
+
+describe("useMembers()", () => {
+
 	it("should type new items against the item shape", async () => {
 
-		const { create } = useCollection({ entry: "/", shape: Catalogue });
+		const { create } = useMembers(useCollection({ entry: "/", shape: Catalogue }));
 
 		expectTypeOf(create).toBeCallableWith({ label: "item" });
 

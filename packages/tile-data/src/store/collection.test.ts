@@ -18,14 +18,13 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { union } from "@metreeca/blue/union";
-import { Conflict } from "@metreeca/http";
 import type { Store as Backend } from "@metreeca/keep";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createCollectionState } from "./collection.core.js";
-import { type Collection, useCollection } from "./collection.js";
+import { type Collection, createCollection } from "./collection.core.js";
+import { useCollection } from "./collection.js";
 import { Store } from "./index.js";
 
 
@@ -45,12 +44,12 @@ const Catalogue = resource({
 });
 
 
-describe("createCollectionState()", () => {
+describe("createCollection()", () => {
 
 	describe("target", () => {
 
 		it("should take the only collection of resources as the collecting property", async () => {
-			expect(createCollectionState({ entry, shape: Catalogue }).property).toBe("members");
+			expect(createCollection({ entry, shape: Catalogue }).target.field).toBe("members");
 		});
 
 		it("should take embedded collections and union collections of resources alike", async () => {
@@ -58,8 +57,8 @@ describe("createCollectionState()", () => {
 			const Embedded = resource({ id: id(), members: multiple(Item), tags: multiple(string()) });
 			const Mixed = resource({ id: id(), members: multiple(union(reference(Item), reference(Other))) });
 
-			expect(createCollectionState({ entry, shape: Embedded }).property).toBe("members");
-			expect(createCollectionState({ entry, shape: Mixed }).property).toBe("members");
+			expect(createCollection({ entry, shape: Embedded }).target.field).toBe("members");
+			expect(createCollection({ entry, shape: Mixed }).target.field).toBe("members");
 
 		});
 
@@ -67,7 +66,7 @@ describe("createCollectionState()", () => {
 
 			const Archive = resource(Catalogue, { id: id() });
 
-			expect(createCollectionState({ entry, shape: Archive }).property).toBe("members");
+			expect(createCollection({ entry, shape: Archive }).target.field).toBe("members");
 
 		});
 
@@ -75,7 +74,7 @@ describe("createCollectionState()", () => {
 
 			const Loose = resource({ id: id(), members: multiple(reference(Item)), notes: multiple(union(reference(Item), string())) });
 
-			expect(createCollectionState({ entry, shape: Loose }).property).toBe("members");
+			expect(createCollection({ entry, shape: Loose }).target.field).toBe("members");
 
 		});
 
@@ -83,7 +82,7 @@ describe("createCollectionState()", () => {
 
 			const Shelves = resource({ id: id(), members: multiple(reference(Item)), archive: multiple(Item) });
 
-			expect(createCollectionState({ entry, shape: Shelves, property: "archive" }).property).toBe("archive");
+			expect(createCollection({ entry, shape: Shelves, field: "archive" }).target.field).toBe("archive");
 
 		});
 
@@ -91,7 +90,7 @@ describe("createCollectionState()", () => {
 
 			const Labels = resource({ id: id(), tags: multiple(string()) });
 
-			expect(() => createCollectionState({ entry, shape: Labels })).toThrow(TypeError);
+			expect(() => createCollection({ entry, shape: Labels })).toThrow(TypeError);
 
 		});
 
@@ -99,7 +98,7 @@ describe("createCollectionState()", () => {
 
 			const Shelves = resource({ id: id(), members: multiple(reference(Item)), archive: multiple(Item) });
 
-			expect(() => createCollectionState({ entry, shape: Shelves })).toThrow(TypeError);
+			expect(() => createCollection({ entry, shape: Shelves })).toThrow(TypeError);
 
 		});
 
@@ -109,24 +108,24 @@ describe("createCollectionState()", () => {
 
 		it("should start from no criterion by default", async () => {
 
-			const collection = createCollectionState({ entry, shape: Catalogue });
+			const collection = createCollection({ entry, shape: Catalogue });
 
 			expect(collection.scope).toEqual({});
-			expect(collection.criteria).toEqual({});
+			expect(collection.sieve).toEqual({});
 
 		});
 
 		it("should start from the criteria given", async () => {
 
-			const collection = createCollectionState({
+			const collection = createCollection({
 				entry,
 				shape: Catalogue,
 				scope: { "?university": ["https://example.com/u/1"] },
-				criteria: { "~label": "chemistry" }
+				sieve: { "~label": "chemistry" }
 			});
 
 			expect(collection.scope).toEqual({ "?university": ["https://example.com/u/1"] });
-			expect(collection.criteria).toEqual({ "~label": "chemistry" });
+			expect(collection.sieve).toEqual({ "~label": "chemistry" });
 
 		});
 
@@ -134,26 +133,26 @@ describe("createCollectionState()", () => {
 			["order", { "^label": 1 }],
 			["focus", { "+label": ["one"] }]
 		])("should reject %s criteria in the scope or the reader's criteria", async (_, criteria) => {
-			expect(() => createCollectionState({ entry, shape: Catalogue, scope: criteria })).toThrow(TypeError);
-			expect(() => createCollectionState({ entry, shape: Catalogue, criteria })).toThrow(TypeError);
+			expect(() => createCollection({ entry, shape: Catalogue, scope: criteria })).toThrow(TypeError);
+			expect(() => createCollection({ entry, shape: Catalogue, sieve: criteria })).toThrow(TypeError);
 		});
 
 	});
 
 	describe("filter()", () => {
 
-		const chemistry = () => createCollectionState({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
+		const chemistry = () => createCollection({ entry, shape: Catalogue, sieve: { "~label": "chemistry" } });
 
 		it("should merge criteria into the reader's ones", async () => {
-			expect(chemistry().filter({ ">=credits": 6 }).criteria).toEqual({ "~label": "chemistry", ">=credits": 6 });
+			expect(chemistry().filter({ ">=credits": 6 }).sieve).toEqual({ "~label": "chemistry", ">=credits": 6 });
 		});
 
 		it("should replace a criterion on the same key", async () => {
-			expect(chemistry().filter({ "~label": "physics" }).criteria).toEqual({ "~label": "physics" });
+			expect(chemistry().filter({ "~label": "physics" }).sieve).toEqual({ "~label": "physics" });
 		});
 
 		it("should remove a criterion set to undefined", async () => {
-			expect(chemistry().filter({ "~label": undefined }).criteria).toEqual({});
+			expect(chemistry().filter({ "~label": undefined }).sieve).toEqual({});
 		});
 
 		it("should leave the collection as it stands where nothing changes", async () => {
@@ -174,7 +173,7 @@ describe("createCollectionState()", () => {
 
 		it("should leave the scope in place", async () => {
 
-			const scoped = createCollectionState({ entry, shape: Catalogue, scope: { "?university": ["u"] } });
+			const scoped = createCollection({ entry, shape: Catalogue, scope: { "?university": ["u"] } });
 
 			expect(scoped.filter({ "~label": "chemistry" }).scope).toEqual({ "?university": ["u"] });
 
@@ -193,23 +192,23 @@ describe("createCollectionState()", () => {
 
 		it("should remove every criterion the reader set, leaving the scope in place", async () => {
 
-			const collection = createCollectionState({
+			const collection = createCollection({
 				entry,
 				shape: Catalogue,
 				scope: { "?university": ["u"] },
-				criteria: { "~label": "chemistry" }
+				sieve: { "~label": "chemistry" }
 			});
 
 			const cleared = collection.clear();
 
-			expect(cleared.criteria).toEqual({});
+			expect(cleared.sieve).toEqual({});
 			expect(cleared.scope).toEqual({ "?university": ["u"] });
 
 		});
 
 		it("should leave the collection as it stands where the reader set no criterion", async () => {
 
-			const collection = createCollectionState({ entry, shape: Catalogue });
+			const collection = createCollection({ entry, shape: Catalogue });
 
 			expect(collection.clear()).toBe(collection);
 
@@ -230,9 +229,9 @@ describe("useCollection()", () => {
 		} as Backend; // ;(cast) test mock: only the members the hook calls are provided
 	}
 
-	function mount(store: Backend, target: string = entry): () => Collection<typeof Catalogue> {
+	function mount(store: Backend, target: string = entry): () => Collection<typeof Catalogue, "members"> {
 
-		const seen = vi.fn<(collection: Collection<typeof Catalogue>) => void>();
+		const seen = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
 
 		function Probe() {
 
@@ -240,7 +239,7 @@ describe("useCollection()", () => {
 
 			seen(collection);
 
-			return createElement("output", {}, JSON.stringify(collection.criteria));
+			return createElement("output", {}, JSON.stringify(collection.sieve));
 
 		}
 
@@ -263,25 +262,11 @@ describe("useCollection()", () => {
 	});
 
 
-	it("should throw outside a store context", async () => {
-
-		function Probe() {
-
-			useCollection({ entry, shape: Catalogue });
-
-			return null;
-
-		}
-
-		expect(() => act(() => render(createElement(Probe, {}), document.body))).toThrow("missing <Store> context");
-
-	});
-
 	it("should resolve a relative identifier against the current location", async () => {
 
 		vi.stubGlobal("location", new URL("https://example.com/catalogue/"));
 
-		expect(mount(backend({}), "../other/")().entry).toBe("https://example.com/other/");
+		expect(mount(backend({}), "../other/")().target.entry).toBe("https://example.com/other/");
 
 	});
 
@@ -289,11 +274,10 @@ describe("useCollection()", () => {
 
 		const collection = mount(backend({}))();
 
-		expect(collection.entry).toBe(entry);
-		expect(collection.shape).toBe(Catalogue);
-		expect(collection.property).toBe("members");
+		expect(collection.target).toEqual({ entry, shape: Catalogue, field: "members" });
+		expect(collection.target.shape).toBe(Catalogue);
 		expect(collection.scope).toEqual({});
-		expect(collection.criteria).toEqual({});
+		expect(collection.sieve).toEqual({});
 
 	});
 
@@ -301,40 +285,13 @@ describe("useCollection()", () => {
 
 		const collection = mount(backend({}));
 
-		act(() => collection().filter({ "~label": "chemistry" }));
+		act(() => void collection().filter({ "~label": "chemistry" }));
 
 		await settled(JSON.stringify({ "~label": "chemistry" }));
 
-		act(() => collection().clear());
+		act(() => void collection().clear());
 
 		await settled(JSON.stringify({}));
-
-	});
-
-	describe("create()", () => {
-
-		const item = { label: "two" };
-		const location = "https://example.com/catalogue/2";
-
-		it("should add the item to the collection, resolving to its identifier", async () => {
-
-			const create = vi.fn(async () => location);
-
-			await expect(mount(backend({ create }))().create(item)).resolves.toBe(location);
-
-			expect(create).toHaveBeenCalledWith({ entry, shape: Catalogue, model: { members: {} }, state: item });
-
-		});
-
-		it("should reject on an existing item", async () => {
-			await expect(mount(backend({ create: async () => undefined }))().create(item))
-				.rejects.toMatchObject({ status: Conflict });
-		});
-
-		it("should reject on a failed creation", async () => {
-			await expect(mount(backend({ create: async () => { throw { status: 422 }; } }))().create(item))
-				.rejects.toMatchObject({ status: 422 });
-		});
 
 	});
 

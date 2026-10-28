@@ -15,7 +15,7 @@
  */
 
 /**
- * Collection options state.
+ * Collection tally state.
  *
  * Holds the keywords a reader narrows the options of a facet by and the page of options on show, so that a facet over
  * a long list of values shows only the ones the reader is looking for, a page at a time.
@@ -28,9 +28,9 @@ import { createState } from "@metreeca/core/state";
 
 
 /**
- * Collection options.
+ * Collection tally.
  */
-export interface Options {
+export interface Tally {
 
 	/**
 	 * The keywords the options on show are narrowed by.
@@ -88,13 +88,13 @@ export interface Options {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Creates collection options.
+ * Creates a collection tally.
  *
  * @param options The number of options on show
  *
- * @returns Options with no keywords, from the first one
+ * @returns A tally with no keywords, from the first option
  */
-export function createOptions({
+export function createTally({
 
 	size = 0
 
@@ -107,11 +107,11 @@ export function createOptions({
 	 */
 	readonly size?: Optional<number>
 
-} = {}): Options {
+} = {}): Tally {
 
 	const initial = { keywords: "", offset: 0, limit: Math.max(0, size) };
 
-	return createState<Options>({
+	return createState<Tally>({
 
 		...initial,
 

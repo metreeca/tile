@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+import { dictionary } from "@metreeca/blue/dictionary";
+import { number } from "@metreeca/blue/number";
 import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
+import { id, multiple, optional, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
+import { union } from "@metreeca/blue/union";
 import type { Relay } from "@metreeca/core/relay";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
-import type { Criteria, Template } from "@metreeca/qest/model";
+import type { Criteria, Option } from "@metreeca/qest/model";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -28,24 +31,24 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { type Collection } from "./collection.core.js";
 import { useCollection } from "./collection.js";
 import { Store } from "./index.js";
-import { createOptions } from "./options.core.js";
-import { type OptionsCases, useOptions } from "./options.js";
+import { createTally } from "./tally.core.js";
+import { type TallyCases, useTally } from "./tally.js";
 
 
-describe("createOptions()", () => {
+describe("createTally()", () => {
 
 	describe("creation", () => {
 
 		it("should start with no keywords from the first option, showing them all by default", async () => {
 
-			const options = createOptions();
+			const options = createTally();
 
 			expect([options.keywords, options.offset, options.limit]).toEqual(["", 0, 0]);
 
 		});
 
 		it("should show as many options as given", async () => {
-			expect(createOptions({ size: 10 }).limit).toBe(10);
+			expect(createTally({ size: 10 }).limit).toBe(10);
 		});
 
 	});
@@ -54,7 +57,7 @@ describe("createOptions()", () => {
 
 		it("should narrow the options by keywords, leaving the page as it stands", async () => {
 
-			const options = createOptions().seek(20).search("item");
+			const options = createTally().seek(20).search("item");
 
 			expect([options.keywords, options.offset]).toEqual(["item", 20]);
 
@@ -62,7 +65,7 @@ describe("createOptions()", () => {
 
 		it("should show the options from the first one again on empty keywords", async () => {
 
-			const options = createOptions().search("item").seek(20).search("");
+			const options = createTally().search("item").seek(20).search("");
 
 			expect([options.keywords, options.offset]).toEqual(["", 0]);
 
@@ -73,11 +76,11 @@ describe("createOptions()", () => {
 	describe("seek()", () => {
 
 		it("should move the options on show", async () => {
-			expect(createOptions().seek(20).offset).toBe(20);
+			expect(createTally().seek(20).offset).toBe(20);
 		});
 
 		it("should take a negative index for the first option", async () => {
-			expect(createOptions().seek(-5).offset).toBe(0);
+			expect(createTally().seek(-5).offset).toBe(0);
 		});
 
 	});
@@ -85,11 +88,11 @@ describe("createOptions()", () => {
 	describe("resize()", () => {
 
 		it("should resize the options on show", async () => {
-			expect(createOptions().resize(5).limit).toBe(5);
+			expect(createTally().resize(5).limit).toBe(5);
 		});
 
 		it("should take a negative number for all the options", async () => {
-			expect(createOptions({ size: 10 }).resize(-5).limit).toBe(0);
+			expect(createTally({ size: 10 }).resize(-5).limit).toBe(0);
 		});
 
 	});
@@ -98,7 +101,7 @@ describe("createOptions()", () => {
 
 		it("should show the options as they stood when created", async () => {
 
-			const options = createOptions({ size: 10 }).search("item").seek(20).resize(5).reset();
+			const options = createTally({ size: 10 }).search("item").seek(20).resize(5).reset();
 
 			expect([options.keywords, options.offset, options.limit]).toEqual(["", 0, 10]);
 
@@ -109,14 +112,34 @@ describe("createOptions()", () => {
 });
 
 
-describe("useOptions()", () => {
+describe("useTally()", () => {
 
 	const entry = "https://example.com/catalogue/";
 
-	const Item = resource({ id: id(), category: required(string()) });
+	const Topic = resource({
+		id: id(),
+		name: required(string()),
+		title: required(dictionary()),
+		alias: optional(string()),
+		tags: multiple(string()),
+		rank: optional(number())
+	});
+
+	const Item = resource({
+		id: id(),
+		category: required(string()),
+		year: optional(number()),
+		keywords: multiple(string()),
+		topic: optional(reference(Topic)),
+		mixed: optional(union(string(), reference(Topic))),
+		nested: optional(Topic)
+	});
+
 	const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
 
 	type Members = { readonly members: { readonly [key: string]: unknown } };
+
+	type Row = { readonly value: Option, readonly label?: string, readonly count: number };
 
 
 	function backend(lookup: unknown, observe: unknown = () => () => {}): Backend {
@@ -127,10 +150,7 @@ describe("useOptions()", () => {
 	 * A store answering the options retrieved under no criteria with `baseline`, and those retrieved under the `?region`
 	 * criterion with `matching`, so that a test tells the two retrievals apart by what they hand over.
 	 */
-	function options(
-		baseline: readonly { value: string, count: number }[],
-		matching: readonly { value: string, count: number }[] = baseline
-	) {
+	function options(baseline: readonly Row[], matching: readonly Row[] = baseline) {
 		return vi.fn(async ({ model }: { model: Members }) => immutable({
 			id: entry,
 			members: "?region" in model.members ? matching : baseline
@@ -141,32 +161,31 @@ describe("useOptions()", () => {
 		return lookup.mock.calls.map(([{ model }]) => model);
 	}
 
-	function mount(store: Backend, { criteria = {}, model, text, size }: {
+	function mount(store: Backend, { criteria = {}, expression = "category", label, size }: {
 
 		readonly criteria?: Criteria
 
-		readonly model?: Template
-		readonly text?: string
+		readonly expression?: string
+		readonly label?: string
 		readonly size?: number
 
 	} = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
-		options: () => Relay<OptionsCases>
+		options: () => Relay<TallyCases>
 
 	} {
 
 		const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
-		const bindings = vi.fn<(options: Relay<OptionsCases>) => void>();
+		const bindings = vi.fn<(options: Relay<TallyCases>) => void>();
 
 		function Probe() {
 
 			const collection = useCollection({ entry, shape: Catalogue, criteria });
 
 			collections(collection);
-			bindings(useOptions(collection, "category", {
-				...(model ? { model } : {}),
-				...(text ? { text } : {}),
+			bindings(useTally(collection, expression, {
+				...(label ? { label } : {}),
 				...(size ? { size } : {})
 			}));
 
@@ -185,7 +204,7 @@ describe("useOptions()", () => {
 		};
 	}
 
-	async function ready(options: () => Relay<OptionsCases>): Promise<void> {
+	async function ready(options: () => Relay<TallyCases>): Promise<void> {
 		await vi.waitFor(() => expect(options()({ ready: () => true })).toBe(true));
 	}
 
@@ -206,7 +225,7 @@ describe("useOptions()", () => {
 			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
 				members: {
 					"value=category": {}, "count=count:": {},
-					"^count:": -2,
+					"^count:": -1, "^category": 2,
 					"@": 0, "#": 0
 				}
 			}));
@@ -223,7 +242,7 @@ describe("useOptions()", () => {
 				members: {
 					"?region": ["r1"],
 					"value=category": {}, "count=count:": {},
-					"^count:": -2, "+category": ["c1"],
+					"^count:": -1, "^category": 2, "+category": ["c1"],
 					"@": 0, "#": 0
 				}
 			}));
@@ -242,14 +261,101 @@ describe("useOptions()", () => {
 
 		});
 
-		it("should retrieve the values the option model asks for", async () => {
+		it("should keep the selected resource options on top", async () => {
 
 			const lookup = options([]);
 
-			mount(backend(lookup), { model: { id: {}, label: {} } });
+			mount(backend(lookup), { criteria: { "?topic": ["https://example.com/t1"] }, expression: "topic", label: "name" });
 
 			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
-				members: expect.objectContaining({ "frame=category": { id: {}, label: {} } })
+				members: expect.objectContaining({ "+topic": ["https://example.com/t1"] })
+			}));
+
+		});
+
+		it("should retrieve resource options with their label, ordered by count and then by label", async () => {
+
+			const lookup = options([]);
+
+			mount(backend(lookup), { expression: "topic", label: "name" });
+
+			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+				members: {
+					"value=topic": {}, "label=topic.name": {}, "count=count:": {},
+					"^count:": -1, "^topic.name": 2,
+					"@": 0, "#": 0
+				}
+			}));
+
+		});
+
+		it("should accept a localised label", async () => {
+
+			const lookup = options([]);
+
+			mount(backend(lookup), { expression: "topic", label: "title" });
+
+			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+				members: expect.objectContaining({ "label=topic.title": {}, "^topic.title": 2 })
+			}));
+
+		});
+
+		it("should accept a label computed by a transform pipe", async () => {
+
+			const lookup = options([]);
+			const { options: binding } = mount(backend(lookup), { expression: "topic", label: "lower:name" });
+
+			await ready(binding);
+
+			act(() => binding()({ ready: ({ search }) => search("art") }));
+
+			await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
+				members: { "label=lower:topic.name": {}, "^lower:topic.name": 2, "~lower:topic.name": "art" }
+			}));
+
+		});
+
+		it("should accept literal options whatever the number of values each item holds", async () => {
+
+			const lookup = options([]);
+
+			mount(backend(lookup), { expression: "year" });
+			mount(backend(lookup), { expression: "keywords" });
+			mount(backend(lookup), { expression: "abs:year" });
+
+			await vi.waitFor(() => expect(models(lookup)).toEqual(expect.arrayContaining([
+				{ members: expect.objectContaining({ "value=year": {}, "^year": 2 }) },
+				{ members: expect.objectContaining({ "value=keywords": {}, "^keywords": 2 }) },
+				{ members: expect.objectContaining({ "value=abs:year": {}, "^abs:year": 2 }) }
+			])));
+
+		});
+
+		it("should ignore the label of literal options, whatever it reaches", async () => {
+
+			const lookup = options([]);
+
+			mount(backend(lookup), { expression: "keywords", label: "unknown" });
+
+			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+				members: expect.objectContaining({ "value=keywords": {}, "^keywords": 2 })
+			}));
+
+		});
+
+		it("should ignore the label of literal options", async () => {
+
+			const lookup = options([]);
+
+			mount(backend(lookup), { label: "name" });
+
+			await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+				members: {
+					"value=category": {}, "count=count:": {},
+					"^count:": -1, "^category": 2,
+					"@": 0, "#": 0
+				}
 			}));
 
 		});
@@ -269,17 +375,17 @@ describe("useOptions()", () => {
 
 		});
 
-		it("should narrow the options by keywords matched against the text expression, if given", async () => {
+		it("should narrow resource options by keywords matched against their label", async () => {
 
 			const lookup = options([]);
-			const { options: binding } = mount(backend(lookup), { text: "category.label" });
+			const { options: binding } = mount(backend(lookup), { expression: "topic", label: "name" });
 
 			await ready(binding);
 
 			act(() => binding()({ ready: ({ search }) => search("art") }));
 
 			await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
-				members: { "~category.label": "art" }
+				members: { "~topic.name": "art" }
 			}));
 
 		});
@@ -311,27 +417,43 @@ describe("useOptions()", () => {
 			)), { criteria: { "?region": ["r1"], "?category": ["a", "b"] } });
 
 			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
-				{ value: "b", count: 5, selected: true },
-				{ value: "a", count: 0, selected: true },
-				{ value: "c", count: 2, selected: false },
-				{ value: "d", count: 0, selected: false }
+				{ value: "b", label: "b", count: 5, selected: true },
+				{ value: "a", label: "a", count: 0, selected: true },
+				{ value: "c", label: "c", count: 2, selected: false },
+				{ value: "d", label: "d", count: 0, selected: false }
 			]));
 
 		});
 
-		it("should hand over the values the option model asks for", async () => {
+		it("should name literal options as text", async () => {
 
-			const { options: binding } = mount(backend(vi.fn(async () => immutable({
-				id: entry,
-				members: [{ value: "https://example.com/c1", frame: { id: "https://example.com/c1", label: "C1" }, count: 3 }]
-			}))), { model: { id: {}, label: {} } });
+			const { options: binding } = mount(backend(options([{ value: 2020, count: 3 }])), { expression: "year" });
 
-			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([{
-				value: "https://example.com/c1",
-				frame: { id: "https://example.com/c1", label: "C1" },
-				count: 3,
-				selected: false
-			}]));
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: 2020, label: "2020", count: 3, selected: false }
+			]));
+
+		});
+
+		it("should name resource options by their label", async () => {
+
+			const { options: binding } = mount(backend(options([
+				{ value: "https://example.com/t1", label: "Arts", count: 3 }
+			])), { expression: "topic", label: "name" });
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: "https://example.com/t1", label: "Arts", count: 3, selected: false }
+			]));
+
+		});
+
+		it("should leave the option for the items holding no value unnamed", async () => {
+
+			const { options: binding } = mount(backend(options([{ value: null, count: 3 }])));
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: null, count: 3, selected: false }
+			]));
 
 		});
 
@@ -342,7 +464,10 @@ describe("useOptions()", () => {
 			])), { size: 2 });
 
 			await vi.waitFor(() => expect(binding()({ ready: ({ state, more }) => ({ state, more }) })).toEqual({
-				state: [{ value: "a", count: 3, selected: false }, { value: "b", count: 2, selected: false }],
+				state: [
+					{ value: "a", label: "a", count: 3, selected: false },
+					{ value: "b", label: "b", count: 2, selected: false }
+				],
 				more: true
 			}));
 
@@ -425,8 +550,58 @@ describe("useOptions()", () => {
 		await act(() => binding()({ error: ({ reload }) => reload() }));
 
 		await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
-			{ value: "a", count: 1, selected: false }
+			{ value: "a", label: "a", count: 1, selected: false }
 		]));
+
+	});
+
+	describe("validation", () => {
+
+		const store = backend(options([]));
+
+		it("should throw on a malformed expression", async () => {
+			expect(() => mount(store, { expression: "category." })).toThrow("malformed");
+		});
+
+		it("should throw on an expression reaching no value", async () => {
+			expect(() => mount(store, { expression: "unknown" })).toThrow(RangeError);
+		});
+
+		it("should throw on an expression reaching literals and resources alike", async () => {
+			expect(() => mount(store, { expression: "mixed", label: "name" })).toThrow(RangeError);
+		});
+
+		it("should throw on an expression reaching nested resources", async () => {
+			expect(() => mount(store, { expression: "nested", label: "name" })).toThrow(RangeError);
+		});
+
+		it("should throw on resource options with no label", async () => {
+			expect(() => mount(store, { expression: "topic" })).toThrow(RangeError);
+		});
+
+		it("should throw on a malformed label", async () => {
+			expect(() => mount(store, { expression: "topic", label: "name." })).toThrow("malformed");
+		});
+
+		it("should throw on a label reaching no value", async () => {
+			expect(() => mount(store, { expression: "topic", label: "unknown" })).toThrow(RangeError);
+		});
+
+		it("should throw on a label possibly reaching no value", async () => {
+			expect(() => mount(store, { expression: "topic", label: "alias" })).toThrow(RangeError);
+		});
+
+		it("should throw on a label computed by a transform pipe possibly reaching no value", async () => {
+			expect(() => mount(store, { expression: "topic", label: "lower:alias" })).toThrow(RangeError);
+		});
+
+		it("should throw on a label reaching more than one value", async () => {
+			expect(() => mount(store, { expression: "topic", label: "tags" })).toThrow(RangeError);
+		});
+
+		it("should throw on a label reaching a value other than text", async () => {
+			expect(() => mount(store, { expression: "topic", label: "rank" })).toThrow(RangeError);
+		});
 
 	});
 
@@ -434,7 +609,7 @@ describe("useOptions()", () => {
 
 		function Probe() {
 
-			useOptions(useCollection({ entry, shape: Catalogue }), "category");
+			useTally(useCollection({ entry, shape: Catalogue }), "category");
 
 			return null;
 

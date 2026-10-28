@@ -38,10 +38,10 @@ export * from "./collection.js";
 export * from "./count.js";
 export * from "./keywords.js";
 export * from "./members.js";
-export * from "./options.js";
 export * from "./query.js";
 export * from "./range.js";
 export * from "./resource.js";
+export * from "./tally.js";
 
 
 const Context = createContext<Optional<Store>>(undefined);

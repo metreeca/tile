@@ -16,8 +16,8 @@
 
 /*
  * A panel lays its definition list out as a two-column grid, labels in the first column and values in the second. In
- * a sidebar the labels keep to the left edge and the values to the right one; in the body of a page the two columns
- * share the width and meet at its middle.
+ * a sidebar the labels keep to the left edge and the values to the right one; in the body of a page labels are set
+ * flush against the values they introduce, which then take whatever width is left.
  */
 
 tile-info {
@@ -47,8 +47,13 @@ tile-info {
 
     & > dl {
 
+        /*
+         * Labels take the width they need up to half the panel, so a long label is clipped rather than crowding out
+         * the values it is there to introduce; values take the rest of the width, never less than half of it.
+         */
+
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
         align-items: baseline;
         gap: var(--tile--spacing-025) var(--tile--spacing-050);
 
@@ -119,14 +124,9 @@ tile-info {
 
     }
 
-    /*
-     * Spread, labels keep to the left edge and values to the right one. Labels take the width they need up to half the
-     * panel, so a long label is clipped rather than crowding out the values it is there to introduce.
-     */
+    /* Spread, labels keep to the left edge and values to the right one. */
 
     &[place="spread"] > dl {
-
-        grid-template-columns: minmax(0, max-content) minmax(50%, 1fr);
 
         & > dt {
             text-align: start;

@@ -51,8 +51,9 @@ export function Info({
 }: {
 
 	/**
-	 * Where labels and values sit across the panel. In the `center`, the default, they meet in the middle, as fits the
-	 * body of a page; with `spread`, labels keep to the left edge and values to the right one, as fits a sidebar.
+	 * Where labels and values sit across the panel. In the `center`, the default, labels sit flush against the values
+	 * they introduce, as fits the body of a page; with `spread`, labels keep to the left edge and values to the right
+	 * one, so that each pair spans the full width of the panel, as fits a narrow sidebar.
 	 */
 	place?: "center" | "spread"
 

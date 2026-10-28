@@ -130,53 +130,57 @@ export function Link({
 
 	const route = useRoute();
 
-	const wild = href.endsWith("/*");
-	const head = wild ? href.slice(0, -1) : href;
+	const section = href.endsWith("/*");
+	const target = section ? href.slice(0, -1) : href;
 
-	const current = active && (wild ? route.startsWith(head) : route === head);
+	const marked = active && (section ? route.startsWith(target) : route === target);
 
-	/*
-	 * Runs of text are set in a span of their own: text left bare in the flex anchor would sit in an anonymous box no
-	 * rule can reach, so the stylesheet could neither shrink it nor end it in an ellipsis.
-	 */
-
-	const content = toChildArray(children).reduce<readonly (VNode | string)[]>((items, child) => {
-
-		const last = items.at(-1);
-
-		return isValidElement(child) ? [...items, child]
-			: isString(last) ? [...items.slice(0, -1), `${last}${child}`]
-				: [...items, `${child}`];
-
-	}, []).map(item => isString(item) ? createElement("span", {}, item) : item);
-
-	/*
-	 * The `active` attribute is stated empty, as boolean attributes are, for a stylesheet to read. It is no anchor
-	 * attribute JSX knows of, so the anchor is created as the wrapper is.
-	 *
-	 * A look the consumer leaves out leaves the attribute off the wrapper as well, which is what lets the stylesheet
-	 * tell a link asking for the ordinary step from one taking whatever the area around it is written in.
-	 *
-	 * A link covering nested routes stands for a section, so it is announced as the current entry of a set.
-	 *
-	 * A handler takes the activation over from the link: the default action is prevented before it runs, which keeps
-	 * the browser from following the link and tells the router to leave it alone as well.
-	 */
+	// `active` is no anchor attribute JSX knows of, so the anchor is created as the wrapper is
 
 	return createElement("tile-link", { look }, createElement("a", {
 
-		href: head,
+		href: target,
 		title,
 
-		active: current ? "" : undefined,
+		active: marked ? "" : undefined,
 
-		"aria-current": !current ? undefined : wild ? "true" : "page",
+		"aria-current": !marked ? undefined : section ? "true" : "page",
+
+		// preventing the default action keeps the browser from following the link and the router from taking it over
 
 		onClick: onClick && ((event: TargetedMouseEvent<HTMLAnchorElement>) => {
 			event.preventDefault();
 			onClick(event);
 		})
 
-	}, ...content));
+	}, ...spans()));
+
+
+	/**
+	 * Sets each run of text in the content in a span of its own, leaving elements as they stand.
+	 *
+	 * Text left bare in the flex anchor would sit in an anonymous box that no rule can reach. The stylesheet could then
+	 * neither shrink it nor end it in an ellipsis when the link runs out of room on a single line.
+	 */
+	function spans(): readonly VNode[] {
+
+		return toChildArray(children)
+			.map(child => isValidElement(child) ? child : `${child}`)
+			.reduce(join, [])
+			.map(item => isString(item) ? createElement("span", {}, item) : item);
+
+
+		/**
+		 * Returns the collected items with an item appended, merged into the last one if both are text.
+		 */
+		function join(items: readonly (VNode | string)[], item: VNode | string): readonly (VNode | string)[] {
+
+			const last = items.at(-1);
+
+			return isString(last) && isString(item) ? [...items.slice(0, -1), `${last}${item}`] : [...items, item];
+
+		}
+
+	}
 
 }

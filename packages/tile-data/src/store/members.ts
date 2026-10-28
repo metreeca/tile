@@ -25,9 +25,9 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { type Items, items, type Slice } from "@metreeca/blue/value";
-import { type Lazy, opt } from "@metreeca/core";
+import { type Lazy, opt, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
-import { immutable } from "@metreeca/core/values";
+import { equals, immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
 import type { Template } from "@metreeca/qest/model";
 import { useModel } from "../model.js";
@@ -113,8 +113,8 @@ export type MembersCases<S extends Lazy<ResourceShape>, P extends Collections<S>
 /**
  * Checks an item model against the shape of the collection items.
  *
- * Resolves to `unknown`, which constrains nothing, where the model asks for values the items hold; to `never`
- * otherwise, so that the model fails to compile.
+ * Resolves to `unknown`, which constrains nothing, if the model asks only for values the items hold. Resolves to
+ * `never` otherwise, so that a model asking for values the items lack fails to compile.
  */
 export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T> =
 	{ readonly [K in P]: T } extends Slice<S, { readonly [K in P]: T }> ? unknown : never
@@ -130,13 +130,14 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
  * start over the first batch, and again whenever the collection criteria, the model or the sort order change; the
  * model and the sort order are compared by content, so they may be written inline.
  *
+ * Every batch on show is retrieved again as the store signals a change, so that no item on show goes stale.
+ *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  * @typeParam T The template or projection stating the values wanted from each item
  *
  * @param collection The collection whose members are retrieved
- * @param options The values wanted from each item, the sort order the items start in, and the number of items
- *     retrieved in each batch, the first one included
+ * @param options The values wanted from each item, the sort order the items start in, and the size of each batch
  *
  * @returns A {@link Relay} over the {@link MembersCases} of the binding
  *
@@ -154,8 +155,8 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 	}: {
 
 		/**
-		 * The template or projection stating the values wanted from each item, checked against the item shape:
-		 * `{ label: {} }` lists the labels of the items.
+		 * The template or projection stating the values wanted from each item, checked against the item shape so
+		 * that a model asking for values the items lack fails to compile: `{ label: {} }` lists the item labels.
 		 */
 		readonly model: T & Admitted<S, P, T>
 
@@ -165,7 +166,8 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 		readonly order?: Ordering
 
 		/**
-		 * The number of items in each batch.
+		 * The number of items in each batch. Each batch is retrieved by a request of its own, so a batch size within
+		 * the server cap on response size lets a long collection be read in full, however many items it holds.
 		 *
 		 * @defaultValue 100
 		 */
@@ -183,25 +185,20 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the items are typed by the
 											   // signature
 
-	const slice: Template = {
-		[field]: {
-			...model,
-			...criteria,
-			...ranks(members.order),
-			"#": members.limit
-		}
-	};
+	const query = { ...model, ...criteria, ...ranks(members.order) };
+	const basis = { entry, field, query }; // the collection the items on show are drawn from
 
-	const binding = createRelay(useEntry({
+	const binding = createRelay(useEntry<Batch, { readonly basis: typeof basis, readonly limit: number }>({
 
 		store,
 		entry,
-		model: slice,
+		model: { [field]: { ...query, "#": members.limit } }, // the items on show, retrieved again as they change
 
-		lookup: () => store.lookup({ entry, shape: holder, model: slice })
-			.then(match => opt(match, match => items(match, slice))),
+		lookup: shown => shown && equals(shown.basis, basis) && shown.limit === members.limit-members.batch
+			? page(shown.limit).then(items => opt(items, items => [...shown.state, ...items]))
+			: pages(members.limit),
 
-		modify: () => ({ limit: members.limit }) // the limit this render asks for, as the items it retrieves answer it
+		modify: () => ({ basis, limit: members.limit }) // what this render asks for, as the items it retrieves answer it
 
 	}));
 
@@ -226,10 +223,41 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 
 	}));
 
+
+	/**
+	 * Retrieves the batches up to a limit, each by a request of its own.
+	 *
+	 * @param limit The number of first items retrieved, a multiple of the batch size
+	 */
+	function pages(limit: number): Promise<Optional<Batch>> {
+		return Promise.all(Array.from({ length: limit/members.batch }, (_, index) => page(index*members.batch)))
+			.then(pages => pages.every(page => page !== undefined) ? pages.flat() : undefined);
+	}
+
+	/**
+	 * Retrieves the batch starting at an offset.
+	 *
+	 * @param offset The number of first items skipped
+	 */
+	function page(offset: number): Promise<Optional<Batch>> {
+
+		const slice: Template = { [field]: { ...query, "@": offset, "#": members.batch } };
+
+		return store.lookup({ entry, shape: holder, model: slice })
+			.then(match => opt(match, match => items(match, slice)));
+
+	}
+
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Collection items retrieved under the generic shape, typed by the {@link useMembers} signature.
+ */
+type Batch = Items<Lazy<ResourceShape>, Template>
+
 
 /**
  * States a sort order as collection criteria.

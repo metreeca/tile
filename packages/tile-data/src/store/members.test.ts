@@ -44,6 +44,14 @@ describe("createMembers()", () => {
 			expect(members().limit).toBe(batch);
 		});
 
+		it("should retrieve the items in batches of the given size", async () => {
+			expect(members().load().batch).toBe(batch);
+		});
+
+		it("should retrieve 100 items per batch by default", async () => {
+			expect(createMembers().batch).toBe(100);
+		});
+
 		it("should sort the items as given", async () => {
 			expect(members().order).toEqual({ label: "asc" });
 		});
@@ -104,18 +112,27 @@ describe("useMembers()", () => {
 	type Binding = ReturnType<typeof useMembers<typeof Catalogue, "members", { readonly label: {} }>>;
 
 
-	function backend(lookup: unknown): Backend {
-		return { lookup, observe: () => () => {} } as unknown as Backend; // ;(test stub) only the members called
+	function backend(lookup: unknown, observers: Set<() => void> = new Set()): Backend {
+		return {
+			lookup,
+			observe: (observer: () => void) => {
+				observers.add(observer);
+				return () => observers.delete(observer);
+			}
+		} as unknown as Backend; // ;(test stub) only the members called
 	}
 
 	function items(size: number) {
 		return Array.from({ length: size }, (_, index) => ({ id: `${entry}${index}`, label: `item ${index}` }));
 	}
 
+	/**
+	 * A store holding as many items as given, handing out the page the model offset and limit ask for.
+	 */
 	function catalogue(size: number = batch/2) {
-		return vi.fn(async ({ model }: { model: { members: { "#": number } } }) => immutable({
+		return vi.fn(async ({ model }: { model: { members: { "@": number, "#": number } } }) => immutable({
 			id: entry,
-			members: items(Math.min(size, model.members["#"]))
+			members: items(size).slice(model.members["@"], model.members["@"]+model.members["#"])
 		}));
 	}
 
@@ -124,7 +141,11 @@ describe("useMembers()", () => {
 		collection: () => Collection<typeof Catalogue, "members">
 		members: () => Binding
 
+		signal(): void
+
 	} {
+
+		const observers = new Set<() => void>();
 
 		const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
 		const bindings = vi.fn<(members: Binding) => void>();
@@ -146,13 +167,14 @@ describe("useMembers()", () => {
 		}
 
 		act(() => render(createElement(Store, {
-			factory: () => backend(lookup),
+			factory: () => backend(lookup, observers),
 			children: createElement(Probe, {})
 		}), document.body));
 
 		return {
 			collection: () => collections.mock.lastCall![0], // test harness: Probe has rendered at least once
-			members: () => bindings.mock.lastCall![0]
+			members: () => bindings.mock.lastCall![0],
+			signal: () => act(() => observers.forEach(observer => observer()))
 		};
 	}
 
@@ -182,6 +204,7 @@ describe("useMembers()", () => {
 				label: {},
 				"?university": ["u1"], "~label": "item",
 				"^label": "asc",
+				"@": 0,
 				"#": batch
 			}
 		}));
@@ -225,33 +248,40 @@ describe("useMembers()", () => {
 
 	it("should retrieve the members again as the store signals a change", async () => {
 
-		const observers: (() => void)[] = [];
 		const lookup = catalogue();
+		const { members, signal } = mount(lookup);
 
-		const store = {
-			lookup,
-			observe: (observer: () => void) => { observers.push(observer); return () => {}; }
-		} as unknown as Backend; // ;(test stub) only the members called
-
-		const bindings = vi.fn<(members: Binding) => void>();
-
-		function Probe() {
-			bindings(useMembers(useCollection({ entry, shape: Catalogue }), { model: { label: {} }, batch }));
-			return null;
-		}
-
-		act(() => render(createElement(Store, {
-			factory: () => store,
-			children: createElement(Probe, {})
-		}), document.body));
-
-		await vi.waitFor(() => expect(bindings.mock.lastCall![0]({ ready: () => true })).toBe(true));
+		await vi.waitFor(() => expect(members()({ ready: () => true })).toBe(true));
 
 		const calls = lookup.mock.calls.length;
 
-		act(() => observers.forEach(observer => observer()));
+		signal();
 
 		await vi.waitFor(() => expect(lookup.mock.calls.length).toBeGreaterThan(calls));
+
+	});
+
+	it("should retrieve again every batch on show as the store signals a change", async () => {
+
+		const lookup = catalogue(3*batch);
+		const { members, signal } = mount(lookup);
+
+		await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
+
+		act(() => load(members())!());
+
+		await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+
+		const calls = lookup.mock.calls.length;
+
+		signal();
+
+		await vi.waitFor(() => expect(models(lookup).slice(calls)).toEqual([
+			{ members: expect.objectContaining({ "@": 0, "#": batch }) },
+			{ members: expect.objectContaining({ "@": batch, "#": batch }) }
+		]));
+
+		expect(members()({ ready: ({ state }) => state })).toEqual(items(2*batch));
 
 	});
 
@@ -283,18 +313,36 @@ describe("useMembers()", () => {
 
 		});
 
-		it("should retrieve one more batch", async () => {
+		it("should retrieve the next batch alone, appending it to the items on show", async () => {
 
 			const lookup = catalogue(3*batch);
 			const { members } = mount(lookup);
 
 			await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
 
+			const calls = lookup.mock.calls.length;
+
 			act(() => load(members())!());
 
-			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(2*batch));
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state })).toEqual(items(2*batch)));
 
-			expect(models(lookup).at(-1)).toMatchObject({ members: { "#": 2*batch } });
+			expect(models(lookup).slice(calls)).toEqual([
+				{ members: expect.objectContaining({ "@": batch, "#": batch }) }
+			]);
+
+		});
+
+		it("should be withheld once a batch comes back short", async () => {
+
+			const { members } = mount(catalogue(batch+batch/2));
+
+			await vi.waitFor(() => expect(load(members())).toBeTypeOf("function"));
+
+			act(() => load(members())!());
+
+			await vi.waitFor(() => expect(members()({ ready: ({ state }) => state.length })).toBe(batch+batch/2));
+
+			expect(load(members())).toBeUndefined();
 
 		});
 
@@ -310,7 +358,9 @@ describe("useMembers()", () => {
 			await act(async () => load(members())!());
 
 			expect(members()({ ready: ({ state }) => state.length })).toBe(batch);
-			expect(models(lookup).at(-1)).toMatchObject({ members: { "#": 2*batch } });
+			expect(models(lookup).slice(1)).toEqual([
+				{ members: expect.objectContaining({ "@": batch, "#": batch }) }
+			]);
 
 		});
 
@@ -327,7 +377,7 @@ describe("useMembers()", () => {
 		act(() => members()({ ready: ({ sort }) => sort({ label: "desc" }) }));
 
 		await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
-			members: { "^label": "desc", "#": batch }
+			members: { "^label": "desc", "@": 0, "#": batch }
 		}));
 
 	});
@@ -343,7 +393,7 @@ describe("useMembers()", () => {
 		act(() => void collection().filter({ "~label": "item" }));
 
 		await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({
-			members: { "~label": "item", "#": batch }
+			members: { "~label": "item", "@": 0, "#": batch }
 		}));
 
 	});

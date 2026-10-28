@@ -101,12 +101,12 @@ describe("Sheet", () => {
 		const batch = 10;
 
 		/**
-		 * A store holding the items given, handing out as many of the first ones as the model limit asks for.
+		 * A store holding the items given, handing out the page the model offset and limit ask for.
 		 */
 		function limited(items: readonly { id: string, label: string }[]) {
-			return vi.fn(async ({ model }: { model: { members: { "#": number } } }) => immutable({
+			return vi.fn(async ({ model }: { model: { members: { "@": number, "#": number } } }) => immutable({
 				id: entry,
-				members: items.slice(0, model.members["#"])
+				members: items.slice(model.members["@"], model.members["@"]+model.members["#"])
 			}));
 		}
 

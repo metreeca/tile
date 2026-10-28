@@ -41,9 +41,14 @@ export interface Members {
 
 
 	/**
-	 * The number of first items retrieved; the collection may end before it.
+	 * The number of items requested so far from the start of the collection, which may hold fewer.
 	 */
 	readonly limit: number
+
+	/**
+	 * The number of items retrieved in each batch.
+	 */
+	readonly batch: number
 
 
 	/**
@@ -106,6 +111,7 @@ export function createMembers({
 
 		order,
 
+		batch: $batch,
 		limit: $batch,
 
 		load() {

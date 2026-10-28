@@ -24,7 +24,15 @@
  */
 
 import { useRoute } from "@metreeca/tile-data/router";
-import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
+import { isString } from "@metreeca/core";
+import {
+	type ComponentChildren,
+	createElement,
+	isValidElement,
+	type TargetedMouseEvent,
+	toChildArray,
+	type VNode
+} from "preact";
 import "./link.css";
 
 
@@ -113,6 +121,8 @@ export function Link({
 
 	/**
 	 * The content the link shows, naming it; a glyph standing alone carries a label of its own to be announced by.
+	 *
+	 * Wording running out of room is cut short with an ellipsis wherever the area around it keeps it to one line.
 	 */
 	children?: ComponentChildren
 
@@ -124,6 +134,21 @@ export function Link({
 	const head = wild ? href.slice(0, -1) : href;
 
 	const current = active && (wild ? route.startsWith(head) : route === head);
+
+	/*
+	 * Runs of text are set in a span of their own: text left bare in the flex anchor would sit in an anonymous box no
+	 * rule can reach, so the stylesheet could neither shrink it nor end it in an ellipsis.
+	 */
+
+	const content = toChildArray(children).reduce<readonly (VNode | string)[]>((items, child) => {
+
+		const last = items.at(-1);
+
+		return isValidElement(child) ? [...items, child]
+			: isString(last) ? [...items.slice(0, -1), `${last}${child}`]
+				: [...items, `${child}`];
+
+	}, []).map(item => isString(item) ? createElement("span", {}, item) : item);
 
 	/*
 	 * The `active` attribute is stated empty, as boolean attributes are, for a stylesheet to read. It is no anchor
@@ -152,6 +177,6 @@ export function Link({
 			onClick(event);
 		})
 
-	}, children));
+	}, ...content));
 
 }

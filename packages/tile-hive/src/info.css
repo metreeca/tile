@@ -88,6 +88,13 @@ tile-info {
 
         & > dd {
 
+            /* Nothing in a value grows wider than its column, so a widget there is clipped by its own rules. */
+
+            & > *,
+            & > ul > li > * {
+                max-width: 100%;
+            }
+
             /* A value listing several items sets them one per line, each marked unless it stands alone. */
 
             & > ul {

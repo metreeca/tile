@@ -24,12 +24,18 @@ tile-link {
 
     /* A logo or an icon in the link is centred on its wording, without stretching the line the link stands in. */
 
+    /*
+     * A link short of room cuts its wording short with an ellipsis, wherever the area around it caps its width and
+     * keeps it to one line. Logos and icons beside the wording are left whole.
+     */
+
     display: inline-flex;
 
     & > a {
 
         display: inline-flex;
         align-items: center;
+        min-width: 0;
 
         font-weight: inherit;
         text-decoration-line: underline;
@@ -41,6 +47,14 @@ tile-link {
 
         text-underline-position: under;
         text-underline-offset: 0.1em;
+
+        /* The wording is clipped across the line only, so the underline hung below the descenders is kept. */
+
+        & > span {
+            min-width: 0;
+            overflow-x: clip;
+            text-overflow: ellipsis;
+        }
 
     }
 

@@ -149,6 +149,38 @@ describe("Link", () => {
 
 	});
 
+	describe("children", () => {
+
+		function content(): string {
+			return document.querySelector("a")?.innerHTML ?? "";
+		}
+
+		it("should wrap text in a span", async () => {
+
+			mount({ href: "/a", children: "Home" });
+
+			expect(content()).toBe("<span>Home</span>");
+
+		});
+
+		it("should wrap runs of text in a single span", async () => {
+
+			mount({ href: "/a", children: ["Home", " ", 1] });
+
+			expect(content()).toBe("<span>Home 1</span>");
+
+		});
+
+		it("should leave elements unwrapped", async () => {
+
+			mount({ href: "/a", children: [createElement("img", { alt: "" }), "Home", createElement("b", {}, "Page")] });
+
+			expect(content()).toBe(`<img alt=""><span>Home</span><b>Page</b>`);
+
+		});
+
+	});
+
 	describe("onClick", () => {
 
 		function click(): void {

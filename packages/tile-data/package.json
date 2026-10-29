@@ -60,7 +60,7 @@
     "@metreeca/qest": "^0.13.0"
   },
   "devDependencies": {
-    "happy-dom": "^20.0.0",
+    "happy-dom": "^21.0.4",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",
     "vitest": "^5.0.1"

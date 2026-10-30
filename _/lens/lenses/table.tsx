@@ -69,8 +69,6 @@ function parse(expression: string): {
 const DummySelector=() => {};
 
 
-// !!! the Tile prefix is dropped on migration, but `Table` clashes with the lucide-preact icon: rename by role
-
 export function TileTable<V extends Frame>({
 
 	hierarchy,

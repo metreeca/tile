@@ -18,6 +18,7 @@ import { Page } from "@metreeca/specimen/index.core.js";
 import { Buttons } from "@metreeca/specimen/tile-cell/buttons.js";
 import { Icons } from "@metreeca/specimen/tile-cell/icons.js";
 import { Logos } from "@metreeca/specimen/tile-cell/logos.js";
+import { Marks } from "@metreeca/specimen/tile-cell/marks.js";
 import { Notes } from "@metreeca/specimen/tile-cell/notes.js";
 import { Paths } from "@metreeca/specimen/tile-cell/paths.js";
 import { Triggers } from "@metreeca/specimen/tile-cell/triggers.js";
@@ -38,6 +39,7 @@ export function TileCell() {
 		Logos: <Logos/>,
 		Buttons: <Buttons/>,
 		Notes: <Notes/>,
+		Marks: <Marks/>,
 		Paths: <Paths/>,
 		Triggers: <Triggers/>
 

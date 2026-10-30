@@ -1,0 +1,106 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A Markdown document is plain markup, which the design system styles as it styles the same markup anywhere else on
+ * the page. This sheet adds only what Markdown brings beyond plain markup: GitHub alerts and highlighted fenced code.
+ */
+
+tile-mark {
+
+    display: block;
+
+    /*
+     * An alert sits on the stripe like a quotation, its kind told by the title and the glyph beside it, which take the
+     * stroke role of the matching status: the colour stands alongside the wording, never alone.
+     */
+
+    & .markdown-alert {
+
+        padding: var(--tile--spacing-050);
+        margin-bottom: var(--tile--spacing-100);
+
+        border-left: var(--tile--border-width) var(--tile--border-style) var(--tile-mark-alert);
+
+        background-color: var(--tile--background-color-stripe);
+
+        /* The stroke roles hold AA contrast on the stripe in both schemes, as stated where they are declared. */
+
+        &.markdown-alert-note, &.markdown-alert-important {
+            --tile-mark-alert: var(--tile--color-info-stroke);
+        }
+
+        &.markdown-alert-tip {
+            --tile-mark-alert: var(--tile--color-pass-stroke);
+        }
+
+        &.markdown-alert-warning {
+            --tile-mark-alert: var(--tile--color-warn-stroke);
+        }
+
+        &.markdown-alert-caution {
+            --tile-mark-alert: var(--tile--color-fail-stroke);
+        }
+
+        & > .markdown-alert-title {
+
+            display: flex;
+            align-items: center;
+            column-gap: var(--tile--spacing-050);
+
+            margin-bottom: var(--tile--spacing-050);
+
+            font-weight: var(--tile--font-weight-strong);
+
+            color: var(--tile-mark-alert);
+
+            & > svg {
+                width: 1em;
+                height: 1em;
+                fill: currentColor;
+            }
+
+        }
+
+        & > p:last-child {
+            margin-bottom: 0;
+        }
+
+    }
+
+    /*
+     * Highlighting tells kinds of tokens apart by the stroke roles, which hold AA contrast on the stripe the code block
+     * sits on: the colour only eases reading, the code saying the same thing without it.
+     */
+
+    & .hljs-keyword, & .hljs-built_in, & .hljs-type, & .hljs-literal {
+        color: var(--tile--color-info-stroke);
+    }
+
+    & .hljs-string, & .hljs-regexp {
+        color: var(--tile--color-pass-stroke);
+    }
+
+    & .hljs-number, & .hljs-symbol, & .hljs-attr, & .hljs-attribute {
+        color: var(--tile--color-warn-stroke);
+    }
+
+    & .hljs-comment, & .hljs-meta {
+        font-style: italic;
+        color: var(--tile--color-label);
+    }
+
+}

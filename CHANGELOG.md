@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/compare/v0.6.1...HEAD)
 
+### Security
+
+- Upgrade the `vitest` development dependency to `^5.0.3`, fixing GHSA-xp26-3454-mjgp and GHSA-qxg6-89mg-rqv8 in
+  the test tooling; published packages are not affected
+
 ## [0.6.1](https://github.com/metreeca/tile/compare/v0.6.0...v0.6.1) - 2026-10-21
 
 ### Security

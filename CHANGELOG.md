@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Upgrade the `vitest` development dependency to `^5.0.3`, fixing GHSA-xp26-3454-mjgp and GHSA-qxg6-89mg-rqv8 in
   the test tooling; published packages are not affected
+- Upgrade the `happy-dom` development dependency to `^21.0.4`, fixing GHSA-834v-8h66-3h79 in the DOM environment the
+  test suites run on; published packages are not affected, as `happy-dom` never reaches their consumers
 
 ## [0.6.1](https://github.com/metreeca/tile/compare/v0.6.0...v0.6.1) - 2026-10-21
 

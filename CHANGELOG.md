@@ -23,6 +23,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — `css.tint` washing a colour token out into a surface fill
 - `@metreeca/tile` — `colorLink` and `colorLinkHover` link colours, in the hue of the subtle accent at a lightness of
   their own, so links hold AA contrast whatever the brand supplies
+- `@metreeca/tile-cell/markdown` — image width hints, so `chart.png#50` sets a picture at half the width of its block
+- `@metreeca/tile` — an image standing alone in a paragraph reads as a figure, centred and scaled down to the measure
 
 ### Changed
 
@@ -34,8 +36,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   in place of the `entry`, `shape` and `model` props
 - `@metreeca/tile` — **breaking**: text is set on two weights, regular and strong, and the `fontWeightHeavy` token is
   removed (migration: use `fontWeightStrong`)
-- `@metreeca/tile` — top-level headings stand further off the text preceding them, and the last column of every table
-  takes the room the others leave, as it did only in Markdown documents
+- `@metreeca/tile` — top-level headings stand further off the text preceding them, and a table closing on a column with
+  an empty header gives that column the room the others leave, keeping the leading ones as narrow as their content
 - `@metreeca/tile` — text is set with greyscale antialiasing on macOS, reading lighter at the same weights
 - `@metreeca/tile-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
 - `@metreeca/tile-cell/link` — `strong` links take the link colour, and `subtle` and `strong` links are underlined

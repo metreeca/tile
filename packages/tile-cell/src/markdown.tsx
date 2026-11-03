@@ -57,6 +57,11 @@ import { type Entry, Toc } from "./toc.js";
  */
 const SafeProtocol = /^(https?|ircs?|mailto|xmpp)$/i;
 
+/**
+ * An image source ending with a percentage of the width of the block holding the image, from `#1` to `#100`.
+ */
+const WidthHint = /^(.*)#([1-9]\d?|100)$/;
+
 
 const front = unified()
 	.use(remarkParse)
@@ -73,7 +78,8 @@ const pipeline = unified()
 	.use(rehypeSlug)
 	.use(rehypeHighlight)
 	.use(rehypeAlerts)
-	.use(rehypeLinks);
+	.use(rehypeLinks)
+	.use(rehypeImages);
 
 
 
@@ -322,4 +328,27 @@ function route(url: string): string {
 		? url.replace(/(?<=^|\/)([-\w]+)\.md(?=#|$)/, (_match, name: string) => name === "index" ? "" : name)
 		: "";
 
+}
+
+/**
+ * Sizes images whose source ends with a percentage hint, `chart.png#50` to half the width of the block holding it,
+ * dropping the hint from the source, so a text sets the relative size of a picture without resorting to raw HTML.
+ */
+function rehypeImages() {
+	return (tree: Tree) => visit(tree, "element", node => {
+
+		const src = node.properties.src;
+		const hint = node.tagName === "img" && typeof src === "string" ? WidthHint.exec(src) : null;
+
+		// ;(mutation) unified transformers edit the tree they are handed in place
+
+		if ( hint !== null ) {
+			node.properties = {
+				...node.properties,
+				src: hint[1],
+				style: `--tile-markdown-width: ${hint[2]}%`
+			};
+		}
+
+	});
 }

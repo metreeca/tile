@@ -24,6 +24,23 @@ p {
 
 }
 
+/*
+ * An image standing alone in a paragraph reads as a figure: centred in the measure, scaled down to fit it keeping its
+ * proportions, and set apart from what follows by the spacing a paragraph takes. The selector carries no weight, so
+ * an image lifted out of the text by the `active` attribute keeps the sizes and margins it is given there.
+ */
+
+:where(p:has(img:only-child)) > :where(img) {
+
+    display: block;
+
+    max-width: 100%;
+    height: auto;
+
+    margin: 0 auto var(--tile--spacing-100);
+
+}
+
 blockquote {
 
     padding: var(--tile--spacing-050);

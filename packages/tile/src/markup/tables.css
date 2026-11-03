@@ -30,9 +30,10 @@ tbody > tr:nth-child(odd) > td {
 }
 
 /*
- * A table states no column widths, so the last column takes the room the others leave: leading columns, typically
- * short keys such as names, types or counts, stay as narrow as their content, and the closing column, typically a
- * description, reads in full lines across whatever width the table is given by the container holding it.
+ * A table states no column widths, so its columns share the width of the container in proportion to their content,
+ * and a column sized as a share of its cell, as an image hinted to a percentage, keeps a share of its own. A table
+ * closing on a column with an empty header gives that column the room the others leave, keeping them as narrow as
+ * their content, so short keys such as names, types or counts can stand apart from a filler stretching the rows.
  */
 
 th {
@@ -40,7 +41,7 @@ th {
     white-space: nowrap;
     font-weight: var(--tile--font-weight-strong);
 
-    &:last-child {
+    &:empty:last-child {
         width: 100%;
     }
 

@@ -165,6 +165,43 @@ describe("Markdown", () => {
 
 		});
 
+		describe("images", () => {
+
+			function widths(): string[] {
+				return Array.from(document.querySelectorAll("img"), image =>
+					image.style.getPropertyValue("--tile-markdown-width")
+				);
+			}
+
+			it("should size images by the percentage hint in their fragment", async () => {
+
+				mount("![a](a.png#50)\n\n![b](docs/b.png#100)\n\n![c](c.png#5)");
+
+				expect(attributes("img", "src")).toEqual(["a.png", "docs/b.png", "c.png"]);
+				expect(widths()).toEqual(["50%", "100%", "5%"]);
+
+			});
+
+			it("should leave images without a percentage hint unsized", async () => {
+
+				mount("![a](a.png)\n\n![b](b.png#0)\n\n![c](c.png#150)\n\n![d](d.png#part)");
+
+				expect(attributes("img", "src")).toEqual(["a.png", "b.png#0", "c.png#150", "d.png#part"]);
+				expect(widths()).toEqual(["", "", "", ""]);
+
+			});
+
+			it("should leave the fragments of links alone", async () => {
+
+				mount("[a](page#50)");
+
+				expect(attributes("a", "href")).toEqual(["page#50"]);
+				expect(attributes("a", "style")).toEqual([""]);
+
+			});
+
+		});
+
 		describe("scrolling", () => {
 
 			it("should scroll the heading named by the fragment into view on render", async () => {

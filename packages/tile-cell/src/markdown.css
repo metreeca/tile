@@ -25,6 +25,15 @@ tile-markdown {
     display: block;
 
     /*
+     * An image sized by a percentage hint takes that share of the width of the block holding it, keeping its
+     * proportions; the rule weighs less than the enlarged view, which an image lifted out of the text keeps.
+     */
+
+    & img {
+        width: var(--tile-markdown-width, auto);
+    }
+
+    /*
      * An alert reads as GitHub renders it, on the page background behind a bar in the stroke role of the matching
      * status, its kind told by the title and the glyph beside it: the colour stands alongside the wording, never alone.
      * The bar takes the narrowest spacing as its width, the scale holding no border width heavy enough to carry it.

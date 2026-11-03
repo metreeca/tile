@@ -33,16 +33,21 @@ tile-info {
     }
 
     /*
-     * A run of panels is set off from what surrounds it by a step above the first and below the last. A run opening or
-     * closing its container takes no step on that side, so it lines up with the edge the container already pads.
+     * A run of panels is spaced as any other block of the page, in the body as in a sidebar: its last panel leaves the
+     * step a paragraph leaves below it. A run opening or closing its container leaves no step on that side, so it lines
+     * up with the edge the container already pads, as a tray or a box pads what it holds.
+     *
+     * Above, the run takes the same step from a widget, which leaves no margin of its own. It takes none from a block
+     * of markup, whose own margin already leaves it, nor from a heading, which then sits over the run it names; flex
+     * layouts, such as the columns of a shell, never collapse the two margins, so taking both would double the step.
      */
 
-    &:not(& + &):not(:first-child) {
-        padding-top: var(--tile--spacing-050);
+    &:not(:first-child, & + &, :is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, hr) + &) {
+        margin-top: var(--tile--spacing-100);
     }
 
     &:not(:has(+ &)):not(:last-child) {
-        padding-bottom: var(--tile--spacing-050);
+        margin-bottom: var(--tile--spacing-100);
     }
 
     & > dl {

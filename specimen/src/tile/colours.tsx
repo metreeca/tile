@@ -58,6 +58,13 @@ const texts: ReadonlyArray<Entry> = [
 
 ];
 
+const links: ReadonlyArray<Entry> = [
+
+	[ tile.colorLink, "a link at rest" ],
+	[ tile.colorLinkHover, "a link under the pointer" ]
+
+];
+
 const controls: ReadonlyArray<Entry> = [
 
 	[ tile.colorEnabled, "a control that answers" ],
@@ -138,6 +145,15 @@ export function Colours() {
 
 		<Samples entries={texts} sample={property =>
 			<span style={{ color: css.var(property) }}>Aa</span>
+		}/>
+
+		<h3>Links</h3>
+
+		<p>What a link takes at rest and under the pointer: the hue of the subtle accent at a lightness of its own, so a
+			brand moves the hue alone and never the contrast.</p>
+
+		<Samples entries={links} sample={property =>
+			<span style={{ color: css.var(property), textDecorationLine: "underline" }}>Link</span>
 		}/>
 
 		<h3>Controls</h3>

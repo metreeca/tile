@@ -107,6 +107,13 @@ function labels(): readonly (string | null)[] {
 	return [...document.querySelectorAll("tile-tally label")].map(label => label.textContent);
 }
 
+function links(): readonly { readonly href: string | null, readonly text: string | null }[] {
+	return [...document.querySelectorAll("tile-tally label a")].map(anchor => ({
+		href: anchor.getAttribute("href"),
+		text: anchor.textContent
+	}));
+}
+
 function clear(): HTMLButtonElement | null {
 	return document.querySelector("button[title=Clear]");
 }
@@ -433,6 +440,26 @@ describe("Tally", () => {
 			});
 
 			await vi.waitFor(() => expect(labels()).toEqual(["‹Arts› 2"]));
+
+		});
+
+		it("should link options naming resources to the resources they name", async () => {
+
+			mount(options([{ value: "https://example.com/categories/arts", label: "Arts", count: 2 }]));
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 2"]));
+
+			expect(links()).toEqual([{ href: "https://example.com/categories/arts", text: "Arts" }]);
+
+		});
+
+		it("should not link options naming literals", async () => {
+
+			mount(options([{ value: "c1", label: "Arts", count: 2 }, { value: null, count: 3 }]));
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 2", "None 3"]));
+
+			expect(links()).toEqual([]);
 
 		});
 

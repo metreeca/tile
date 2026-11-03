@@ -25,9 +25,11 @@
 
 import type { Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
+import { isReference } from "@metreeca/qest/state";
 import { AutoDelay, classes, keys } from "@metreeca/tile-cell";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
+import { Link } from "@metreeca/tile-cell/link";
 import { More } from "@metreeca/tile-cell/more";
 import { Note } from "@metreeca/tile-cell/note";
 import { useModel } from "@metreeca/tile-data/model";
@@ -44,9 +46,10 @@ import "./tally.css";
  *
  * Lists the values the tally offers as checkboxes, each labelled by its name and by the number of items holding it,
  * grouping digits as the reader's locale does, so that ticking a value narrows the collection to the items holding
- * any of the values ticked. The items holding none of the values are offered as `None`. A value no item lets through
- * under the other criteria stays on offer with a count of `0`, so the list holds still as other facets narrow the
- * collection.
+ * any of the values ticked. The name of a linked resource is a {@link @metreeca/tile-cell!link.Link link} to it, which
+ * takes the reader to the resource and leaves its checkbox as it stands. The items holding none of the values are
+ * offered as `None`. A value no item lets through under the other criteria stays on offer with a count of `0`, so
+ * the list holds still, every value in its place, as other facets narrow the collection.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
  * it, as does a {@link @metreeca/tile-cell!button.Button button} marked by the
@@ -106,7 +109,8 @@ export function Tally({
 
 	/**
 	 * Renders the name of a value; the {@link @metreeca/tile-data!store/tally.TallyBucket.label label} of the value,
-	 * or `None` for the items holding none, if omitted.
+	 * or `None` for the items holding none, if omitted. The name of a linked resource is set within a link to it, so
+	 * the name holds no control of its own, as a link or button nested within it would be invalid inside the link.
 	 *
 	 * @param bucket The value to be named
 	 */
@@ -218,7 +222,10 @@ export function Tally({
 								onChange={event => select(bucket.value, event.currentTarget.checked)}
 							/>
 
-							<span>{children ? children(bucket) : bucket.label ?? "None"}</span>
+							<span>{isReference(bucket.value)
+								? <Link href={bucket.value}>{Name(bucket)}</Link>
+								: Name(bucket)
+							}</span>
 							{" "}
 							<small>{bucket.count.toLocaleString()}</small>
 
@@ -236,6 +243,15 @@ export function Tally({
 
 	</>);
 
+
+	/**
+	 * Renders the name of an option.
+	 *
+	 * @param bucket The option to be named
+	 */
+	function Name(bucket: TallyBucket): ComponentChildren {
+		return children ? children(bucket) : bucket.label ?? "None";
+	}
 
 	/**
 	 * Narrows the options by the text typed, at once.

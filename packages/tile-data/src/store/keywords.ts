@@ -61,7 +61,7 @@ export interface Keywords {
  * {@link "store/collection"!Collection.clear clear}, so that a search box always shows what narrows the list.
  *
  * The keywords are applied and handed back trimmed at every {@link Keywords.search search}, so the search box holds the
- * text as the reader types it, spaces between words included, and hands it over only once the reader pauses.
+ * text as the reader types it, spaces between words included, and decides on its own when to hand it over.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items

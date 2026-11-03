@@ -278,6 +278,12 @@ tile-tally {
 
             }
 
+            /* The name the facet supplies for the items holding no value is set at rest, apart from the names of values. */
+
+            & > li.blank > label > span {
+                font-weight: var(--tile--font-weight);
+            }
+
             /*
              * The whole row toggles the checkbox, the name clipped with an ellipsis rather than wrapped, so a long
              * name never widens the box; counts line up at the end, in figures of equal width.

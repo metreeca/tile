@@ -48,9 +48,10 @@ import "./tally.css";
  * grouping digits as the reader's locale does, so that ticking a value narrows the collection to the items holding
  * any of the values ticked. The name of a linked resource is a {@link @metreeca/tile-cell!link.Link link} to it, which
  * takes the reader to the resource and leaves its checkbox as it stands. The items holding none of the values are
- * offered as `None`. A value no item lets through under the other criteria stays on offer with a count of `0`, so
- * the list holds still, every value in its place, as other facets narrow the collection; its checkbox is disabled
- * unless ticked, since ticking it would empty the collection, while a ticked one stays enabled to be unticked.
+ * offered as `‹blank›`, a name the facet supplies itself. A value no item lets through under the other criteria
+ * stays on offer with a count of `0`, so the list holds still, every value in its place, as other facets narrow the
+ * collection; its checkbox is disabled unless ticked, since ticking it would empty the collection, while a ticked one
+ * stays enabled to be unticked.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
  * it, as does a {@link @metreeca/tile-cell!button.Button button} marked by the
@@ -111,8 +112,9 @@ export function Tally({
 
 	/**
 	 * Renders the name of a value; the {@link @metreeca/tile-data!store/tally.TallyBucket.label label} of the value,
-	 * or `None` for the items holding none, if omitted. The name of a linked resource is set within a link to it, so
-	 * the name holds no control of its own, as a link or button nested within it would be invalid inside the link.
+	 * if omitted. The items holding none are always named `‹blank›` by the facet itself, so the reader tells a name it
+	 * supplies from the values in the data. The name of a linked resource is set within a link to it, so the name holds
+	 * no control of its own, as a link or button nested within it would be invalid inside the link.
 	 *
 	 * @param bucket The value to be named
 	 */
@@ -224,7 +226,7 @@ export function Tally({
 
 				).map(bucket =>
 
-					<li key={JSON.stringify(bucket.value)} class={classes({ unavailable: bucket.count === 0 })}>
+					<li key={JSON.stringify(bucket.value)} class={classes({ unavailable: bucket.count === 0, blank: bucket.value === null })}>
 						<label>
 
 							<input type="checkbox" checked={bucket.selected}
@@ -260,7 +262,9 @@ export function Tally({
 	 * @param bucket The option to be named
 	 */
 	function Name(bucket: TallyBucket): ComponentChildren {
-		return children ? children(bucket) : bucket.label ?? "None";
+		return bucket.value === null ? "‹blank›"
+			: children ? children(bucket)
+				: bucket.label;
 	}
 
 	/**

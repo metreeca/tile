@@ -465,17 +465,27 @@ describe("Tally", () => {
 
 			mount(options([{ value: null, count: 3 }]));
 
-			await vi.waitFor(() => expect(labels()).toEqual(["None 3"]));
+			await vi.waitFor(() => expect(labels()).toEqual(["‹blank› 3"]));
+
+		});
+
+		it("should name the option for the items holding no value itself, whatever the caller renders", async () => {
+
+			mount(options([{ value: "c1", label: "Arts", count: 2 }, { value: null, count: 3 }]), {
+				children: ({ label }) => `[${label}]`
+			});
+
+			await vi.waitFor(() => expect(labels()).toEqual(["[Arts] 2", "‹blank› 3"]));
 
 		});
 
 		it("should name options as the caller renders them", async () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 2 }]), {
-				children: ({ label }) => `‹${label}›`
+				children: ({ label }) => `[${label}]`
 			});
 
-			await vi.waitFor(() => expect(labels()).toEqual(["‹Arts› 2"]));
+			await vi.waitFor(() => expect(labels()).toEqual(["[Arts] 2"]));
 
 		});
 
@@ -493,7 +503,7 @@ describe("Tally", () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 2 }, { value: null, count: 3 }]));
 
-			await vi.waitFor(() => expect(labels()).toEqual(["Arts 2", "None 3"]));
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 2", "‹blank› 3"]));
 
 			expect(links()).toEqual([]);
 

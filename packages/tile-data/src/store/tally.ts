@@ -270,10 +270,7 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 		"^count:": -1,
 		[`^${text}`]: 2,
-		...(selected.length > 0 ? { [`+${expression}`]: selected } : {}),
-
-		"@": options.offset,
-		"#": options.limit > 0 ? options.limit+1 : 0
+		...(selected.length > 0 ? { [`+${expression}`]: selected } : {})
 
 	};
 
@@ -298,29 +295,58 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 
 	/**
-	 * Binds the options the store holds under a set of criteria.
-	 *
-	 * The generic shape and template accept any model: the options are typed by the signature instead.
+	 * Binds the options on show the store holds under a set of criteria, retrieved batch by batch.
 	 *
 	 * @param slot The criteria and the bindings the options are retrieved under
 	 */
 	function useBuckets(slot: object) {
 
-		const holder: Lazy<ResourceShape> = shape;
-		const model: Template = { [field]: slot };
-
 		return createRelay(useEntry({
 
 			store,
 			entry,
-			model,
+			model: { [field]: { ...slot, "@": options.offset, "#": options.limit } }, // the options on show
 
-			lookup: () => store.lookup({ entry, shape: holder, model })
-				.then(match => opt(match, match => items(match, model).flatMap(row))),
+			lookup: () => Promise.all(batches().map(batch => retrieve({ ...slot, ...batch })))
+				.then(rows => rows.every(rows => rows !== undefined) ? rows.flat() : undefined),
 
 			modify: () => ({})
 
 		}));
+
+	}
+
+	/**
+	 * Slices the options on show into batches of the facet size, each retrieved by a request of its own, so no
+	 * request outgrows the result set a store serves at once; the last one reaches one option past the options on
+	 * show, to tell whether more follow.
+	 */
+	function batches(): readonly { readonly "@": number, readonly "#": number }[] {
+
+		const step = size !== undefined && size > 0 ? size : options.limit;
+		const count = options.limit > 0 ? Math.ceil(options.limit/step) : 0;
+
+		return count === 0 ? [{ "@": options.offset, "#": 0 }] : Array.from({ length: count }, (_, index) => ({
+			"@": options.offset+index*step,
+			"#": Math.min(step, options.limit-index*step)+(index === count-1 ? 1 : 0)
+		}));
+
+	}
+
+	/**
+	 * Retrieves the options the store holds under a set of criteria and bindings.
+	 *
+	 * The generic shape and template accept any model: the options are typed by the signature instead.
+	 *
+	 * @param slot The criteria and the bindings the options are retrieved under, a batch of them included
+	 */
+	function retrieve(slot: object): Promise<Optional<readonly Row[]>> {
+
+		const holder: Lazy<ResourceShape> = shape;
+		const model: Template = { [field]: slot };
+
+		return store.lookup({ entry, shape: holder, model })
+			.then(match => opt(match, match => items(match, model).flatMap(row)));
 
 	}
 

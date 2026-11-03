@@ -20,6 +20,7 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { union } from "@metreeca/blue/union";
+import { isNumber } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
@@ -514,7 +515,52 @@ describe("useTally()", () => {
 
 			act(() => binding()({ ready: ({ load }) => load?.() }));
 
-			await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({ members: { "@": 0, "#": 5 } }));
+			await vi.waitFor(() => expect(models(lookup).slice(-2)).toMatchObject([
+				{ members: { "@": 0, "#": 2 } },
+				{ members: { "@": 2, "#": 3 } }
+			]));
+
+		});
+
+		it("should retrieve each batch by a request of its own, so no request outgrows the batch size", async () => {
+
+			const lookup = options([{ value: "a", count: 3 }, { value: "b", count: 2 }, { value: "c", count: 1 }]);
+			const { options: binding } = mount(backend(lookup), { size: 2 });
+
+			await ready(binding);
+
+			act(() => binding()({ ready: ({ load }) => load?.() }));
+			await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({ members: { "@": 2 } }));
+
+			act(() => binding()({ ready: ({ load }) => load?.() }));
+			await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({ members: { "@": 4 } }));
+
+			expect(models(lookup).map(({ members }) => members["#"])).toSatisfy((limits: readonly unknown[]) =>
+				limits.every(limit => isNumber(limit) && limit <= 3)
+			);
+
+		});
+
+		it("should list the options of every batch retrieved, in order", async () => {
+
+			const rows = [{ value: "a", count: 3 }, { value: "b", count: 2 }, { value: "c", count: 1 }];
+
+			const lookup = vi.fn(async ({ model: { members } }: { model: Members }) => immutable({
+				id: entry,
+				members: isNumber(members["@"]) && isNumber(members["#"])
+					? rows.slice(members["@"], members["@"]+members["#"])
+					: rows
+			}));
+
+			const { options: binding } = mount(backend(lookup), { size: 2 });
+
+			await ready(binding);
+
+			act(() => binding()({ ready: ({ load }) => load?.() }));
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state.map(({ value }) => value) })).toEqual([
+				"a", "b", "c"
+			]));
 
 		});
 

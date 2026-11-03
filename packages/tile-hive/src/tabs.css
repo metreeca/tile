@@ -37,12 +37,12 @@ tile-tabs {
 
         & > label {
 
-            padding-bottom: var(--tile--spacing-050);
+            padding-bottom: var(--tile--spacing-075);
             margin-bottom: calc(-1 * var(--tile--border-width)); /* The mark sits on the rule, not above it. */
             cursor: pointer;
 
             font-size: var(--tile--font-size-small);
-            font-weight: var(--tile--font-weight-heavy);
+            font-weight: var(--tile--font-weight-strong);
             color: var(--tile--color-label);
 
             background-color: transparent; /* The reset hands down an opaque page, which would mask the rule. */
@@ -126,7 +126,7 @@ tile-tabs {
 
         display: flex;
 
-        padding-bottom: var(--tile--spacing-050);
+        padding-bottom: var(--tile--spacing-075);
 
         border-bottom-style: var(--tile--border-style);
 
@@ -150,7 +150,7 @@ tile-tabs {
             cursor: pointer;
 
             font-size: var(--tile--font-size-small);
-            font-weight: var(--tile--font-weight-heavy);
+            font-weight: var(--tile--font-weight-strong);
             color: var(--tile--color);
 
             background-color: transparent; /* The page shows through, so the bar reads as the strip it stands in for. */

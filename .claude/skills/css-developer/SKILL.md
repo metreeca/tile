@@ -39,8 +39,9 @@ it. The rules it displaces, and what holds instead:
 | always give an external variable a fallback, `var(--x, #fallback)`  | read a token plainly: a fallback restates an anchor and hides a missing import, and is reserved for a consumer that cannot count on the stylesheet being loaded at all |
 | file layout: header, `:root` section, then styles                   | header, knob registrations, then the component rule, declarations **ahead of** any nested rule; no `:root` section |
 
-Unaffected, and still in force from that skill: `&` nesting mirroring the DOM, kebab-case, no global leakage, and
-semantic names describing purpose rather than appearance.
+Unaffected, and still in force from that skill: `&` nesting mirroring the DOM, kebab-case, no global leakage,
+semantic names describing purpose rather than appearance, and sizing left to the parent (§Sizing), so a `<tile-*>`
+element never caps, stretches or places itself against its container.
 
 # Responsibilities
 

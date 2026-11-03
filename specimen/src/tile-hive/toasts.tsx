@@ -67,8 +67,8 @@ export function Toasts() {
 
 		<Batch/>
 
-		<p>An actionable post shows its message as a link, handing the post back to the interface when followed: here
-			following it clears the post and notes what was opened.</p>
+		<p>An actionable post shows its message as a link: following it clears the post and hands it back to the
+			interface, which here notes what was opened in a toast of its own.</p>
 
 		<Actionable/>
 
@@ -94,10 +94,9 @@ function Actionable() {
 
 function Shown() {
 
-	const { post, clear } = useBoard();
+	const { post } = useBoard();
 
 	return <Toast position={["bottom", "start"]} timeout={2500} onAction={acted => {
-		clear(acted);
 		post({ message: `Opened “${acted.message}”` });
 	}}/>;
 

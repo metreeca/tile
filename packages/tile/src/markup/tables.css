@@ -32,7 +32,7 @@ tbody > tr:nth-child(odd) > td {
 th {
 
     white-space: nowrap;
-    font-weight: var(--tile--font-weight-heavy);
+    font-weight: var(--tile--font-weight-strong);
 
     &:empty:last-child {
         width: 100%;

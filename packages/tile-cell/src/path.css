@@ -1,0 +1,97 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A path lays its steps in a single row, clipping the last one with an ellipsis where the row runs out. */
+
+tile-path {
+
+    display: block;
+
+    min-width: 0;
+
+    & > nav {
+        display: contents;
+    }
+
+    /* The list drops the markers, indent and gaps the design system gives running text. */
+
+    & > nav > ol {
+
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+
+        overflow: hidden;
+
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+
+    }
+
+    & > nav > ol > li {
+
+        flex-shrink: 0;
+
+        margin: 0;
+
+        white-space: nowrap;
+
+        /*
+         * Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never announced.
+         * Each is the lucide right chevron, a little shorter than a lowercase letter and centred on the x-height, so
+         * it reads as a mark between the words rather than as a letter among them at any size. It is painted in the
+         * label colour through a mask cropped to the stroke, round caps included. The stroke is stated in the glyph,
+         * a mask having no way to read a custom property, at a width close to the stem of the light text weight. The
+         * chevron keeps the label colour under forced colours, which would otherwise paint the box it is cut from.
+         */
+
+        &:not(:first-child)::before, &:only-child::after {
+
+            --tile-path-chevron-height: 0.9ex;
+
+            content: "" / "";
+
+            display: inline-block;
+
+            /* The stroke spans 8 by 14 of the units the glyph is drawn on. */
+
+            width: calc(var(--tile-path-chevron-height) * 8 / 14);
+            height: var(--tile-path-chevron-height);
+            margin: 0 calc((var(--tile--spacing-025) + var(--tile--spacing-050)) / 2); /* Between the two steps. */
+
+            /* Raised off the baseline by half the room the x-height leaves around it. */
+
+            vertical-align: calc((1ex - var(--tile-path-chevron-height)) / 2);
+
+            background-color: var(--tile--color-label);
+            forced-color-adjust: none;
+
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='8 5 8 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat;
+
+        }
+
+        &:last-child {
+            flex-shrink: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    }
+
+}

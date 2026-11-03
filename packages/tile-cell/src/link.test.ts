@@ -95,6 +95,26 @@ describe("Link", () => {
 
 		});
 
+		it("should mark active links whatever the query", async () => {
+
+			history.replaceState(null, "", "/a?x=1");
+
+			mount({ active: true, href: "/a", query: { y: 2 } }, { active: true, href: "/a?z=3" });
+
+			expect(anchors("a[active]")).toEqual(["/a?y=2", "/a?z=3"]);
+
+		});
+
+		it("should mark active wildcard links whatever the query", async () => {
+
+			history.replaceState(null, "", "/a/b?x=1");
+
+			mount({ active: true, href: "/a/*", query: { y: 2 } });
+
+			expect(anchors("a[aria-current='true']")).toEqual(["/a/?y=2"]);
+
+		});
+
 		it("should not mark links not flagged as active", async () => {
 
 			history.replaceState(null, "", "/a");
@@ -103,6 +123,52 @@ describe("Link", () => {
 
 			expect(anchors("a[active]")).toEqual([]);
 			expect(anchors("a[aria-current]")).toEqual([]);
+
+		});
+
+	});
+
+	describe("query", () => {
+
+		it("should append the entries to the link", async () => {
+
+			mount({ href: "/a", query: { "~name": "w b&c", "#": 25, "flag": true } });
+
+			expect(anchors()).toEqual(["/a?~name=w%20b%26c&%23=25&flag=true"]);
+
+		});
+
+		it("should append the entries to the query of the link", async () => {
+
+			mount({ href: "/a?x=1", query: { y: 2 } });
+
+			expect(anchors()).toEqual(["/a?x=1&y=2"]);
+
+		});
+
+		it("should append the entries to wildcard links", async () => {
+
+			mount({ href: "/a/*", query: { y: 2 } });
+
+			expect(anchors()).toEqual(["/a/?y=2"]);
+
+		});
+
+		it("should leave empty queries off the link", async () => {
+
+			mount({ href: "/a", query: {} });
+
+			expect(anchors()).toEqual(["/a"]);
+
+		});
+
+		it("should follow links to the query", async () => {
+
+			mount({ href: "/a", query: { y: 2 } });
+
+			act(() => void document.querySelector("a")?.click());
+
+			expect(`${location.pathname}${location.search}`).toBe("/a?y=2");
 
 		});
 
@@ -144,6 +210,38 @@ describe("Link", () => {
 			mount({ href: "/a" });
 
 			expect(document.querySelectorAll("a[title]")).toHaveLength(0);
+
+		});
+
+	});
+
+	describe("children", () => {
+
+		function content(): string {
+			return document.querySelector("a")?.innerHTML ?? "";
+		}
+
+		it("should wrap text in a span", async () => {
+
+			mount({ href: "/a", children: "Home" });
+
+			expect(content()).toBe("<span>Home</span>");
+
+		});
+
+		it("should wrap runs of text in a single span", async () => {
+
+			mount({ href: "/a", children: ["Home", " ", 1] });
+
+			expect(content()).toBe("<span>Home 1</span>");
+
+		});
+
+		it("should leave elements unwrapped", async () => {
+
+			mount({ href: "/a", children: [createElement("img", { alt: "" }), "Home", createElement("b", {}, "Page")] });
+
+			expect(content()).toBe(`<img alt=""><span>Home</span><b>Page</b>`);
 
 		});
 

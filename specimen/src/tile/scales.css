@@ -24,12 +24,6 @@
     background-color: var(--tile--color-strong);
 }
 
-/* Leading is read off two lines rather than one, so the sample carries a break the line box shows the effect of. */
-
-.leading {
-    display: inline-block;
-}
-
 
 /**** Motion **********************************************************************************************************/
 

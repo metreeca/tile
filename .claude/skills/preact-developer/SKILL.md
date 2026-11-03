@@ -91,13 +91,16 @@ line:
 
 1. `name`, the accessible name, where the widget takes one
 2. boolean options, alphabetically
-3. the remaining options, alphabetically
-4. event handlers, alphabetically
-5. `children`
+3. the options settling how the widget is laid out or appears (`side`, `place`, `align`, `look`, `mode`), in the
+   order a reader decides them
+4. the content slots the widget shows (`icon`, `label`, `title`, `tags`), in the order they render
+5. event handlers, alphabetically
+6. `children`
 
-What the widget is called comes before what it is given, what it is given before what it hands back, and what the
-caller writes between the tags after all of it, so every widget reads the same way. This settles the prop ordering
-`react-developer-props` states for booleans, data and handlers alone; its JSX attribute ordering stays in force.
+What the widget is called comes before what it is given, how it is arranged before what it shows, what it shows in
+the order the reader meets it, what it is given before what it hands back, and what the caller writes between the
+tags after all of it, so every widget reads the same way. This settles the prop ordering `react-developer-props`
+states for booleans, data and handlers alone; its JSX attribute ordering stays in force.
 
 ```tsx
 export function Button({
@@ -106,9 +109,13 @@ export function Button({
 
 	disabled,
 
+	look,
+	mode = "normal",
+	type = "button",
+
 	icon,
 	label,
-	type = "button",
+	title,
 
 	onClick
 

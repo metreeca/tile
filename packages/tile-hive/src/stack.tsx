@@ -79,12 +79,13 @@ export function Stack({
 	 * Where the items sit along the column, when the stack is taller than they are: at the `start`, in the `center`,
 	 * at the `end`, `spread` from edge to edge, the leftover room shared out between them, or split with the first item
 	 * alone at the start and the others at the end (`head`), or the last item alone at the end and the others at the
-	 * start (`tail`).
+	 * start (`tail`); at the start if omitted, packed against the leading edge as plain document flow leaves them.
 	 */
 	place?: "start" | "center" | "end" | "spread" | "head" | "tail"
 
 	/**
-	 * Where each item sits across the column: `start`, `center`, `end`, or `stretch`ed to the full width of the stack.
+	 * Where each item sits across the column: `start`, `center`, `end`, or `stretch`ed to the full width of the stack,
+	 * as it is if omitted, so a column of controls lines up along both edges without a width of its own.
 	 */
 	align?: "start" | "center" | "end" | "stretch"
 

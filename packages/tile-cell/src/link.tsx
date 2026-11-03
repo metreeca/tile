@@ -24,7 +24,15 @@
  */
 
 import { useRoute } from "@metreeca/tile-data/router";
-import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
+import { isString, type Scalar } from "@metreeca/core";
+import {
+	type ComponentChildren,
+	createElement,
+	isValidElement,
+	type TargetedMouseEvent,
+	toChildArray,
+	type VNode
+} from "preact";
 import "./link.css";
 
 
@@ -56,6 +64,7 @@ export function Link({
 	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 
 	href,
+	query,
 	title,
 
 	onClick,
@@ -71,10 +80,11 @@ export function Link({
 
 
 	/**
-	 * How loud the link appears: `subtle` reads as the text around it, font and colour alike, `normal` adds the
-	 * link colour and an underline, and `strong` stands as a label of its own, smaller and heavier in the text colour
-	 * with no underline, as a navigation entry does. However loud, a marked link is underlined in the accent colour,
-	 * thick except for `subtle`, where the mark is thinner and closer to the text.
+	 * How loud the link appears: `subtle` reads as the text around it, font and colour alike, `normal` adds the link
+	 * colour and an underline, and `strong` stands as a label of its own, heavier in the text colour with no underline,
+	 * as a navigation entry does. Every look keeps the face and size of the text around it, turns to the hover colour
+	 * under the pointer and holds it through the press. However loud, a marked link is underlined in the accent colour,
+	 * thick except for `subtle`, where the mark is thinner and drawn closer to the text it sits under.
 	 *
 	 * A link stating nothing takes the look the area around it is written in, from the `--tile--look` token the
 	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone.
@@ -87,6 +97,15 @@ export function Link({
 	 * it, so `/users/*` links to `/users/` and is marked for `/users/123`, though not for `/users`.
 	 */
 	href: string
+
+	/**
+	 * The entries the link adds to the query of the route it points at, after any query `href` carries; none if omitted.
+	 *
+	 * The page reached reads them from its location, so a link hands over the criteria it is narrowed by, as a facet
+	 * value linking to the catalogue filtered on it, and a link to the current route narrows the page in place with an
+	 * entry in the history to go back by. The query never takes part in marking an `active` link.
+	 */
+	query?: { readonly [name: string]: Scalar }
 
 	/**
 	 * The hint the platform shows on resting the pointer on the link, such as where it leads; no hint if omitted.
@@ -112,6 +131,8 @@ export function Link({
 
 	/**
 	 * The content the link shows, naming it; a glyph standing alone carries a label of its own to be announced by.
+	 *
+	 * Wording running out of room is cut short with an ellipsis wherever the area around it keeps it to one line.
 	 */
 	children?: ComponentChildren
 
@@ -119,38 +140,63 @@ export function Link({
 
 	const route = useRoute();
 
-	const wild = href.endsWith("/*");
-	const head = wild ? href.slice(0, -1) : href;
+	const section = href.endsWith("/*");
+	const target = section ? href.slice(0, -1) : href;
 
-	const current = active && (wild ? route.startsWith(head) : route === head);
+	const path = target.replace(/\?.*$/, ""); // the route carries no query, so marking compares the path alone
 
-	/*
-	 * The `active` attribute is stated empty, as boolean attributes are, for a stylesheet to read. It is no anchor
-	 * attribute JSX knows of, so the anchor is created as the wrapper is.
-	 *
-	 * A look the consumer leaves out leaves the attribute off the wrapper as well, which is what lets the stylesheet
-	 * tell a link asking for the ordinary step from one taking whatever the area around it is written in.
-	 *
-	 * A link covering nested routes stands for a section, so it is announced as the current entry of a set.
-	 *
-	 * A handler takes the activation over from the link: the default action is prevented before it runs, which keeps
-	 * the browser from following the link and tells the router to leave it alone as well.
-	 */
+	const entries = Object.entries(query ?? {})
+		.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // `+` would not read as a space
+		.join("&");
+
+	const marked = active && (section ? route.startsWith(path) : route === path);
+
+	// `active` is no anchor attribute JSX knows of, so the anchor is created as the wrapper is
 
 	return createElement("tile-link", { look }, createElement("a", {
 
-		href: head,
+		href: !entries ? target : `${target}${target.includes("?") ? "&" : "?"}${entries}`,
 		title,
 
-		active: current ? "" : undefined,
+		active: marked ? "" : undefined,
 
-		"aria-current": !current ? undefined : wild ? "true" : "page",
+		"aria-current": !marked ? undefined : section ? "true" : "page",
+
+		// preventing the default action keeps the browser from following the link and the router from taking it over
 
 		onClick: onClick && ((event: TargetedMouseEvent<HTMLAnchorElement>) => {
 			event.preventDefault();
 			onClick(event);
 		})
 
-	}, children));
+	}, ...spans()));
+
+
+	/**
+	 * Sets each run of text in the content in a span of its own, leaving elements as they stand.
+	 *
+	 * Text left bare in the flex anchor would sit in an anonymous box that no rule can reach. The stylesheet could then
+	 * neither shrink it nor end it in an ellipsis when the link runs out of room on a single line.
+	 */
+	function spans(): readonly VNode[] {
+
+		return toChildArray(children)
+			.map(child => isValidElement(child) ? child : `${child}`)
+			.reduce(join, [])
+			.map(item => isString(item) ? createElement("span", {}, item) : item);
+
+
+		/**
+		 * Returns the collected items with an item appended, merged into the last one if both are text.
+		 */
+		function join(items: readonly (VNode | string)[], item: VNode | string): readonly (VNode | string)[] {
+
+			const last = items.at(-1);
+
+			return isString(last) && isString(item) ? [...items.slice(0, -1), `${last}${item}`] : [...items, item];
+
+		}
+
+	}
 
 }

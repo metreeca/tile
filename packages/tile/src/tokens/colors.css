@@ -226,10 +226,10 @@
 }
 
 /*
- * A role painting text takes the subtle accent as it stands, since a mix towards the page costs the lightness it needs
- * to hold AA contrast and would force the anchor itself down towards black. Only the focus ring, which owes 3:1
- * rather than 4.5:1, can afford the mix, and 70% is as light as it goes: the edit background is the tightest surface
- * it has to hold, at 3.02:1, and a lighter mix drops below the floor there first.
+ * A role painting text derives from the subtle accent in oklch rather than by a mix towards the page, which spends the
+ * lightness it needs to hold AA contrast. Only the focus ring, which owes 3:1 rather than 4.5:1, can afford the mix,
+ * and 70% is as light as it goes: the edit background is the tightest surface it holds, at 3.02:1, where a lighter mix
+ * drops below the floor before it does on any other surface the ring is drawn against.
  *
  * A role whose share differs by scheme states a light-dark() pair of derivations, following a pinned subtree too.
  */
@@ -285,7 +285,16 @@
      */
 
     --tile--color-placeholder: var(--tile--color-disabled);
-    --tile--color-enabled: var(--tile--color-subtle);
+
+    /*
+     * The enabled colour, which a link is painted in, takes the hue of the subtle accent at three times its chroma and
+     * a shade lighter, so a link stands out from the text around it while following a retuned brand. It holds AA
+     * contrast at 5.19:1 on the page, 4.62:1 on the stripe and 4.90:1 on the edit background in the light scheme, and
+     * 7.26:1, 6.83:1 and 7.06:1 in the dark one, where the lighter shade only adds contrast.
+     */
+
+    --tile--color-enabled: oklch(from var(--tile--color-subtle) calc(l + 0.03) calc(c * 3) h);
+
     --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
 
     --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);

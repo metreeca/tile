@@ -15,14 +15,19 @@
  */
 
 /*
- * A link starts from the colour and the hover the design system gives any anchor, and this sheet says how loud it
- * appears on top of that. The ordinary step reads as the text around it, underlined so that it is told from that text
- * wherever colour does not reach.
+ * A link starts from the colour and the focus mark the design system gives any anchor, and this sheet says how loud
+ * it appears on top of that. Every step keeps the face and size of the text around it, and holds its colour through
+ * the press. The ordinary step is underlined, so that it is told from that text wherever colour does not reach.
  */
 
 tile-link {
 
     /* A logo or an icon in the link is centred on its wording, without stretching the line the link stands in. */
+
+    /*
+     * A link short of room cuts its wording short with an ellipsis, wherever the area around it caps its width and
+     * keeps it to one line. Logos and icons beside the wording are left whole.
+     */
 
     display: inline-flex;
 
@@ -30,29 +35,55 @@ tile-link {
 
         display: inline-flex;
         align-items: center;
+        min-width: 0;
 
         font-weight: inherit;
         text-decoration-line: underline;
-        text-underline-offset: 0.3em; /* Optical nudge held off the descenders at any size, for the ordinary and the active mark alike. */
-    }
 
-    /* The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it. */
+        /*
+         * The underline is hung from the bottom of the descenders rather than from the baseline, so no offset is left
+         * for a descender to cross, whatever the face and the size. The offset is the optical gap below them.
+         */
 
-    &[look="subtle"] > a {
-        color: inherit;
-        text-decoration-line: none;
+        text-underline-position: under;
+        text-underline-offset: 0.1em;
+
+        /* The wording is clipped across the line only, so the underline hung below the descenders is kept. */
+
+        & > span {
+            min-width: 0;
+            overflow-x: clip;
+            text-overflow: ellipsis;
+        }
+
     }
 
     /*
-     * The loud step stands as a label of its own, set as a tab label is, in the text colour rather than the link one:
-     * it is read as an entry of a menu rather than as a passage of the text.
+     * The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it until
+     * the pointer reaches it, when it turns to the hover colour as the other steps do.
+     */
+
+    &[look="subtle"] > a {
+
+        color: inherit;
+        text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
+    }
+
+    /*
+     * The loud step stands as a label of its own, set as a tab label is: strong, in the ink of the text around it and
+     * with no underline, it is read as an entry of a menu rather than as a passage of the text. Like the quiet step, it
+     * keeps that ink until the pointer reaches it, when it turns to the hover colour as the other steps do.
      */
 
     &[look="strong"] > a {
 
-        font-weight: var(--tile--font-weight-heavy);
-        color: var(--tile--color);
-
+        font-weight: var(--tile--font-weight-strong);
+        color: inherit;
         text-decoration-line: none;
 
         &:hover {
@@ -79,9 +110,14 @@ tile-link {
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a {
-        font-family: var(--tile--font-family-heading);
+
         color: inherit;
         text-decoration-line: none;
+
+        &:hover {
+            color: var(--tile--color-hover);
+        }
+
     }
 
 }
@@ -90,10 +126,8 @@ tile-link {
 
     tile-link:not([look]) > a {
 
-        font-size: var(--tile--font-size-small);
-        font-weight: var(--tile--font-weight-heavy);
-        color: var(--tile--color);
-
+        font-weight: var(--tile--font-weight-strong);
+        color: inherit;
         text-decoration-line: none;
 
         &:hover {
@@ -125,14 +159,14 @@ tile-link > a[active] {
 
 tile-link[look="subtle"] > a[active] {
     text-decoration-thickness: calc(2 * var(--tile--border-width));
-    text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+    text-underline-offset: 0.05em; /* Optical nudge, half the ordinary gap below the descenders. */
 }
 
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a[active] {
         text-decoration-thickness: calc(2 * var(--tile--border-width));
-        text-underline-offset: 0.15em; /* Optical nudge, half the ordinary offset, still clear of the descenders. */
+        text-underline-offset: 0.05em; /* Optical nudge, half the ordinary gap below the descenders. */
     }
 
 }

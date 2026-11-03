@@ -4,11 +4,9 @@
 
 Preact linked data forms for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer turns a described resource into an editable form: the shape decides which properties are offered, what each
-one accepts and when a value is valid, so editing rules stay with the model rather than being restated per screen.
+Forms driven by shapes: the model decides which properties are editable, what each accepts and when it is valid.
 
-Validated changes are committed through the store the app publishes, sharing the caching, batching and validation the
-rest of the stack relies on.
+Changes are committed through the [@metreeca/keep](https://github.com/metreeca/keep) store the app provides.
 
 # Installation
 

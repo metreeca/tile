@@ -405,7 +405,7 @@ describe("Toast()", () => {
 
 		});
 
-		it("should hand the post to the handler when its message is activated, leaving it standing", async () => {
+		it("should clear the post and hand it to the handler when its message is activated", async () => {
 
 			const acted = vi.fn<(post: Post) => void>();
 
@@ -415,7 +415,20 @@ describe("Toast()", () => {
 			act(() => link()?.click());
 
 			expect(acted).toHaveBeenCalledWith(linked);
-			expect(standing()).toEqual([linked]);
+			expect(standing()).toEqual([]);
+
+		});
+
+		it("should keep standing a post the handler puts up again", async () => {
+
+			const retrying: Post = { ...linked, status: "pending", message: "Retrying", actionable: false };
+
+			mount({ onAction: () => board().post(retrying) });
+			post(linked);
+
+			act(() => link()?.click());
+
+			expect(standing()).toEqual([retrying]);
 
 		});
 

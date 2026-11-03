@@ -33,7 +33,12 @@
 
 tile-logo {
 
-    display: inline-grid;
+    /*
+     * The logo stands exactly one line of the text beside it tall, with the baseline where the text has it, so a row
+     * centring its items, aligning them on the baseline or stacking them inline leaves the mark level with the text.
+     */
+
+    display: inline-block;
 
     /*
      * The mark is a square measured against the capitals beside it. `cap` is read off the face in use, so an app
@@ -51,6 +56,15 @@ tile-logo {
         aspect-ratio: 1;
 
         object-fit: contain; /* The square takes an image of any proportions without cropping it. */
+
+        /*
+         * The mark is centred on the capitals rather than on the line, whose middle sits lower or higher by however
+         * much the face hangs below its baseline. The margins fold the mark into a point at its own centre, which is
+         * raised to half the capitals, so a mark taller than the line overflows it rather than pushing it apart.
+         */
+
+        margin-block: calc(-0.5 * var(--tile-logo-mark));
+        vertical-align: 0.5cap;
 
     }
 

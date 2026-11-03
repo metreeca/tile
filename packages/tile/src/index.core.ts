@@ -34,14 +34,16 @@ import type { Token } from "./index.js";
  * offers the type and scaling ladders, both of which are measured against the text, and not the spacing one, though
  * all three are lengths, because a size set from a gap is not a thing anyone means. A token belonging to no ladder, a
  * flag or a keyword, resolves to nothing and is left to the literal alone. A box token, shaping the element it is
- * assigned to, resolves to the ladder it is set from without being a step on it.
+ * assigned to, resolves to the ladder it is set from without being a step on it. A surface also takes a palette
+ * colour, tinting an area by the class it belongs to, and the text the area holds then needs a `color` of its own,
+ * holding contrast over that fill rather than over the page, which the fill replaces for everything inside it.
  *
  * @typeParam K The token being assigned
  */
 export type Alias<K extends Token> =
 	K extends Palette ? Palette :
 		K extends Ink ? Ink :
-			K extends Fill ? Fill :
+			K extends Fill ? Fill | Palette :
 				K extends Type ? Type | Scaling :
 					K extends Scaling ? Scaling :
 						K extends Spacing | Padding ? Spacing :

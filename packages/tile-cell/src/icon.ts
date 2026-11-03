@@ -81,6 +81,8 @@
  * | **Search**       | narrowing what is on show                                    |
  * | `Search`         | submits a query, or opens the field it is typed in           |
  * | `Clear`          | empties that field                                           |
+ * | `Reset`          | withdraws every criterion the reader set to narrow a list    |
+ * | `Options`        | marks a facet narrowing by the values the reader picks       |
  * | **Ordering**     | the sequence entries are shown in                            |
  * | `Sort`           | offers an order the reader has yet to choose                 |
  * | `Increasing`     | states the order in force, smallest first                    |

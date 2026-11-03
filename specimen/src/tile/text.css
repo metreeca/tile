@@ -1,0 +1,140 @@
+/*
+ * Copyright © 2025-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**** Frames **********************************************************************************************************/
+
+/*
+ * A markup sample is set in a bordered frame on the raised surface, so it reads as a page set into the specimen rather
+ * than as more of the notes around it. The elements it carries are tagged along its foot, under a rule of their own.
+ */
+
+.markup {
+
+    margin: 0 0 var(--tile--spacing-150);
+
+    background-color: var(--tile--background-color-raised);
+
+    border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+    border-radius: var(--tile--border-radius-050);
+
+    & > div {
+
+        padding: var(--tile--spacing-150);
+        margin: 0;
+
+        background-color: transparent;
+
+        & > :last-child {
+            margin-bottom: 0;
+        }
+
+    }
+
+    /*
+     * Samples standing side by side share the frame in equal columns, wrapping to one column on a narrow page. The
+     * minimum column width is stated outright, a share of the frame standing for nothing the ladders size.
+     */
+
+    & > .columns {
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+        gap: var(--tile--spacing-150);
+
+        & > * {
+            margin: 0;
+        }
+
+    }
+
+    & > figcaption {
+
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--tile--spacing-050);
+
+        padding: var(--tile--spacing-050) var(--tile--spacing-150);
+
+        font-size: var(--tile--font-size-small);
+        color: var(--tile--color-label);
+
+        background-color: transparent;
+
+        border-top: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
+
+        & > code {
+            background-color: transparent;
+        }
+
+    }
+
+}
+
+/*
+ * An image sample is centred on a plate in the stripe colour, so it reads as a picture set into the frame rather than
+ * as a glyph floating in it, and is captioned under the plate with what it is and what a click does to it.
+ */
+
+.markup figure {
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--tile--spacing-075);
+    margin: 0;
+
+    & > .plate {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: var(--tile--spacing-200);
+
+        background-color: var(--tile--background-color-stripe);
+
+        border-radius: var(--tile--border-radius-025);
+
+        /*
+         * A link wrapping the image would otherwise add the line box it sits on, and the two plates would differ. The
+         * image itself keeps its background, which the design system paints under it once it is enlarged.
+         */
+
+        & > a {
+            display: flex;
+            background-color: transparent;
+        }
+
+        & img:not([active]) {
+            background-color: transparent;
+        }
+
+    }
+
+    & > figcaption {
+
+        display: flex;
+        flex-direction: column;
+
+        font-size: var(--tile--font-size-small);
+        color: var(--tile--color-label);
+
+        & > strong {
+            color: var(--tile--color);
+        }
+
+    }
+
+}

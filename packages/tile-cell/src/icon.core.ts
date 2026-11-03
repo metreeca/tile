@@ -39,7 +39,9 @@ export { ChevronRight as Expand } from "lucide-preact";
 export { ChevronDown as Collapse } from "lucide-preact";
 
 export { Search } from "lucide-preact";
-export { XCircle as Clear } from "lucide-preact";
+export { X as Clear } from "lucide-preact";
+export { XCircle as Reset } from "lucide-preact";
+export { SquareCheckBig as Options } from "lucide-preact";
 
 export { ChevronsUpDown as Sort } from "lucide-preact";
 export { ChevronDown as Increasing } from "lucide-preact";

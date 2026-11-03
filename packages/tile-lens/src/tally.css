@@ -1,0 +1,226 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* The block size the list of options scrolls within, once longer. */
+
+@property --tile-tally-height {
+    syntax: "*";
+    inherits: true;
+    initial-value: 15em;
+}
+
+/*
+ * A tally is a bounded box stacking the search field over the options, set apart by a rule. The options scroll
+ * within the box once they outgrow it, so a long list never pushes the facets below it out of view.
+ */
+
+tile-tally {
+
+    display: flex;
+    flex-direction: column;
+
+    border-style: var(--tile--border-style);
+    border-radius: var(--tile--border-radius-050);
+
+    /*
+     * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
+     * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
+     */
+
+    background-color: var(--tile--background-color);
+
+    /* The parts are left transparent, so their square corners never mask the rounded ones of the box. */
+
+    & > header,
+    & > section {
+        background-color: transparent;
+    }
+
+    /*
+     * The glyph is decorative and set in the label colour, so it reads as guidance rather than as content. The
+     * placeholder doubles as the name of the facet, so it takes the label colour as well, holding the 4.5:1 a text
+     * role owes, where the placeholder colour would leave the name below legibility.
+     */
+
+    & > header {
+
+        display: grid;
+        grid-template-columns: min-content minmax(0, 1fr);
+        grid-auto-columns: min-content;
+        grid-auto-flow: column;
+        align-items: center;
+        column-gap: var(--tile--spacing-050);
+
+        /* The row keeps room for the controls whether shown or not, so the facet holds still as they come and go. */
+
+        grid-template-rows: minmax(var(--tile--scaling-150), auto);
+
+        /* The controls at the end stand as far from the edge as from the rules above and below them. */
+
+        padding-block: var(--tile--spacing-025);
+        padding-inline: var(--tile--spacing-050) var(--tile--spacing-025);
+
+        /*
+         * The header follows the rounded corners of the box, the bottom ones too while nothing shows below it, so the
+         * focus mark it carries for the search field traces the edge of the box rather than a square within it.
+         */
+
+        border-start-start-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+        border-start-end-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+
+        &:has(+ section[hidden]) {
+            border-end-start-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+            border-end-end-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+        }
+
+        &:has(> input:focus) {
+            outline: var(--tile--outline-focus);
+            outline-offset: calc(-2 * var(--tile--border-width));
+        }
+
+        & > .lucide {
+            color: var(--tile--color-label);
+        }
+
+        /* The controls are set as one item of the row, side by side with no gap, since each pads its own glyph. */
+
+        & > span {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /*
+         * The search clear acts on the field alone, so it reads a step quieter than the reset of the facet: a smaller
+         * glyph, and a round hover fill held to the box around it. The control keeps the full pointer target all the
+         * same, the fill being clipped rather than the button shrunk, so it is as easy to hit as the controls beside it.
+         */
+
+        & > span > tile-button:has(> button > .clear) > button {
+
+            /* The button gives up part of its padding to the fill, which leaves the glyph more air within it. */
+
+            padding: calc(var(--tile--spacing-025) * 0.75);
+            align-items: center;
+
+            /* The fill is drawn in by its own padding, so the control reaches over it to sit by the edge of the facet. */
+
+            margin-right: calc(var(--tile--spacing-025) * -0.75);
+
+            background-clip: content-box;
+            border-radius: 50%;
+
+            & > .clear {
+                width: var(--tile--scaling-075);
+                height: var(--tile--scaling-075);
+            }
+
+        }
+
+        /* The field leaves its focus mark to the header, which draws it around the glyph and controls as well. */
+
+        & > input {
+
+            min-width: 0;
+            border-style: none;
+            background-color: transparent;
+
+            &:focus {
+                outline: none;
+            }
+
+            /* The platform cancel button is left out, since the reset of the facet already empties the field. */
+
+            &::-webkit-search-cancel-button {
+                display: none;
+            }
+
+            &::placeholder {
+                color: var(--tile--color-label);
+            }
+
+        }
+
+    }
+
+    & > section {
+
+        max-block-size: var(--tile-tally-height);
+        overflow-y: auto;
+
+        border-top-style: var(--tile--border-style);
+
+        & > small {
+            display: block;
+            padding: var(--tile--spacing-050);
+            color: var(--tile--color-label);
+        }
+
+        & > ul {
+
+            display: grid;
+
+            margin: 0;
+            padding: var(--tile--spacing-050);
+
+            list-style-type: none;
+
+            /* The options are rows of a list, packed line on line rather than spaced out as prose list items are. */
+
+            & > li {
+                margin: 0;
+            }
+
+            /*
+             * An option no item lets through under the other criteria takes the label colour, which holds the 4.5:1 a
+             * text role owes in both schemes. Its count of 0 states the same thing in text, so colour is never alone.
+             */
+
+            & > li.unavailable {
+                color: var(--tile--color-label);
+            }
+
+            /*
+             * The whole row toggles the checkbox, the name clipped with an ellipsis rather than wrapped, so a long
+             * name never widens the box; counts line up at the end, in figures of equal width.
+             */
+
+            & > li > label {
+
+                display: grid;
+                grid-template-columns: min-content minmax(0, 1fr) min-content;
+                align-items: center;
+                column-gap: var(--tile--spacing-050);
+
+                cursor: pointer;
+
+                & > span {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                & > small {
+                    color: var(--tile--color-label);
+                    font-variant-numeric: tabular-nums;
+                }
+
+            }
+
+        }
+
+    }
+
+}

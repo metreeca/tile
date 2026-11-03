@@ -69,6 +69,17 @@
 }
 
 /*
+ * The air between the entries the tray stacks. It ships tight enough for a run of headings to read as one list, and a
+ * screen whose tray stacks boxed entries, such as the facets narrowing a collection, widens it to set them apart.
+ */
+
+@property --tile-shell-tray-gap {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.25em;
+}
+
+/*
  * The air above and below what a bar holds. A bar takes its height from these and from what it was given to show, never
  * from a height of its own: a bar told how tall to be either crops a taller control or leaves a band of empty page
  * around a shorter one, depending on the size the app writes in.
@@ -325,16 +336,20 @@ tile-shell {
             font-size: var(--tile-shell-head-font-size);
 
             /*
-             * A bar that stands is held to at least the height of a subtle icon button between its insets, whatever it
+             * A bar that stands is held to at least the height of a bounded icon button between its insets, whatever it
              * was given to show, so a heading standing alone, a link at its end or a control coming and going leaves
              * the bar where it was rather than folding the body up and down beneath it. The floor is the one a glyph
-             * button sizes itself to, the larger of its minimum target and its glyph with the air around it, so the
-             * two stay level however either ladder is retuned. A bar holding something taller still grows to fit.
+             * button sizes itself to, the larger of its minimum target and its glyph with the air and the rule around
+             * it, so the two stay level however either ladder is retuned and whichever look the button is set in.
+             * A bar holding something taller still grows to fit.
              */
 
             min-height: calc(
                 var(--tile-shell-head-inset-top)
-                + max(var(--tile--scaling-150), var(--tile--scaling-100) + 2 * var(--tile--spacing-025))
+                + max(
+                    var(--tile--scaling-150),
+                    var(--tile--scaling-100) + 2 * var(--tile--spacing-025) + 2 * var(--tile--border-width)
+                )
                 + var(--tile-shell-head-inset-bottom)
             );
 
@@ -384,6 +399,17 @@ tile-shell {
 
             }
 
+            /*
+             * The heading is drawn back a little past the extra side bearing its larger size carries, so its first
+             * letter reads as standing on the edge the body text below it starts from, not to its right. The row itself
+             * is moved, through a margin no descendant inherits, so the heading lands in one place, plain text or a
+             * trail of links alike, and a control opening the row moves with it.
+             */
+
+            & > span[id] {
+                margin-left: calc(-1 * var(--tile-shell-ring-room) - 0.07em); /* Optical nudge, below the scale. */
+            }
+
         }
 
         & > section {
@@ -409,6 +435,14 @@ tile-shell {
             padding-bottom: var(--tile-shell-shade-depth);
 
             /*
+             * A target scrolled into view, such as the heading a link fragment names, stops below the same band rather
+             * than under the fade, so landing on the first heading leaves the body where it was.
+             */
+
+            scroll-padding-top: var(--tile-shell-shade-depth);
+            scroll-padding-bottom: var(--tile-shell-shade-depth);
+
+            /*
              * A bar left out hands its row to the body of the same column. The row itself stands as long as the other
              * column fills it, so a body held to the middle row would stop short of the frame edge and leave a band of
              * empty page where the missing bar would have been.
@@ -420,11 +454,13 @@ tile-shell {
             &:is(header:empty ~ *) {
                 grid-row-start: 1;
                 padding-top: var(--tile-shell-head-inset-top);
+                scroll-padding-top: var(--tile-shell-head-inset-top);
             }
 
             &:has(+ footer:empty) {
                 grid-row-end: -1;
                 padding-bottom: var(--tile-shell-foot-inset-bottom);
+                scroll-padding-bottom: var(--tile-shell-foot-inset-bottom);
             }
 
         }
@@ -484,7 +520,16 @@ tile-shell {
             flex-direction: column;
             align-items: stretch;
 
-            row-gap: var(--tile--spacing-025);
+            row-gap: var(--tile-shell-tray-gap);
+
+            /*
+             * The column scrolls rather than squeezing what it holds, so every entry keeps the height its content asks
+             * for however many the tray stacks, and no entry spills over the one below it.
+             */
+
+            & > * {
+                flex-shrink: 0;
+            }
 
             & > hr {
                 margin-block: var(--tile--spacing-075);
@@ -515,7 +560,7 @@ tile-shell {
 
             & > h1 {
 
-                font-weight: var(--tile--font-weight-heavy);
+                font-weight: var(--tile--font-weight-strong);
 
                 & + h1 {
                     margin-top: var(--tile--spacing-025);
@@ -622,6 +667,10 @@ tile-shell {
                 flex-direction: column;
 
                 flex-grow: 1;
+
+                /* The content keeps clear of what follows it, so its last line never sits against the footer. */
+
+                padding-bottom: var(--tile--spacing-200);
 
             }
 

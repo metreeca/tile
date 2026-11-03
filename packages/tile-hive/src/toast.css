@@ -210,11 +210,15 @@ tile-toast {
             border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
             border-radius: var(--tile--border-radius-050);
 
-            /* The mark is centred on the first line, the space a line takes beyond the glyph split above and below it. */
+            /*
+             * The mark is centred on the first line, the space a line takes beyond the glyph split above and below it,
+             * and held a step further off the message than the gap alone, so it reads as a marker set apart from it.
+             */
 
             & > svg {
                 flex: none;
                 margin-block: calc((1lh - 1em) / 2);
+                margin-inline-end: var(--tile--spacing-025);
             }
 
             /* The message takes the room the mark and the dismiss control leave, wrapping within it. */
@@ -243,7 +247,8 @@ tile-toast {
                     text-decoration-line: underline;
                     text-decoration-color: var(--tile--border-color);
                     text-decoration-thickness: var(--tile--border-width);
-                    text-underline-offset: 0.3em; /* Optical nudge held off the descenders, as links are. */
+                    text-underline-position: under; /* Hung below the descenders, as links are. */
+                    text-underline-offset: 0.1em;
 
                     &:hover {
                         color: var(--tile--color-hover);

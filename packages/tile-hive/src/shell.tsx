@@ -30,6 +30,9 @@ import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
 import "./shell.css";
 
+// !!!	responsive layout
+// !!	full-height scrollbars
+
 /**
  * Creates a shell.
  *

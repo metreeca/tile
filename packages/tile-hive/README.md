@@ -4,15 +4,7 @@
 
 Preact layouts and containers for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-A consumer assembles a screen from the arrangements an app repeats: pages, tables, accordions, panes, grids and stacks
-that answer where things sit, and takes from here the element the screen is rendered into. A layout places the widgets
-handed to it without knowing what they mean, so an arrangement is replaced without touching what the interface does.
-
-A container need not place anything. One may instead settle how the widgets it encloses appear, retuning the design
-system over an area so a toolbar, a panel or a whole screen is written in a single register rather than every widget in
-it repeating the same value, and a widget asking for something of its own still getting it. Another sets them on a box
-of its own, padded, rounded, lifted and painted from the design system, so a card, a panel or a well needs no rule
-written for it.
+Container components that arrange widgets into screens and retune the design system over the area they enclose.
 
 Styling is structural only: what an arrangement needs to work, with the values behind colour, type and spacing left to
 [@metreeca/tile](https://www.npmjs.com/package/@metreeca/tile) or to whoever styles the app.

@@ -15,6 +15,7 @@
  */
 
 import { type ComponentChildren, createElement, type FunctionComponent, type JSX, render, type VNode } from "preact";
+import { useEffect } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -421,6 +422,81 @@ describe("Routes", () => {
 
 			expect(() => mount({ "/": createElement("p", {}), "/*/users": createElement("p", {}) }))
 				.toThrow("invalid route pattern </*/users>");
+
+		});
+
+	});
+
+	describe("remounting", () => {
+
+		/**
+		 * Mounts a view counting how many times it is mounted, alongside a link and the navigator.
+		 */
+		function counting() {
+
+			const mounts = vi.fn();
+			const navigators = vi.fn<(navigate: ReturnType<typeof useRouter>) => void>();
+
+			const View: FunctionComponent = () => {
+
+				useEffect(() => mounts(), []);
+
+				navigators(useRouter());
+
+				return createElement("a", { href: "/catalogue/?~label=art" }, "link");
+
+			};
+
+			history.replaceState(null, "", "/catalogue/");
+
+			mount({ "/catalogue/": createElement(View, {}) });
+
+			return { mounts, navigate: () => navigators.mock.lastCall![0] }; // test harness: View has rendered
+
+		}
+
+
+		it("should remount the view on a navigation changing the query alone", async () => {
+
+			const { mounts, navigate } = counting();
+
+			act(() => navigate()("/catalogue/?~label=art"));
+
+			expect(mounts).toHaveBeenCalledTimes(2);
+
+		});
+
+		it("should remount the view on a link changing the query alone", async () => {
+
+			const { mounts } = counting();
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(mounts).toHaveBeenCalledTimes(2);
+
+		});
+
+		it("should remount the view on browser history navigation changing the query alone", async () => {
+
+			const { mounts } = counting();
+
+			act(() => {
+				history.replaceState(null, "", "/catalogue/?~label=art");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(mounts).toHaveBeenCalledTimes(2);
+
+		});
+
+		it("should leave the view alone as the query is replaced outside the router", async () => {
+
+			const { mounts, navigate } = counting();
+
+			act(() => history.replaceState(null, "", "/catalogue/?~label=art"));
+			act(() => navigate()({ title: "Catalogue" })); // a title alone moves nowhere
+
+			expect(mounts).toHaveBeenCalledTimes(1);
 
 		});
 

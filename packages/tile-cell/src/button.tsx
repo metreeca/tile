@@ -48,16 +48,18 @@ import "./button.css";
 export function Button({
 
 	name,
+	controls,
 
 	disabled,
-
-	icon,
-	label,
-	title,
+	expanded,
 
 	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
 	mode = "normal",
 	type = "button",
+
+	icon,
+	label,
+	title,
 
 	onClick
 
@@ -71,36 +73,26 @@ export function Button({
 	name?: string
 
 	/**
+	 * The id of the region the button shows and hides, which has to be rendered whether shown or not; stated together
+	 * with `expanded`, making the button a disclosure assistive technology lets the reader follow to the region.
+	 */
+	controls?: string
+
+	/**
 	 * Whether the button is inactive, greyed and out of the tab order like any disabled control; live if omitted.
 	 */
 	disabled?: boolean
 
 	/**
-	 * The glyph marking the action, shown before the label and hidden from assistive technology unless labelled itself.
+	 * Whether the region the button discloses is on show, announced as the expanded state of the control; stated for a
+	 * disclosure alone, and left out of any other button, which then announces no such state.
 	 */
-	icon?: ComponentChildren
-
-	/**
-	 * The text the button shows, naming it unless `name` does; omitted only where `name` or `title` names the glyph.
-	 */
-	label?: string
-
-	/**
-	 * The hint the platform shows on resting the pointer on the button, such as the shortcut it answers to or what a
-	 * glyph stands for at greater length than its name; no hint if omitted.
-	 *
-	 * Beside a label or a `name` it names nothing. On a glyph standing alone with no `name` it names the button, and is
-	 * then spoken as a name rather than as an aside, so it states what the button does before any shortcut. Either
-	 * way it reaches neither a reader who never rests the pointer nor one on a touch screen, so whatever a reader has
-	 * to take in to use the control belongs in the label or beside it rather than here.
-	 */
-	title?: string
+	expanded?: boolean
 
 	/**
 	 * How loud the button appears, told in weight, rule and room rather than in colour, so it stays legible wherever
 	 * colour does not reach: `subtle` keeps no rule and reads as part of the text around it, `strong` is bounded and
-	 * set heaviest, and `normal` sits between the two. The appearance is independent of what the button means, which
-	 * `mode` states.
+	 * set in the strong weight, and `normal` sits between the two. What the button means is stated apart, by `mode`.
 	 *
 	 * A button stating nothing takes the look the area around it is written in, from the `--tile--look` token the
 	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone,
@@ -123,6 +115,27 @@ export function Button({
 	 * leaves it alone, so that a button inside a form behaves as one outside it unless asked otherwise.
 	 */
 	type?: "button" | "submit" | "reset"
+
+	/**
+	 * The glyph marking the action, shown before the label and hidden from assistive technology unless labelled itself.
+	 */
+	icon?: ComponentChildren
+
+	/**
+	 * The text the button shows, naming it unless `name` does; omitted only where `name` or `title` names the glyph.
+	 */
+	label?: string
+
+	/**
+	 * The hint the platform shows on resting the pointer on the button, such as the shortcut it answers to or what a
+	 * glyph stands for at greater length than its name; no hint if omitted.
+	 *
+	 * Beside a label or a `name` it names nothing. On a glyph standing alone with no `name` it names the button, and is
+	 * then spoken as a name rather than as an aside, so it states what the button does before any shortcut. Either
+	 * way it reaches neither a reader who never rests the pointer nor one on a touch screen, so whatever a reader has
+	 * to take in to use the control belongs in the label or beside it rather than here.
+	 */
+	title?: string
 
 	/**
 	 * What activating the button is handed to, whether the activation comes from a pointer, from `Enter` or from
@@ -169,6 +182,8 @@ export function Button({
 		disabled={disabled}
 
 		aria-label={name}
+		aria-controls={controls}
+		aria-expanded={expanded}
 		title={title}
 		type={type}
 

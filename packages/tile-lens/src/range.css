@@ -1,0 +1,152 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A range is a bounded box stacking a header over the two fields, set apart by a rule. The header carries the glyph
+ * marking the value type, the name and the controls; the fields sit side by side, split by a rule, save for temporal
+ * fields carrying a time of day as well, which are too wide to share a line and are stacked instead.
+ */
+
+tile-range {
+
+    display: flex;
+    flex-direction: column;
+
+    border-style: var(--tile--border-style);
+    border-radius: var(--tile--border-radius-050);
+
+    /*
+     * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
+     * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
+     */
+
+    background-color: var(--tile--background-color);
+
+    /* The parts are left transparent, so their square corners never mask the rounded ones of the box. */
+
+    & > header,
+    & > section,
+    & > section > input {
+        background-color: transparent;
+    }
+
+    /*
+     * The glyph is decorative and set in the label colour, so it reads as guidance rather than as content. The name
+     * is text the reader relies on, so it takes the label colour too, which holds the 4.5:1 a text role owes.
+     */
+
+    & > header {
+
+        display: grid;
+        grid-template-columns: min-content minmax(0, 1fr);
+        grid-auto-columns: min-content;
+        grid-auto-flow: column;
+        align-items: center;
+        column-gap: var(--tile--spacing-050);
+
+        /* The row keeps room for the controls whether shown or not, so the facet holds still as they come and go. */
+
+        grid-template-rows: minmax(var(--tile--scaling-150), auto);
+
+        /* The controls at the end stand as far from the edge as from the rules above and below them. */
+
+        padding-block: var(--tile--spacing-025);
+        padding-inline: var(--tile--spacing-050) var(--tile--spacing-025);
+
+        color: var(--tile--color-label);
+
+        & > span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    }
+
+    /* A closed facet hides the fields by the attribute, which a display stated here would override. */
+
+    & > section:not([hidden]) {
+
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+        border-top-style: var(--tile--border-style);
+
+        /*
+         * The box bounds the fields, which keep the inset focus and invalid marks the base rules draw within them. A
+         * field follows the rounded corner of the box it sits in, so the marks trace the edge of the box there.
+         */
+
+        --tile-range-corner: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+
+        & > input {
+
+            min-width: 0;
+            border-style: none;
+            border-radius: 0;
+
+            &:first-child {
+                border-end-start-radius: var(--tile-range-corner);
+            }
+
+            &:last-child {
+                border-end-end-radius: var(--tile-range-corner);
+            }
+
+            /* The text lines up with the name in the header, and takes the air the header takes above and below it. */
+
+            padding-block: var(--tile--spacing-025);
+            padding-inline: var(--tile--spacing-050);
+
+            /*
+             * The height is pinned to a line of text, since a native temporal input pads its entry mask on its own and
+             * would otherwise grow as an empty field turns into one on focus, shifting everything below the facet.
+             */
+
+            box-sizing: border-box;
+            block-size: calc(1lh + 2 * var(--tile--spacing-025));
+
+            & + input {
+                border-inline-start-style: var(--tile--border-style);
+            }
+
+        }
+
+        & > tile-note {
+            grid-column: 1 / -1;
+        }
+
+    }
+
+    &[wide] > section:not([hidden]) {
+
+        grid-template-columns: minmax(0, 1fr);
+
+        /* Stacked, the first field takes no corner of the box, and the last takes both of the bottom ones. */
+
+        & > input:first-child {
+            border-end-start-radius: 0;
+        }
+
+        & > input + input {
+            border-inline-start-style: none;
+            border-top-style: var(--tile--border-style);
+            border-end-start-radius: var(--tile-range-corner);
+        }
+
+    }
+
+}

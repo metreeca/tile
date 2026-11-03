@@ -7,6 +7,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/tile/compare/v0.6.1...HEAD)
 
+### Added
+
+- `@metreeca/tile-type` — new package of shape-driven value types, showing a stored value to a reader, handing it to
+  a native input and reading back what the input yields, with `toType` picking the default type for a shape
+- `@metreeca/tile-data/store` — collection lenses sharing one collection across a screen: `useMembers` growing the
+  items a batch at a time, `useActions` adding and removing them, `useCount`, `useKeywords`, `useTally` and `useRange`
+  narrowing them, and `useQuery` keeping the page criteria in the browser location
+- `@metreeca/tile-lens` — `Frame` resource frame, `Table` collection table, `Tally` and `Range` facets, `Clear`
+  collection reset and `Count` collection counter
+- `@metreeca/tile-cell` — `Mark` Markdown document and `Path` breadcrumb trail, disclosure states on `Button`
+  (`expanded`, `controls`), query entries on links, and the `Icon.Reset` and `Icon.Options` glyph roles
+- `@metreeca/tile-hive` — `Card` resource summary and `Info` property panel
+- `@metreeca/tile` — `css.tint` washing a colour token out into a surface fill
+
+### Changed
+
+- Upgrade `@metreeca/blue` to `^0.13.1`
+- Upgrade `@metreeca/keep` and `@metreeca/keep-rest` to `^0.12.2`
+- `@metreeca/tile-data/store` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
+  shared by every lens on it, rather than retrieving items (migration: retrieve items through `useMembers`)
+- `@metreeca/tile-lens/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by `useMembers`
+  in place of the `entry`, `shape` and `model` props
+- `@metreeca/tile` — **breaking**: text is set on two weights, regular and strong, and the `fontWeightHeavy` token is
+  removed (migration: use `fontWeightStrong`)
+- `@metreeca/tile-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
+
+### Fixed
+
+- `@metreeca/tile-cell` — subtle links give hover feedback, and the logo mark is centred on the capitals beside it
+- `@metreeca/tile-hive/toast` — toast marks set further apart from their message
+
 ### Security
 
 - Upgrade the `vitest` development dependency to `^5.0.3`, fixing GHSA-xp26-3454-mjgp and GHSA-qxg6-89mg-rqv8 in

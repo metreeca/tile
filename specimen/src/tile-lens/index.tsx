@@ -15,7 +15,9 @@
  */
 
 import { Page } from "@metreeca/specimen/index.core.js";
+import { Frames } from "@metreeca/specimen/tile-lens/frames.js";
 import { Sheets } from "@metreeca/specimen/tile-lens/sheets.js";
+import { Tables } from "@metreeca/specimen/tile-lens/tables.js";
 import { Link } from "@metreeca/tile-cell/link";
 import { Routes } from "@metreeca/tile-data/router";
 import "@metreeca/specimen/tile-cell/index.css";
@@ -30,7 +32,9 @@ export function TileLens() {
 
 	const sections = {
 
-		Sheet: <Sheets/>
+		Sheet: <Sheets/>,
+		Frame: <Frames/>,
+		Table: <Tables/>
 
 	};
 

@@ -95,7 +95,7 @@ tile-note {
      */
 
     &:not([level="normal"]) > :first-child {
-        font-weight: var(--tile--font-weight-heavy);
+        font-weight: var(--tile--font-weight-strong);
     }
 
     &[level="info"] > :first-child > :first-child {

@@ -42,7 +42,8 @@
       "@metreeca/source": "./src/*.css",
       "default": "./dist/*.css"
     },
-    "./*.core": null
+    "./*.core": null,
+    "./index": null
   },
   "files": [
     "README.md",
@@ -53,21 +54,22 @@
     "node": ">=22.22.0"
   },
   "scripts": {
-    "clean": "rm dist docs node_modules '*.tsbuildinfo'",
-    "build": "tsc -b tsconfig.build.json && cp dist 'src/*.css'",
+    "clean": "ush rm dist docs node_modules '*.tsbuildinfo'",
+    "build": "tsc -b tsconfig.build.json && ush cp dist 'src/*.css'",
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
-    "@metreeca/blue": "^0.13.0",
+    "@metreeca/blue": "^0.13.1",
     "@metreeca/core": "^0.13.0",
     "@metreeca/http": "^0.5.0",
     "@metreeca/qest": "^0.13.0",
     "@metreeca/tile": "^0.6.1",
     "@metreeca/tile-cell": "^0.6.1",
-    "@metreeca/tile-data": "^0.6.1"
+    "@metreeca/tile-data": "^0.6.1",
+    "@metreeca/tile-type": "^0.6.1"
   },
   "devDependencies": {
-    "@metreeca/keep": "^0.12.0",
+    "@metreeca/keep": "^0.12.2",
     "happy-dom": "^21.0.4",
     "preact": "^10.29.8",
     "typescript": "^6.0.3",

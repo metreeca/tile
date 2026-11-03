@@ -23,7 +23,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { isNumber, isObject } from "@metreeca/core";
+import { isNumber, isObject, isString } from "@metreeca/core";
 import { by, locale, reverse } from "@metreeca/core/order";
 import { getIRIBase } from "@metreeca/core/resource";
 import { createFetch } from "@metreeca/http";
@@ -31,8 +31,9 @@ import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
+import { More } from "@metreeca/tile-cell/more";
 import { Fetch } from "@metreeca/tile-data/fetch";
-import { Store } from "@metreeca/tile-data/store";
+import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useState } from "preact/hooks";
 
@@ -41,14 +42,6 @@ const entry = "https://example.com/catalogue/";
 
 const Item = resource({ id: id(), label: required(string()) });
 const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
-
-/*
- * The two orders are declared once, so the list is handed the same model on every render and a new one only when the
- * reader switches order.
- */
-
-const Increasing = { members: { id: {}, label: {}, "^label": "asc" } } as const; // ;(literal) the order keeps its literal type
-const Decreasing = { members: { id: {}, label: {}, "^label": "desc" } } as const; // ;(literal) as above
 
 const items = Array.from({ length: 1000 }, (_, index) => ({
 	id: `${entry}${index + 1}`,
@@ -59,22 +52,19 @@ const byLabel = by((item: { readonly label: string }) => item.label, locale());
 
 
 /**
- * Answers a collection query over the sample items, sorted and sliced as the query asks, with no member the query
- * didn't ask for, or their count if the query asks for it.
+ * Answers a collection query over the sample items, narrowed by label keywords, sorted and limited as the query asks.
  */
 async function serve(request: Request): Promise<Response> {
 
 	const query = decodeTemplate(new URL(request.url).search.slice(1), { base: getIRIBase(entry) });
 	const members: { readonly [key: string]: unknown } = isObject(query.members) ? query.members : {};
 
+	const keywords = isString(members["~label"]) ? members["~label"].toLowerCase() : "";
 	const order = members["^label"] === "desc" ? reverse(byLabel) : byLabel;
-	const offset = isNumber(members["@"]) ? members["@"] : 0;
 	const limit = isNumber(members["#"]) && members["#"] > 0 ? members["#"] : items.length;
 
 	return Response.json({
-		members: "count=count:" in members ? [{ count: items.length }] : [...items]
-			.sort(order)
-			.slice(offset, offset + limit)
+		members: items.filter(({ label }) => label.toLowerCase().includes(keywords)).sort(order).slice(0, limit)
 	});
 
 }
@@ -83,37 +73,72 @@ async function serve(request: Request): Promise<Response> {
 /**
  * Creates the sheets section.
  *
- * Shows a collection listed a window at a time from a store answering after a delay, and a list starting again from the
- * first items when the order changes.
+ * Shows a collection listed a batch at a time from a store answering after a delay, growing as the reader scrolls to
+ * its end, narrowed by keywords kept in the location, and starting again from the first items when the order changes.
  *
  * @returns The sheets section
  */
 export function Sheets() {
 
-	const [model, setModel] = useState<typeof Increasing | typeof Decreasing>(Increasing);
+	const [query, setQuery] = useQuery();
+
+	const collection = useCollection({ entry, shape: Catalogue, criteria: query, onChange: setQuery });
 
 	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
 
 		<Store>
 
-			<p>A sheet lists the items of a collection held by the store, fetching only the items in view and the batches
-				around them while taking the room of the whole collection, and starts again from the first items when it
-				is handed a new model, as when the order changes.</p>
+			<p>A sheet lists the members of a collection held by the store, closed by a trigger fetching the next
+				batch as the reader scrolls to it, and starts again from the first items when the order changes. The
+				keywords narrowing it are kept in the location, so they survive a reload.</p>
 
-			<div class="controls">
-				<Button
-					icon={model === Increasing ? <Icon.Increasing/> : <Icon.Decreasing/>}
-					label={model === Increasing ? "Increasing" : "Decreasing"}
-					onClick={() => setModel(model === Increasing ? Decreasing : Increasing)}
-				/>
-			</div>
-
-			<Sheet entry={entry} model={model} placeholder={<Icon.List/>} shape={Catalogue}>{item =>
-				<div>{item.label}</div>
-			}</Sheet>
+			<Listing collection={collection}/>
 
 		</Store>
 
 	</Fetch>;
+
+}
+
+
+/**
+ * Lists the sample collection, narrowed and sorted as the reader picks.
+ */
+function Listing({
+
+	collection
+
+}: {
+
+	collection: Collection<typeof Catalogue, "members">
+
+}) {
+
+	const [order, setOrder] = useState<"asc" | "desc">("asc");
+
+	const members = useMembers(collection, { model: { id: {}, label: {} }, order: { label: order } });
+	const { text, search, commit } = useKeywords(collection, "label");
+
+	return <>
+
+		<div class="controls">
+			<input type="search" placeholder="Keywords" value={text}
+				onInput={event => search(event.currentTarget.value)}
+				onKeyDown={event => event.key === "Enter" && commit()}
+			/>
+			<Button
+				icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}
+				label={order === "asc" ? "Increasing" : "Decreasing"}
+				onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+			/>
+		</div>
+
+		<Sheet members={members} placeholder={<Icon.List/>}>{item =>
+			<div>{item.label}</div>
+		}</Sheet>
+
+		{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+
+	</>;
 
 }

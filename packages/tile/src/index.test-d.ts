@@ -83,6 +83,12 @@ describe("css", () => {
 		// @ts-expect-error unknown token name
 		css({ colorUnknown: "#000" });
 
+		// @ts-expect-error retired token name
+		css({ fontWeightLabel: 600 });
+
+		// @ts-expect-error retired token name
+		css({ fontWeightHeavy: 600 });
+
 	});
 
 	it("rejects a custom property in place of a token name", () => {
@@ -102,13 +108,20 @@ describe("css", () => {
 		expectTypeOf(css({ scaling100: "scaling200" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ spacing100: "spacing250" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ borderRadius025: "borderRadius050" })).toEqualTypeOf<Style>();
-		expectTypeOf(css({ fontWeight: "fontWeightHeavy" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ fontWeight: "fontWeightStrong" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ opacityLoading: "opacityDisabled" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ zIndexModal: "zIndexToast" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ durationFast: "durationSlow" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ easingEnter: "easingExit" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ boxShadowRaised: "boxShadowOverlay" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ fontFamily: "fontFamilyMono" })).toEqualTypeOf<Style>();
+
+	});
+
+	it("takes a palette step as a fill classifying a surface", () => {
+
+		expectTypeOf(css({ backgroundColor: "colorHeat030" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ backgroundColorSunken: "colorArea1" })).toEqualTypeOf<Style>();
 
 	});
 
@@ -154,6 +167,9 @@ describe("css", () => {
 
 		// @ts-expect-error a scale step where an ink goes
 		css({ colorStrong: "colorGray050" });
+
+		// @ts-expect-error a fill where a scale step goes
+		css({ colorHeat050: "backgroundColorRaised" });
 
 	});
 
@@ -264,6 +280,32 @@ describe("css.var", () => {
 
 		// @ts-expect-error unknown custom property
 		css.var("--tile--nope");
+
+	});
+
+});
+
+describe("css.tint", () => {
+
+	it("produces a fill value off any colour token", () => {
+
+		expectTypeOf(css.tint(tile.colorHeat030, 20)).toExtend<Value<"backgroundColor">>();
+		expectTypeOf(css.tint(tile.colorStrong, 20)).toExtend<Value<"backgroundColor">>();
+		expectTypeOf(css.tint(tile.backgroundColorInfo, 20)).toExtend<Value<"backgroundColor">>();
+
+	});
+
+	it("rejects a token carrying no colour", () => {
+
+		// @ts-expect-error a spacing has no colour to tint with
+		css.tint(tile.spacing100, 20);
+
+	});
+
+	it("rejects a token name in place of a custom property", () => {
+
+		// @ts-expect-error token name rather than custom property
+		css.tint("colorHeat030", 20);
 
 	});
 

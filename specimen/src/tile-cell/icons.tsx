@@ -59,7 +59,9 @@ const areas: ReadonlyArray<Area> = [
 
 	[ "Search", [
 		[ "Search", Icon.Search ],
-		[ "Clear", Icon.Clear ]
+		[ "Clear", Icon.Clear ],
+		[ "Reset", Icon.Reset ],
+		[ "Options", Icon.Options ]
 	] ],
 
 	[ "Ordering", [

@@ -20,17 +20,19 @@
  * @module
  */
 
+import { type ComponentChildren } from "preact";
 import logo from "../index.svg";
 import "./index.css";
+import "./text.css";
 
 
 /**
  * Creates the text section.
  *
- * Shows what plain document markup is given as it stands, with no class on anything: the measure body copy sets, the
- * inline treatments a passage carries, the heading levels an outline is built from, the blocks set apart from the
- * text around them, the images a reader enlarges with a click, and the lists and definitions a page is structured
- * with.
+ * Shows what plain document markup is given as it stands, with no class on anything: the inline treatments a passage
+ * carries, the heading levels an outline is built from, the blocks set apart from the text around them, the lists and
+ * definitions a page is structured with, and the images a reader enlarges with a click. Each group is set in a frame
+ * of its own, tagged with the elements it carries, so a sample is never read as part of the notes around it.
  *
  * @returns The text section
  */
@@ -38,80 +40,145 @@ export function Text() {
 	return <>
 
 		<p>Plain document markup is styled as it stands: an app writes ordinary HTML and gets the type scale, the
-			rhythm and the inline treatments without a class on anything.</p>
+			rhythm and the inline treatments without a class on anything. Each frame below holds markup exactly as an
+			app would write it.</p>
 
-		<p>Body copy sets the measure: a <a href="#colours">link</a>, some <strong>strong</strong> words,
-			an <em>emphatic aside</em>, a <code>code span</code> and a trailing <small>note in small print</small>.</p>
+		<h3>Inline</h3>
+
+		<Frame tags={[ "a", "strong", "em", "code", "small" ]}>
+
+			<p>A passage carries a <a href="#text">link</a> leading somewhere, a few <strong>strong words</strong> marked
+				out from it, an <em>emphatic aside</em>, a <code>code span</code> naming one thing, and a trailing
+				<small> note in small print</small>.</p>
+
+		</Frame>
 
 		<h3>Headings</h3>
 
 		<p>The first level stands alone and every level below it shares one size, the hierarchy being carried by the
-			face, the weight and the room around a heading rather than by a ladder of sizes, which keeps a deep outline
-			readable in a column.</p>
+			face, the weight and the room around a heading rather than by a ladder of sizes.</p>
 
-		{/* The samples are marked presentational, so they show how a heading is styled without joining the outline
-		 a reader navigates the page by. */}
+		{/* The samples are marked presentational, so they show how a heading is styled without joining the outline a
+		 reader navigates the page by. */}
 
-		<h1 role="presentation">A first-level heading</h1>
-		<h2 role="presentation">A second-level heading</h2>
-		<h3 role="presentation">A third-level heading</h3>
+		<Frame tags={[ "h1", "h2", "h3" ]}>
 
-		<hr/>
+			<h1 role="presentation">A first-level heading</h1>
+			<p>The paragraph under a heading shows the room the heading keeps from the text it introduces.</p>
+
+			<h2 role="presentation">A second-level heading</h2>
+			<p>A second level opens a section within the page.</p>
+
+			<h3 role="presentation">A third-level heading</h3>
+			<p>A third level names a part of that section.</p>
+
+		</Frame>
 
 		<h3>Blocks</h3>
 
-		<blockquote>
-			<p>A quotation sits on the stripe background, so it reads as set apart without a border.</p>
-			<p>A second paragraph keeps the tighter rhythm of the block.</p>
-		</blockquote>
+		<p>A quotation and a preformatted block sit on the stripe, set apart from the text around them without a
+			border. Preformatted text keeps the lines it was given, so what runs past the measure is scrolled.</p>
 
-		<p>A preformatted block sits on the same stripe and keeps the lines it was given, so what runs past the measure
-			is scrolled rather than folded:</p>
+		<Frame tags={[ "blockquote", "pre", "hr" ]}>
 
-		<pre><code>{
-			`const style = css({ colorSubtle: "#345", colorStrong: "#D60", fontFamily: "Inter, sans-serif",`
-			+ ` fontSizeLarge: "1.5em", spacing100: "1.25em", borderRadius025: "0.25em" });`
-		}</code></pre>
+			<blockquote>
+				<p>A quotation reads as set apart without a border.</p>
+				<p>A second paragraph keeps the tighter rhythm of the block.</p>
+			</blockquote>
 
-		<hr/>
+			<pre><code>{
+				`const style = css({ colorSubtle: "#345", colorStrong: "#D60", fontFamily: "Inter, sans-serif",`
+				+ ` fontSizeLarge: "1.5em", spacing100: "1.25em", borderRadius025: "0.25em" });`
+			}</code></pre>
 
-		<h3>Images</h3>
+			<p>A rule closes one passage before the next.</p>
 
-		<p>An image is enlarged over the whole page by a click, and restored by another click, by <kbd>Escape</kbd> or
-			as soon as the focus moves:</p>
+			<hr/>
 
-		<p><img src={logo} alt="The Metreeca logo" width={96} height={96}/></p>
+			<p>And the passage after it opens on the far side.</p>
 
-		<p>An image inside a link is left to the link, so a click follows it instead:</p>
-
-		<p><a href="https://www.metreeca.com/"><img src={logo} alt="Metreeca" width={96} height={96}/></a></p>
-
-		<hr/>
+		</Frame>
 
 		<h3>Lists</h3>
 
-		<ul>
-			<li>an unordered item</li>
-			<li>
-				another, with a nested list
-				<ul>
-					<li>nested once</li>
-					<li>nested twice</li>
-				</ul>
-			</li>
-		</ul>
+		<Frame tags={[ "ul", "ol", "dl" ]} columns>
 
-		<ol>
-			<li>an ordered item</li>
-			<li>and the one after it</li>
-		</ol>
+			<ul>
+				<li>an unordered item</li>
+				<li>
+					another, with a nested list
+					<ul>
+						<li>nested once</li>
+						<li>nested twice</li>
+					</ul>
+				</li>
+				<li>and a last one</li>
+			</ul>
 
-		<dl>
-			<dt>Definition term</dt>
-			<dd>The description explaining it.</dd>
-			<dt>Another term</dt>
-			<dd>And what it stands for.</dd>
-		</dl>
+			<ol>
+				<li>an ordered item</li>
+				<li>the one after it</li>
+				<li>and the last one</li>
+			</ol>
+
+			<dl>
+				<dt>Definition term</dt>
+				<dd>The description explaining it.</dd>
+				<dt>Another term</dt>
+				<dd>And what it stands for.</dd>
+			</dl>
+
+		</Frame>
+
+		<h3>Images</h3>
+
+		<p>An image is enlarged over the whole page by a click, and restored by another click,
+			by <kbd>Escape</kbd> or as soon as the focus moves. An image inside a link is left to the link.</p>
+
+		<Frame tags={[ "img", "a > img" ]} columns>
+
+			<figure>
+				<p class="plate"><img src={logo} alt="The Metreeca logo" width={128} height={128}/></p>
+				<figcaption>
+					<strong>Plain image</strong>
+					<span>Click to enlarge it over the page</span>
+				</figcaption>
+			</figure>
+
+			<figure>
+				<p class="plate"><a href="https://www.metreeca.com/">
+					<img src={logo} alt="Metreeca" width={128} height={128}/>
+				</a></p>
+				<figcaption>
+					<strong>Linked image</strong>
+					<span>Click to follow its link instead</span>
+				</figcaption>
+			</figure>
+
+		</Frame>
 
 	</>;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Sets a markup sample in a frame of its own, tagged with the elements it carries.
+ */
+function Frame({ columns, tags, children }: {
+
+	readonly columns?: boolean;
+	readonly tags: ReadonlyArray<string>;
+
+	readonly children: ComponentChildren;
+
+}) {
+	return <figure class="markup">
+
+		<div class={columns ? "columns" : undefined}>{children}</div>
+
+		<figcaption>{tags.map(tag => <code key={tag}>{`<${tag}>`}</code>)}</figcaption>
+
+	</figure>;
 }

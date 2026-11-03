@@ -429,16 +429,22 @@ function values(options: unknown): readonly Option[] {
 /**
  * Reads an option off a row retrieved for it.
  *
+ * A row stating no value at all stands for the items holding none, as a store hands that group over.
+ *
  * @param item The row retrieved for an option
  *
  * @returns The option the row states, with a non-negative count, or nothing if the row states no option
  */
 function row(item: unknown): readonly Row[] {
-	return isObject(item) && isOption(item.value) ? [{
-		value: item.value,
-		...(item.value === null ? {} : { label: isString(item.label) ? item.label : String(item.value) }),
+
+	const value = isObject(item) ? item.value ?? null : undefined;
+
+	return isObject(item) && isOption(value) ? [{
+		value,
+		...(value === null ? {} : { label: isString(item.label) ? item.label : String(value) }),
 		count: isNumber(item.count) && item.count >= 0 ? item.count : 0
 	}] : [];
+
 }
 
 /**

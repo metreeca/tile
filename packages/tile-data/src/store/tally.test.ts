@@ -153,6 +153,11 @@ describe("useTally()", () => {
 
 	type Row = { readonly value: Option, readonly label?: string, readonly count: number };
 
+	/**
+	 * A row for the items holding no value, as a store hands it over: with no value at all, rather than a `null` one.
+	 */
+	type Unvalued = { readonly count: number };
+
 
 	function backend(lookup: unknown, observe: unknown = () => () => {}): Backend {
 		return { lookup, observe } as unknown as Backend; // ;(test stub) only the members called
@@ -162,7 +167,7 @@ describe("useTally()", () => {
 	 * A store answering the options retrieved under no criteria with `baseline`, and those retrieved under the `?region`
 	 * criterion with `matching`, so that a test tells the two retrievals apart by what they hand over.
 	 */
-	function options(baseline: readonly Row[], matching: readonly Row[] = baseline) {
+	function options(baseline: readonly (Row | Unvalued)[], matching: readonly (Row | Unvalued)[] = baseline) {
 		return vi.fn(async ({ model }: { model: Members }) => immutable({
 			id: entry,
 			members: "?region" in model.members ? matching : baseline
@@ -464,6 +469,17 @@ describe("useTally()", () => {
 			const { options: binding } = mount(backend(options([{ value: null, count: 3 }])));
 
 			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: null, count: 3, selected: false }
+			]));
+
+		});
+
+		it("should read a row stating no value as the option for the items holding no value", async () => {
+
+			const { options: binding } = mount(backend(options([{ value: "a", count: 5 }, { count: 3 }])));
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: "a", label: "a", count: 5, selected: false },
 				{ value: null, count: 3, selected: false }
 			]));
 

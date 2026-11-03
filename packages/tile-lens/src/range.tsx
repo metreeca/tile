@@ -52,7 +52,8 @@ import "./range.css";
  * shows, so whatever the reader types replaces it rather than adding to it. A bound is applied once the reader pauses
  * typing or stepping through values, at once on `Enter` or on leaving the field, so a run of steps narrows the
  * collection once; a temporal field waits for `Enter` or for the reader to leave it, since its mask reports every
- * segment changed as a value of its own. An emptied field removes its bound, and text the type cannot read leaves the
+ * segment changed as a value of its own, and text the field rejects, as a year typed partway falls short of the
+ * lowest one on offer, waits as well. An emptied field removes its bound, and text the type cannot read leaves the
  * bound as it was. Where the input orders its values natively, each field is constrained by the other, and an empty one
  * by the lowest or highest value on offer, so the two bounds never cross and stepping starts from a value items hold.
  *
@@ -133,10 +134,13 @@ export function Range({
 	/*
 	 * A pending edit is applied once the reader pauses, a timer the browser alone keeps, released by the next edit. A
 	 * masked input reports each segment the reader changes as a complete value, so a pause between segments would
-	 * apply a value the reader is still composing: its edits wait for the reader to commit the field instead.
+	 * apply a value the reader is still composing: its edits wait for the reader to commit the field instead. Text the
+	 * field rejects may be a value typed partway, `19` on the way to `1995`, so a pause leaves it pending as well.
 	 */
 
-	useEffect(() => edit === undefined || Masked.has(input) ? undefined : cancel(setTimeout(apply, AutoDelay)), [edit]);
+	useEffect(() => edit === undefined || !edit.valid || Masked.has(input)
+		? undefined
+		: cancel(setTimeout(apply, AutoDelay)), [edit]);
 	const Glyph = Glyphs[type.label] ?? Icon.Type;
 
 	const bounded = range({ ready: ({ lower, upper }) => lower !== undefined || upper !== undefined }) ?? false;

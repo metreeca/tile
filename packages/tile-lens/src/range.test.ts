@@ -555,6 +555,32 @@ describe("Range", () => {
 
 		});
 
+		it("should hold an edit the field rejects across a pause, as typing a value slowly does", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(1990, 2020), { onChange });
+
+			await ready();
+
+			focus(lower(), "focusin");
+			edit(lower(), "19");
+
+			await new Promise(resolve => setTimeout(resolve, 3 * AutoDelay));
+
+			expect(onChange).not.toHaveBeenCalled();
+			expect(lower()?.value).toBe("19");
+
+			edit(lower(), "1995");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 1995 }), {
+				timeout: 4 * AutoDelay
+			});
+
+			expect(onChange).toHaveBeenCalledTimes(1);
+
+		});
+
 		it("should apply a run of edits once, as stepping through values does", async () => {
 
 			const onChange = vi.fn();

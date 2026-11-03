@@ -59,7 +59,8 @@ export function Path({
 
 	/**
 	 * The steps of the trail, outermost first, one child each: a {@link link.Link Link} for a level the reader may
-	 * return to, plain content for one they may not; empty children such as `null` or `false` are dropped.
+	 * return to, coloured as a strong link unless it states a look of its own, plain content for one they may not; empty
+	 * children such as `null`, `undefined` or `false` are dropped rather than shown as empty steps.
 	 */
 	children?: ComponentChildren
 

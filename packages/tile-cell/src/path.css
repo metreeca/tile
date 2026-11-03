@@ -22,6 +22,13 @@ tile-path {
 
     min-width: 0;
 
+    /*
+     * The trail is written in the loud look, so a step linking back up takes the colour of a strong link whatever area
+     * the trail stands in, while a link stating a look of its own keeps that one instead of the look the trail sets.
+     */
+
+    --tile--look: strong;
+
     & > nav {
         display: contents;
     }
@@ -50,6 +57,15 @@ tile-path {
         margin: 0;
 
         white-space: nowrap;
+
+        /*
+         * A link keeps the weight of the plain steps beside it, whatever its look, so the trail reads at one weight
+         * throughout. Matching the anchor as a link is what outweighs the looks the link sheet keys on its attribute.
+         */
+
+        & > tile-link > a:any-link {
+            font-weight: inherit;
+        }
 
         /*
          * Separators, trailing a lone step too, carry empty alternative text, so they are drawn but never announced.

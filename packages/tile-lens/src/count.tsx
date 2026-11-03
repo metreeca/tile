@@ -29,6 +29,7 @@ import type { Relay } from "@metreeca/core/relay";
 import type { Collection, Collections } from "@metreeca/tile-data/store/collection";
 import type { CountCases } from "@metreeca/tile-data/store/count";
 import { createElement } from "preact";
+import "./count.css";
 
 
 /**

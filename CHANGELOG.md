@@ -20,6 +20,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`expanded`, `controls`), query entries on links, and the `Icon.Reset` and `Icon.Options` glyph roles
 - `@metreeca/tile-hive` — `Card` resource summary and `Info` property panel
 - `@metreeca/tile` — `css.tint` washing a colour token out into a surface fill
+- `@metreeca/tile` — `colorLink` and `colorLinkHover` link colours, in the hue of the subtle accent at a lightness of
+  their own, so links hold AA contrast whatever the brand supplies
 
 ### Changed
 
@@ -32,6 +34,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — **breaking**: text is set on two weights, regular and strong, and the `fontWeightHeavy` token is
   removed (migration: use `fontWeightStrong`)
 - `@metreeca/tile-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
+- `@metreeca/tile-cell/link` — `strong` links take the link colour, and `subtle` and `strong` links are underlined
+  under the pointer; every link draws its underline within the line, so containers clipping their content keep it
 
 ### Fixed
 

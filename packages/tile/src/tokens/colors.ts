@@ -85,6 +85,9 @@
  * text the reader has not supplied, and a disabled control is told from an empty one by its background rather than
  * by the weight of its text.
  *
+ * **Links** — `colorLink` paints a link and `colorLinkHover` a link under the pointer, both in the hue of the subtle
+ * accent at a lightness of their own, so a link follows a brand while holding AA contrast whatever the brand supplies.
+ *
  * **States** — `colorHover` marks what the pointer is over, `colorPressed` what is being acted on, `colorSelected`
  * what an earlier choice left standing, and `colorFocus` what the keyboard has reached, the focus ring holding 3:1.
  * The first three answer to the strong accent, so they follow a brand; `colorFocus` carries a value of its own per
@@ -136,6 +139,9 @@ export const colors = {
 	colorPlaceholder: "--tile--color-placeholder",
 	colorEnabled: "--tile--color-enabled",
 	colorDisabled: "--tile--color-disabled",
+
+	colorLink: "--tile--color-link",
+	colorLinkHover: "--tile--color-link-hover",
 
 	colorHover: "--tile--color-hover",
 	colorPressed: "--tile--color-pressed",

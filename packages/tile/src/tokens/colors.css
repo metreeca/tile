@@ -140,6 +140,16 @@
     inherits: true;
 }
 
+@property --tile--color-link {
+    syntax: "*";
+    inherits: true;
+}
+
+@property --tile--color-link-hover {
+    syntax: "*";
+    inherits: true;
+}
+
 @property --tile--color-hover {
     syntax: "*";
     inherits: true;
@@ -287,8 +297,8 @@
     --tile--color-placeholder: var(--tile--color-disabled);
 
     /*
-     * The enabled colour, which a link is painted in, takes the hue of the subtle accent at three times its chroma and
-     * a shade lighter, so a link stands out from the text around it while following a retuned brand. It holds AA
+     * The enabled colour, marking a control that answers, takes the hue of the subtle accent at three times its chroma
+     * and a shade lighter, so it stands out from the text around it while following a retuned brand. It holds AA
      * contrast at 5.19:1 on the page, 4.62:1 on the stripe and 4.90:1 on the edit background in the light scheme, and
      * 7.26:1, 6.83:1 and 7.06:1 in the dark one, where the lighter shade only adds contrast.
      */
@@ -296,6 +306,30 @@
     --tile--color-enabled: oklch(from var(--tile--color-subtle) calc(l + 0.03) calc(c * 3) h);
 
     --tile--color-disabled: color-mix(in oklab, var(--tile--color) 20%, var(--tile--background-color));
+
+    /*
+     * A link takes the hue of the subtle accent at twice its chroma, capped so a saturated brand stays muted, and at a
+     * lightness of its own: an app retuning the accent moves the hue alone, never the contrast. The pointer moves the
+     * link a step away from the page, deeper in the light scheme and lighter in the dark one; the deeper shade takes
+     * more chroma, so it still reads as a colour rather than as black. Measured over the shipped accent, the specimen
+     * brand and a navy one, the light hover varying by up to 0.6 and the other figures by a few hundredths:
+     *
+     *                    page   stripe  text
+     *     light  rest    7.40   6.59    2.84
+     *            hover   10.4   9.26
+     *     dark   rest    8.54   8.04    1.91
+     *            hover   13.2   12.4
+     */
+
+    --tile--color-link: light-dark(
+        oklch(from var(--tile--color-subtle) 0.45 min(calc(c * 2), 0.1) h),
+        oklch(from var(--tile--color-subtle) 0.75 min(calc(c * 2), 0.1) h)
+    );
+
+    --tile--color-link-hover: light-dark(
+        oklch(from var(--tile--color-subtle) 0.37 min(calc(c * 3), 0.16) h),
+        oklch(from var(--tile--color-subtle) 0.88 min(calc(c * 2), 0.1) h)
+    );
 
     --tile--color-hover: oklch(from var(--tile--color-strong) calc(l - 0.1) c h);
     --tile--color-pressed: oklch(from var(--tile--color-strong) calc(l - 0.2) c h);

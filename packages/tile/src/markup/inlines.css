@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-/* A link is set strong in the link colour, and the pointer adds an underline hung below the descenders. */
+/* A link is set strong in the link colour, and the pointer adds an underline drawn just below the baseline. */
 
 a, a:visited {
 
     text-decoration-line: none;
     text-decoration-thickness: 1px;
-    text-underline-position: under;
-    text-underline-offset: 0.1em;
+    text-underline-offset: 0.15em;
 
     font-weight: var(--tile--font-weight-strong);
-    color: var(--tile--color-enabled);
+    color: var(--tile--color-link);
 
     cursor: pointer;
 
@@ -40,7 +39,7 @@ a, a:visited {
 
     &:hover {
         text-decoration-line: underline;
-        color: var(--tile--color-hover);
+        color: var(--tile--color-link-hover);
     }
 
 }

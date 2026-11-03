@@ -15,9 +15,9 @@
  */
 
 /*
- * A link starts from the colour and the focus mark the design system gives any anchor, and this sheet says how loud
- * it appears on top of that. Every step keeps the face and size of the text around it, and holds its colour through
- * the press. The ordinary step is underlined, so that it is told from that text wherever colour does not reach.
+ * A link starts from the colour, the hover colour and the focus mark the design system gives any anchor, and this
+ * sheet says how loud it appears on top of that. Every step keeps the face and size of the text around it, and holds
+ * its colour through the press. The ordinary step is underlined, so it is told from that text wherever colour fails.
  */
 
 tile-link {
@@ -41,14 +41,13 @@ tile-link {
         text-decoration-line: underline;
 
         /*
-         * The underline is hung from the bottom of the descenders rather than from the baseline, so no offset is left
-         * for a descender to cross, whatever the face and the size. The offset is the optical gap below them.
+         * The underline is drawn a little below the baseline, within the line rather than below the descenders, so a
+         * container clipping its content at the edge of the line never cuts it off. The descenders it crosses break it.
          */
 
-        text-underline-position: under;
-        text-underline-offset: 0.1em;
+        text-underline-offset: 0.15em;
 
-        /* The wording is clipped across the line only, so the underline hung below the descenders is kept. */
+        /* The wording is clipped across the line only, keeping the underline whatever the line height. */
 
         & > span {
             min-width: 0;
@@ -58,10 +57,7 @@ tile-link {
 
     }
 
-    /*
-     * The quiet step drops the underline and the link colour, leaving the link in the ink of the text around it until
-     * the pointer reaches it, when it turns to the hover colour as the other steps do.
-     */
+    /* The quiet step reads as the text around it until the pointer adds the hover colour and the underline. */
 
     &[look="subtle"] > a {
 
@@ -69,25 +65,21 @@ tile-link {
         text-decoration-line: none;
 
         &:hover {
-            color: var(--tile--color-hover);
+            color: var(--tile--color-link-hover);
+            text-decoration-line: underline;
         }
 
     }
 
-    /*
-     * The loud step stands as a label of its own, set as a tab label is: strong, in the ink of the text around it and
-     * with no underline, it is read as an entry of a menu rather than as a passage of the text. Like the quiet step, it
-     * keeps that ink until the pointer reaches it, when it turns to the hover colour as the other steps do.
-     */
+    /* The loud step is strong in the link colour, underlined only under the pointer. */
 
     &[look="strong"] > a {
 
         font-weight: var(--tile--font-weight-strong);
-        color: inherit;
         text-decoration-line: none;
 
         &:hover {
-            color: var(--tile--color-hover);
+            text-decoration-line: underline;
         }
 
     }
@@ -115,7 +107,8 @@ tile-link {
         text-decoration-line: none;
 
         &:hover {
-            color: var(--tile--color-hover);
+            color: var(--tile--color-link-hover);
+            text-decoration-line: underline;
         }
 
     }
@@ -127,11 +120,10 @@ tile-link {
     tile-link:not([look]) > a {
 
         font-weight: var(--tile--font-weight-strong);
-        color: inherit;
         text-decoration-line: none;
 
         &:hover {
-            color: var(--tile--color-hover);
+            text-decoration-line: underline;
         }
 
     }
@@ -143,12 +135,19 @@ tile-link {
  * The current entry is marked by a rule three times the width of a line in the accent colour, as the chosen tab is,
  * whatever the look: the ink is left as the look sets it, so the mark alone says where the reader stands. It comes
  * after the looks, which it matches with equal specificity, so that it outlasts a look dropping the underline.
+ * Under the pointer the mark takes the hover colour of the wording, as the underline of every other link does.
  */
 
 tile-link > a[active] {
+
     text-decoration-line: underline;
     text-decoration-color: var(--tile--color-strong);
     text-decoration-thickness: calc(3 * var(--tile--border-width));
+
+    &:hover {
+        text-decoration-color: currentColor;
+    }
+
 }
 
 /*
@@ -159,14 +158,14 @@ tile-link > a[active] {
 
 tile-link[look="subtle"] > a[active] {
     text-decoration-thickness: calc(2 * var(--tile--border-width));
-    text-underline-offset: 0.05em; /* Optical nudge, half the ordinary gap below the descenders. */
+    text-underline-offset: 0.05em; /* Optical nudge, a third of the ordinary gap below the baseline. */
 }
 
 @container style(--tile--look: subtle) {
 
     tile-link:not([look]) > a[active] {
         text-decoration-thickness: calc(2 * var(--tile--border-width));
-        text-underline-offset: 0.05em; /* Optical nudge, half the ordinary gap below the descenders. */
+        text-underline-offset: 0.05em; /* Optical nudge, a third of the ordinary gap below the baseline. */
     }
 
 }

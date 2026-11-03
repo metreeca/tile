@@ -17,8 +17,8 @@
 /**
  * Shared collection keywords.
  *
- * Binds a search box to a shared collection, so that the keywords a reader types narrow what every lens over the
- * collection shows, once the reader pauses or confirms them, rather than at every keystroke.
+ * Binds a search box to a shared collection, so that the keywords it hands over narrow what every lens over the
+ * collection shows; pacing the keywords as the reader types is left to the search box.
  *
  * @module
  */
@@ -27,7 +27,6 @@ import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Lazy } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
 import type { Criteria, Expression } from "@metreeca/qest/model";
-import { useEffect, useState } from "preact/hooks";
 import type { Collection, Collections } from "./collection.core.js";
 
 
@@ -37,22 +36,17 @@ import type { Collection, Collections } from "./collection.core.js";
 export interface Keywords {
 
 	/**
-	 * The keywords as the reader typed them, applied or not.
+	 * The keywords narrowing the collection, empty where none do.
 	 */
 	readonly text: string
 
 
 	/**
-	 * Updates the keywords as the reader types them, applying them to the collection once the reader pauses.
+	 * Narrows the collection by new keywords at once.
 	 *
-	 * @param text The keywords replacing the current ones; blank keywords stop narrowing the collection
+	 * @param text The keywords replacing the current ones, trimmed; blank keywords stop narrowing the collection
 	 */
 	search(text: string): void
-
-	/**
-	 * Applies the keywords to the collection at once, as when the reader confirms them.
-	 */
-	commit(): void
 
 }
 
@@ -66,80 +60,34 @@ export interface Keywords {
  * already narrowing the collection, and follow them whenever they are changed or cleared elsewhere, as by
  * {@link "store/collection"!Collection.clear clear}, so that a search box always shows what narrows the list.
  *
+ * The keywords are applied and handed back trimmed at every {@link Keywords.search search}, so the search box holds the
+ * text as the reader types it, spaces between words included, and hands it over only once the reader pauses.
+ *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
  * @param collection The collection narrowed, as handed by {@link "store/collection"!useCollection useCollection}
  * @param expression The expression the keywords are matched against, as a property path: `label`
- * @param options The pause in milliseconds after the last keystroke before the keywords are applied
  *
- * @returns The keywords narrowing `collection` and the transitions updating them
+ * @returns The keywords narrowing `collection` and the transition updating them
  */
 export function useKeywords<S extends Lazy<ResourceShape>, P extends Collections<S>>(
 
 	collection: Collection<S, P>,
-	expression: Expression,
-
-	{
-
-		delay = 500
-
-	}: {
-
-		/**
-		 * The pause in milliseconds after the last keystroke before the keywords are applied.
-		 *
-		 * @defaultValue 500
-		 */
-		readonly delay?: number
-
-	} = {}
+	expression: Expression
 
 ): Keywords {
 
 	const key: `~${Expression}` = `~${expression}`;
-	const applied = collection.criteria[key] ?? "";
-
-	// the typed text is dropped as the keywords narrowing the collection change elsewhere
-
-	const [typed, setTyped] = useState({ text: applied, from: applied });
-	const text = typed.from === applied ? typed.text : applied;
-
-	if ( typed.from !== applied ) {
-		setTyped({ text, from: applied });
-	}
-
-	// the pause is timed by the browser alone, so a timer is held for as long as the typed text is not applied
-
-	useEffect(() => text.trim() === applied ? undefined : cancel(setTimeout(commit, delay)), [text, collection]);
 
 	return immutable({
 
-		text,
+		text: collection.criteria[key] ?? "",
 
-		search: (text: string) => setTyped({ text, from: applied }),
-
-		commit
+		search: (text: string) => collection.filter(
+			{ [key]: text.trim() || undefined } as Partial<Criteria> // ;(cast) computed keys widen to string
+		)
 
 	});
 
-
-	function commit(): void {
-		collection.filter({ [key]: text.trim() || undefined } as Partial<Criteria>); // ;(cast) computed keys widen to string
-	}
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Releases a pending timer.
- *
- * @param timer The timer to be released
- *
- * @returns The effect cleanup cancelling `timer`
- */
-function cancel(timer: ReturnType<typeof setTimeout>): () => void {
-	return () => clearTimeout(timer);
 }

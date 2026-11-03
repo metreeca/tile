@@ -618,7 +618,15 @@ tile-shell {
              */
 
             & > span:not([id]) {
+
                 margin-left: auto;
+
+                /* The control closing the navigation is the one the mark comes to rest over. */
+
+                & > :last-child {
+                    anchor-name: --tile-shell-tail;
+                }
+
             }
 
             /*
@@ -692,11 +700,12 @@ tile-shell {
          * none nor adds to the height of one that stands, whatever that bar happens to hold. A screen with no bar at
          * all leaves the row closed up and the mark comes to rest in the band the body already holds clear at its top.
          *
-         * Where it comes to rest is settled by giving it the bar's own box rather than by measuring anything off: it
-         * takes the whole of the row, reads the same insets the header reads and the same measure and gutter every part
-         * of the column reads, and lays out what it holds the way the header lays out its ends. What it holds is the
-         * control it stands in for, so the two agree down to the air a glyph is drawn with, and a retuned button or a
-         * retuned bar carries the mark along with no offset left behind to go stale.
+         * Where it comes to rest is settled by giving it a box someone else already laid out rather than by measuring
+         * anything off. Over a navigation, the box is the one of the control closing it, and the glyph is centred in
+         * it, so it stands where the glyph of an icon link stands and where the glyph of a button stands inside the
+         * air around it alike. With no navigation, the box is the bar's own: the mark takes the whole of the row, reads
+         * the same insets the header reads and the same measure and gutter every part of the column reads, and rests
+         * at the end of the bar. Either way a retuned control or bar carries the mark along, leaving no stale offset.
          *
          * It answers no gesture, the column underneath keeping the pointer and the wheel.
          */
@@ -736,7 +745,7 @@ tile-shell {
             padding-top: var(--tile-shell-head-inset-top);
             padding-bottom: var(--tile-shell-head-inset-bottom);
 
-            /* The mark is set at the size of the header, so it matches the control it stands in for. */
+            /* The mark is set at the size of the header, so it matches the glyph it stands in for. */
 
             font-size: var(--tile-shell-head-font-size);
 
@@ -755,6 +764,22 @@ tile-shell {
             & svg {
                 animation: tile-shell-turn calc(2 * var(--tile--duration-slow)) linear infinite;
             }
+
+        }
+
+        /*
+         * Over a navigation, the mark trades the bar's box for the box of the control closing it, stated as the area
+         * that control spans, and holds the glyph in its middle with none of the bar's insets left over.
+         */
+
+        &:has(> header > span:not([id]) > *) > .busy {
+
+            position-anchor: --tile-shell-tail;
+            position-area: center;
+
+            justify-content: center;
+
+            padding: 0;
 
         }
 

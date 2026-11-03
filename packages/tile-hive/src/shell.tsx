@@ -23,7 +23,6 @@
  * @module
  */
 
-import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { useFetching } from "@metreeca/tile-data/fetch";
 import { type ComponentChildren, createElement } from "preact";
@@ -239,14 +238,14 @@ export function Shell({
 			 * navigation's place for as long as an exchange runs, the end of the bar being taken off show meanwhile,
 			 * and the bar keeps the height its own content asks for either way.
 			 *
-			 * It is drawn as the control it stands in for, so it comes to rest exactly where the control it covers
-			 * stood, with nothing measured off by hand. The whole of it is made inert: waiting is already stated by
-			 * `aria-busy` on the frame, so a reader meets nothing here, the name the control type asks for never
-			 * reaches anybody, and nothing answers a gesture.
+			 * It is a bare glyph rather than a control: it offers nothing to press, so it carries no role, no name
+			 * and none of the air a button draws around its glyph, and comes to rest centred over the control closing
+			 * the navigation, whatever that control is drawn as. The whole of it is made inert: waiting is already
+			 * stated by `aria-busy` on the frame, so a reader meets nothing here and nothing answers a gesture.
 			 */}
 
 			{fetching && <span class="busy" inert>
-				<Button icon={<Icon.RefreshCw/>} look="subtle" name="Waiting"/>
+				<Icon.RefreshCw/>
 			</span>}
 
 			<section>

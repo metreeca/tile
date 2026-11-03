@@ -44,6 +44,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `@metreeca/tile-cell` — subtle links give hover feedback, and the logo mark is centred on the capitals beside it
 - `@metreeca/tile-hive/toast` — toast marks set further apart from their message
+- `@metreeca/tile-hive/shell` — the waiting mark stands over the control it replaces, so the header end holds still
 
 ### Security
 

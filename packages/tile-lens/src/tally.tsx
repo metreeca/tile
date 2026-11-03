@@ -249,7 +249,7 @@ export function Tally({
 
 			</>,
 
-			error: () => <Note level="critical"><div>Not Available</div></Note>
+			error: () => <Note level="critical" text={"Not Available"}/>
 
 		})}</section>
 

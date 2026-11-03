@@ -223,6 +223,24 @@ tile-tally {
             color: var(--tile--color-label);
         }
 
+        /*
+         * A failed retrieval reads as one line set as the line telling that nothing matches, its mark sized to the text
+         * rather than to the space a note is handed elsewhere, so a facet failing never outweighs the facets around it.
+         */
+
+        & > tile-note {
+
+            margin: 0;
+            padding: var(--tile--spacing-050);
+
+            font-size: var(--tile--font-size-small);
+
+            & > :first-child > :first-child {
+                font-size: 1em;
+            }
+
+        }
+
         & > ul {
 
             display: grid;

@@ -218,9 +218,7 @@ export function Range({
 
 			</>,
 
-			error: () => <Note level="critical">
-				<div>Not Available</div>
-			</Note>
+			error: () => <Note level="critical" text={"Not Available"}/>
 
 		})}</section>
 

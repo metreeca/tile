@@ -132,8 +132,24 @@ tile-range {
 
         }
 
+        /*
+         * A failed retrieval reads as one line across both fields, its mark sized to the text rather than to the space
+         * a note is handed elsewhere, so a facet failing never outweighs the facets around it, as a failing tally does.
+         */
+
         & > tile-note {
+
             grid-column: 1 / -1;
+
+            margin: 0;
+            padding: var(--tile--spacing-050);
+
+            font-size: var(--tile--font-size-small);
+
+            & > :first-child > :first-child {
+                font-size: 1em;
+            }
+
         }
 
     }

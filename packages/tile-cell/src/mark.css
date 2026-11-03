@@ -16,8 +16,8 @@
 
 /*
  * A Markdown document is plain markup, which the design system styles as it styles the same markup anywhere else on
- * the page. This sheet adds only what Markdown brings beyond plain markup: outlines, tables, GitHub alerts and
- * highlighted fenced code.
+ * the page. This sheet adds only what Markdown brings beyond plain markup: tables, GitHub alerts and highlighted
+ * fenced code, leaving the outline of a document to the stylesheet of the table of contents widget drawing it.
  */
 
 tile-mark {
@@ -32,54 +32,6 @@ tile-mark {
 
     & table > thead > tr > th:last-child {
         width: 100%;
-    }
-
-    /*
-     * An outline reads as quiet navigation beside the document: links in the text colour stacked without markers,
-     * top-level sections strong, their subsections smaller and indented beneath them, deeper levels left out, and a
-     * wider gap closing each section that lists subsections.
-     */
-
-    & > nav {
-
-        & ul {
-
-            padding-left: 0;
-            margin-bottom: 0;
-
-            list-style: none;
-
-        }
-
-        & li + li, & li > ul {
-            margin-top: var(--tile--spacing-025);
-        }
-
-        & > ul > li:has(> ul) + li {
-            margin-top: var(--tile--spacing-050);
-        }
-
-        & a {
-            font-weight: var(--tile--font-weight-strong);
-            color: var(--tile--color);
-        }
-
-        & ul ul {
-
-            padding-left: var(--tile--spacing-050);
-
-            font-size: var(--tile--font-size-small);
-
-            & a {
-                font-weight: var(--tile--font-weight);
-            }
-
-            & ul {
-                display: none;
-            }
-
-        }
-
     }
 
     /*

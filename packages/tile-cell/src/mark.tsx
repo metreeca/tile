@@ -41,6 +41,7 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import "./mark.css";
+import { type Entry, Toc } from "./toc.js";
 
 
 /*
@@ -100,7 +101,7 @@ export interface Meta {
  * - **document**, the default: the text in full, with GitHub Flavored Markdown tables, task lists and footnotes,
  *   GitHub alerts (`> [!NOTE]`), emoji shortcodes, fenced code highlighted by language and stripped of surrounding
  *   blank lines, and headings carrying the ids GitHub would give them, so links into the document resolve
- * - **table of contents**: the headings alone, each a link to the matching heading of the document
+ * - **table of contents**: the headings alone, as a {@link toc.Toc Toc} linking each to the matching heading
  * - **front matter**: the values the YAML front matter declares, the text itself left unrendered
  *
  * Links to Markdown files are rewritten to the route serving them, `guide.md` to `guide` and `index.md` to the folder
@@ -166,7 +167,7 @@ export function Mark({
 
 
 	return useMemo(() => meta === undefined ? createElement("tile-mark", {}, render(transform(children)))
-		: meta === "toc" ? createElement("tile-mark", {}, render(outline(transform(children))))
+		: meta === "toc" ? <Toc entries={outline(transform(children))}/>
 			: typeof meta === "function" ? meta(entries(children))
 				: entries(children)[meta]
 	, [meta, children]);
@@ -197,44 +198,35 @@ function transform(text: string): Tree {
 }
 
 /**
- * Reduces a document to a navigation list of its headings, each a link to the heading it stands for, holding the
- * list of the headings it introduces, so the outline reads as plain navigation rather than as a second document.
+ * Reduces a document to its table of contents, one entry for each heading, linking to that heading and holding the
+ * entries of the headings it introduces, so the outline mirrors the nesting a reader sees in the document itself.
  *
  * The ids are left to the document, so an outline shown beside it adds no duplicate ids to the page.
  */
-function outline(tree: Tree): Tree {
-
-	const headings = tree.children.filter((node): node is Element => headingRank(node) !== undefined);
-
-	return {
-		...tree, children: headings.length > 0 ? [element("nav", [list(headings)])] : []
-	};
-
+function outline(tree: Tree): readonly Entry[] {
+	return sections(tree.children.filter((node): node is Element => headingRank(node) !== undefined));
 }
 
 /**
- * Nests headings in a list, each holding the headings that follow it up to the next one of the same or a higher level.
+ * Nests headings, each holding the headings that follow it up to the next one of the same or a higher level.
  */
-function list(headings: readonly Element[]): Element {
-	return element("ul", items(headings));
-}
-
-function items(headings: readonly Element[]): Element[] {
+function sections(headings: readonly Element[]): readonly Entry[] {
 
 	const [heading, ...rest] = headings;
 
 	return heading === undefined ? [] : [
-		item(heading, rest.slice(0, boundary(heading, rest))),
-		...items(rest.slice(boundary(heading, rest)))
+		section(heading, rest.slice(0, boundary(heading, rest))),
+		...sections(rest.slice(boundary(heading, rest)))
 	];
 
 }
 
-function item(heading: Element, nested: readonly Element[]): Element {
-	return element("li", [
-		{ ...element("a", heading.children), properties: { href: `#${heading.properties.id}` } },
-		...(nested.length > 0 ? [list(nested)] : [])
-	]);
+function section(heading: Element, nested: readonly Element[]): Entry {
+	return {
+		label: render({ type: "root", children: heading.children }),
+		href: `#${heading.properties.id}`,
+		entries: sections(nested)
+	};
 }
 
 /**
@@ -250,10 +242,6 @@ function boundary(heading: Element, rest: readonly Element[]): number {
 
 function rank(heading: Element): number {
 	return headingRank(heading) ?? 0;
-}
-
-function element(tagName: string, children: Element["children"]): Element {
-	return { type: "element", tagName, properties: {}, children };
 }
 
 function render(tree: Tree): ComponentChildren {

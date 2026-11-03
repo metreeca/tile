@@ -219,8 +219,8 @@ describe("Mark", () => {
 
 			mount("---\ntitle: T\n---\n\n# Hello World\n\nText\n\n## Hello World\n\n### Other", "toc");
 
-			expect(texts("tile-mark a")).toEqual(["Hello World", "Hello World", "Other"]);
-			expect(attributes("tile-mark a", "href")).toEqual(["#hello-world", "#hello-world-1", "#other"]);
+			expect(texts("tile-toc a")).toEqual(["Hello World", "Hello World", "Other"]);
+			expect(attributes("tile-toc a", "href")).toEqual(["#hello-world", "#hello-world-1", "#other"]);
 
 		});
 
@@ -228,9 +228,9 @@ describe("Mark", () => {
 
 			mount("# A\n\n## B\n\n### C\n\n## D\n\n# E", "toc");
 
-			expect(texts("tile-mark > nav > ul > li > a")).toEqual(["A", "E"]);
-			expect(texts("tile-mark > nav > ul > li > ul > li > a")).toEqual(["B", "D"]);
-			expect(texts("tile-mark > nav > ul > li > ul > li > ul > li > a")).toEqual(["C"]);
+			expect(texts("tile-toc > nav > ul > li > a")).toEqual(["A", "E"]);
+			expect(texts("tile-toc > nav > ul > li > ul > li > a")).toEqual(["B", "D"]);
+			expect(texts("tile-toc > nav > ul > li > ul > li > ul > li > a")).toEqual(["C"]);
 
 		});
 
@@ -238,8 +238,8 @@ describe("Mark", () => {
 
 			mount("## A\n\n# B\n\n### C", "toc");
 
-			expect(texts("tile-mark > nav > ul > li > a")).toEqual(["A", "B"]);
-			expect(texts("tile-mark > nav > ul > li > ul > li > a")).toEqual(["C"]);
+			expect(texts("tile-toc > nav > ul > li > a")).toEqual(["A", "B"]);
+			expect(texts("tile-toc > nav > ul > li > ul > li > a")).toEqual(["C"]);
 
 		});
 
@@ -247,7 +247,7 @@ describe("Mark", () => {
 
 			mount("# A\n\n## B", "toc");
 
-			expect(document.querySelectorAll("tile-mark :is(h1, h2, h3, h4, h5, h6)").length).toBe(0);
+			expect(document.querySelectorAll("tile-toc :is(h1, h2, h3, h4, h5, h6)").length).toBe(0);
 
 		});
 
@@ -255,8 +255,8 @@ describe("Mark", () => {
 
 			mount("# A\n\nText\n\n- item", "toc");
 
-			expect(texts("tile-mark li")).toEqual(["A"]);
-			expect(document.querySelectorAll("tile-mark p").length).toBe(0);
+			expect(texts("tile-toc li")).toEqual(["A"]);
+			expect(document.querySelectorAll("tile-toc p").length).toBe(0);
 
 		});
 
@@ -264,7 +264,7 @@ describe("Mark", () => {
 
 			mount("Text", "toc");
 
-			expect(document.querySelectorAll("tile-mark nav").length).toBe(0);
+			expect(document.querySelectorAll("tile-toc").length).toBe(0);
 
 		});
 

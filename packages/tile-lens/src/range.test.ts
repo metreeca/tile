@@ -79,7 +79,7 @@ function mount(lookup: unknown, {
 
 		return createElement(Range, {
 			name: "Year",
-			...(compact ? { compact } : {}),
+			...(compact === undefined ? {} : { compact }),
 			type,
 			range: useRange(collection, "year")
 		});
@@ -199,7 +199,7 @@ describe("Range", () => {
 
 		});
 
-		it("should offer no disclosure unless compact", async () => {
+		it("should offer no disclosure if compact is omitted", async () => {
 
 			mount(bounds(1990, 2020));
 
@@ -347,6 +347,42 @@ describe("Range", () => {
 			await act(async () => {});
 
 			expect(lower()).not.toBeNull();
+
+		});
+
+		it("should start open by the disclosure unless compact", async () => {
+
+			mount(bounds(1990, 2020), { compact: false });
+
+			await ready();
+
+			expect(disclosure()?.getAttribute("aria-expanded")).toBe("true");
+
+		});
+
+		it("should stay open as focus leaves the facet unless compact", async () => {
+
+			mount(bounds(1990, 2020), { compact: false });
+
+			await ready();
+
+			focus(lower(), "focusout", document.body);
+
+			await act(async () => {});
+
+			expect(lower()).not.toBeNull();
+
+		});
+
+		it("should close by the disclosure unless compact", async () => {
+
+			mount(bounds(1990, 2020), { compact: false });
+
+			await ready();
+
+			act(() => disclosure()?.click());
+
+			await vi.waitFor(() => expect(lower()).toBeNull());
 
 		});
 

@@ -77,7 +77,7 @@ function mount(lookup: unknown, {
 
 		return createElement(Tally, {
 			name: "Category",
-			...(compact ? { compact } : {}),
+			...(compact === undefined ? {} : { compact }),
 			tally: useTally(collection, "category", size ? { size } : {}),
 			...(children ? { children } : {})
 		});
@@ -211,7 +211,7 @@ describe("Tally", () => {
 
 		});
 
-		it("should offer no disclosure unless compact", async () => {
+		it("should offer no disclosure if compact is omitted", async () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 1 }]));
 
@@ -399,6 +399,42 @@ describe("Tally", () => {
 			await ready();
 
 			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			act(() => disclosure()?.click());
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
+
+		});
+
+		it("should start open by the disclosure unless compact", async () => {
+
+			mount(options(rows), { compact: false });
+
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1", "Sciences 1"]));
+
+			expect(disclosure()?.getAttribute("aria-expanded")).toBe("true");
+
+		});
+
+		it("should stay open as focus leaves the facet unless compact", async () => {
+
+			mount(options(rows), { compact: false });
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			focus(checkboxes()[0] ?? null, "focusout", document.body);
+
+			await act(async () => {});
+
+			expect(checkboxes()).toHaveLength(2);
+
+		});
+
+		it("should close by the disclosure unless compact", async () => {
+
+			mount(options(rows), { compact: false });
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
 

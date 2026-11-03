@@ -68,10 +68,17 @@ tile-range {
 
         color: var(--tile--color-label);
 
-        & > span {
+        & > span:first-of-type {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* The controls are set as one item of the row, side by side with no gap, as in the other facets. */
+
+        & > span:last-of-type {
+            display: inline-flex;
+            align-items: center;
         }
 
     }

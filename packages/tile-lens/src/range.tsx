@@ -52,15 +52,17 @@ import "./range.css";
  * reader pauses typing or stepping through values, at once on `Enter` or on leaving the field, so a run of steps
  * narrows the collection once; a temporal field waits for `Enter` or for the reader to leave it, since its mask
  * reports every segment changed as a value of its own. An emptied field removes its bound, and text the type cannot
- * read leaves the bound as it was. Where the input orders its values natively, each field is constrained by the other, and an empty one by the
- * lowest or highest value on offer, so the two bounds never cross and stepping starts from a value items hold.
+ * read leaves the bound as it was. Where the input orders its values natively, each field is constrained by the other,
+ * and an empty one by the lowest or highest value on offer, so the two bounds never cross and stepping starts from a
+ * value items hold.
  *
  * A {@link @metreeca/tile-cell!button.Button button} marked by the {@link @metreeca/tile-cell!icon Reset}
  * glyph, shown while a bound is set, removes both bounds and leaves the facet suggesting the values on offer again.
  *
- * A compact facet starts closed, showing its fields only while a bound is set. Clicking its header opens it while the
- * reader works on it, and focus leaving the facet closes it again; a disclosure marked by the
- * {@link @metreeca/tile-cell!icon Expand} glyph opens it to stay open, until the reader closes it by the same.
+ * A collapsible facet, one stating whether it is `compact`, folds down to its fields only while a bound is set.
+ * Clicking its header opens it while the reader works on it, and focus leaving the facet closes it again; a disclosure
+ * marked by the {@link @metreeca/tile-cell!icon Expand} glyph opens it to stay open, until the reader closes it by the
+ * same. A compact facet starts closed, any other starts open, as if opened by its disclosure.
  *
  * The facet is a group named by `name`, shown in its header beside a glyph marking the value type, and marked busy
  * while the values are retrieved for the first time; a failed retrieval is shown as a critical
@@ -94,8 +96,8 @@ export function Range({
 	name: string
 
 	/**
-	 * Whether the facet starts closed, showing its fields only while a bound is set until the reader opens it, by its
-	 * header while focus stays within or by its disclosure until closed; always open, with no disclosure, if omitted.
+	 * Whether the facet starts closed, showing its fields only while a bound is set, or open, as if opened by its
+	 * disclosure; the reader opens and closes it by the disclosure or its header either way; always open if omitted.
 	 */
 	compact?: boolean
 
@@ -114,7 +116,15 @@ export function Range({
 
 	const id = useId();
 
-	const { open: unfolded, expand, collapse, toggle } = useModel(() => createFold());
+	const collapsible = compact !== undefined;
+
+	// a facet starting open is opened as by its disclosure, so it stays open until the reader closes it
+
+	const { open: unfolded, expand, collapse, toggle } = useModel(() => compact === false
+		? createFold().toggle()
+		: createFold()
+	);
+
 	const { field: focused, enter, leave: quit } = useModel(() => createFocus());
 	const { edit, change, settle } = useModel(() => createPending());
 
@@ -133,7 +143,7 @@ export function Range({
 	const failed = range({ error: () => true }) ?? false;
 	const ready = range({ ready: () => true }) ?? false;
 
-	const open = !compact || unfolded;
+	const open = !collapsible || unfolded;
 
 	// the fields wait for the values on offer, so the facet never shows a strip it is about to fill
 
@@ -147,13 +157,13 @@ export function Range({
 
 		"wide": input === "datetime-local" || undefined,
 
-		"onFocusOut": compact ? (event: FocusEvent) => leave(event, collapse) : undefined
+		"onFocusOut": collapsible ? (event: FocusEvent) => leave(event, collapse) : undefined
 
 	}, <>
 
-		{/* a compact header takes focus as clicked, opening the facet only as it takes focus itself, not its buttons */}
+		{/* a collapsible header takes focus as clicked, opening the facet only as it takes focus itself, not its buttons */}
 
-		<header tabIndex={compact ? -1 : undefined} onFocusIn={compact ? (event: FocusEvent) => {
+		<header tabIndex={collapsible ? -1 : undefined} onFocusIn={collapsible ? (event: FocusEvent) => {
 			if ( event.target === event.currentTarget ) { expand(); }
 		} : undefined}>
 
@@ -161,21 +171,25 @@ export function Range({
 
 			<span id={`${id}-name`}>{name}</span>
 
-			{bounded && <Button
+			<span>
 
-				look={"subtle"}
+				{bounded && <Button
 
-				icon={<Icon.Reset/>}
-				title={"Reset"}
+					look={"subtle"}
 
-				onClick={() => {
-					settle();
-					range({ ready: ({ clear }) => clear() });
-				}}
+					icon={<Icon.Reset/>}
+					title={"Reset"}
 
-			/>}
+					onClick={() => {
+						settle();
+						range({ ready: ({ clear }) => clear() });
+					}}
 
-			{compact && <Disclosure open={open} controls={`${id}-fields`} onToggle={toggle}/>}
+				/>}
+
+				{collapsible && <Disclosure open={open} controls={`${id}-fields`} onToggle={toggle}/>}
+
+			</span>
 
 		</header>
 
@@ -200,7 +214,9 @@ export function Range({
 
 			</>,
 
-			error: () => <Note level="critical"><div>Not Available</div></Note>
+			error: () => <Note level="critical">
+				<div>Not Available</div>
+			</Note>
 
 		})}</section>
 

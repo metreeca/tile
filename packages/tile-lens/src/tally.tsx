@@ -58,10 +58,11 @@ import "./tally.css";
  * deselects them all, so the two never stand side by side. A long list is closed by a
  * {@link @metreeca/tile-cell!more.More More} trigger fetching the next batch as it scrolls into view.
  *
- * A compact facet starts closed, showing only the values ticked. Turning to the search field opens it while the reader
- * works on it, and focus leaving the facet closes it again, back to the values the reader ticked; a disclosure marked
- * by the {@link @metreeca/tile-cell!icon Expand} glyph opens it to stay open, until the reader closes it by the
- * same disclosure, whether the facet was opened by the disclosure itself or by the search field.
+ * A collapsible facet, one stating whether it is `compact`, folds down to the values ticked. Turning to the search
+ * field opens it while the reader works on it, and focus leaving the facet closes it again, back to the values the
+ * reader ticked; a disclosure marked by the {@link @metreeca/tile-cell!icon Expand} glyph opens it to stay open, until
+ * the reader closes it by the same disclosure, whether the facet was opened by the disclosure itself or by the search
+ * field. A compact facet starts closed, any other starts open, as if opened by its disclosure.
  *
  * The facet is a group named by `name`, marked busy while the values are retrieved for the first time; a failed
  * retrieval is shown as a critical {@link @metreeca/tile-cell!note.Note note} in place of the values.
@@ -80,9 +81,9 @@ import "./tally.css";
  */
 export function Tally({
 
-	name,
-
 	compact,
+
+	name,
 
 	tally,
 
@@ -91,16 +92,16 @@ export function Tally({
 }: {
 
 	/**
+	 * Whether the facet starts closed, showing only the values ticked, or open, as if opened by its disclosure; the
+	 * reader opens and closes it by the disclosure or the search field either way; always open if omitted.
+	 */
+	compact?: boolean
+
+	/**
 	 * The name of the facet, naming what its values are values of, as in `University`: the accessible name of the
 	 * group, and the hint the search field shows while empty, which doubles as the visible title of the facet.
 	 */
 	name: string
-
-	/**
-	 * Whether the facet starts closed, showing only the values ticked until the reader opens it, by turning to the
-	 * search field for as long as focus stays within or by its disclosure until closed; always open if omitted.
-	 */
-	compact?: boolean
 
 	/**
 	 * The tally offered, as handed by {@link @metreeca/tile-data!store/tally.useTally useTally}.
@@ -120,9 +121,16 @@ export function Tally({
 
 	const id = useId();
 
-	const { open: unfolded, expand, collapse, toggle } = useModel(() => createFold());
+	const collapsible = compact !== undefined;
 
-	const open = !compact || unfolded;
+	// a facet starting open is opened as by its disclosure, so it stays open until the reader closes it
+
+	const { open: unfolded, expand, collapse, toggle } = useModel(() => compact === false
+		? createFold().toggle()
+		: createFold()
+	);
+
+	const open = !collapsible || unfolded;
 
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
@@ -154,9 +162,9 @@ export function Tally({
 		 * as focus leaving it and close the facet before the click lands; the facet takes the focus in their place.
 		 */
 
-		"tabIndex": compact ? -1 : undefined,
+		"tabIndex": collapsible ? -1 : undefined,
 
-		"onFocusOut": compact ? (event: FocusEvent) => leave(event, collapse) : undefined
+		"onFocusOut": collapsible ? (event: FocusEvent) => leave(event, collapse) : undefined
 
 	}, <>
 
@@ -166,7 +174,7 @@ export function Tally({
 
 			<input type="search" value={text} placeholder={name} aria-label={"Search"}
 
-				onFocusIn={compact ? expand : undefined}
+				onFocusIn={collapsible ? expand : undefined}
 				onInput={event => setTyped({ text: event.currentTarget.value, from: keywords })}
 				onKeyDown={keys({ Enter: apply, ...(text === "" ? {} : { Escape: () => search("") }) })}
 
@@ -197,7 +205,7 @@ export function Tally({
 
 				/>}
 
-				{compact && <Disclosure open={open} controls={id} onToggle={toggle}/>}
+				{collapsible && <Disclosure open={open} controls={id} onToggle={toggle}/>}
 
 			</span>
 

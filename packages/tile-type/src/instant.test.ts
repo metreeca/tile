@@ -33,7 +33,13 @@ describe("instant", () => {
 	describe("format()", () => {
 
 		it("should localise instants in the runtime time zone", async () => {
-			expect(instant.format("2024-03-05T12:30:00Z", { locales: "it-IT" })).toBe("5 mar 2024, 13:30");
+			expect(instant.format("2024-03-05T12:30:00Z", { locales: "it-IT" })).toBe("05/03/2024, 13:30");
+		});
+
+		it("should show numeric dates with the configured time style", async () => {
+			expect(instant({ timeStyle: "medium" }).format("2024-03-05T12:30:00Z", {
+				locales: "it-IT"
+			})).toBe("05/03/2024, 13:30:00");
 		});
 
 		it("should show the configured styles", async () => {
@@ -43,7 +49,7 @@ describe("instant", () => {
 		});
 
 		it("should honour stated offsets", async () => {
-			expect(instant.format("2024-03-05T12:30:00+05:00", { locales: "it-IT" })).toBe("5 mar 2024, 08:30");
+			expect(instant.format("2024-03-05T12:30:00+05:00", { locales: "it-IT" })).toBe("05/03/2024, 08:30");
 		});
 
 		it("should reject malformed instants", async () => {

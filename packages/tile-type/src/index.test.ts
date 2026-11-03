@@ -79,7 +79,7 @@ describe("toType()", () => {
 
 		it("should show values through their branch", async () => {
 			expect(mixed.format(1234, { locales: "en-US" })).toBe("1,234");
-			expect(mixed.format("2024-03-05", { locales: "en-US" })).toBe("Mar 5, 2024");
+			expect(mixed.format("2024-03-05", { locales: "en-US" })).toBe("3/5/2024");
 		});
 
 		it("should write values through their branch", async () => {

@@ -30,6 +30,7 @@ import {
 	lexical,
 	malformed,
 	mismatched,
+	NumericDate,
 	toInstant,
 	toLocalDay,
 	toMoment
@@ -97,7 +98,7 @@ const Instants: Storage = {
 export type DateOpts = {
 
 	/**
-	 * The localised date style; defaults to `medium`, as in `Mar 5, 2024`.
+	 * The localised date style; numeric with a full year if omitted, as in `3/5/2024`.
 	 */
 	readonly style?: Intl.DateTimeFormatOptions["dateStyle"]
 
@@ -118,9 +119,10 @@ export type DateOpts = {
  * Shows `xsd:date` values as the localised day they state, whatever their offset, and moves them to and from the
  * `YYYY-MM-DD` form a `date` input works on, rejecting days missing from the calendar.
  */
-export const date: Configurable<DateOpts, string> = configurable(({ style = "medium", instant = false }) => {
+export const date: Configurable<DateOpts, string> = configurable(({ style, instant = false }) => {
 
 	const storage = instant ? Instants : Dates;
+	const presentation = style === undefined ? NumericDate : { dateStyle: style };
 
 	return immutable({
 
@@ -128,7 +130,7 @@ export const date: Configurable<DateOpts, string> = configurable(({ style = "med
 
 		format(value, { locales } = {}) {
 			return isString(value)
-				? new Intl.DateTimeFormat(locales, { dateStyle: style, timeZone: storage.zone }).format(storage.read(value))
+				? new Intl.DateTimeFormat(locales, { ...presentation, timeZone: storage.zone }).format(storage.read(value))
 				: mismatched("date", value);
 		},
 

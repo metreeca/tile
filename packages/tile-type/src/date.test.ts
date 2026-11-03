@@ -33,8 +33,8 @@ describe("date", () => {
 	describe("format()", () => {
 
 		it("should localise dates", async () => {
-			expect(date.format("2024-03-05", { locales: "en-US" })).toBe("Mar 5, 2024");
-			expect(date.format("2024-03-05", { locales: "it-IT" })).toBe("5 mar 2024");
+			expect(date.format("2024-03-05", { locales: "en-US" })).toBe("3/5/2024");
+			expect(date.format("2024-03-05", { locales: "it-IT" })).toBe("05/03/2024");
 		});
 
 		it("should show the configured style", async () => {
@@ -42,8 +42,8 @@ describe("date", () => {
 		});
 
 		it("should show the day stated, whatever its offset", async () => {
-			expect(date.format("2024-01-01+14:00", { locales: "en-US" })).toBe("Jan 1, 2024");
-			expect(date.format("2024-01-01-12:00", { locales: "en-US" })).toBe("Jan 1, 2024");
+			expect(date.format("2024-01-01+14:00", { locales: "en-US" })).toBe("1/1/2024");
+			expect(date.format("2024-01-01-12:00", { locales: "en-US" })).toBe("1/1/2024");
 		});
 
 		it("should reject malformed dates", async () => {
@@ -79,7 +79,7 @@ describe("date", () => {
 		const day = date({ instant: true });
 
 		it("should show the local day an instant falls on", async () => {
-			expect(day.format("2024-03-05T23:30:00Z", { locales: "en-US" })).toBe("Mar 6, 2024");
+			expect(day.format("2024-03-05T23:30:00Z", { locales: "en-US" })).toBe("3/6/2024");
 		});
 
 		it("should write the local day an instant falls on", async () => {

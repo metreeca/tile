@@ -34,6 +34,15 @@ import type { Configurable, Type } from "./index.js";
  */
 export const Offset = /(?:Z|[+-]\d{2}:\d{2})$/;
 
+/**
+ * The numeric day, month and full year dates are shown as when no date style is configured, as in `3/5/2024`.
+ */
+export const NumericDate: Readonly<Intl.DateTimeFormatOptions> = {
+	year: "numeric",
+	month: "numeric",
+	day: "numeric"
+};
+
 
 /**
  * Makes a type configurable.

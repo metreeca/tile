@@ -38,7 +38,7 @@ const Local = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?$/;
 export type InstantOpts = {
 
 	/**
-	 * The localised date style; defaults to `medium`, as in `Mar 5, 2024`.
+	 * The localised date style; numeric with a full year if omitted, as in `3/5/2024`.
 	 */
 	readonly dateStyle?: Intl.DateTimeFormatOptions["dateStyle"]
 
@@ -61,7 +61,7 @@ export type InstantOpts = {
  */
 export const instant: Configurable<InstantOpts, string> = configurable(({
 
-	dateStyle = "medium",
+	dateStyle,
 	timeStyle = "short"
 
 }) => immutable({
@@ -70,7 +70,9 @@ export const instant: Configurable<InstantOpts, string> = configurable(({
 
 	format(value, { locales } = {}) {
 		return isString(value)
-			? new Intl.DateTimeFormat(locales, { dateStyle, timeStyle }).format(toInstant("instant", value))
+			? dateStyle === undefined
+				? toNumeric(locales, timeStyle, toInstant("instant", value))
+				: new Intl.DateTimeFormat(locales, { dateStyle, timeStyle }).format(toInstant("instant", value))
 			: mismatched("instant", value);
 	},
 
@@ -95,3 +97,26 @@ export const instant: Configurable<InstantOpts, string> = configurable(({
 	}
 
 }));
+
+
+/**
+ * Formats an instant with a numeric date carrying the full year, as no date style does in every locale.
+ *
+ * @param locales The locales to format for
+ * @param timeStyle The localised time style
+ * @param moment The instant to format
+ *
+ * @returns `moment` as the `short` date style shows it, with its year widened to the full digits the locale writes
+ */
+function toNumeric(locales: Intl.LocalesArgument, timeStyle: Intl.DateTimeFormatOptions["timeStyle"], moment: Date): string {
+
+	const year = new Intl.DateTimeFormat(locales, { year: "numeric" })
+		.formatToParts(moment)
+		.find(({ type }) => type === "year")?.value;
+
+	return new Intl.DateTimeFormat(locales, { dateStyle: "short", timeStyle })
+		.formatToParts(moment)
+		.map(({ type, value }) => type === "year" && year !== undefined ? year : value)
+		.join("");
+
+}

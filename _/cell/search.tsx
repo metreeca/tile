@@ -28,7 +28,6 @@ import "./search.css";
  *
  * @constructor
  */
-// !!! the Tile prefix is dropped on migration, but `Search` clashes with the lucide-preact icon: rename by role
 
 export function TileSearch({
 

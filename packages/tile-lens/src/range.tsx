@@ -44,17 +44,17 @@ import "./range.css";
 /**
  * Creates a collection range facet.
  *
- * Shows a `From` and a `To` field on the native input the value type works on, a `number` input for numbers and
- * years, a `date`, `time` or `datetime-local` one for temporal values, and a `text` one otherwise. Each field holds
- * the bound narrowing the collection, if one is set, and suggests the lowest or highest value on offer, formatted as
- * the type shows it, while it is empty; an empty temporal field shows its suggestion as text, since the native input
- * draws its own entry mask instead, and turns into the native input as it takes focus. A bound is applied once the
- * reader pauses typing or stepping through values, at once on `Enter` or on leaving the field, so a run of steps
- * narrows the collection once; a temporal field waits for `Enter` or for the reader to leave it, since its mask
- * reports every segment changed as a value of its own. An emptied field removes its bound, and text the type cannot
- * read leaves the bound as it was. Where the input orders its values natively, each field is constrained by the other,
- * and an empty one by the lowest or highest value on offer, so the two bounds never cross and stepping starts from a
- * value items hold.
+ * Shows a `From` and a `To` field on the native input the value type works on, a `number` input for numbers and years,
+ * a `date`, `time` or `datetime-local` one for temporal values, and a `text` one otherwise. Each field holds the bound
+ * narrowing the collection, if one is set, and suggests the lowest or highest value on offer, formatted as the type
+ * shows it, while it is empty; an empty temporal field shows its suggestion as text, since the native input draws its
+ * own entry mask instead, and turns into the native input as it takes focus. A field taking focus selects the text it
+ * shows, so whatever the reader types replaces it rather than adding to it. A bound is applied once the reader pauses
+ * typing or stepping through values, at once on `Enter` or on leaving the field, so a run of steps narrows the
+ * collection once; a temporal field waits for `Enter` or for the reader to leave it, since its mask reports every
+ * segment changed as a value of its own. An emptied field removes its bound, and text the type cannot read leaves the
+ * bound as it was. Where the input orders its values natively, each field is constrained by the other, and an empty one
+ * by the lowest or highest value on offer, so the two bounds never cross and stepping starts from a value items hold.
  *
  * A {@link @metreeca/tile-cell!button.Button button} marked by the {@link @metreeca/tile-cell!icon Reset}
  * glyph, shown while a bound is set, removes both bounds and leaves the facet suggesting the values on offer again.
@@ -276,7 +276,10 @@ export function Range({
 			min={ordered ? write(min) : undefined}
 			max={ordered ? write(max) : undefined}
 
-			onFocusIn={() => enter(id)}
+			onFocusIn={event => {
+				enter(id);
+				select(event.currentTarget);
+			}}
 			onFocusOut={event => {
 				quit();
 				apply(read(event.currentTarget));
@@ -284,7 +287,20 @@ export function Range({
 			onInput={event => change(read(event.currentTarget))}
 			onKeyDown={event => keys({ Enter: () => apply(read(event.currentTarget)) })(event)}
 
+			// the click focusing the field would otherwise drop the selection as the button is released
+
+			onMouseUp={event => event.preventDefault()}
+
 		/>;
+
+
+		/**
+		 * Selects the text a field taking focus shows, so typing replaces it at once. The selection waits for the
+		 * render, which drops any selection made before it as it writes the suggestion an empty field starts from.
+		 */
+		function select(element: HTMLInputElement): void {
+			setTimeout(() => element.select());
+		}
 
 
 		/**

@@ -606,6 +606,36 @@ describe("Range", () => {
 
 		});
 
+		it("should select the bound a field holds as it takes focus", async () => {
+
+			mount(bounds("a", "z"), { type: string, criteria: { ">=year": "m" } });
+
+			await vi.waitFor(() => expect(lower()?.value).toBe("m"));
+
+			focus(lower(), "focusin");
+
+			await vi.waitFor(() => expect([lower()?.selectionStart, lower()?.selectionEnd]).toEqual([0, 1]));
+
+		});
+
+		it("should select the value an empty field suggests as it takes focus", async () => {
+
+			const selected = vi.spyOn(HTMLInputElement.prototype, "select");
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			focus(upper(), "focusin");
+
+			const values = () => selected.mock.contexts.map(context => context === upper() ? upper()?.value : undefined);
+
+			await vi.waitFor(() => expect(values()).toEqual(["2020"]));
+
+			selected.mockRestore();
+
+		});
+
 		it("should apply nothing for a suggestion left as it is", async () => {
 
 			const onChange = vi.fn();

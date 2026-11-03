@@ -505,6 +505,25 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(labels()).toEqual(["Arts 0"]));
 
+		});
+
+		it("should disable unticked options the other criteria leave out", async () => {
+
+			mount(options([
+				{ value: "c1", label: "Arts", count: 0 },
+				{ value: "c2", label: "Sciences", count: 1 }
+			]));
+
+			await vi.waitFor(() => expect(checkboxes().map(({ disabled }) => disabled)).toEqual([true, false]));
+
+		});
+
+		it("should keep ticked options the other criteria leave out enabled, so they can be unticked", async () => {
+
+			mount(options([{ value: "c1", label: "Arts", count: 0 }]), { criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(checkboxes().map(({ checked }) => checked)).toEqual([true]));
+
 			expect(checkboxes()[0]?.disabled).toBe(false);
 
 		});

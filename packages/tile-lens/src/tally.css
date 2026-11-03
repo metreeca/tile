@@ -232,10 +232,15 @@ tile-tally {
 
             list-style-type: none;
 
-            /* The options are rows of a list, packed line on line rather than spaced out as prose list items are. */
+            /*
+             * The options are rows of a list, packed line on line rather than spaced out as prose list items are. Their
+             * text is set a step lighter than the copy, since its strong weight would otherwise read too dark, holding
+             * 13.6:1 on the page and 12.1:1 on the stripe in the light scheme, 7.55:1 and 7.10:1 in the dark one.
+             */
 
             & > li {
                 margin: 0;
+                color: var(--tile--color-gray-070);
             }
 
             /*
@@ -251,6 +256,24 @@ tile-tally {
 
                 & a {
                     color: inherit;
+                }
+
+                /*
+                 * Unless ticked, such an option is disabled and fades as a disabled control does, contrast being owed
+                 * by no inactive control. A ticked one stays at full strength, since it is still there to be unticked.
+                 * The name of a linked resource is spared the fade, since the link still works and owes its 4.5:1.
+                 */
+
+                &:has(input:disabled) > label {
+
+                    cursor: default;
+
+                    & > input,
+                    & > span:not(:has(tile-link)),
+                    & > small {
+                        opacity: var(--tile--opacity-disabled);
+                    }
+
                 }
 
             }
@@ -269,11 +292,15 @@ tile-tally {
 
                 cursor: pointer;
 
+                /* The name is set in the strong weight, so a plain name reads alike beside the name of a linked one. */
+
                 & > span {
 
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+
+                    font-weight: var(--tile--font-weight-strong);
 
                     /* A link cuts its own wording short, once capped to the room the name leaves it. */
 

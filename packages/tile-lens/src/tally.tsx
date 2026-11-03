@@ -49,7 +49,8 @@ import "./tally.css";
  * any of the values ticked. The name of a linked resource is a {@link @metreeca/tile-cell!link.Link link} to it, which
  * takes the reader to the resource and leaves its checkbox as it stands. The items holding none of the values are
  * offered as `None`. A value no item lets through under the other criteria stays on offer with a count of `0`, so
- * the list holds still, every value in its place, as other facets narrow the collection.
+ * the list holds still, every value in its place, as other facets narrow the collection; its checkbox is disabled
+ * unless ticked, since ticking it would empty the collection, while a ticked one stays enabled to be unticked.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
  * it, as does a {@link @metreeca/tile-cell!button.Button button} marked by the
@@ -227,6 +228,7 @@ export function Tally({
 						<label>
 
 							<input type="checkbox" checked={bucket.selected}
+								disabled={bucket.count === 0 && !bucket.selected}
 								onChange={event => select(bucket.value, event.currentTarget.checked)}
 							/>
 

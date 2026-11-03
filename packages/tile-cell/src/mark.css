@@ -16,23 +16,13 @@
 
 /*
  * A Markdown document is plain markup, which the design system styles as it styles the same markup anywhere else on
- * the page. This sheet adds only what Markdown brings beyond plain markup: tables, GitHub alerts and highlighted
- * fenced code, leaving the outline of a document to the stylesheet of the table of contents widget drawing it.
+ * the page. This sheet adds only what Markdown brings beyond plain markup, GitHub alerts and highlighted fenced code,
+ * leaving tables to the design system and the outline of a document to the table of contents widget drawing it.
  */
 
 tile-mark {
 
     display: block;
-
-    /*
-     * A Markdown table states no column widths, so the last column takes the room the others leave: leading columns,
-     * typically short keys such as prefixes or names, stay as narrow as their content, and the closing description
-     * reads in full lines.
-     */
-
-    & table > thead > tr > th:last-child {
-        width: 100%;
-    }
 
     /*
      * An alert reads as GitHub renders it, on the page background behind a bar in the stroke role of the matching

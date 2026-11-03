@@ -34,6 +34,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   in place of the `entry`, `shape` and `model` props
 - `@metreeca/tile` — **breaking**: text is set on two weights, regular and strong, and the `fontWeightHeavy` token is
   removed (migration: use `fontWeightStrong`)
+- `@metreeca/tile` — top-level headings stand further off the text preceding them, and the last column of every table
+  takes the room the others leave, as it did only in Markdown documents
 - `@metreeca/tile-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
 - `@metreeca/tile-cell/link` — `strong` links take the link colour, and `subtle` and `strong` links are underlined
   under the pointer; every link draws its underline within the line, so containers clipping their content keep it

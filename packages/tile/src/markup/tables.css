@@ -29,12 +29,18 @@ tbody > tr:nth-child(odd) > td {
     background-color: var(--tile--background-color-stripe);
 }
 
+/*
+ * A table states no column widths, so the last column takes the room the others leave: leading columns, typically
+ * short keys such as names, types or counts, stay as narrow as their content, and the closing column, typically a
+ * description, reads in full lines across whatever width the table is given by the container holding it.
+ */
+
 th {
 
     white-space: nowrap;
     font-weight: var(--tile--font-weight-strong);
 
-    &:empty:last-child {
+    &:last-child {
         width: 100%;
     }
 

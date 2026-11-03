@@ -26,6 +26,16 @@ h1 {
     border-bottom-style: var(--tile--border-style);
     margin-bottom: var(--tile--spacing-100);
     font-size: calc(var(--tile--font-size-heading) * 1.25); /* A ratio on the heading size, which no em step can express. */
+
+    /*
+     * A top-level heading opening a new part of the text stands further off what precedes it than the block gap, so
+     * the break reads at a glance; one opening its container keeps flush with the top, adding no room of its own.
+     */
+
+    &:not(:first-child) {
+        margin-top: var(--tile--spacing-150);
+    }
+
 }
 
 h2 {

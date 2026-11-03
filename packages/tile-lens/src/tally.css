@@ -23,6 +23,35 @@
 }
 
 /*
+ * The depth of the fade at each end of the list, grown and shrunk by scrolling. They are registered, unlike an internal
+ * variable, because only a registered length is interpolated by an animation rather than flipped at its midpoint.
+ */
+
+@property --tile-tally-shade-top {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+@property --tile-tally-shade-bottom {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+
+@keyframes tile-tally-shade-top {
+    to {
+        --tile-tally-shade-top: var(--tile--spacing-100);
+    }
+}
+
+@keyframes tile-tally-shade-bottom {
+    from {
+        --tile-tally-shade-bottom: var(--tile--spacing-100);
+    }
+}
+
+/*
  * A tally is a bounded box stacking the search field over the options, set apart by a rule. The options scroll
  * within the box once they outgrow it, so a long list never pushes the facets below it out of view.
  */
@@ -162,6 +191,32 @@ tile-tally {
 
         border-top-style: var(--tile--border-style);
 
+        /*
+         * Each end of the box fades the options running past it, so a reader sees the list carry on beyond the edge
+         * rather than stop at a line, as the columns of a shell do. The mask belongs to the box and not to the options,
+         * so the fade stays where the edge is, and it spares the rule above, which stays whole.
+         *
+         * A fade grows in only as the reader scrolls away from its end, so a list at rest, or with nothing to scroll,
+         * reads plainly. Browsers unable to tie an animation to scrolling show no fade at all.
+         */
+
+        mask-image: linear-gradient(
+            to bottom,
+            black var(--tile--border-width),
+            transparent var(--tile--border-width),
+            black calc(var(--tile--border-width) + var(--tile-tally-shade-top)),
+            black calc(100% - var(--tile-tally-shade-bottom)),
+            transparent 100%
+        );
+
+        @supports (animation-timeline: scroll()) {
+
+            animation: tile-tally-shade-top linear both, tile-tally-shade-bottom linear both;
+            animation-timeline: scroll(self);
+            animation-range: 0 var(--tile--spacing-100), calc(100% - var(--tile--spacing-100)) 100%;
+
+        }
+
         & > small {
             display: block;
             padding: var(--tile--spacing-050);
@@ -184,12 +239,20 @@ tile-tally {
             }
 
             /*
-             * An option no item lets through under the other criteria takes the label colour, which holds the 4.5:1 a
-             * text role owes in both schemes. Its count of 0 states the same thing in text, so colour is never alone.
+             * An option no item lets through under the other criteria takes the label colour, name and count alike,
+             * and the name of a linked resource keeps its underline. Live counts stay in the text colour, so a count
+             * of 0 reads as greyed beside them while holding the 4.5:1 a text role owes in both schemes. The 0 states
+             * the same thing in text, so colour is never alone.
              */
 
             & > li.unavailable {
+
                 color: var(--tile--color-label);
+
+                & a {
+                    color: inherit;
+                }
+
             }
 
             /*
@@ -207,13 +270,21 @@ tile-tally {
                 cursor: pointer;
 
                 & > span {
+
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+
+                    /* A link cuts its own wording short, once capped to the room the name leaves it. */
+
+                    & > tile-link {
+                        max-width: 100%;
+                    }
+
                 }
 
                 & > small {
-                    color: var(--tile--color-label);
+                    color: inherit;
                     font-variant-numeric: tabular-nums;
                 }
 

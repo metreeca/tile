@@ -64,6 +64,14 @@ describe("Clear", () => {
 
 	});
 
+	it("should take the subtle look", async () => {
+
+		mount({});
+
+		expect(document.querySelector("tile-button")?.getAttribute("look")).toBe("subtle");
+
+	});
+
 	it("should be disabled while no criterion narrows the collection", async () => {
 
 		mount({});

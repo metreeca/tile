@@ -33,7 +33,7 @@ import type { Collection, Collections } from "@metreeca/tile-data/store/collecti
 /**
  * Creates a collection reset.
  *
- * Shows a {@link @metreeca/tile-cell!button.Button button} marked by the {@link @metreeca/tile-cell!icon Reset}
+ * Shows a subtle {@link @metreeca/tile-cell!button.Button button} marked by the {@link @metreeca/tile-cell!icon Reset}
  * glyph, removing every criterion the reader set on the collection, so that every lens handed the same collection,
  * lists, facets and counters alike, follows along. The button is disabled while no criterion narrows the collection,
  * and is named for assistive technology by its `Clear Filters` hint, the glyph standing alone.
@@ -67,6 +67,8 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 	return <Button
 
 		disabled={Object.keys(collection.criteria).length === 0}
+
+		look={"subtle"}
 
 		icon={<Icon.Reset/>}
 		title={"Clear Filters"}

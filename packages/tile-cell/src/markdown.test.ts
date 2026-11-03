@@ -18,11 +18,11 @@ import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Mark } from "./mark.js";
+import { Markdown } from "./markdown.js";
 
 
-function mount(text: string, meta?: Parameters<typeof Mark>[0]["meta"]): void {
-	act(() => render(createElement(Mark, { meta, children: text }), document.body));
+function mount(text: string, meta?: Parameters<typeof Markdown>[0]["meta"]): void {
+	act(() => render(createElement(Markdown, { meta, children: text }), document.body));
 }
 
 function texts(selector: string): string[] {
@@ -44,16 +44,16 @@ afterEach(async () => {
 });
 
 
-describe("Mark", () => {
+describe("Markdown", () => {
 
 	describe("document", () => {
 
-		it("should render the text in a tile-mark element", async () => {
+		it("should render the text in a tile-markdown element", async () => {
 
 			mount("# Title\n\nSome *text*.");
 
-			expect(texts("tile-mark > h1")).toEqual(["Title"]);
-			expect(texts("tile-mark > p > em")).toEqual(["text"]);
+			expect(texts("tile-markdown > h1")).toEqual(["Title"]);
+			expect(texts("tile-markdown > p > em")).toEqual(["text"]);
 
 		});
 
@@ -62,7 +62,7 @@ describe("Mark", () => {
 			mount("---\ntitle: Hidden\n---\n\nShown");
 
 			expect(document.body.textContent).not.toContain("Hidden");
-			expect(texts("tile-mark > p")).toEqual(["Shown"]);
+			expect(texts("tile-markdown > p")).toEqual(["Shown"]);
 
 		});
 

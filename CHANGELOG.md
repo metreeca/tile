@@ -16,7 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   narrowing them, and `useQuery` keeping the page criteria in the browser location
 - `@metreeca/tile-lens` — `Frame` resource frame, `Table` collection table, `Tally` and `Range` facets, `Clear`
   collection reset and `Count` collection counter
-- `@metreeca/tile-cell` — `Mark` Markdown document, `Toc` table of contents and `Path` breadcrumb trail, disclosure
+- `@metreeca/tile-cell` — `Markdown` document, `Toc` table of contents and `Path` breadcrumb trail, disclosure
   states on `Button` (`expanded`, `controls`), query entries on links, and the `Icon.Reset` and `Icon.Options` glyph
   roles
 - `@metreeca/tile-hive` — `Card` resource summary and `Info` property panel

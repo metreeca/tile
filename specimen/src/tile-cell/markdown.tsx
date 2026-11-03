@@ -4,7 +4,7 @@
  * @module
  */
 
-import { Mark } from "@metreeca/tile-cell/mark";
+import { Markdown } from "@metreeca/tile-cell/markdown";
 import "./index.css";
 
 
@@ -74,14 +74,14 @@ export function Marks() {
 	return <>
 
 		<p>A mark renders a Markdown text as a document, as the outline linking into it, or through the values its
-			front matter declares: here <strong><Mark meta="title">{text}</Mark></strong> by <Mark
-				meta={({ author }) => <em>{author}</em>}>{text}</Mark>.</p>
+			front matter declares: here <strong><Markdown meta="title">{text}</Markdown></strong> by <Markdown
+				meta={({ author }) => <em>{author}</em>}>{text}</Markdown>.</p>
 
-		<Mark meta="toc">{text}</Mark>
+		<Markdown meta="toc">{text}</Markdown>
 
 		<hr/>
 
-		<Mark>{text}</Mark>
+		<Markdown>{text}</Markdown>
 
 	</>;
 }

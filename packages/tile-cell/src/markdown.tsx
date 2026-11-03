@@ -40,7 +40,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
-import "./mark.css";
+import "./markdown.css";
 import { type Entry, Toc } from "./toc.js";
 
 
@@ -115,7 +115,7 @@ export interface Meta {
  *
  * @returns The rendered document, outline or front matter value
  */
-export function Mark({
+export function Markdown({
 
 	meta,
 
@@ -166,7 +166,7 @@ export function Mark({
 	}, [meta]);
 
 
-	return useMemo(() => meta === undefined ? createElement("tile-mark", {}, render(transform(children)))
+	return useMemo(() => meta === undefined ? createElement("tile-markdown", {}, render(transform(children)))
 		: meta === "toc" ? <Toc entries={outline(transform(children))}/>
 			: typeof meta === "function" ? meta(entries(children))
 				: entries(children)[meta]

@@ -20,7 +20,7 @@
  * leaving tables to the design system and the outline of a document to the table of contents widget drawing it.
  */
 
-tile-mark {
+tile-markdown {
 
     display: block;
 
@@ -35,24 +35,24 @@ tile-mark {
         padding: var(--tile--spacing-050) var(--tile--spacing-100);
         margin-bottom: var(--tile--spacing-100);
 
-        border-left: var(--tile--spacing-025) var(--tile--border-style) var(--tile-mark-alert);
+        border-left: var(--tile--spacing-025) var(--tile--border-style) var(--tile-markdown-alert);
 
         /* The stroke roles hold AA contrast on the stripe in both schemes, as stated where they are declared. */
 
         &.markdown-alert-note, &.markdown-alert-important {
-            --tile-mark-alert: var(--tile--color-info-stroke);
+            --tile-markdown-alert: var(--tile--color-info-stroke);
         }
 
         &.markdown-alert-tip {
-            --tile-mark-alert: var(--tile--color-pass-stroke);
+            --tile-markdown-alert: var(--tile--color-pass-stroke);
         }
 
         &.markdown-alert-warning {
-            --tile-mark-alert: var(--tile--color-warn-stroke);
+            --tile-markdown-alert: var(--tile--color-warn-stroke);
         }
 
         &.markdown-alert-caution {
-            --tile-mark-alert: var(--tile--color-fail-stroke);
+            --tile-markdown-alert: var(--tile--color-fail-stroke);
         }
 
         & > .markdown-alert-title {
@@ -65,7 +65,7 @@ tile-mark {
 
             font-weight: var(--tile--font-weight-strong);
 
-            color: var(--tile-mark-alert);
+            color: var(--tile-markdown-alert);
 
             & > svg {
                 width: 1em;

@@ -61,6 +61,11 @@
         font-weight: var(--tile--font-weight);
         line-height: var(--tile--line-height);
 
+        /* Greyscale antialiasing keeps macOS from emboldening text; other platforms ignore it. */
+
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
     }
 
     /*

@@ -107,6 +107,12 @@ export interface Collection<S extends Lazy<ResourceShape>, P extends Collections
 		 */
 		readonly field: P
 
+		/**
+		 * The criteria fixing which items the collection holds at all, beyond the reach of the reader: every lens
+		 * retrieves under them, over any reader's criterion on the same key, and {@link Collection.clear} keeps them.
+		 */
+		readonly scope: Criteria
+
 	}
 
 
@@ -182,7 +188,7 @@ export function getCollection(shape: Lazy<ResourceShape>): Identifier {
  * @returns A collection narrowed by the reader's `criteria`
  *
  * @throws {@link !TypeError TypeError} If `field` is omitted and the shape holds no collection of resources, or
- *     several of them, or if `criteria` states anything other than narrowing criteria
+ *     several of them, or if `scope` or `criteria` state anything other than narrowing criteria
  */
 export function createCollection<S extends Lazy<ResourceShape>, P extends Collections<S> = Sole<S>>({
 
@@ -190,6 +196,7 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	shape,
 	field,
 
+	scope = {},
 	criteria = {}
 
 }: {
@@ -211,6 +218,11 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	readonly field?: Optional<P>
 
 	/**
+	 * The criteria fixing which items the collection holds at all, beyond the reach of the reader.
+	 */
+	readonly scope?: Optional<Criteria>
+
+	/**
 	 * The reader's criteria the collection starts from.
 	 */
 	readonly criteria?: Optional<Criteria>
@@ -222,7 +234,8 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 		target: {
 			entry,
 			shape,
-			field: field ?? getCollection(shape) as P // ;(cast) the field inferred from the shape is Sole<S>, P's default
+			field: field ?? getCollection(shape) as P, // ;(cast) the field inferred from the shape is Sole<S>, P's default
+			scope: narrowing(scope)
 		},
 
 		criteria: narrowing(criteria),

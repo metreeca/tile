@@ -105,6 +105,30 @@ describe("createCollection()", () => {
 
 	});
 
+	describe("scope", () => {
+
+		it("should hold no scope by default", async () => {
+			expect(createCollection({ entry, shape: Catalogue }).target.scope).toEqual({});
+		});
+
+		it("should take the scope as given, apart from the reader's criteria", async () => {
+
+			const collection = createCollection({ entry, shape: Catalogue, scope: { "?other": ["https://example.com/o/1"] } });
+
+			expect(collection.target.scope).toEqual({ "?other": ["https://example.com/o/1"] });
+			expect(collection.criteria).toEqual({});
+
+		});
+
+		it.each([
+			["order", { "^label": 1 }],
+			["focus", { "+label": ["one"] }]
+		])("should reject %s criteria", async (_, scope) => {
+			expect(() => createCollection({ entry, shape: Catalogue, scope })).toThrow(TypeError);
+		});
+
+	});
+
 	describe("criteria", () => {
 
 		it("should start from no criterion by default", async () => {
@@ -192,6 +216,20 @@ describe("createCollection()", () => {
 
 		});
 
+		it("should keep the scope", async () => {
+
+			const collection = createCollection({
+				entry,
+				shape: Catalogue,
+				scope: { "?other": ["https://example.com/o/1"] },
+				criteria: { "~label": "chemistry" }
+			}).clear();
+
+			expect(collection.target.scope).toEqual({ "?other": ["https://example.com/o/1"] });
+			expect(collection.criteria).toEqual({});
+
+		});
+
 	});
 
 });
@@ -210,14 +248,15 @@ describe("useCollection()", () => {
 	function mount(
 		store: Backend,
 		target: string = entry,
-		criteria?: Criteria
+		criteria?: Criteria,
+		scope?: Criteria
 	): () => Collection<typeof Catalogue, "members"> {
 
 		const seen = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
 
 		function Probe() {
 
-			const collection = useCollection({ entry: target, shape: Catalogue, criteria });
+			const collection = useCollection({ entry: target, shape: Catalogue, scope, criteria });
 
 			seen(collection);
 
@@ -261,11 +300,20 @@ describe("useCollection()", () => {
 
 	});
 
+	it("should resolve reference options in the scope against the current location", async () => {
+
+		vi.stubGlobal("location", new URL("https://example.com/catalogue/"));
+
+		expect(mount(backend({}), entry, undefined, { "?other": ["/others/1"] })().target.scope)
+			.toEqual({ "?other": ["https://example.com/others/1"] });
+
+	});
+
 	it("should hand over the target and the criteria", async () => {
 
 		const collection = mount(backend({}))();
 
-		expect(collection.target).toEqual({ entry, shape: Catalogue, field: "members" });
+		expect(collection.target).toEqual({ entry, shape: Catalogue, field: "members", scope: {} });
 		expect(collection.target.shape).toBe(Catalogue);
 		expect(collection.criteria).toEqual({});
 
@@ -287,7 +335,7 @@ describe("useCollection()", () => {
 
 	describe("onChange", () => {
 
-		function observed(criteria = {}): {
+		function observed(criteria = {}, scope = {}): {
 
 			collection: () => Collection<typeof Catalogue, "members">
 			changes: ReturnType<typeof vi.fn<(criteria: object) => void>>
@@ -299,7 +347,7 @@ describe("useCollection()", () => {
 
 			function Probe() {
 
-				collections(useCollection({ entry, shape: Catalogue, criteria, onChange: changes }));
+				collections(useCollection({ entry, shape: Catalogue, scope, criteria, onChange: changes }));
 
 				return null;
 
@@ -318,6 +366,20 @@ describe("useCollection()", () => {
 			await act(async () => void collection().filter({ "?university": ["u1"] }));
 
 			expect(changes).toHaveBeenLastCalledWith({ "~label": "art", "?university": ["u1"] });
+
+			await act(async () => void collection().clear());
+
+			expect(changes).toHaveBeenLastCalledWith({});
+
+		});
+
+		it("should leave the scope out of the reader's criteria", async () => {
+
+			const { collection, changes } = observed({}, { "?university": ["u1"] });
+
+			await act(async () => void collection().filter({ "~label": "art" }));
+
+			expect(changes).toHaveBeenLastCalledWith({ "~label": "art" });
 
 			await act(async () => void collection().clear());
 

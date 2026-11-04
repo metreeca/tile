@@ -46,7 +46,7 @@ describe("useCount()", () => {
 		return vi.fn(async () => immutable({ id: entry, members: [{ count }] }));
 	}
 
-	function mount(store: Backend, criteria = {}): {
+	function mount(store: Backend, criteria = {}, scope = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
 		count: () => Relay<CountCases>
@@ -58,7 +58,7 @@ describe("useCount()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
 
 			collections(collection);
 			counts(useCount(collection));
@@ -94,6 +94,32 @@ describe("useCount()", () => {
 		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
 			entry,
 			model: { members: { "?university": ["u1"], "~label": "item", "count=count:": {} } }
+		})));
+
+	});
+
+	it("should count only the items the collection scope lets through", async () => {
+
+		const lookup = counting(3);
+
+		mount(backend(lookup), { "~label": "item" }, { "?university": ["u1"] });
+
+		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
+			entry,
+			model: { members: { "~label": "item", "?university": ["u1"], "count=count:": {} } }
+		})));
+
+	});
+
+	it("should keep the scope over a reader's criterion on the same key", async () => {
+
+		const lookup = counting(3);
+
+		mount(backend(lookup), { "?university": ["u2"] }, { "?university": ["u1"] });
+
+		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
+			entry,
+			model: { members: { "?university": ["u1"], "count=count:": {} } }
 		})));
 
 	});

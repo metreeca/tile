@@ -136,7 +136,7 @@ describe("useMembers()", () => {
 		}));
 	}
 
-	function mount(lookup: unknown, criteria = {}): {
+	function mount(lookup: unknown, criteria = {}, scope = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
 		members: () => Binding
@@ -152,7 +152,7 @@ describe("useMembers()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
 
 			collections(collection);
 
@@ -203,6 +203,24 @@ describe("useMembers()", () => {
 			members: {
 				label: {},
 				"?university": ["u1"], "~label": "item",
+				"^label": "asc",
+				"@": 0,
+				"#": batch
+			}
+		}));
+
+	});
+
+	it("should retrieve only the members the collection scope lets through", async () => {
+
+		const lookup = catalogue();
+
+		mount(lookup, { "~label": "item" }, { "?university": ["u1"] });
+
+		await vi.waitFor(() => expect(models(lookup)).toContainEqual({
+			members: {
+				label: {},
+				"~label": "item", "?university": ["u1"],
 				"^label": "asc",
 				"@": 0,
 				"#": batch

@@ -39,7 +39,6 @@ import { createMembers, type Ordering } from "./members.core.js";
 export type { Ordering } from "./members.core.js";
 
 
-
 /**
  * Collection members cases.
  *
@@ -155,48 +154,49 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
  * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
  * @throws {@link !TypeError TypeError} If `batch` isn't a positive integer
  */
-export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<S>, T extends object>(
-	collection: Collection<S, P>,
-	{
+export function useMembers<
+	S extends Lazy<ResourceShape>,
+	P extends Collections<S>,
+	T extends object
+>(collection: Collection<S, P>, {
 
-		model,
-		order,
-		batch
+	model,
+	order,
+	batch
 
-	}: {
+}: {
 
-		/**
-		 * The template or projection stating the values wanted from each item, checked against the item shape so
-		 * that a model asking for values the items lack fails to compile: `{ label: {} }` lists the item labels.
-		 */
-		readonly model: T & Admitted<S, P, T>
+	/**
+	 * The template or projection stating the values wanted from each item, checked against the item shape so
+	 * that a model asking for values the items lack fails to compile: `{ label: {} }` lists the item labels.
+	 */
+	readonly model: T & Admitted<S, P, T>
 
-		/**
-		 * The sort order the items start in, as expressions mapped to their direction: `{ label: "asc" }`.
-		 */
-		readonly order?: Ordering
+	/**
+	 * The sort order the items start in, as expressions mapped to their direction: `{ label: "asc" }`.
+	 */
+	readonly order?: Ordering
 
-		/**
-		 * The number of items in each batch. Each batch is retrieved by a request of its own, so a batch size within
-		 * the server cap on response size lets a long collection be read in full, however many items it holds.
-		 *
-		 * @defaultValue 100
-		 */
-		readonly batch?: number
+	/**
+	 * The number of items in each batch. Each batch is retrieved by a request of its own, so a batch size within
+	 * the server cap on response size lets a long collection be read in full, however many items it holds.
+	 *
+	 * @defaultValue 100
+	 */
+	readonly batch?: number
 
-	}
-): Relay<MembersCases<S, P, T>> {
+}): Relay<MembersCases<S, P, T>> {
 
 	const store = useStore();
 
-	const { target: { entry, shape, field }, criteria } = collection;
+	const { target: { entry, shape, field, scope }, criteria } = collection;
 
-	const members = useModel(() => createMembers({ order, batch }), [entry, field, criteria, model, order, batch]);
+	const members = useModel(() => createMembers({ order, batch }), [entry, field, scope, criteria, model, order, batch]);
 
 	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the items are typed by the
 											   // signature
 
-	const query = { ...model, ...criteria, ...ranks(members.order) };
+	const query = { ...model, ...criteria, ...scope, ...ranks(members.order) };
 	const basis = { entry, field, query }; // the collection the items on show are drawn from
 
 	const binding = createRelay(useEntry<Batch, { readonly basis: typeof basis, readonly limit: number }>({
@@ -209,7 +209,8 @@ export function useMembers<S extends Lazy<ResourceShape>, P extends Collections<
 			? page(shown.limit).then(items => opt(items, items => [...shown.state, ...items]))
 			: pages(members.limit),
 
-		modify: () => ({ basis, limit: members.limit }) // what this render asks for, as the items it retrieves answer it
+		modify: () => ({ basis, limit: members.limit }) // what this render asks for, as the items it retrieves answer
+														// it
 
 	}));
 

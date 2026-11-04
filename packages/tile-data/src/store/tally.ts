@@ -250,7 +250,7 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	const store = useStore();
 
-	const { target: { entry, shape, field }, criteria } = collection;
+	const { target: { entry, shape, field, scope }, criteria } = collection;
 
 	const naming = resolveNaming(shape, field, expression, label);
 	const text = naming ?? expression;
@@ -276,8 +276,8 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	};
 
-	const baseline = useBuckets(specs);
-	const matching = useBuckets({ ...others, ...specs });
+	const baseline = useBuckets({ ...scope, ...specs });
+	const matching = useBuckets({ ...others, ...scope, ...specs });
 
 	return createRelay(baseline<Outcome<TallyCases>>({
 

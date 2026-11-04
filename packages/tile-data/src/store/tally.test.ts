@@ -179,8 +179,9 @@ describe("useTally()", () => {
 		return lookup.mock.calls.map(([{ model }]) => model);
 	}
 
-	function mount(store: Backend, { criteria = {}, expression = "category", label, size }: {
+	function mount(store: Backend, { scope = {}, criteria = {}, expression = "category", label, size }: {
 
+		readonly scope?: Criteria
 		readonly criteria?: Criteria
 
 		readonly expression?: string
@@ -199,7 +200,7 @@ describe("useTally()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
 
 			collections(collection);
 			bindings(useTally(collection, expression, {
@@ -264,6 +265,33 @@ describe("useTally()", () => {
 					"@": 0, "#": 0
 				}
 			}));
+
+		});
+
+		it("should retrieve the options only within the collection scope, with and without the other criteria", async () => {
+
+			const lookup = options([]);
+
+			mount(backend(lookup), { scope: { "?university": ["u1"] }, criteria: { "?region": ["r1"] } });
+
+			await vi.waitFor(() => expect(models(lookup)).toEqual(expect.arrayContaining([
+				{
+					members: {
+						"?university": ["u1"],
+						"value=category": {}, "count=count:": {},
+						"^count:": -1, "^category": 2,
+						"@": 0, "#": 0
+					}
+				},
+				{
+					members: {
+						"?region": ["r1"], "?university": ["u1"],
+						"value=category": {}, "count=count:": {},
+						"^count:": -1, "^category": 2,
+						"@": 0, "#": 0
+					}
+				}
+			])));
 
 		});
 

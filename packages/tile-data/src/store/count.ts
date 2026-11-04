@@ -100,7 +100,7 @@ export type CountCases = {
  */
 export function useCount<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
-	target: { entry, shape, field },
+	target: { entry, shape, field, scope },
 	criteria
 
 }: Collection<S, P>): Relay<CountCases> {
@@ -108,7 +108,7 @@ export function useCount<S extends Lazy<ResourceShape>, P extends Collections<S>
 	const store = useStore();
 
 	const holder: Lazy<ResourceShape> = shape; // the generic shape accepts any model: the count is typed by the signature
-	const model: Template = { [field]: { ...criteria, "count=count:": {} } };
+	const model: Template = { [field]: { ...criteria, ...scope, "count=count:": {} } };
 
 	return createRelay(useEntry({
 

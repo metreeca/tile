@@ -47,8 +47,9 @@ describe("useRange()", () => {
 		return vi.fn(async () => immutable({ id: entry, members: [{ min, max }] }));
 	}
 
-	function mount(store: Backend, { criteria = {} }: {
+	function mount(store: Backend, { scope = {}, criteria = {} }: {
 
+		readonly scope?: Criteria
 		readonly criteria?: Criteria
 
 	} = {}): {
@@ -63,7 +64,7 @@ describe("useRange()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
 
 			collections(collection);
 			ranges(useRange(collection, "year"));
@@ -100,6 +101,24 @@ describe("useRange()", () => {
 			model: {
 				members: {
 					"?university": ["u1"], ">=year": 3,
+					"min=min:year": {}, "max=max:year": {}
+				}
+			}
+		})));
+
+	});
+
+	it("should retrieve the range of the items the collection scope lets through", async () => {
+
+		const lookup = spanning(1, 9);
+
+		mount(backend(lookup), { scope: { "?university": ["u1"] }, criteria: { ">=year": 3 } });
+
+		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
+			entry,
+			model: {
+				members: {
+					">=year": 3, "?university": ["u1"],
 					"min=min:year": {}, "max=max:year": {}
 				}
 			}

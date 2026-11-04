@@ -14,6 +14,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-data/store` — collection lenses sharing one collection across a screen: `useMembers` growing the
   items a batch at a time, `useActions` adding and removing them, `useCount`, `useKeywords`, `useTally` and `useRange`
   narrowing them, and `useQuery` keeping the page criteria in the browser location
+- `@metreeca/tile-data/store` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
+  reach of the reader: every lens retrieves under them, and clearing the collection keeps them in place
 - `@metreeca/tile-data/asset` — `useAsset` retrieving a static asset such as a Markdown guide by its path alone, in
   the media type its extension names, and dropping the previous text as soon as the path changes
 - `@metreeca/tile-lens` — `Frame` resource frame, `Table` collection table, `Tally` and `Range` facets, `Clear`

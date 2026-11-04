@@ -70,7 +70,7 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  *
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  * @throws {@link !TypeError TypeError} If `field` is omitted and the shape holds no collection of resources, or
- *     several of them, or if `criteria` states anything other than narrowing criteria
+ *     several of them, or if `scope` or `criteria` state anything other than narrowing criteria
  */
 export function useCollection<S extends Lazy<ResourceShape>, P extends Collections<S> = Sole<S>>({
 
@@ -78,6 +78,7 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	shape,
 	field,
 
+	scope,
 	criteria,
 
 	onChange
@@ -102,6 +103,13 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 
 
 	/**
+	 * The criteria fixing which items the collection holds at all, beyond the reach of the reader: never cleared nor
+	 * handed to `onChange`, and taking effect again whenever they change. Options matched against values the shape
+	 * types as references may be relative to the current location, and are handed over resolved.
+	 */
+	readonly scope?: Criteria
+
+	/**
 	 * The reader's criteria the collection starts from, read as it is created: criteria handed over later, as those
 	 * written back by `onChange`, leave the collection as it stands until it is created again for another reason.
 	 * Options matched against values the shape types as references may be relative to the current location, and are
@@ -119,15 +127,13 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 
 } & ([Sole<S>] extends [never] ? { readonly field: P } : unknown)): Collection<S, P> {
 
-	const { entry, query: $criteria } = resolveTarget({
-		entry: relative,
-		shape,
-		field: field ?? getCollection(shape),
-		query: criteria ?? {}
-	});
+	const target = { entry: relative, shape, field: field ?? getCollection(shape) };
 
-	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, criteria: $criteria }),
-		[entry, shape, field]
+	const { entry, query: $scope } = resolveTarget({ ...target, query: scope ?? {} });
+	const { query: $criteria } = resolveTarget({ ...target, query: criteria ?? {} });
+
+	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, scope: $scope, criteria: $criteria }),
+		[entry, shape, field, $scope]
 	);
 
 	// the criteria last handed over, from those the collection is created with, so that only changes reach onChange

@@ -144,7 +144,7 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	const store = useStore();
 
-	const { target: { entry, shape, field }, criteria } = collection;
+	const { target: { entry, shape, field, scope }, criteria } = collection;
 
 	const lower: `>=${Expression}` = `>=${expression}`;
 	const upper: `<=${Expression}` = `<=${expression}`;
@@ -153,6 +153,7 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 	const model: Template = {
 		[field]: {
 			...criteria,
+			...scope,
 			[`min=min:${expression}`]: {},
 			[`max=max:${expression}`]: {}
 		}

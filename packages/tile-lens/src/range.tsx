@@ -36,7 +36,7 @@ import type { RangeCases } from "@metreeca/tile-data/store/range";
 import type { Type } from "@metreeca/tile-type";
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
-import { createFold } from "./fold.core.js";
+import { createFold } from "./index.core.js";
 import { cancel, Disclosure, leave } from "./index.js";
 import "./range.css";
 

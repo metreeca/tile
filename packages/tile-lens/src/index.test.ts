@@ -16,7 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { createFold } from "./fold.core.js";
+import { createFold } from "./index.core.js";
 
 
 describe("createFold", () => {

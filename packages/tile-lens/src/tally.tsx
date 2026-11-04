@@ -36,7 +36,7 @@ import { useModel } from "@metreeca/tile-data/model";
 import type { TallyBucket, TallyCases } from "@metreeca/tile-data/store/tally";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
-import { createFold } from "./fold.core.js";
+import { createFold } from "./index.core.js";
 import { cancel, Disclosure, leave } from "./index.js";
 import "./tally.css";
 

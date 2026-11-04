@@ -443,6 +443,40 @@ describe("useTally()", () => {
 
 		});
 
+		it("should order the literal options the other criteria leave out by value, the unvalued option first", async () => {
+
+			const { options: binding } = mount(backend(options(
+				[{ value: "d", count: 9 }, { value: "c", count: 8 }, { count: 7 }, { value: "a", count: 6 }, { value: "b", count: 5 }],
+				[{ value: "b", count: 3 }]
+			)), { criteria: { "?region": ["r1"], "?category": ["d", "c"] } });
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state })).toEqual([
+				{ value: "c", label: "c", count: 0, selected: true },
+				{ value: "d", label: "d", count: 0, selected: true },
+				{ value: "b", label: "b", count: 3, selected: false },
+				{ value: null, count: 0, selected: false },
+				{ value: "a", label: "a", count: 0, selected: false }
+			]));
+
+		});
+
+		it("should order the resource options the other criteria leave out by label", async () => {
+
+			const { options: binding } = mount(backend(options(
+				[
+					{ value: "https://example.com/t1", label: "Zoology", count: 9 },
+					{ value: "https://example.com/t2", label: "Music", count: 7 },
+					{ value: "https://example.com/t3", label: "Arts", count: 5 }
+				],
+				[]
+			)), { criteria: { "?region": ["r1"] }, expression: "topic", label: "name" });
+
+			await vi.waitFor(() => expect(binding()({ ready: ({ state }) => state.map(({ label }) => label) })).toEqual([
+				"Arts", "Music", "Zoology"
+			]));
+
+		});
+
 		it("should name literal options as text", async () => {
 
 			const { options: binding } = mount(backend(options([{ value: 2020, count: 3 }])), { expression: "year" });

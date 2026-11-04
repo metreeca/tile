@@ -27,6 +27,7 @@ import type { ResourceShape } from "@metreeca/blue/resource";
 import { getShapeBranches } from "@metreeca/blue/union";
 import { effective, items, type Range } from "@metreeca/blue/value";
 import { error, isArray, isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
+import { ascending, by } from "@metreeca/core/order";
 import { createRelay, type Option as Outcome, type Relay } from "@metreeca/core/relay";
 import { equals, immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
@@ -61,8 +62,9 @@ export type TallyCases = {
 	readonly ready: {
 
 		/**
-		 * The options on show: selected first, then the others, each set leading with the values the other criteria
-		 * let through, by decreasing count then label; the values they leave out count no items.
+		 * The options on show. Selected options come first, then the others. In each set, the values the other
+		 * criteria let through lead by decreasing count, ties ordered by label for resources and by value for
+		 * literals. The values left out follow with no items, in the same order, the option for unvalued items first.
 		 */
 		readonly state: readonly TallyBucket[]
 
@@ -360,8 +362,8 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 	}
 
 	/**
-	 * Lists the options on show: selected first, then the others, those the other criteria let through leading each
-	 * set; the options they leave out are retrieved under no criteria and count no items.
+	 * Lists the options on show, in the order {@link TallyCases} `ready` states for them. The options the other
+	 * criteria leave out are taken from the retrieval under no criteria, and count no items.
 	 */
 	function merge(base: readonly Row[], match: readonly Row[]): readonly TallyBucket[] {
 
@@ -370,9 +372,12 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 			selected: selected.some(value => equals(value, row.value))
 		});
 
+		const ranked = by(({ value, label }: Row) => naming ? label : value, ascending);
+
 		const matched = match.map(tagged);
 		const missing = base
 			.filter(({ value }) => !match.some(row => equals(row.value, value)))
+			.sort(ranked) // sorts the fresh array filter() returns, as toSorted() is beyond the ES2022 library
 			.map(row => tagged({ ...row, count: 0 }));
 
 		return [

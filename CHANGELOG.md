@@ -49,6 +49,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
 - `@metreeca/tile-cell/link` — `strong` links take the link colour, and `subtle` and `strong` links are underlined
   under the pointer; every link draws its underline within the line, so containers clipping their content keep it
+- `@metreeca/tile-hive/tabs` — tab labels, and the menu standing in for them where they would not fit, sit closer to
+  the rule closing off the strip
 
 ### Fixed
 

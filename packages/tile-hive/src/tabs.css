@@ -37,7 +37,7 @@ tile-tabs {
 
         & > label {
 
-            padding-bottom: var(--tile--spacing-075);
+            padding-bottom: var(--tile--spacing-050);
             margin-bottom: calc(-1 * var(--tile--border-width)); /* The mark sits on the rule, not above it. */
             cursor: pointer;
 
@@ -126,7 +126,7 @@ tile-tabs {
 
         display: flex;
 
-        padding-bottom: var(--tile--spacing-075);
+        padding-bottom: var(--tile--spacing-050);
 
         border-bottom-style: var(--tile--border-style);
 

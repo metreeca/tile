@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { difference, some, type Some, unique } from "@metreeca/core/arrays";
-import { createState } from "@metreeca/core/state";
-import { equals } from "@metreeca/core/values";
+import { difference, some, type Some, unique } from "../Core/src/types/arrays.js";
+import { createState } from "../Core/src/patterns/state.js";
+import { equals } from "../Core/src/types/values.js";
 
 
 export interface Selection<T> {

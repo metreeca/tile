@@ -43,12 +43,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — top-level headings stand further off the text preceding them, and a table closing on a column with
   an empty header gives that column the room the others leave, keeping the leading ones as narrow as their content
 - `@metreeca/tile` — text is set with greyscale antialiasing on macOS, reading lighter at the same weights
+- `@metreeca/tile` — inline code sits on a tint of its own ink at close to the size of the text around it, and table
+  text is set at the size of the body copy rather than the small size, matching the prose it sits in
 - `@metreeca/tile-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
 - `@metreeca/tile-cell/link` — `strong` links take the link colour, and `subtle` and `strong` links are underlined
   under the pointer; every link draws its underline within the line, so containers clipping their content keep it
 
 ### Fixed
 
+- `@metreeca/tile` — code in a preformatted block keeps its line breaks rather than running onto a single line
 - `@metreeca/tile-cell` — subtle links give hover feedback, and the logo mark is centred on the capitals beside it
 - `@metreeca/tile-hive/toast` — toast marks set further apart from their message
 - `@metreeca/tile-hive/shell` — the waiting mark stands over the control it replaces, so the header end holds still

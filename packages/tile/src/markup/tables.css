@@ -20,7 +20,6 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
     margin-bottom: var(--tile--spacing-150);
-    font-size: var(--tile--font-size-small);
 }
 
 /* The stripe is painted rather than assigned to the background token, which derives from it and would cycle. */

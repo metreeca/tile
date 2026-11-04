@@ -190,7 +190,10 @@ tile-note {
         padding: var(--tile--spacing-100) 0;
 
         border-style: var(--tile--border-style) none;
+        border-radius: 0;
         overflow: auto;
+
+        background-color: transparent; /* Set apart by its rules rather than by the tint of inline code. */
 
         white-space: pre;
         font-size: 0.75em;

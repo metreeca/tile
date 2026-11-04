@@ -21,6 +21,12 @@
  * scaling ladder instead.
  */
 
+@property --tile--spacing-010 {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0.1em;
+}
+
 @property --tile--spacing-025 {
     syntax: "*";
     inherits: true;

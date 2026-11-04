@@ -128,6 +128,7 @@ describe("css", () => {
 	it("takes a step off the ladder a box token is shaped on", () => {
 
 		expectTypeOf(css({ padding: "spacing100" })).toEqualTypeOf<Style>();
+		expectTypeOf(css({ padding: "spacing010" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ borderRadius: "borderRadius050" })).toEqualTypeOf<Style>();
 		expectTypeOf(css({ boxShadow: "boxShadowRaised" })).toEqualTypeOf<Style>();
 

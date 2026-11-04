@@ -27,8 +27,8 @@ tile-info {
     /* Consecutive panels are set apart by a rule, so a screen groups properties by panel. */
 
     & + & {
-        margin-top: var(--tile--spacing-100);
-        padding-top: var(--tile--spacing-100);
+        margin-top: var(--tile--spacing-075);
+        padding-top: var(--tile--spacing-075);
         border-top-style: var(--tile--border-style);
     }
 
@@ -60,7 +60,7 @@ tile-info {
         display: grid;
         grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
         align-items: baseline;
-        gap: var(--tile--spacing-025) var(--tile--spacing-050);
+        gap: var(--tile--spacing-010) var(--tile--spacing-050);
 
         margin: 0;
 
@@ -100,7 +100,10 @@ tile-info {
                 max-width: 100%;
             }
 
-            /* A value listing several items sets them one per line, each marked unless it stands alone. */
+            /*
+             * A value listing several items sets them one per line, each marked unless it stands alone, with no step
+             * between items, so the list reads as a single value rather than as a run of separate entries.
+             */
 
             & > ul {
 
@@ -109,6 +112,10 @@ tile-info {
                 list-style-type: none;
 
                 & > li {
+
+                    & + li {
+                        margin-top: 0;
+                    }
 
                     /* The room a marked item leaves to its chevron: the glyph and the gap before the item. */
 

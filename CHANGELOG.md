@@ -30,6 +30,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   their own, so links hold AA contrast whatever the brand supplies
 - `@metreeca/tile-cell/markdown` — image width hints, so `chart.png#50` sets a picture at half the width of its block
 - `@metreeca/tile` — an image standing alone in a paragraph reads as a figure, centred and scaled down to the measure
+- `@metreeca/tile` — `spacing010` spacing step, the narrowest on the ladder, for compact runs such as the rows of a
+  property panel, which can now sit closer together than the 0.25em step allowed
 
 ### Changed
 

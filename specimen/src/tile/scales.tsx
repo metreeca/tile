@@ -28,6 +28,7 @@ import "./scales.css";
 
 const spacings: ReadonlyArray<Entry> = [
 
+	[ tile.spacing010, "the narrowest step, between the rows of a property panel" ],
 	[ tile.spacing025, "gaps inside a control, and between list items" ],
 	[ tile.spacing050, "cell and field padding" ],
 	[ tile.spacing075, "the space under a description or a second-level heading" ],

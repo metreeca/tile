@@ -40,6 +40,7 @@
  */
 export const spacings = {
 
+	spacing010: "--tile--spacing-010",
 	spacing025: "--tile--spacing-025",
 	spacing050: "--tile--spacing-050",
 	spacing075: "--tile--spacing-075",

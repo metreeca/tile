@@ -43,13 +43,13 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  * Creates the {@link Collection} the lenses rendered by the component share, held for the lifetime of the component:
  * the component renders again after every revision that changes the reader's criteria, and the lenses handed the
  * collection follow along. The collection is created again, and the reader's criteria start over, whenever the
- * resource, the shape or the collecting property change, so that a component moving on to another collection never
- * carries over the criteria the reader set on the previous one, which may not even apply to it.
+ * resource, the shape, the collecting property or the scope change, so that a component moving on to another
+ * collection never carries over the criteria the reader set on the previous one, which may not even apply to it.
  *
  * The collecting property may be left for the shape to settle, as
  * {@link "store/collection.core"!createCollection createCollection} does, and is typed against the shape: only a
  * collection of resources the shape holds is accepted, and omitting it fails to compile unless the shape holds exactly
- * one, so that the error reaches the author before it reaches the reader.
+ * one, so that the error reaches the author at build time rather than the reader at run time.
  *
  * The reader's criteria survive reloads and navigation where the page keeps them in the location, handing them over as
  * the starting criteria and taking them back as the reader revises them, once per catalogue page and with no wiring:
@@ -57,20 +57,20 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  * ```tsx
  * const [query, setQuery] = useQuery();
  *
- * const courses = useCollection({ entry: "/courses/", shape: Course, criteria: query, onChange: setQuery });
+ * const courses = useCollection({ entry: "/courses/", shape: Course, query, onChange: setQuery });
  * ```
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property collecting the items, inferred from `field` or, where omitted, from the shape
  *
- * @param options The collection to be shown and the criteria it starts from; `criteria` is read as the component first
- *     renders and whenever the collection is created again, as for another resource, shape or collecting property
+ * @param options The collection to be shown and the criteria it starts from; `query` is read on the first render and
+ *     whenever the collection is created again, as for another resource, shape, collecting property or scope
  *
  * @returns The shared collection, as it stands for this render
  *
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  * @throws {@link !TypeError TypeError} If `field` is omitted and the shape holds no collection of resources, or
- *     several of them, or if `scope` or `criteria` state anything other than narrowing criteria
+ *     several of them, or if `scope` or `query` state anything other than narrowing criteria
  */
 export function useCollection<S extends Lazy<ResourceShape>, P extends Collections<S> = Sole<S>>({
 
@@ -79,7 +79,7 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	field,
 
 	scope,
-	criteria,
+	query,
 
 	onChange
 
@@ -110,12 +110,11 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	readonly scope?: Criteria
 
 	/**
-	 * The reader's criteria the collection starts from, read as it is created: criteria handed over later, as those
-	 * written back by `onChange`, leave the collection as it stands until it is created again for another reason.
-	 * Options matched against values the shape types as references may be relative to the current location, and are
-	 * handed over resolved.
+	 * The reader's criteria the collection starts from, read only as it is created: criteria handed over later, as
+	 * those written back by `onChange`, take effect only once the collection is created again. Options matched against
+	 * values the shape types as references may be relative to the current location, and are handed over resolved.
 	 */
-	readonly criteria?: Criteria
+	readonly query?: Criteria
 
 
 	/**
@@ -130,24 +129,24 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 	const target = { entry: relative, shape, field: field ?? getCollection(shape) };
 
 	const { entry, query: $scope } = resolveTarget({ ...target, query: scope ?? {} });
-	const { query: $criteria } = resolveTarget({ ...target, query: criteria ?? {} });
+	const { query: $query } = resolveTarget({ ...target, query: query ?? {} });
 
-	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, scope: $scope, criteria: $criteria }),
+	const collection = useModel(() => createCollection<S, P>({ entry, shape, field, scope: $scope, query: $query }),
 		[entry, shape, field, $scope]
 	);
 
 	// the criteria last handed over, from those the collection is created with, so that only changes reach onChange
 
-	const [notified, setNotified] = useState(collection.criteria);
+	const [notified, setNotified] = useState(collection.query);
 
 	useEffect(() => {
 
-		if ( !equals(notified, collection.criteria) ) {
-			setNotified(collection.criteria);
-			onChange?.(collection.criteria);
+		if ( !equals(notified, collection.query) ) {
+			setNotified(collection.query);
+			onChange?.(collection.query);
 		}
 
-	}, [collection.criteria]);
+	}, [collection.query]);
 
 	return collection;
 

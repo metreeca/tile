@@ -17,10 +17,10 @@
 /**
  * Shared collection state.
  *
- * Holds what lenses showing the same collection agree on: which collection it is, and the criteria the reader narrows
- * it by. Lenses read the state to build their own retrievals and write the reader's criteria back through its
- * transitions, so that a facet narrowing the collection narrows what every other lens shows, counters and lists
- * alike, with no wiring between the lenses themselves beyond the collection they are all handed.
+ * Holds what lenses showing the same collection agree on: which collection it is, the criteria fixing which items it
+ * holds, and the criteria the reader narrows it by. Lenses read the state to build their own retrievals and write the
+ * reader's criteria back through its transitions, so that a facet narrowing the collection narrows what every other
+ * lens shows, counters and lists alike, with no wiring between the lenses beyond the collection they are all handed.
  *
  * @module
  */
@@ -107,19 +107,19 @@ export interface Collection<S extends Lazy<ResourceShape>, P extends Collections
 		 */
 		readonly field: P
 
-		/**
-		 * The criteria fixing which items the collection holds at all, beyond the reach of the reader: every lens
-		 * retrieves under them, over any reader's criterion on the same key, and {@link Collection.clear} keeps them.
-		 */
-		readonly scope: Criteria
-
 	}
 
 
 	/**
+	 * The criteria fixing which items the collection holds at all, beyond the reach of the reader: every lens
+	 * retrieves under them, over any reader's criterion on the same key, and {@link Collection.clear} keeps them.
+	 */
+	readonly scope: Criteria
+
+	/**
 	 * The criteria the reader narrows the collection by.
 	 */
-	readonly criteria: Criteria
+	readonly query: Criteria
 
 
 	/**
@@ -185,10 +185,10 @@ export function getCollection(shape: Lazy<ResourceShape>): Identifier {
  *
  * @param options The collection to be shown and the criteria it starts from
  *
- * @returns A collection narrowed by the reader's `criteria`
+ * @returns A collection narrowed by the reader's `query`
  *
  * @throws {@link !TypeError TypeError} If `field` is omitted and the shape holds no collection of resources, or
- *     several of them, or if `scope` or `criteria` state anything other than narrowing criteria
+ *     several of them, or if `scope` or `query` state anything other than narrowing criteria
  */
 export function createCollection<S extends Lazy<ResourceShape>, P extends Collections<S> = Sole<S>>({
 
@@ -197,7 +197,7 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	field,
 
 	scope = {},
-	criteria = {}
+	query = {}
 
 }: {
 
@@ -212,8 +212,7 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	readonly shape: S
 
 	/**
-	 * The multi-valued property collecting the items; required where the shape holds no collection of resources or
-	 * several of them.
+	 * The multi-valued property collecting the items; required unless the shape holds exactly one collection of resources.
 	 */
 	readonly field?: Optional<P>
 
@@ -225,7 +224,7 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 	/**
 	 * The reader's criteria the collection starts from.
 	 */
-	readonly criteria?: Optional<Criteria>
+	readonly query?: Optional<Criteria>
 
 }): Collection<S, P> {
 
@@ -234,24 +233,24 @@ export function createCollection<S extends Lazy<ResourceShape>, P extends Collec
 		target: {
 			entry,
 			shape,
-			field: field ?? getCollection(shape) as P, // ;(cast) the field inferred from the shape is Sole<S>, P's default
-			scope: narrowing(scope)
+			field: field ?? getCollection(shape) as P // ;(cast) the field inferred from the shape is Sole<S>, P's default
 		},
 
-		criteria: narrowing(criteria),
+		scope: narrowing(scope),
+		query: narrowing(query),
 
 		filter(criteria: Partial<Criteria>) {
 
-			const revised = Object.fromEntries(Object.entries({ ...this.criteria, ...narrowing(criteria) })
+			const revised = Object.fromEntries(Object.entries({ ...this.query, ...narrowing(criteria) })
 				.filter(([, value]) => value !== undefined)
 			) as Criteria; // ;(cast) fromEntries widens keys to strings: they are criteria keys narrowing() checked
 
-			return equals(revised, this.criteria) ? {} : { criteria: revised };
+			return equals(revised, this.query) ? {} : { query: revised };
 
 		},
 
 		clear() {
-			return Object.keys(this.criteria).length === 0 ? {} : { criteria: {} };
+			return Object.keys(this.query).length === 0 ? {} : { query: {} };
 		}
 
 	});

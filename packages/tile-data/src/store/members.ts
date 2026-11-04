@@ -189,7 +189,7 @@ export function useMembers<
 
 	const store = useStore();
 
-	const { target: { entry, shape, field, scope }, criteria } = collection;
+	const { target: { entry, shape, field }, scope, query: criteria } = collection;
 
 	const members = useModel(() => createMembers({ order, batch }), [entry, field, scope, criteria, model, order, batch]);
 

@@ -152,7 +152,7 @@ describe("useMembers()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, query: criteria });
 
 			collections(collection);
 

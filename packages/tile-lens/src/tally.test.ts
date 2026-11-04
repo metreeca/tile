@@ -73,7 +73,7 @@ function mount(lookup: unknown, {
 
 	function Host() {
 
-		const collection = useCollection({ entry, shape: Catalogue, criteria, onChange });
+		const collection = useCollection({ entry, shape: Catalogue, query: criteria, onChange });
 
 		return createElement(Tally, {
 			name: "Category",

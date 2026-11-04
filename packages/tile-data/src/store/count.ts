@@ -85,13 +85,13 @@ export type CountCases = {
  * Binds a component to the count of a shared collection.
  *
  * Counts through the store offered by the innermost enclosing {@link "store"!Store Store} context the items the
- * reader's criteria let through. The items are counted again whenever the criteria change or the store signals a
- * change to the collection, whoever made it, so that a counter keeps in step with every list over it.
+ * collection scope and the reader's criteria let through. The items are counted again whenever the criteria change or
+ * the store signals a change to the collection, whoever made it, so that a counter keeps in step with every list.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
- * @param collection The collection whose items are counted under the reader's criteria, as handed by
+ * @param collection The collection whose items are counted under its scope and the reader's criteria, as handed by
  *     {@link "store/collection"!useCollection useCollection} to every lens over it
  *
  * @returns A {@link Relay} over the {@link CountCases} of the binding
@@ -100,8 +100,9 @@ export type CountCases = {
  */
 export function useCount<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
-	target: { entry, shape, field, scope },
-	criteria
+	target: { entry, shape, field },
+	scope,
+	query: criteria
 
 }: Collection<S, P>): Relay<CountCases> {
 

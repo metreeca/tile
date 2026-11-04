@@ -108,15 +108,15 @@ describe("createCollection()", () => {
 	describe("scope", () => {
 
 		it("should hold no scope by default", async () => {
-			expect(createCollection({ entry, shape: Catalogue }).target.scope).toEqual({});
+			expect(createCollection({ entry, shape: Catalogue }).scope).toEqual({});
 		});
 
 		it("should take the scope as given, apart from the reader's criteria", async () => {
 
 			const collection = createCollection({ entry, shape: Catalogue, scope: { "?other": ["https://example.com/o/1"] } });
 
-			expect(collection.target.scope).toEqual({ "?other": ["https://example.com/o/1"] });
-			expect(collection.criteria).toEqual({});
+			expect(collection.scope).toEqual({ "?other": ["https://example.com/o/1"] });
+			expect(collection.query).toEqual({});
 
 		});
 
@@ -129,22 +129,21 @@ describe("createCollection()", () => {
 
 	});
 
-	describe("criteria", () => {
+	describe("query", () => {
 
 		it("should start from no criterion by default", async () => {
 
 			const collection = createCollection({ entry, shape: Catalogue });
 
-			expect(collection).not.toHaveProperty("scope");
-			expect(collection.criteria).toEqual({});
+			expect(collection.query).toEqual({});
 
 		});
 
 		it("should start from the criteria given", async () => {
 
-			const collection = createCollection({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
+			const collection = createCollection({ entry, shape: Catalogue, query:{ "~label": "chemistry" } });
 
-			expect(collection.criteria).toEqual({ "~label": "chemistry" });
+			expect(collection.query).toEqual({ "~label": "chemistry" });
 
 		});
 
@@ -152,25 +151,25 @@ describe("createCollection()", () => {
 			["order", { "^label": 1 }],
 			["focus", { "+label": ["one"] }]
 		])("should reject %s criteria", async (_, criteria) => {
-			expect(() => createCollection({ entry, shape: Catalogue, criteria: criteria })).toThrow(TypeError);
+			expect(() => createCollection({ entry, shape: Catalogue, query:criteria })).toThrow(TypeError);
 		});
 
 	});
 
 	describe("filter()", () => {
 
-		const chemistry = () => createCollection({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
+		const chemistry = () => createCollection({ entry, shape: Catalogue, query:{ "~label": "chemistry" } });
 
 		it("should merge criteria into the reader's ones", async () => {
-			expect(chemistry().filter({ ">=credits": 6 }).criteria).toEqual({ "~label": "chemistry", ">=credits": 6 });
+			expect(chemistry().filter({ ">=credits": 6 }).query).toEqual({ "~label": "chemistry", ">=credits": 6 });
 		});
 
 		it("should replace a criterion on the same key", async () => {
-			expect(chemistry().filter({ "~label": "physics" }).criteria).toEqual({ "~label": "physics" });
+			expect(chemistry().filter({ "~label": "physics" }).query).toEqual({ "~label": "physics" });
 		});
 
 		it("should remove a criterion set to undefined", async () => {
-			expect(chemistry().filter({ "~label": undefined }).criteria).toEqual({});
+			expect(chemistry().filter({ "~label": undefined }).query).toEqual({});
 		});
 
 		it("should leave the collection as it stands where nothing changes", async () => {
@@ -202,9 +201,9 @@ describe("createCollection()", () => {
 
 		it("should remove every criterion the reader set", async () => {
 
-			const collection = createCollection({ entry, shape: Catalogue, criteria: { "~label": "chemistry" } });
+			const collection = createCollection({ entry, shape: Catalogue, query:{ "~label": "chemistry" } });
 
-			expect(collection.clear().criteria).toEqual({});
+			expect(collection.clear().query).toEqual({});
 
 		});
 
@@ -222,11 +221,11 @@ describe("createCollection()", () => {
 				entry,
 				shape: Catalogue,
 				scope: { "?other": ["https://example.com/o/1"] },
-				criteria: { "~label": "chemistry" }
+				query: { "~label": "chemistry" }
 			}).clear();
 
-			expect(collection.target.scope).toEqual({ "?other": ["https://example.com/o/1"] });
-			expect(collection.criteria).toEqual({});
+			expect(collection.scope).toEqual({ "?other": ["https://example.com/o/1"] });
+			expect(collection.query).toEqual({});
 
 		});
 
@@ -256,11 +255,11 @@ describe("useCollection()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry: target, shape: Catalogue, scope, criteria });
+			const collection = useCollection({ entry: target, shape: Catalogue, scope, query: criteria });
 
 			seen(collection);
 
-			return createElement("output", {}, JSON.stringify(collection.criteria));
+			return createElement("output", {}, JSON.stringify(collection.query));
 
 		}
 
@@ -295,7 +294,7 @@ describe("useCollection()", () => {
 
 		vi.stubGlobal("location", new URL("https://example.com/catalogue/"));
 
-		expect(mount(backend({}), entry, { "?other": ["/others/1"], "?label": ["/others/1"] })().criteria)
+		expect(mount(backend({}), entry, { "?other": ["/others/1"], "?label": ["/others/1"] })().query)
 			.toEqual({ "?other": ["https://example.com/others/1"], "?label": ["/others/1"] });
 
 	});
@@ -304,7 +303,7 @@ describe("useCollection()", () => {
 
 		vi.stubGlobal("location", new URL("https://example.com/catalogue/"));
 
-		expect(mount(backend({}), entry, undefined, { "?other": ["/others/1"] })().target.scope)
+		expect(mount(backend({}), entry, undefined, { "?other": ["/others/1"] })().scope)
 			.toEqual({ "?other": ["https://example.com/others/1"] });
 
 	});
@@ -313,9 +312,10 @@ describe("useCollection()", () => {
 
 		const collection = mount(backend({}))();
 
-		expect(collection.target).toEqual({ entry, shape: Catalogue, field: "members", scope: {} });
+		expect(collection.target).toEqual({ entry, shape: Catalogue, field: "members" });
+		expect(collection.scope).toEqual({});
 		expect(collection.target.shape).toBe(Catalogue);
-		expect(collection.criteria).toEqual({});
+		expect(collection.query).toEqual({});
 
 	});
 
@@ -347,7 +347,7 @@ describe("useCollection()", () => {
 
 			function Probe() {
 
-				collections(useCollection({ entry, shape: Catalogue, scope, criteria, onChange: changes }));
+				collections(useCollection({ entry, shape: Catalogue, scope, query: criteria, onChange: changes }));
 
 				return null;
 

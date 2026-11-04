@@ -144,7 +144,7 @@ export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	const store = useStore();
 
-	const { target: { entry, shape, field, scope }, criteria } = collection;
+	const { target: { entry, shape, field }, scope, query: criteria } = collection;
 
 	const lower: `>=${Expression}` = `>=${expression}`;
 	const upper: `<=${Expression}` = `<=${expression}`;

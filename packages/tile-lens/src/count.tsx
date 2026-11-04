@@ -35,7 +35,7 @@ import "./count.css";
 /**
  * Creates a collection counter.
  *
- * Tells how many items the collection holds, as `12 items`, or, while criteria narrow it, how many of them match,
+ * Tells how many items the collection holds, as `12 items`, or, while the reader narrows it, how many of them match,
  * as `3 matches`, grouping digits as the reader's locale does. The counter stays blank while the items are counted
  * for the first time or the count fails, and keeps the last count on show while the items are counted again.
  *
@@ -65,7 +65,7 @@ export function Count<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
 	/**
 	 * The collection counted, as handed by {@link @metreeca/tile-data!store/collection.useCollection useCollection},
-	 * telling whether criteria narrow it and so whether the counter speaks of items or of matches.
+	 * telling whether the reader narrows it and so whether the counter speaks of items or of matches.
 	 */
 	collection: Collection<S, P>
 
@@ -76,7 +76,7 @@ export function Count<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
 }) {
 
-	const narrowed = Object.keys(collection.criteria).length > 0;
+	const narrowed = Object.keys(collection.query).length > 0;
 
 	return createElement("tile-count", { role: "status" }, count({
 

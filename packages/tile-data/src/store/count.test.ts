@@ -58,7 +58,7 @@ describe("useCount()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, query: criteria });
 
 			collections(collection);
 			counts(useCount(collection));

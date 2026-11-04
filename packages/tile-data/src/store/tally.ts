@@ -250,7 +250,7 @@ export function useTally<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 	const store = useStore();
 
-	const { target: { entry, shape, field, scope }, criteria } = collection;
+	const { target: { entry, shape, field }, scope, query: criteria } = collection;
 
 	const naming = resolveNaming(shape, field, expression, label);
 	const text = naming ?? expression;

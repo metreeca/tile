@@ -47,7 +47,7 @@ describe("useKeywords()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, query: criteria });
 
 			collections(collection);
 			keywords(useKeywords(collection, "label"));
@@ -117,7 +117,7 @@ describe("useKeywords()", () => {
 
 			await step(() => keywords().search(" item "));
 
-			expect(collection().criteria).toEqual({ "~label": "item" });
+			expect(collection().query).toEqual({ "~label": "item" });
 
 		});
 
@@ -137,7 +137,7 @@ describe("useKeywords()", () => {
 
 			await step(() => keywords().search("  "));
 
-			expect(collection().criteria).toEqual({ "?university": ["u1"] });
+			expect(collection().query).toEqual({ "?university": ["u1"] });
 
 		});
 

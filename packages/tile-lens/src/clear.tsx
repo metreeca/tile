@@ -66,7 +66,7 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
 	return <Button
 
-		disabled={Object.keys(collection.criteria).length === 0}
+		disabled={Object.keys(collection.query).length === 0}
 
 		look={"subtle"}
 

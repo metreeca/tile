@@ -82,7 +82,7 @@ export function useKeywords<S extends Lazy<ResourceShape>, P extends Collections
 
 	return immutable({
 
-		text: collection.criteria[key] ?? "",
+		text: collection.query[key] ?? "",
 
 		search: (text: string) => collection.filter(
 			{ [key]: text.trim() || undefined } as Partial<Criteria> // ;(cast) computed keys widen to string

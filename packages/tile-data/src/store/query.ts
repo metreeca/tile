@@ -20,13 +20,13 @@
  * Keeps the criteria a page is narrowed by in the browser location, so that they survive reloads, travel with links
  * and come back as the reader returns to the page through the history or a plain link to it.
  *
- * A catalogue page keeps the criteria of its collection in the location by handing them over as the collection seed,
- * and writing them back as the reader changes them, with no wiring beyond the call site:
+ * A catalogue page keeps the criteria of its collection in the location by handing them over as the collection query
+ * it starts from, and writing them back as the reader changes them, with no wiring beyond the call site:
  *
  * ```tsx
  * const [query, setQuery] = useQuery();
  *
- * const courses = useCollection({ entry: "/courses/", shape: Course, criteria: query, onChange: setQuery });
+ * const courses = useCollection({ entry: "/courses/", shape: Course, query, onChange: setQuery });
  * ```
  *
  * @module

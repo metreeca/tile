@@ -82,7 +82,7 @@ export function Sheets() {
 
 	const [query, setQuery] = useQuery();
 
-	const collection = useCollection({ entry, shape: Catalogue, criteria: query, onChange: setQuery });
+	const collection = useCollection({ entry, shape: Catalogue, query, onChange: setQuery });
 
 	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
 

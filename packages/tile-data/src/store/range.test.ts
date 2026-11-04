@@ -64,7 +64,7 @@ describe("useRange()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, query: criteria });
 
 			collections(collection);
 			ranges(useRange(collection, "year"));
@@ -163,7 +163,7 @@ describe("useRange()", () => {
 
 			act(() => range()({ ready: ({ narrow }) => narrow({ lower: 3, upper: 7 }) }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({
+			await vi.waitFor(() => expect(collection().query).toEqual({
 				"?university": ["u1"], ">=year": 3, "<=year": 7
 			}));
 
@@ -177,7 +177,7 @@ describe("useRange()", () => {
 
 			act(() => range()({ ready: ({ narrow }) => narrow({ upper: 8 }) }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({ ">=year": 3, "<=year": 8 }));
+			await vi.waitFor(() => expect(collection().query).toEqual({ ">=year": 3, "<=year": 8 }));
 
 		});
 
@@ -189,7 +189,7 @@ describe("useRange()", () => {
 
 			act(() => range()({ ready: ({ narrow }) => narrow({ lower: null }) }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({ "<=year": 7 }));
+			await vi.waitFor(() => expect(collection().query).toEqual({ "<=year": 7 }));
 
 		});
 
@@ -225,7 +225,7 @@ describe("useRange()", () => {
 
 			act(() => range()({ ready: ({ clear }) => clear() }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?university": ["u1"] }));
+			await vi.waitFor(() => expect(collection().query).toEqual({ "?university": ["u1"] }));
 
 		});
 

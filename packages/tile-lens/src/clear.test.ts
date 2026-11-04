@@ -36,7 +36,7 @@ function mount(criteria: Criteria, onChange: (criteria: Criteria) => void = () =
 
 	function Host() {
 		return createElement(Clear<typeof Catalogue, "members">, {
-			collection: useCollection({ entry, shape: Catalogue, criteria, onChange })
+			collection: useCollection({ entry, shape: Catalogue, query: criteria, onChange })
 		});
 	}
 

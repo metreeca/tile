@@ -52,7 +52,7 @@ function mount(lookup: unknown, criteria: Criteria = {}): void {
 
 	function Host() {
 
-		const collection = useCollection({ entry, shape: Catalogue, criteria });
+		const collection = useCollection({ entry, shape: Catalogue, query: criteria });
 
 		return createElement(Count<typeof Catalogue, "members">, { collection, count: useCount(collection) });
 

@@ -200,7 +200,7 @@ describe("useTally()", () => {
 
 		function Probe() {
 
-			const collection = useCollection({ entry, shape: Catalogue, scope, criteria });
+			const collection = useCollection({ entry, shape: Catalogue, scope, query: criteria });
 
 			collections(collection);
 			bindings(useTally(collection, expression, {
@@ -648,7 +648,7 @@ describe("useTally()", () => {
 
 			act(() => binding()({ ready: ({ select }) => select("b", true) }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?category": ["a", "b"] }));
+			await vi.waitFor(() => expect(collection().query).toEqual({ "?category": ["a", "b"] }));
 
 		});
 
@@ -662,7 +662,7 @@ describe("useTally()", () => {
 
 			act(() => binding()({ ready: ({ select }) => select("a", false) }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?region": ["r1"] }));
+			await vi.waitFor(() => expect(collection().query).toEqual({ "?region": ["r1"] }));
 
 		});
 
@@ -686,7 +686,7 @@ describe("useTally()", () => {
 			await act(async () => binding()({ ready: ({ seek }) => seek(20) }));
 			await act(async () => binding()({ ready: ({ clear }) => clear() }));
 
-			await vi.waitFor(() => expect(collection().criteria).toEqual({ "?region": ["r1"] }));
+			await vi.waitFor(() => expect(collection().query).toEqual({ "?region": ["r1"] }));
 			await vi.waitFor(() => expect(binding()({ ready: ({ keywords, offset }) => [keywords, offset] })).toEqual(["", 0]));
 
 		});

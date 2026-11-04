@@ -35,7 +35,7 @@ import { More } from "@metreeca/tile-cell/more";
 import { Fetch } from "@metreeca/tile-data/fetch";
 import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile-data/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 
 const entry = "https://example.com/catalogue/";
@@ -117,14 +117,20 @@ function Listing({
 	const [order, setOrder] = useState<"asc" | "desc">("asc");
 
 	const members = useMembers(collection, { model: { id: {}, label: {} }, order: { label: order } });
-	const { text, search, commit } = useKeywords(collection, "label");
+	const { text, search } = useKeywords(collection, "label");
+
+	// the box holds the text as typed and follows the keywords whenever they change elsewhere
+
+	const [draft, setDraft] = useState(text);
+
+	useEffect(() => setDraft(text), [text]);
 
 	return <>
 
 		<div class="controls">
-			<input type="search" placeholder="Keywords" value={text}
-				onInput={event => search(event.currentTarget.value)}
-				onKeyDown={event => event.key === "Enter" && commit()}
+			<input type="search" placeholder="Keywords" value={draft}
+				onInput={event => setDraft(event.currentTarget.value)}
+				onKeyDown={event => event.key === "Enter" && search(draft)}
 			/>
 			<Button
 				icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}

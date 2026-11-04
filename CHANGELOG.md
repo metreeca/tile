@@ -23,7 +23,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-cell` — `Markdown` document, `Toc` table of contents and `Path` breadcrumb trail, disclosure
   states on `Button` (`expanded`, `controls`), query entries on links, and the `Icon.Reset` and `Icon.Options` glyph
   roles
-- `@metreeca/tile-hive` — `Card` resource summary and `Info` property panel
+- `@metreeca/tile-hive` — `Card` resource summary and `Info` property panel, wrapping long values in the body of a
+  page and keeping them to one line in a sidebar
 - `@metreeca/tile` — `css.tint` washing a colour token out into a surface fill
 - `@metreeca/tile` — `colorLink` and `colorLinkHover` link colours, in the hue of the subtle accent at a lightness of
   their own, so links hold AA contrast whatever the brand supplies

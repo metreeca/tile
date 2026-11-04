@@ -67,7 +67,7 @@ tile-info {
         /*
          * Spacing between entries comes from the grid gap, replacing the margins the base list rules set. Labels and
          * values are kept to one line each, clipped with an ellipsis where they outrun their column, so one long value
-         * neither wraps the row nor widens the panel.
+         * neither wraps the row nor widens the panel; centred panels release values from this rule, as set below.
          */
 
         & > dt,
@@ -156,10 +156,20 @@ tile-info {
     /*
      * Centred, labels and values meet in the middle of the panel with no edge between them, so they are set a wider
      * step apart to read as two columns rather than as one run of text.
+     *
+     * Values in the body of a page have the width of the page to wrap across, so a long value wraps within its
+     * column rather than being clipped, and a word outrunning the column alone, as a long address, breaks as needed.
      */
 
     &:not([place="spread"]) > dl {
+
         column-gap: var(--tile--spacing-075);
+
+        & > dd {
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
     }
 
     /* Spread, labels keep to the left edge and values to the right one. */

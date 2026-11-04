@@ -116,9 +116,9 @@ export function Tally({
 	 * supplies from the values in the data. The name of a linked resource is set within a link to it, so the name holds
 	 * no control of its own, as a link or button nested within it would be invalid inside the link.
 	 *
-	 * @param bucket The value to be named
+	 * @param bucket The value to be named, never the `‹blank›` option the facet names itself
 	 */
-	children?: (bucket: TallyBucket) => ComponentChildren
+	children?: (bucket: TallyBucket & { readonly label: string }) => ComponentChildren
 
 }) {
 
@@ -261,10 +261,10 @@ export function Tally({
 	 *
 	 * @param bucket The option to be named
 	 */
-	function Name(bucket: TallyBucket): ComponentChildren {
-		return bucket.value === null ? "‹blank›"
-			: children ? children(bucket)
-				: bucket.label;
+	function Name({ label, ...bucket }: TallyBucket): ComponentChildren {
+		return label === undefined ? "‹blank›"
+			: children ? children({ ...bucket, label })
+				: label;
 	}
 
 	/**

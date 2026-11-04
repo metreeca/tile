@@ -67,7 +67,7 @@ function mount(lookup: unknown, {
 	readonly criteria?: Criteria
 	readonly size?: number
 	readonly onChange?: (criteria: Criteria) => void
-	readonly children?: (bucket: TallyBucket) => ComponentChildren
+	readonly children?: (bucket: TallyBucket & { readonly label: string }) => ComponentChildren
 
 } = {}): void {
 

@@ -26,10 +26,11 @@ tile-markdown {
 
     /*
      * An image sized by a percentage hint takes that share of the width of the block holding it, keeping its
-     * proportions; the rule weighs less than the enlarged view, which an image lifted out of the text keeps.
+     * proportions. An enlarged image is left out: this unlayered rule would otherwise outrank the layered one sizing
+     * an image lifted out of the text to the viewport, pinning it at its own width against the left margin.
      */
 
-    & img {
+    & img:not([active]) {
         width: var(--tile-markdown-width, auto);
     }
 

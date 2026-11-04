@@ -94,7 +94,8 @@ export type Column<I> = {
  * Items carrying an identifier end their row with a {@link @metreeca/tile-cell!link.Link link} to the resource it
  * names, followed by the enclosing router. In a `hierarchy`, the leading cells of a row repeating the ones above are
  * faded, so that items sharing their first values read as a group; cells are compared by the text they render, and a
- * cell rendering anything other than text or a number never counts as repeating.
+ * cell rendering anything other than text or a number never counts as repeating. A `striped` table tints alternate
+ * rows, which native tables are not, for listings whose rows run too wide to follow by their rules alone.
  *
  * Where a `placeholder` is supplied, a table with nothing to show fills its area with it, worded as still loading or
  * as matching nothing. A failed exchange is shown as a critical {@link @metreeca/tile-cell!note.Note note} instead.
@@ -114,6 +115,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 	name,
 
 	hierarchy,
+	striped,
 
 	members,
 
@@ -132,6 +134,11 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 	 * Whether leading cells repeating the ones above are faded, grouping items by their first values; not if omitted.
 	 */
 	hierarchy?: boolean
+
+	/**
+	 * Whether alternate rows are tinted, guiding the eye along rows too wide to follow at a glance; not if omitted.
+	 */
+	striped?: boolean
 
 
 	/**
@@ -162,7 +169,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 			? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
 
-			: createElement("tile-table", {}, <table aria-label={name}>
+			: createElement("tile-table", { striped },<table aria-label={name}>
 
 				<thead>
 					<tr>

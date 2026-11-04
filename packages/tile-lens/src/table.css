@@ -52,4 +52,13 @@ tile-table {
         color: var(--tile--color-label);
     }
 
+    /*
+     * A striped table tints alternate rows, which native tables leave to their rules alone. The stripe is painted rather
+     * than assigned to the background token, which derives from it and would cycle.
+     */
+
+    &[striped] tbody > tr:nth-child(odd) > td {
+        background-color: var(--tile--background-color-stripe);
+    }
+
 }

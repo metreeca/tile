@@ -61,12 +61,14 @@ function mount(lookup: unknown, {
 
 	name,
 	hierarchy,
+	striped,
 	placeholder
 
 }: {
 
 	name?: string
 	hierarchy?: boolean
+	striped?: boolean
 	placeholder?: string
 
 } = {}): void {
@@ -81,6 +83,7 @@ function mount(lookup: unknown, {
 		return createElement(Table<typeof Catalogue, "members", { id: {}, label: {}, year: {} }>, {
 			name,
 			hierarchy,
+			striped,
 			members,
 			placeholder,
 			columns: {
@@ -318,6 +321,34 @@ describe("Table", () => {
 			await vi.waitFor(() => expect(cells()).toHaveLength(3));
 
 			expect(faded().flat()).not.toContain(true);
+
+		});
+
+	});
+
+	describe("striping", () => {
+
+		function striped(): boolean {
+			return document.querySelector("tile-table")?.hasAttribute("striped") ?? false;
+		}
+
+		it("should mark the table as striped if asked to", async () => {
+
+			mount(catalogue(rows), { striped: true });
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			expect(striped()).toBe(true);
+
+		});
+
+		it("should leave the table unstriped if not asked to", async () => {
+
+			mount(catalogue(rows));
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			expect(striped()).toBe(false);
 
 		});
 

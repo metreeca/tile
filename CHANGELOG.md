@@ -53,6 +53,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   under the pointer; every link draws its underline within the line, so containers clipping their content keep it
 - `@metreeca/tile-hive/tabs` — tab labels, and the menu standing in for them where they would not fit, sit closer to
   the rule closing off the strip
+- `@metreeca/tile` — **breaking**: native tables, Markdown ones included, are no longer striped and tell their rows
+  apart by their rules alone; a collection `Table` tints alternate rows only when `striped` is set
 
 ### Fixed
 

@@ -22,12 +22,6 @@ table {
     margin-bottom: var(--tile--spacing-150);
 }
 
-/* The stripe is painted rather than assigned to the background token, which derives from it and would cycle. */
-
-tbody > tr:nth-child(odd) > td {
-    background-color: var(--tile--background-color-stripe);
-}
-
 /*
  * A table states no column widths, so its columns share the width of the container in proportion to their content,
  * and a column sized as a share of its cell, as an image hinted to a percentage, keeps a share of its own. A table

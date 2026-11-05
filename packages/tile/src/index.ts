@@ -40,6 +40,12 @@
  * import "@metreeca/tile/index.css";
  * ```
  *
+ * Include the brand faces too, unless the app sets faces of its own:
+ *
+ * ```typescript
+ * import "@metreeca/tile/fonts.css";
+ * ```
+ *
  * Override any token to restyle the whole interface, stating a colour for both schemes as a `light-dark()` pair:
  *
  * ```css
@@ -71,7 +77,7 @@
  *
  * **Override order** — the stylesheet declares its rules in a `tile` cascade layer, so a rule an app or a component
  * writes outside a layer wins whatever order the two stylesheets reach the document in, and whichever selector is the
- * more specific. An app whose own rules are layered orders its layer after `tile`.
+ * more specific. An app declaring layers of its own orders them after `tile`, or the design system outranks them.
  *
  * **Missing and malformed values** — a token carrying a literal states it as the registered default of its custom
  * property, so the value lives in one place. A malformed override is caught only where the token has a fixed type: a

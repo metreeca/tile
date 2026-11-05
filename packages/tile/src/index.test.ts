@@ -134,6 +134,24 @@ describe("tile", () => {
 
 });
 
+describe("stylesheets", () => {
+
+	const remote = /@import\s+url\(\s*["']?https?:/;
+
+	it("loads no remote resource from the entry stylesheet", () => {
+
+		expect(readFileSync(new URL("./index.css", import.meta.url), "utf-8")).not.toMatch(remote);
+
+	});
+
+	it("loads the brand faces from a stylesheet of their own", () => {
+
+		expect(readFileSync(new URL("./fonts.css", import.meta.url), "utf-8")).toMatch(remote);
+
+	});
+
+});
+
 describe("css", () => {
 
 	it("assigns the custom property of each token the value given for it", () => {

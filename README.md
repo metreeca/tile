@@ -22,7 +22,8 @@ npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 
 Add a binding package for each component layer an app assembles its screens from. Bindings render with Preact and take
 it as a peer dependency: check the package README for what each one expects. The design system package is optional and
-styles whatever a binding renders.
+styles whatever a binding renders. An app brands it by overriding its tokens, as its
+[theming guide](packages/tile/README.md#theming) explains for colours, faces and every other family.
 
 | Package               | Description                          |
 |-----------------------|--------------------------------------|

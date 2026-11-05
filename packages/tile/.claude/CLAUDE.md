@@ -15,9 +15,13 @@ carries no components and no behaviour, and nothing in it imports a rendering fr
 
 `src/index.css` imports the modules and is the only entry an app includes. The token modules come first, the anchors
 ahead of what derives from them, then the base rules by increasing structural complexity, so a composite lands after
-the plain elements it is built from and takes precedence where the two match with equal specificity. It also loads the
-brand faces, and carries the page defaults itself and nothing else: `color-scheme`, the page colours and the page
-typography, every one of them reading a token it does not state.
+the plain elements it is built from and takes precedence where the two match with equal specificity. It carries the
+page defaults itself and nothing else: `color-scheme`, the page colours and the page typography, every one of them
+reading a token it does not state.
+
+`src/fonts.css` loads the brand faces from Google Fonts, and is the one other entry an app includes, only when it keeps
+the default faces. `index.css` **NEVER** imports it or any other remote resource, so an app setting faces of its own
+downloads none.
 
 The modules fall into two groups, one folder each, and the split holds in both directions: nothing in `markup/`
 assigns a token, and every `var()` in `tokens/` is a token deriving from another.
@@ -125,8 +129,8 @@ Two things the arrangement deliberately does not do:
   source order and specificity decide exactly as they did before, so the module order in `index.css` still carries the
   precedence a composite needs over its plain elements. Every extra layer name is a public commitment an app has to
   order against, bought for nothing.
-- **It does not touch the font import.** The Google Fonts `@import` stays unlayered, since it carries only
-  `@font-face`, which a layer has no effect on.
+- **It does not touch the font import.** The Google Fonts `@import` in `fonts.css` stays unlayered, since it carries
+  only `@font-face`, which a layer has no effect on.
 
 `@property` registrations are global regardless of the layer they are declared in, so a token module behaves
 identically inside it.

@@ -59,6 +59,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the rule closing off the strip
 - `@metreeca/tile` — **breaking**: native tables, Markdown ones included, are no longer striped and tell their rows
   apart by their rules alone; a collection `Table` tints alternate rows only when `striped` is set
+- `@metreeca/tile` — **breaking**: `index.css` no longer downloads the Roboto faces, so an app setting faces of its
+  own fetches nothing from Google Fonts (migration: also import `@metreeca/tile/fonts.css` to keep the default faces)
 
 ### Fixed
 

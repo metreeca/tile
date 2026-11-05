@@ -23,6 +23,7 @@
  * @module
  */
 
+import "@metreeca/tile/fonts.css";
 import "@metreeca/tile/index.css";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";

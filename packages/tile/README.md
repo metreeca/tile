@@ -39,50 +39,85 @@ import "@metreeca/tile/index.css";
 An app assembling its own HTML links it in the document head instead: the stylesheet has to reach the document before
 it is painted, or the first frame shows the unstyled markup.
 
-Override any token to restyle the interface:
+The default font stacks name the Roboto faces first, which the stylesheet does not download on its own. An app keeping
+the default typography includes them from Google Fonts as well, while one setting faces of its own leaves them out:
 
-```css
-:root {
-    --tile--color-strong: light-dark(#D60, #F80);
-    --tile--font-family: Inter, sans-serif;
-}
+```typescript
+import "@metreeca/tile/fonts.css";
 ```
 
-The stylesheet declares its rules in a `tile` cascade layer, so an override written outside a layer wins however the
-two stylesheets reach the document; an app whose own rules are layered orders its layer after `tile`.
+## Theming
 
-Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-subtle`,
-`--tile--color-strong` and the four status colours `--tile--color-info`, `--tile--color-pass`,
-`--tile--color-warn` and `--tile--color-fail`: labels, borders, stripes, focus rings, state fills, notice tints
-and elevation surfaces derive from them and follow. The accents ship brand-agnostic, so an app supplies its own,
-a quieter value and a louder one per colour scheme, and rechecks that the text roles still hold AA contrast against
-the page and the striped row in both. The status four take values of their own rather than derivations of an accent,
-so an outcome keeps reading as itself whatever an app brands with.
-
-A malformed override is caught only where the token has a fixed type: a weight, a duration or an opacity the browser
-cannot parse stays on its default. Most tokens, the colour anchors and the sizes among them, take an override as
-written, so a malformed value leaves whatever reads it unstyled rather than on the default.
-
-A colour differing by scheme is stated once, as a `light-dark()` pair, and every scheme and every pinned subtree
-follows it with no rule restated per scheme:
+An app brands the interface by restating tokens in an ordinary rule, with no change to any component. A colour that
+differs by scheme is stated once, as a `light-dark()` pair with the light value first:
 
 ```html
 <style>
     :root {
         --tile--color-subtle: light-dark(#1C275D, #9AB);
         --tile--color-strong: light-dark(#D60, #F80);
+        --tile--font-family: Inter, Helvetica, Arial, sans-serif;
     }
 </style>
 ```
 
+The stylesheet declares its rules in a `tile` cascade layer, so a rule an app writes outside a layer wins whatever order
+the two stylesheets reach the document in, and whichever selector is the more specific. An app declaring layers of its
+own orders them after `tile`, or the design system outranks them, along with every rule they hold.
+
 An override in the document head, as above, is in force from the first frame, so a loader painted before the
-stylesheet arrives already reads the brand; one in an app stylesheet takes effect once that stylesheet loads.
+stylesheet arrives already reads the brand. An override in an app stylesheet takes effect once that stylesheet loads.
+
+A malformed override is caught only where the token has a fixed type: a weight, a duration or an opacity the browser
+cannot parse stays on its default. Most tokens, the colour anchors and the sizes among them, take an override as
+written, so a malformed value leaves whatever reads it unstyled rather than on the default.
+
+### Colours
+
+Retheme by retuning the anchors alone, `--tile--color`, `--tile--background-color`, `--tile--color-subtle`,
+`--tile--color-strong` and the four status colours `--tile--color-info`, `--tile--color-pass`, `--tile--color-warn` and
+`--tile--color-fail`: labels, borders, stripes, focus rings, state fills, notice tints and elevation surfaces derive
+from them and follow. The accents ship brand-agnostic, so an app supplies its own, a quieter value and a louder one per
+colour scheme, and rechecks that the text roles still hold AA contrast against the page and the striped row in both. The
+status colours take values of their own rather than derivations of an accent, so a success or a failure keeps reading as
+itself whatever colours an app brands its accents with, in either of the two colour schemes.
+
+Each anchor holds its `light-dark()` pair unresolved, so every scheme and every pinned subtree follows a single
+override, with no rule restated in a `prefers-color-scheme` query or per pinned scheme.
+
+### Typography
+
+`--tile--font-family` sets the body face, `--tile--font-family-heading` the face titles are set in, and
+`--tile--font-family-mono` the face code spans and aligned figures are set in. An app setting a face of its own
+loads it itself, through `@font-face` or a hosted stylesheet, and leaves out `@metreeca/tile/fonts.css`. It
+also restates a generic fallback after the face, as in the example above, so text stays readable until the face loads.
+
+`--tile--font-size`, `--tile--font-size-heading`, `--tile--font-weight` and `--tile--line-height` retune the type
+scale, and `--tile--letter-spacing-heading` corrects the heading tracking for a condensed or a wide face.
+
+### Other Tokens
+
+Spacings, radii, elevations, palettes, motions and the other families are overridden the same way. Every token is listed
+by family in the [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile.html), along with what it
+decides, so an app finds the token to retune without reading through the stylesheets.
+
+The viewport breakpoints are the one exception: CSS does not accept a custom property in a media query, so an app cannot
+move them, though it can still force a breakpoint on or off by overriding its flag.
+
+### Subtrees
 
 An interface follows the platform colour scheme on its own. An app that has to pin one sets `data-theme` to `light` or
 `dark`, on the root element or on any subtree that has to differ from the page around it, which a
 `prefers-color-scheme` query cannot express. The pinned subtree takes its side of every `light-dark()` pair, the app's
 overrides included, and the stylesheet states `color-scheme` alongside, so native controls and scrollbars follow it
 too.
+
+A single subtree takes a look of its own from tokens assigned inline through `css`. It names each token by its
+TypeScript entry, so a misspelt name fails the build rather than leaving the subtree unstyled:
+
+```tsx
+<section style={css({ colorStrong: "#D60" })}>
+```
 
 ## Modes
 

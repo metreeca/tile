@@ -163,6 +163,7 @@ tile-tally {
         & > input {
 
             min-width: 0;
+            padding: 0; /* The header already holds the field clear of the edge. */
             border-style: none;
             background-color: transparent;
 

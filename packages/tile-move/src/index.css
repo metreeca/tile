@@ -25,7 +25,11 @@ li.tile-movable {
     display: flex;
     align-items: stretch;
 
+    /* The grip is a bare mark beside the item, so it drops the box the design system draws around every button. */
+
     & > button {
+        padding: 0;
+        border-style: none;
         cursor: grab;
     }
 

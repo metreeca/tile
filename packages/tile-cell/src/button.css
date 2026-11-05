@@ -283,14 +283,16 @@ tile-button {
 
     /*
      * The quiet step closes the gap between the mark and the label to the step below, which is what draws the two
-     * together into the one word a button read as text has to be. It takes the ink of its mode and none of the fill,
-     * which is what leaves it reading as part of the text around it where the other two read as controls. The fill
-     * still answers the pointer, so the control says as much as its neighbours once it is reached.
+     * together into the one word a button read as text has to be. It takes the ink of its mode and neither the fill
+     * nor the rule the design system boxes every button with, which is what leaves it reading as part of the text
+     * around it where the other two read as controls. The fill still answers the pointer, so the control says as
+     * much as its neighbours once the reader reaches it, without ever drawing the frame the other steps are set in.
      */
 
     &[look="subtle"] > button {
 
         column-gap: var(--skin--spacing-025);
+        border-style: none;
 
         &:enabled {
             background-color: transparent;
@@ -356,6 +358,7 @@ tile-button {
     tile-button:not([look]) > button {
 
         column-gap: var(--skin--spacing-025);
+        border-style: none;
 
         &:enabled {
             background-color: transparent;

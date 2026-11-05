@@ -145,6 +145,8 @@ tile-tabs {
              * starting where the first tab of the strip started, and the section below lines up with both.
              */
 
+            padding: 0;
+            border-style: none;
             border-radius: var(--skin--border-radius-025);
 
             cursor: pointer;

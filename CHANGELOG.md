@@ -61,6 +61,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   apart by their rules alone; a collection `Table` tints alternate rows only when `striped` is set
 - `@metreeca/tile` — **breaking**: `index.css` no longer downloads the Roboto faces, so an app setting faces of its
   own fetches nothing from Google Fonts (migration: also import `@metreeca/tile/fonts.css` to keep the default faces)
+- `@metreeca/tile-cell/markdown` — GitHub alerts and highlighted code are styled by the `@metreeca/skin` base
+  stylesheet rather than by the widget, so all Markdown on a page reads alike, and a note takes the subtle accent
 
 ### Removed
 

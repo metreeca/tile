@@ -23,8 +23,7 @@
  * @module
  */
 
-import "@metreeca/skin/fonts.css";
-import "@metreeca/skin/index.css";
+import "@metreeca/skin/brands/metreeca.css";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";

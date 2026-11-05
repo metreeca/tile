@@ -5,13 +5,13 @@ Minimalist model-driven UI toolkit for linked data resources.
 Preact components for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. Resource models shared with
 the server drive what screens show, what forms accept and how values are validated, so neither side restates them.
 
-Screens are composed in JSX from general-purpose widgets and layouts alongside linked data views and forms. The design
-system is optional: components work without it and follow the platform light or dark scheme with it.
+Screens are composed in JSX from general-purpose widgets and layouts alongside linked data views and forms. The
+[@metreeca/skin] design system is optional: components work without it and follow the platform colour scheme with it.
 
 # Installation
 
 ```shell
-npm install @metreeca/tile            # design system package, optional
+npm install @metreeca/skin            # design system package, optional
 npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 ```
 

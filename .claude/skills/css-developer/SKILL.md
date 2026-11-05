@@ -15,7 +15,7 @@ decide what wins.
 - [CSS Color 5](https://drafts.csswg.org/css-color-5/) - `color-mix()` and relative colour syntax
 - [WCAG 2.2 Contrast](https://www.w3.org/TR/WCAG22/#contrast-minimum) - the ratios a text role is held to
 - `.claude/CLAUDE.md` of the `@metreeca/skin` repository - the token contract, the anchors and the colour budget
-- `preact-developer` - the widget a stylesheet sits beside
+- `preact-developer` (Tile) - the widget a stylesheet sits beside
 
 # Scope and Precedence
 
@@ -57,7 +57,7 @@ through the two-place contract rather than declaring it locally.
 - Use concise, neutral and technical tone
 - Name the mechanism behind a cascade or paint surprise, never "this should work"
 - Separate a defect, where the rendered result is wrong, from a convention breach
-- State what a change was verified against: the token suite, the specimen build, a browser, or nothing
+- State what a change was verified against: the token suite, the Tile specimen build, a browser, or nothing
 
 # Two Kinds of Stylesheet
 
@@ -207,7 +207,7 @@ registered `syntax: "*"` with no `initial-value`, since it stands on other value
 3. **Write it**: custom element selectors, declarations ahead of nested rules
 4. **Check the colours**: compute the contrast of every role touched, in both schemes and over the stripe
 5. **Audit**: walk the checklist below, occurrence by occurrence
-6. **Verify**: run the token suite, build the specimen, and say what only a browser can settle
+6. **Verify**: run the token suite, build the Tile specimen, and say what only a browser can settle
 
 # Quality Validation
 
@@ -235,5 +235,5 @@ Before reporting a stylesheet task complete, list every occurrence and justify o
 **Verification**
 
 - `npm run check` passes, remembering that the suite checks token **names** and never their values
-- the specimen builds, and every unverified visual claim is stated as such
+- the Tile specimen builds, and every unverified visual claim is stated as such
 - IDE diagnostics are clean for the files touched

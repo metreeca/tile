@@ -56,7 +56,7 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/tile": "^0.7.0"
+    "@metreeca/skin": "^0.1.0"
   },
   "devDependencies": {
     "preact": "^10.29.8",

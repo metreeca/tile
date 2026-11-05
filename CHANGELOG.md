@@ -62,6 +62,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — **breaking**: `index.css` no longer downloads the Roboto faces, so an app setting faces of its
   own fetches nothing from Google Fonts (migration: also import `@metreeca/tile/fonts.css` to keep the default faces)
 
+### Removed
+
+- `@metreeca/tile` — **breaking**: the design system moves to its own `@metreeca/skin` package, with tokens, stylesheets
+  and the `tile` cascade layer unchanged (migration: depend on `@metreeca/skin` and import from it instead)
+
 ### Fixed
 
 - `@metreeca/tile` — code in a preformatted block keeps its line breaks rather than running onto a single line

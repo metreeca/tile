@@ -36,6 +36,9 @@
     "@metreeca/http": {
       "*": "https://metreeca.github.io/http/"
     },
+    "@metreeca/skin": {
+      "*": "https://metreeca.github.io/skin/"
+    },
     "preact": {
       "*": "https://preactjs.com/guide/v10/api-reference/"
     }
@@ -61,7 +64,6 @@
       "src/**/*.{ts,tsx}"
     ],
     "exclude": [
-      "**/packages/tile/src/**/*.core.ts",
       "**/packages/tile-cell/src/icon.core.ts",
       "**/packages/tile-data/src/store/index.core.ts",
       "**/packages/tile-move/src/index.core.ts",

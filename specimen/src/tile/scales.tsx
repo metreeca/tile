@@ -20,7 +20,7 @@
  * @module
  */
 
-import { css, tile } from "@metreeca/tile";
+import { css, tile } from "@metreeca/skin";
 import { type Entry, Samples } from "./sample.js";
 import "./index.css";
 import "./scales.css";

@@ -76,7 +76,7 @@ where the interaction implies it: a pointer activation leaves focus where the br
 
 ## What the Design System Does Not Cover
 
-`@metreeca/tile` styles `:focus-visible` for native controls only, so an element made focusable by `tabIndex` needs
+`@metreeca/skin` styles `:focus-visible` for native controls only, so an element made focusable by `tabIndex` needs
 its own focus ring. State **NEVER** rests on colour alone: the mark on a selected item stands alongside a text colour
 and the state attribute an assistive technology reads.
 

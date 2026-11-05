@@ -35,6 +35,8 @@ repository **NEVER** reimplements them behind the interface.
   reads from and writes to
 - [@metreeca/gate](https://github.com/metreeca/gate) - Zero-code model-driven endpoints for linked data resources, the
   server counterpart this layer talks to
+- [@metreeca/skin](https://github.com/metreeca/skin) - Essential design tokens and styles, providing the token contract
+  and the stylesheet every component sheet reads from
 
 # NPM Scripts
 
@@ -81,7 +83,7 @@ Every package states its summary in three places, which **MUST** be kept aligned
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
   that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
-The suffix names the project repository as `@metreeca/tile`, for `@metreeca/tile` itself as for every other package.
+The suffix names the project repository as `@metreeca/tile`, for every package alike.
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the

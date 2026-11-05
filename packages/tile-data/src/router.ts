@@ -291,7 +291,7 @@ export interface Router {
  * - a link to the same site is followed without reloading the page, unless it points at a fragment of the current
  *   page or targets another browsing context through a `target` attribute other than `_self`
  * - a link to another site opens in a new browsing context
- * - an image outside any link toggles its `active` attribute, which the `@metreeca/tile` stylesheet reads to show it
+ * - an image outside any link toggles its `active` attribute, which the `@metreeca/skin` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
  *
  * An enlarged image is restored by another click on it, by `Escape`, or as soon as the focus moves, so a keyboard user

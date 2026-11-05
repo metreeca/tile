@@ -20,7 +20,7 @@
  * @module
  */
 
-import { tile } from "@metreeca/tile";
+import { tile } from "@metreeca/skin";
 import "./index.css";
 
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { css, type Tokens } from "@metreeca/tile";
+import { css, type Tokens } from "@metreeca/skin";
 import { type JSX, render } from "preact";
 import { describe, expect, it } from "vitest";
 import { Box } from "./box.js";

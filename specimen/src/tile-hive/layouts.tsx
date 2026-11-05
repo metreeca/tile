@@ -20,7 +20,7 @@
  * @module
  */
 
-import { type Tokens } from "@metreeca/tile";
+import { type Tokens } from "@metreeca/skin";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Link } from "@metreeca/tile-cell/link";

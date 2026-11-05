@@ -23,7 +23,7 @@
  */
 
 import { isString, opt } from "@metreeca/core";
-import { css, type Spacing, tile } from "@metreeca/tile";
+import { css, type Spacing, tile } from "@metreeca/skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./strip.css";
 

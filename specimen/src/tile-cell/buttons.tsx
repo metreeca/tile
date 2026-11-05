@@ -20,7 +20,7 @@
  * @module
  */
 
-import { tile } from "@metreeca/tile";
+import { tile } from "@metreeca/skin";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Style } from "@metreeca/tile-hive/style";

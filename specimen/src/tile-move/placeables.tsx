@@ -20,7 +20,7 @@
  * @module
  */
 
-import { css, tile } from "@metreeca/tile";
+import { css, tile } from "@metreeca/skin";
 import { Style } from "@metreeca/tile-hive/style";
 import { Placeable } from "@metreeca/tile-move/placeable";
 import { Fragment } from "preact";

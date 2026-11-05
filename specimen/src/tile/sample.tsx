@@ -27,7 +27,7 @@
  * @module
  */
 
-import { css, type Property } from "@metreeca/tile";
+import { css, type Property } from "@metreeca/skin";
 import { type ComponentChild } from "preact";
 import "./sample.css";
 

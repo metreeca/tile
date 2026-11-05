@@ -22,7 +22,7 @@
 
 import { scalings } from "@metreeca/specimen/tile/scales";
 import { type Entry, Samples } from "@metreeca/specimen/tile/sample";
-import { css, tile } from "@metreeca/tile";
+import { css, tile } from "@metreeca/skin";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Fragment } from "preact";
 import "./icons.css";

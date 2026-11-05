@@ -23,7 +23,7 @@
  * @module
  */
 
-import { css as compile, type Tokens } from "@metreeca/tile";
+import { css as compile, type Tokens } from "@metreeca/skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./box.css";
 

@@ -441,7 +441,7 @@ function land({ source, element, feedbackElement, placeholder }: Parameters<Drop
 	 */
 
 	const duration = prefersReducedMotion(window) ? 0
-		: parseFloat(getComputedStyles(feedbackElement).getPropertyValue("--tile--duration-normal")) || 0;
+		: parseFloat(getComputedStyles(feedbackElement).getPropertyValue("--skin--duration-normal")) || 0;
 
 	return animateTransform({
 

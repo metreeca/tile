@@ -48,15 +48,15 @@ tile-toast {
      */
 
     position: fixed;
-    inset-inline: var(--tile--spacing-100);
-    z-index: var(--tile--z-index-toast);
+    inset-inline: var(--skin--spacing-100);
+    z-index: var(--skin--z-index-toast);
 
     display: flex;
     align-items: stretch;
 
-    padding: var(--tile--spacing-100);
+    padding: var(--skin--spacing-100);
 
-    background-color: var(--tile--background-color-glass);
+    background-color: var(--skin--background-color-glass);
 
     /*
      * A faint blur below the scale, just enough to soften what shows through so it does not compete with the toasts
@@ -65,7 +65,7 @@ tile-toast {
 
     backdrop-filter: blur(0.5px);
 
-    border-radius: var(--tile--border-radius-100);
+    border-radius: var(--skin--border-radius-100);
 
     pointer-events: none;
 
@@ -88,31 +88,31 @@ tile-toast {
 
     &[edge="top"] {
 
-        top: var(--tile--spacing-100);
+        top: var(--skin--spacing-100);
         flex-direction: column;
 
         /* The gap after the last toast is part of its slot, so the tray closes on what is left of its padding. */
 
-        padding-block-end: calc(var(--tile--spacing-100) - var(--tile--spacing-050));
+        padding-block-end: calc(var(--skin--spacing-100) - var(--skin--spacing-050));
 
         --tile-toast-before: 0;
-        --tile-toast-after: var(--tile--spacing-050);
-        --tile-toast-shift: calc(-1 * var(--tile--spacing-050));
+        --tile-toast-after: var(--skin--spacing-050);
+        --tile-toast-shift: calc(-1 * var(--skin--spacing-050));
 
     }
 
     &[edge="bottom"] {
 
-        bottom: var(--tile--spacing-100);
+        bottom: var(--skin--spacing-100);
         flex-direction: column-reverse;
 
         /* The gap before the topmost toast is part of its slot, so the tray opens on what is left of its padding. */
 
-        padding-block-start: calc(var(--tile--spacing-100) - var(--tile--spacing-050));
+        padding-block-start: calc(var(--skin--spacing-100) - var(--skin--spacing-050));
 
-        --tile-toast-before: var(--tile--spacing-050);
+        --tile-toast-before: var(--skin--spacing-050);
         --tile-toast-after: 0;
-        --tile-toast-shift: var(--tile--spacing-050);
+        --tile-toast-shift: var(--skin--spacing-050);
 
     }
 
@@ -149,8 +149,8 @@ tile-toast {
          */
 
         transition-property: grid-template-rows, margin-block, opacity, translate, display;
-        transition-duration: max(var(--tile--duration-normal), 1ms);
-        transition-timing-function: var(--tile--easing-enter);
+        transition-duration: max(var(--skin--duration-normal), 1ms);
+        transition-timing-function: var(--skin--easing-enter);
         transition-behavior: allow-discrete;
 
         @starting-style {
@@ -167,7 +167,7 @@ tile-toast {
             grid-template-rows: 0fr;
             margin-block: 0;
             opacity: 0;
-            transition-timing-function: var(--tile--easing-exit);
+            transition-timing-function: var(--skin--easing-exit);
         }
 
         /*
@@ -190,13 +190,13 @@ tile-toast {
 
             display: flex;
             align-items: start;
-            column-gap: var(--tile--spacing-050);
+            column-gap: var(--skin--spacing-050);
 
-            padding: var(--tile--spacing-050) var(--tile--spacing-100);
+            padding: var(--skin--spacing-050) var(--skin--spacing-100);
 
             /* The dismiss control closing the toast carries room of its own, so the edge it sits on takes the step below. */
 
-            padding-inline-end: var(--tile--spacing-050);
+            padding-inline-end: var(--skin--spacing-050);
 
             /*
              * Each toast is a card of its own on the glass, lighter than the page where the glass is darker, rounded
@@ -204,11 +204,11 @@ tile-toast {
              * A neutral border, the same whatever the status, sets the card off from the glass.
              */
 
-            --tile-toast-tint: var(--tile--background-color-overlay);
+            --tile-toast-tint: var(--skin--background-color-overlay);
 
-            background-color: color-mix(in oklab, var(--tile-toast-tint) 60%, var(--tile--background-color-overlay));
-            border: var(--tile--border-width) var(--tile--border-style) var(--tile--border-color);
-            border-radius: var(--tile--border-radius-050);
+            background-color: color-mix(in oklab, var(--tile-toast-tint) 60%, var(--skin--background-color-overlay));
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+            border-radius: var(--skin--border-radius-050);
 
             /*
              * The mark is centred on the first line, the space a line takes beyond the glyph split above and below it,
@@ -218,7 +218,7 @@ tile-toast {
             & > svg {
                 flex: none;
                 margin-block: calc((1lh - 1em) / 2);
-                margin-inline-end: var(--tile--spacing-025);
+                margin-inline-end: var(--skin--spacing-025);
             }
 
             /* The message takes the room the mark and the dismiss control leave, wrapping within it. */
@@ -245,18 +245,18 @@ tile-toast {
                     cursor: pointer;
 
                     text-decoration-line: underline;
-                    text-decoration-color: var(--tile--border-color);
-                    text-decoration-thickness: var(--tile--border-width);
+                    text-decoration-color: var(--skin--border-color);
+                    text-decoration-thickness: var(--skin--border-width);
                     text-underline-position: under; /* Hung below the descenders, as links are. */
                     text-underline-offset: 0.1em;
 
                     &:hover {
-                        color: var(--tile--color-hover);
+                        color: var(--skin--color-hover);
                         text-decoration-color: currentColor;
                     }
 
                     &:focus-visible {
-                        outline: var(--tile--outline-focus);
+                        outline: var(--skin--outline-focus);
                     }
 
                 }
@@ -281,8 +281,8 @@ tile-toast {
 
                 & > tile-button {
                     pointer-events: auto;
-                    font-size: var(--tile--scaling-075);
-                    color: var(--tile--color-label);
+                    font-size: var(--skin--scaling-075);
+                    color: var(--skin--color-label);
                 }
 
             }
@@ -303,30 +303,30 @@ tile-toast {
 
         &[status="pending"] > div > div {
 
-            --tile-toast-tint: var(--tile--background-color-info);
+            --tile-toast-tint: var(--skin--background-color-info);
             & > svg {
-                color: var(--tile--color-info);
-                animation: tile-toast-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+                color: var(--skin--color-info);
+                animation: tile-toast-turn calc(2 * var(--skin--duration-slow)) linear infinite;
             }
 
         }
 
         &[status="success"] > div > div {
 
-            --tile-toast-tint: var(--tile--background-color-pass);
+            --tile-toast-tint: var(--skin--background-color-pass);
             & > svg {
-                color: var(--tile--color-pass);
+                color: var(--skin--color-pass);
             }
 
         }
 
         &[status="warning"] > div > div {
 
-            --tile-toast-tint: var(--tile--background-color-warn);
+            --tile-toast-tint: var(--skin--background-color-warn);
             /* The caution anchor is a fill holding 1.73:1 on the page, so the mark takes its stroke role instead. */
 
             & > svg {
-                color: var(--tile--color-warn-stroke);
+                color: var(--skin--color-warn-stroke);
             }
 
         }
@@ -337,9 +337,9 @@ tile-toast {
 
             & > div > div {
 
-                --tile-toast-tint: var(--tile--background-color-fail);
+                --tile-toast-tint: var(--skin--background-color-fail);
                 & > svg {
-                    color: var(--tile--color-fail);
+                    color: var(--skin--color-fail);
                 }
 
             }
@@ -366,7 +366,7 @@ tile-toast {
          * sits a little outside the curve, shifted by half its own size outwards on either axis.
          */
 
-        --tile-toast-corner: calc(var(--tile--border-radius-100) * (1 - cos(45deg)) / 2);
+        --tile-toast-corner: calc(var(--skin--border-radius-100) * (1 - cos(45deg)) / 2);
         --tile-toast-x: 50%;
         --tile-toast-y: -50%;
 
@@ -386,8 +386,8 @@ tile-toast {
          * narrow band of page sets it apart from the tray rather than letting it melt into it.
          */
 
-        background-color: oklch(from var(--tile--background-color-glass) l c h / 1);
-        border: calc(2 * var(--tile--border-width)) var(--tile--border-style) var(--tile--background-color);
+        background-color: oklch(from var(--skin--background-color-glass) l c h / 1);
+        border: calc(2 * var(--skin--border-width)) var(--skin--border-style) var(--skin--background-color);
 
         /* Half the side rounds the square to a circle whatever the side measures, clipping the button fill with it. */
 
@@ -404,8 +404,8 @@ tile-toast {
 
         & > tile-button {
             pointer-events: auto;
-            font-size: var(--tile--scaling-075);
-            color: var(--tile--background-color);
+            font-size: var(--skin--scaling-075);
+            color: var(--skin--background-color);
         }
 
     }
@@ -428,7 +428,7 @@ tile-toast {
  * following the writing direction.
  */
 
-@container style(--tile--viewport-small: on) {
+@container style(--skin--viewport-small: on) {
 
     tile-toast {
 

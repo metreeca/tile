@@ -20,34 +20,34 @@ tile-tabs {
 
     display: block;
 
-    padding-bottom: var(--tile--spacing-250);
+    padding-bottom: var(--skin--spacing-250);
 
     & > nav {
 
         display: flex;
 
-        column-gap: var(--tile--spacing-100);
+        column-gap: var(--skin--spacing-100);
 
         /* The strip stands on one line: a label is never broken, and a tab never moves to a line of its own. */
 
         white-space: nowrap;
         overflow-y: visible;
 
-        border-bottom-style: var(--tile--border-style);
+        border-bottom-style: var(--skin--border-style);
 
         & > label {
 
-            padding-bottom: var(--tile--spacing-050);
-            margin-bottom: calc(-1 * var(--tile--border-width)); /* The mark sits on the rule, not above it. */
+            padding-bottom: var(--skin--spacing-050);
+            margin-bottom: calc(-1 * var(--skin--border-width)); /* The mark sits on the rule, not above it. */
             cursor: pointer;
 
-            font-size: var(--tile--font-size-small);
-            font-weight: var(--tile--font-weight-strong);
-            color: var(--tile--color-label);
+            font-size: var(--skin--font-size-small);
+            font-weight: var(--skin--font-weight-strong);
+            color: var(--skin--color-label);
 
             background-color: transparent; /* The reset hands down an opaque page, which would mask the rule. */
 
-            border-bottom-style: var(--tile--border-style);
+            border-bottom-style: var(--skin--border-style);
             border-bottom-color: transparent;
 
             /*
@@ -57,17 +57,17 @@ tile-tabs {
              */
 
             transition-property: color, border-bottom-color;
-            transition-duration: var(--tile--duration-fast);
-            transition-timing-function: var(--tile--easing-standard);
+            transition-duration: var(--skin--duration-fast);
+            transition-timing-function: var(--skin--easing-standard);
 
             &:hover {
-                color: var(--tile--color-hover);
+                color: var(--skin--color-hover);
             }
 
             /* A tab that cannot be chosen is greyed, the pointer and `aria-disabled` saying so alongside the colour. */
 
             &[aria-disabled="true"] {
-                color: var(--tile--color-disabled);
+                color: var(--skin--color-disabled);
                 cursor: default;
             }
 
@@ -79,17 +79,17 @@ tile-tabs {
              */
 
             &:focus-visible {
-                outline: var(--tile--outline-focus);
-                outline-offset: var(--tile--border-width);
+                outline: var(--skin--outline-focus);
+                outline-offset: var(--skin--border-width);
             }
 
             /* Three times the rule, to read as a highlight. Weight is left alone, since it would reflow the strip. */
 
             &[aria-selected="true"] {
-                color: var(--tile--color);
-                border-bottom-width: calc(3 * var(--tile--border-width));
-                border-bottom-color: var(--tile--color-strong);
-                margin-bottom: calc(-3 * var(--tile--border-width));
+                color: var(--skin--color);
+                border-bottom-width: calc(3 * var(--skin--border-width));
+                border-bottom-color: var(--skin--color-strong);
+                margin-bottom: calc(-3 * var(--skin--border-width));
             }
 
         }
@@ -126,9 +126,9 @@ tile-tabs {
 
         display: flex;
 
-        padding-bottom: var(--tile--spacing-050);
+        padding-bottom: var(--skin--spacing-050);
 
-        border-bottom-style: var(--tile--border-style);
+        border-bottom-style: var(--skin--border-style);
 
         /*
          * The menu takes the width of its labels, so the ring left on it after a choice wraps the control rather
@@ -145,13 +145,13 @@ tile-tabs {
              * starting where the first tab of the strip started, and the section below lines up with both.
              */
 
-            border-radius: var(--tile--border-radius-025);
+            border-radius: var(--skin--border-radius-025);
 
             cursor: pointer;
 
-            font-size: var(--tile--font-size-small);
-            font-weight: var(--tile--font-weight-strong);
-            color: var(--tile--color);
+            font-size: var(--skin--font-size-small);
+            font-weight: var(--skin--font-weight-strong);
+            color: var(--skin--color);
 
             background-color: transparent; /* The page shows through, so the bar reads as the strip it stands in for. */
 
@@ -165,8 +165,8 @@ tile-tabs {
              */
 
             &:focus-visible {
-                outline: var(--tile--outline-focus);
-                outline-offset: var(--tile--spacing-025);
+                outline: var(--skin--outline-focus);
+                outline-offset: var(--skin--spacing-025);
             }
 
             /*
@@ -177,11 +177,11 @@ tile-tabs {
 
             & > option {
 
-                color: var(--tile--color);
-                background-color: var(--tile--background-color);
+                color: var(--skin--color);
+                background-color: var(--skin--background-color);
 
                 &:disabled {
-                    color: var(--tile--color-disabled);
+                    color: var(--skin--color-disabled);
                 }
 
             }
@@ -208,14 +208,14 @@ tile-tabs {
         /* With no rule to clear, the label tightens the room below it, drawing the chosen mark up against its word. */
 
         & > nav > label {
-            padding-bottom: var(--tile--spacing-025);
+            padding-bottom: var(--skin--spacing-025);
         }
 
     }
 
     & > div {
 
-        padding-top: var(--tile--spacing-150);
+        padding-top: var(--skin--spacing-150);
 
         /*
          * A panel takes no stop of its own, so it reaches the keyboard only where it is the box that scrolls and the
@@ -224,7 +224,7 @@ tile-tabs {
          */
 
         &:focus-visible {
-            outline: var(--tile--outline-focus);
+            outline: var(--skin--outline-focus);
             outline-offset: 0;
         }
 
@@ -234,7 +234,7 @@ tile-tabs {
 
 
 /*
- * Tabs stating no look of their own take the one the area around them is written in, read off the `--tile--look`
+ * Tabs stating no look of their own take the one the area around them is written in, read off the `--skin--look`
  * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every widget
  * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
  * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
@@ -246,7 +246,7 @@ tile-tabs {
  * the same step cannot be written as one selector.
  */
 
-@container style(--tile--look: subtle) {
+@container style(--skin--look: subtle) {
 
     tile-tabs:not([look]) > nav,
     tile-tabs:not([look]) > span {
@@ -254,7 +254,7 @@ tile-tabs {
     }
 
     tile-tabs:not([look]) > nav > label {
-        padding-bottom: var(--tile--spacing-025);
+        padding-bottom: var(--skin--spacing-025);
     }
 
 }

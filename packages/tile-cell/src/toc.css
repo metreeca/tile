@@ -36,26 +36,26 @@ tile-toc {
         }
 
         & li + li, & li > ul {
-            margin-top: var(--tile--spacing-025);
+            margin-top: var(--skin--spacing-025);
         }
 
         & > ul > li:has(> ul) + li {
-            margin-top: var(--tile--spacing-050);
+            margin-top: var(--skin--spacing-050);
         }
 
         & a {
-            font-weight: var(--tile--font-weight-strong);
-            color: var(--tile--color);
+            font-weight: var(--skin--font-weight-strong);
+            color: var(--skin--color);
         }
 
         & ul ul {
 
-            padding-left: var(--tile--spacing-050);
+            padding-left: var(--skin--spacing-050);
 
-            font-size: var(--tile--font-size-small);
+            font-size: var(--skin--font-size-small);
 
             & a {
-                font-weight: var(--tile--font-weight);
+                font-weight: var(--skin--font-weight);
             }
 
             & ul {

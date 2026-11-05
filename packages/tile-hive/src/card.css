@@ -22,7 +22,7 @@
 /*
  * The widest the side column grows: 15rem on a wide card and a third of a narrow one, the share taken of the card
  * where the knob is read, so the main column keeps at least two thirds of the card at any width. Past it, tags are
- * clipped and a picture is scaled down. A single dash keeps this layout knob apart from the `--tile--` contract.
+ * clipped and a picture is scaled down. A single dash keeps this layout knob apart from the `--skin--` contract.
  */
 
 @property --tile-card-side-max-width {
@@ -37,12 +37,12 @@ tile-card {
     grid-template-columns: 1fr fit-content(var(--tile-card-side-max-width));
     grid-template-rows: min-content min-content;
     align-items: start;
-    gap: var(--tile--spacing-050) var(--tile--spacing-100);
+    gap: var(--skin--spacing-050) var(--skin--spacing-100);
 
     /* Consecutive cards are set a step apart, so a run of them reads as a list of entries. */
 
     & + & {
-        margin-top: var(--tile--spacing-100);
+        margin-top: var(--skin--spacing-100);
     }
 
     /* The title and the tags share the first row, sitting on a common baseline as a property panel entry does. */
@@ -66,7 +66,7 @@ tile-card {
     /* The title names the resource the card sums up, so it reads at the strong weight whatever it holds. */
 
     & > span:not(.tags) {
-        font-weight: var(--tile--font-weight-strong);
+        font-weight: var(--skin--font-weight-strong);
     }
 
     /* A description with no image beneath the side column runs on under the tags. */
@@ -89,7 +89,7 @@ tile-card {
         text-overflow: ellipsis;
         white-space: nowrap;
         text-align: end;
-        color: var(--tile--color-label);
+        color: var(--skin--color-label);
 
     }
 
@@ -103,7 +103,7 @@ tile-card {
         grid-column: 2;
         justify-self: end;
         font-style: normal;
-        color: var(--tile--color-label);
+        color: var(--skin--color-label);
 
         /*
          * A picture is aligned on the top of the line the description opens with rather than on its capitals: a hard
@@ -125,9 +125,9 @@ tile-card {
             display: block;
             width: 0;
             min-width: 100%;
-            margin-top: var(--tile--spacing-025);
+            margin-top: var(--skin--spacing-025);
             text-align: end;
-            font-size: var(--tile--font-size-small);
+            font-size: var(--skin--font-size-small);
         }
 
     }

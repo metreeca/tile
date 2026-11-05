@@ -28,7 +28,7 @@
 /*
  * The knobs below tune the geometry of the frame. They are properties of this layout rather than design system tokens,
  * a column width being what this arrangement needs rather than a value the interface is themed by, so a single dash
- * keeps them apart from the `--tile--` contract. An app retunes one shell by restating a knob on it, or every shell
+ * keeps them apart from the `--skin--` contract. An app retunes one shell by restating a knob on it, or every shell
  * inside an element by restating it there.
  */
 
@@ -212,7 +212,7 @@ tile-shell {
      */
 
     &[aria-busy="true"] {
-        opacity: var(--tile--opacity-loading);
+        opacity: var(--skin--opacity-loading);
     }
 
     /*
@@ -236,12 +236,12 @@ tile-shell {
 
     & > aside > * {
         transition-property: opacity;
-        transition-duration: var(--tile--duration-normal);
-        transition-timing-function: var(--tile--easing-standard);
+        transition-duration: var(--skin--duration-normal);
+        transition-timing-function: var(--skin--easing-standard);
     }
 
     &[locked] > aside > * {
-        opacity: var(--tile--opacity-locked);
+        opacity: var(--skin--opacity-locked);
     }
 
     & > * {
@@ -287,7 +287,7 @@ tile-shell {
             align-items: center;
             justify-content: space-between;
 
-            column-gap: var(--tile--spacing-025);
+            column-gap: var(--skin--spacing-025);
 
             white-space: nowrap;
 
@@ -347,8 +347,8 @@ tile-shell {
             min-height: calc(
                 var(--tile-shell-head-inset-top)
                 + max(
-                    var(--tile--scaling-150),
-                    var(--tile--scaling-100) + 2 * var(--tile--spacing-025) + 2 * var(--tile--border-width)
+                    var(--skin--scaling-150),
+                    var(--skin--scaling-100) + 2 * var(--skin--spacing-025) + 2 * var(--skin--border-width)
                 )
                 + var(--tile-shell-head-inset-bottom)
             );
@@ -377,7 +377,7 @@ tile-shell {
                  * took before.
                  */
 
-                --tile-shell-ring-room: calc(var(--tile--spacing-025) + 2 * var(--tile--border-width));
+                --tile-shell-ring-room: calc(var(--skin--spacing-025) + 2 * var(--skin--border-width));
 
                 padding: var(--tile-shell-ring-room);
                 margin: calc(-1 * var(--tile-shell-ring-room));
@@ -390,11 +390,11 @@ tile-shell {
 
                 & > :not(tile-button) + *,
                 & > * + :not(tile-button) {
-                    margin-left: var(--tile--spacing-050);
+                    margin-left: var(--skin--spacing-050);
                 }
 
                 & > :not(tile-button) + :not(tile-button) {
-                    margin-left: var(--tile--spacing-075);
+                    margin-left: var(--skin--spacing-075);
                 }
 
             }
@@ -499,15 +499,15 @@ tile-shell {
          * field colour would say the tray is something to type into, and a lifted one has nowhere to go on a white
          * page, where a surface separates by line and shadow rather than by tint.
          *
-         * It is painted directly rather than by retuning `--tile--background-color`, which the sunken colour is derived
+         * It is painted directly rather than by retuning `--skin--background-color`, which the sunken colour is derived
          * from: assigning the token here and reading a colour derived from it in the same rule forms a custom property
          * cycle and loses both. The reset hands every element `background-color: inherit`, so what the tray holds takes
          * the painted colour along all the same.
          */
 
-        background-color: var(--tile--background-color-sunken);
+        background-color: var(--skin--background-color-sunken);
 
-        border-right-style: var(--tile--border-style);
+        border-right-style: var(--skin--border-style);
 
         & > * {
             padding-left: var(--tile-shell-tray-gutter);
@@ -532,7 +532,7 @@ tile-shell {
             }
 
             & > hr {
-                margin-block: var(--tile--spacing-075);
+                margin-block: var(--skin--spacing-075);
             }
 
             /*
@@ -560,24 +560,24 @@ tile-shell {
 
             & > h1 {
 
-                font-weight: var(--tile--font-weight-strong);
+                font-weight: var(--skin--font-weight-strong);
 
                 & + h1 {
-                    margin-top: var(--tile--spacing-025);
+                    margin-top: var(--skin--spacing-025);
                 }
 
                 & + h2 {
-                    margin-top: var(--tile--spacing-025);
+                    margin-top: var(--skin--spacing-025);
                 }
 
             }
 
             & > h2 {
 
-                margin-left: var(--tile--spacing-050);
+                margin-left: var(--skin--spacing-050);
 
                 & + h1 {
-                    margin-top: var(--tile--spacing-050);
+                    margin-top: var(--skin--spacing-050);
                 }
 
             }
@@ -667,7 +667,7 @@ tile-shell {
             display: flex;
             flex-direction: column;
 
-            row-gap: var(--tile--spacing-100);
+            row-gap: var(--skin--spacing-100);
 
             & > div {
 
@@ -678,7 +678,7 @@ tile-shell {
 
                 /* The content keeps clear of what follows it, so its last line never sits against the footer. */
 
-                padding-bottom: var(--tile--spacing-200);
+                padding-bottom: var(--skin--spacing-200);
 
             }
 
@@ -688,7 +688,7 @@ tile-shell {
                 flex-direction: row;
                 align-items: center;
 
-                column-gap: var(--tile--spacing-025);
+                column-gap: var(--skin--spacing-025);
 
             }
 
@@ -762,7 +762,7 @@ tile-shell {
              */
 
             & svg {
-                animation: tile-shell-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+                animation: tile-shell-turn calc(2 * var(--skin--duration-slow)) linear infinite;
             }
 
         }

@@ -65,7 +65,7 @@ tile-link {
         text-decoration-line: none;
 
         &:hover {
-            color: var(--tile--color-link-hover);
+            color: var(--skin--color-link-hover);
             text-decoration-line: underline;
         }
 
@@ -75,7 +75,7 @@ tile-link {
 
     &[look="strong"] > a {
 
-        font-weight: var(--tile--font-weight-strong);
+        font-weight: var(--skin--font-weight-strong);
         text-decoration-line: none;
 
         &:hover {
@@ -88,7 +88,7 @@ tile-link {
 
 
 /*
- * Links stating no look of their own take the one the area around them is written in, read off the `--tile--look`
+ * Links stating no look of their own take the one the area around them is written in, read off the `--skin--look`
  * token through a style query: a rule has no other way to branch on a value, and the token inherits, so every widget
  * sits inside a container answering for it without a rule declaring one. The attribute has to be absent for the
  * container to have a say, which is why the widget renders it only where the consumer asked for a look, and why each
@@ -99,7 +99,7 @@ tile-link {
  * group and takes rules of its own, so the two forms of the same step cannot be written as one selector.
  */
 
-@container style(--tile--look: subtle) {
+@container style(--skin--look: subtle) {
 
     tile-link:not([look]) > a {
 
@@ -107,7 +107,7 @@ tile-link {
         text-decoration-line: none;
 
         &:hover {
-            color: var(--tile--color-link-hover);
+            color: var(--skin--color-link-hover);
             text-decoration-line: underline;
         }
 
@@ -115,11 +115,11 @@ tile-link {
 
 }
 
-@container style(--tile--look: strong) {
+@container style(--skin--look: strong) {
 
     tile-link:not([look]) > a {
 
-        font-weight: var(--tile--font-weight-strong);
+        font-weight: var(--skin--font-weight-strong);
         text-decoration-line: none;
 
         &:hover {
@@ -141,8 +141,8 @@ tile-link {
 tile-link > a[active] {
 
     text-decoration-line: underline;
-    text-decoration-color: var(--tile--color-strong);
-    text-decoration-thickness: calc(3 * var(--tile--border-width));
+    text-decoration-color: var(--skin--color-strong);
+    text-decoration-thickness: calc(3 * var(--skin--border-width));
 
     &:hover {
         text-decoration-color: currentColor;
@@ -157,14 +157,14 @@ tile-link > a[active] {
  */
 
 tile-link[look="subtle"] > a[active] {
-    text-decoration-thickness: calc(2 * var(--tile--border-width));
+    text-decoration-thickness: calc(2 * var(--skin--border-width));
     text-underline-offset: 0.05em; /* Optical nudge, a third of the ordinary gap below the baseline. */
 }
 
-@container style(--tile--look: subtle) {
+@container style(--skin--look: subtle) {
 
     tile-link:not([look]) > a[active] {
-        text-decoration-thickness: calc(2 * var(--tile--border-width));
+        text-decoration-thickness: calc(2 * var(--skin--border-width));
         text-underline-offset: 0.05em; /* Optical nudge, a third of the ordinary gap below the baseline. */
     }
 

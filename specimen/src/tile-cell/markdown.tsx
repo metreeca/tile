@@ -22,8 +22,8 @@ values of their own. See the [guide](guide.md) or the [index](docs/index.md#toke
 
 | Token                  | Role                |
 |------------------------|---------------------|
-| \`--tile--color-info\`   | informative status  |
-| \`--tile--color-fail\`   | failure status      |
+| \`--skin--color-info\`   | informative status  |
+| \`--skin--color-fail\`   | failure status      |
 
 - [x] colours
 - [ ] motions

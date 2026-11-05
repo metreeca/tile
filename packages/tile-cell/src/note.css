@@ -27,7 +27,7 @@ tile-note {
     display: flex;
     flex-direction: column;
     align-items: center;
-    row-gap: var(--tile--spacing-100);
+    row-gap: var(--skin--spacing-100);
 
     /* The note is as wide as what it carries, so the margins centre it rather than a block stretching it. */
 
@@ -49,7 +49,7 @@ tile-note {
         display: flex;
         flex-direction: row;
         align-items: center;
-        column-gap: var(--tile--spacing-050);
+        column-gap: var(--skin--spacing-050);
 
         /*
          * The mark is drawn against the text size of the box it sits in, which is the measure every glyph is drawn
@@ -57,7 +57,7 @@ tile-note {
          */
 
         & > :first-child {
-            font-size: var(--tile--scaling-200);
+            font-size: var(--skin--scaling-200);
         }
 
     }
@@ -77,14 +77,14 @@ tile-note {
          * between blocks, and the step above would leave a pill deeper than the line it holds.
          */
 
-        padding: 0.75ex var(--tile--spacing-075);
+        padding: 0.75ex var(--skin--spacing-075);
 
-        border-style: var(--tile--border-style);
-        border-color: var(--tile--color-enabled);
+        border-style: var(--skin--border-style);
+        border-color: var(--skin--color-enabled);
 
         /* Rounded a step deeper than a panel, so the badge reads as a marker rather than as a box of its own. */
 
-        border-radius: var(--tile--border-radius-050);
+        border-radius: var(--skin--border-radius-050);
 
     }
 
@@ -95,25 +95,25 @@ tile-note {
      */
 
     &:not([level="normal"]) > :first-child {
-        font-weight: var(--tile--font-weight-strong);
+        font-weight: var(--skin--font-weight-strong);
     }
 
     &[level="info"] > :first-child > :first-child {
-        color: var(--tile--color-info);
+        color: var(--skin--color-info);
     }
 
     &[level="highlight"] > :first-child > :first-child {
-        color: var(--tile--color-pass);
+        color: var(--skin--color-pass);
     }
 
     /* The caution anchor is a fill holding 1.73:1 on the page, so the mark takes its stroke role instead. */
 
     &[level="warning"] > :first-child > :first-child {
-        color: var(--tile--color-warn-stroke);
+        color: var(--skin--color-warn-stroke);
     }
 
     &[level="critical"] > :first-child > :first-child {
-        color: var(--tile--color-fail);
+        color: var(--skin--color-fail);
     }
 
     /* A block of text is centred under the mark, broken where the wording breaks it. */
@@ -133,9 +133,9 @@ tile-note {
 
         max-height: 7.5em;
 
-        padding: var(--tile--spacing-050) 0;
+        padding: var(--skin--spacing-050) 0;
 
-        border-style: var(--tile--border-style) none;
+        border-style: var(--skin--border-style) none;
         overflow-y: auto;
         overflow-x: hidden;
 
@@ -157,22 +157,22 @@ tile-note {
 
             /*
              * The colour of the page rather than an elevation shadow: this one hides what is leaving the scroll box
-             * instead of lifting the bar off it, so --tile--box-shadow-raised is the wrong tool however similar the
+             * instead of lifting the bar off it, so --skin--box-shadow-raised is the wrong tool however similar the
              * declaration looks.
              */
 
-            box-shadow: 0 0 var(--tile--spacing-050) var(--tile--spacing-050) var(--tile--background-color);
+            box-shadow: 0 0 var(--skin--spacing-050) var(--skin--spacing-050) var(--skin--background-color);
 
         }
 
         &::before {
             top: 0;
-            transform: translateY(calc(-1 * var(--tile--spacing-050)));
+            transform: translateY(calc(-1 * var(--skin--spacing-050)));
         }
 
         &::after {
             bottom: 0;
-            transform: translateY(var(--tile--spacing-050));
+            transform: translateY(var(--skin--spacing-050));
         }
 
     }
@@ -187,9 +187,9 @@ tile-note {
 
         max-width: 50em;
 
-        padding: var(--tile--spacing-100) 0;
+        padding: var(--skin--spacing-100) 0;
 
-        border-style: var(--tile--border-style) none;
+        border-style: var(--skin--border-style) none;
         border-radius: 0;
         overflow: auto;
 

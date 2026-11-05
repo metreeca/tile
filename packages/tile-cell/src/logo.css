@@ -71,11 +71,11 @@ tile-logo {
     /* The mark is held off an element beside it, and sits flush with its container where nothing is. */
 
     * + & {
-        margin-inline-start: var(--tile--spacing-050);
+        margin-inline-start: var(--skin--spacing-050);
     }
 
     &:has(+ *) {
-        margin-inline-end: var(--tile--spacing-050);
+        margin-inline-end: var(--skin--spacing-050);
     }
 
 }

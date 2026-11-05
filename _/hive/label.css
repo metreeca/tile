@@ -73,7 +73,7 @@ tile-label {
             font-size: 90%;
             font-weight: 700;
 
-            color: var(--tile--color-label);
+            color: var(--skin--color-label);
 
             & * {
                 font-weight: inherit;

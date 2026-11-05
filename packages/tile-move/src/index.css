@@ -48,8 +48,8 @@ li.tile-movable {
         cursor: grab;
 
         &:focus-visible {
-            outline: var(--tile--outline-focus);
-            outline-offset: var(--tile--border-width);
+            outline: var(--skin--outline-focus);
+            outline-offset: var(--skin--border-width);
         }
 
         & :is(
@@ -74,7 +74,7 @@ li.tile-movable {
     /* The content of an item waiting for its move to be settled fades by the loading step, the handle left alone. */
 
     &[data-state="pending"] > div {
-        opacity: var(--tile--opacity-loading);
+        opacity: var(--skin--opacity-loading);
     }
 
 }

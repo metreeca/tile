@@ -66,8 +66,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Removed
 
-- `@metreeca/tile` — **breaking**: the design system moves to its own `@metreeca/skin` package, with tokens, stylesheets
-  and the `tile` cascade layer unchanged (migration: depend on `@metreeca/skin` and import from it instead)
+- `@metreeca/tile` — **breaking**: the design system moves to its own `@metreeca/skin` package, renaming the
+  `--tile--*` tokens to `--skin--*`, the `tile` token map to `skin` and the `tile` cascade layer to `skin` (migration:
+  depend on `@metreeca/skin`, import from it, and replace the `--tile--` prefix in stylesheets and inline styles)
 
 ### Fixed
 

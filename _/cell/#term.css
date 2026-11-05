@@ -18,7 +18,7 @@ tile-term {
 
     &.disabled,
     &.disabled * {
-        color: var(--tile--color-disabled);
+        color: var(--skin--color-disabled);
     }
 
 }

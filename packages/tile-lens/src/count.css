@@ -17,5 +17,5 @@
 /* The count takes the label colour, so it reads as a note on the collection rather than as part of its content. */
 
 tile-count {
-    color: var(--tile--color-label);
+    color: var(--skin--color-label);
 }

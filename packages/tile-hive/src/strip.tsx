@@ -23,7 +23,7 @@
  */
 
 import { isString, opt } from "@metreeca/core";
-import { css, type Spacing, tile } from "@metreeca/skin";
+import { css, type Spacing, skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./strip.css";
 
@@ -44,7 +44,7 @@ const justify = {
  * Creates a horizontal strip.
  *
  * Places what it holds one item beside the other, in the order given, with the same gap between each pair and none
- * before the first or after the last. The gap is a step of the {@link @metreeca/tile!index.tile spacing ladder}, so it
+ * before the first or after the last. The gap is a step of the {@link @metreeca/skin!index.skin spacing ladder}, so it
  * follows the text size of the strip and whatever an app retuned the ladder to.
  *
  * The strip stands as wide as whatever holds it and as tall as its tallest item, each item keeping its own width;
@@ -121,8 +121,8 @@ export function Strip({
 			flexWrap: wrap ? "wrap" : undefined,
 			justifyContent: justify[place],
 			alignItems: align,
-			columnGap: opt(space, step => css.var(tile[step])),
-			rowGap: opt(leading, step => css.var(tile[step]))
+			columnGap: opt(space, step => css.var(skin[step])),
+			rowGap: opt(leading, step => css.var(skin[step]))
 		}
 
 	}, children);

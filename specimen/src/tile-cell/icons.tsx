@@ -21,7 +21,7 @@
  */
 
 import { type Entry, Samples } from "@metreeca/specimen/sample";
-import { css, tile } from "@metreeca/skin";
+import { css, skin } from "@metreeca/skin";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Fragment } from "preact";
 import "./icons.css";
@@ -43,16 +43,16 @@ type Area = readonly [string, ReadonlyArray<Glyph>]
  */
 const scalings: ReadonlyArray<Entry> = [
 
-	[ tile.scaling025, "a dot no larger than the full stop beside it" ],
-	[ tile.scaling050, "a bullet or a caret, half the height of the text" ],
-	[ tile.scaling075, "a mark subordinate to its text" ],
-	[ tile.scaling090, "a mark set a shade below the text" ],
-	[ tile.scaling100, "an icon beside a label" ],
-	[ tile.scaling110, "a mark set a shade above it" ],
-	[ tile.scaling125, "a roundel or a swatch" ],
-	[ tile.scaling150, "a glyph standing without a label" ],
-	[ tile.scaling200, "a mark heading a panel" ],
-	[ tile.scaling250, "a display mark on an empty or failed screen" ]
+	[ skin.scaling025, "a dot no larger than the full stop beside it" ],
+	[ skin.scaling050, "a bullet or a caret, half the height of the text" ],
+	[ skin.scaling075, "a mark subordinate to its text" ],
+	[ skin.scaling090, "a mark set a shade below the text" ],
+	[ skin.scaling100, "an icon beside a label" ],
+	[ skin.scaling110, "a mark set a shade above it" ],
+	[ skin.scaling125, "a roundel or a swatch" ],
+	[ skin.scaling150, "a glyph standing without a label" ],
+	[ skin.scaling200, "a mark heading a panel" ],
+	[ skin.scaling250, "a display mark on an empty or failed screen" ]
 
 ];
 
@@ -130,12 +130,12 @@ const strokes: ReadonlyArray<number> = [ 1, 1.5, 2, 3 ];
 
 const tints: ReadonlyArray<Entry> = [
 
-	[ tile.color, "a mark in the text colour, which it takes by inheritance" ],
-	[ tile.colorEnabled, "a mark on an enabled control" ],
-	[ tile.colorHover, "a mark under the pointer" ],
-	[ tile.colorLabel, "a mark beside secondary text" ],
-	[ tile.colorDisabled, "a mark on a control taking no input" ],
-	[ tile.colorFail, "a mark telling a failure" ]
+	[ skin.color, "a mark in the text colour, which it takes by inheritance" ],
+	[ skin.colorEnabled, "a mark on an enabled control" ],
+	[ skin.colorHover, "a mark under the pointer" ],
+	[ skin.colorLabel, "a mark beside secondary text" ],
+	[ skin.colorDisabled, "a mark on a control taking no input" ],
+	[ skin.colorFail, "a mark telling a failure" ]
 
 ];
 
@@ -171,7 +171,7 @@ export function Icons() {
 
 		<h3>Size</h3>
 
-		<p>A glyph is drawn at <code>{tile.scaling100}</code>, so it rides with the text around it; any other step of
+		<p>A glyph is drawn at <code>{skin.scaling100}</code>, so it rides with the text around it; any other step of
 			the ladder is a size stated on purpose.</p>
 
 		<Samples entries={scalings} sample={property =>
@@ -180,15 +180,15 @@ export function Icons() {
 
 		<h3>Stroke</h3>
 
-		<p>Every glyph is stroked at <code>{tile.strokeWidth}</code>, in user units of the icon viewport, so the weight
+		<p>Every glyph is stroked at <code>{skin.strokeWidth}</code>, in user units of the icon viewport, so the weight
 			holds whatever size the glyph is drawn at.</p>
 
 		<div class="glyphs">{strokes.map(width =>
 			<span key={width}>
 				<Icon.Alert style={{
 
-					width: css.var(tile.scaling200),
-					height: css.var(tile.scaling200),
+					width: css.var(skin.scaling200),
+					height: css.var(skin.scaling200),
 					strokeWidth: width
 
 				}}/>{" "}<code>{width}</code>

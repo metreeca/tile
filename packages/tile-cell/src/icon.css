@@ -24,9 +24,9 @@
 
     display: inline-block;
 
-    width: var(--tile--scaling-100);
-    height: var(--tile--scaling-100);
+    width: var(--skin--scaling-100);
+    height: var(--skin--scaling-100);
 
-    stroke-width: var(--tile--stroke-width);
+    stroke-width: var(--skin--stroke-width);
 
 }

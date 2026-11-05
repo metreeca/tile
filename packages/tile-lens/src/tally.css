@@ -41,13 +41,13 @@
 
 @keyframes tile-tally-shade-top {
     to {
-        --tile-tally-shade-top: var(--tile--spacing-100);
+        --tile-tally-shade-top: var(--skin--spacing-100);
     }
 }
 
 @keyframes tile-tally-shade-bottom {
     from {
-        --tile-tally-shade-bottom: var(--tile--spacing-100);
+        --tile-tally-shade-bottom: var(--skin--spacing-100);
     }
 }
 
@@ -61,15 +61,15 @@ tile-tally {
     display: flex;
     flex-direction: column;
 
-    border-style: var(--tile--border-style);
-    border-radius: var(--tile--border-radius-050);
+    border-style: var(--skin--border-style);
+    border-radius: var(--skin--border-radius-050);
 
     /*
      * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
      * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
      */
 
-    background-color: var(--tile--background-color);
+    background-color: var(--skin--background-color);
 
     /* The parts are left transparent, so their square corners never mask the rounded ones of the box. */
 
@@ -91,37 +91,37 @@ tile-tally {
         grid-auto-columns: min-content;
         grid-auto-flow: column;
         align-items: center;
-        column-gap: var(--tile--spacing-050);
+        column-gap: var(--skin--spacing-050);
 
         /* The row keeps room for the controls whether shown or not, so the facet holds still as they come and go. */
 
-        grid-template-rows: minmax(var(--tile--scaling-150), auto);
+        grid-template-rows: minmax(var(--skin--scaling-150), auto);
 
         /* The controls at the end stand as far from the edge as from the rules above and below them. */
 
-        padding-block: var(--tile--spacing-025);
-        padding-inline: var(--tile--spacing-050) var(--tile--spacing-025);
+        padding-block: var(--skin--spacing-025);
+        padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
 
         /*
          * The header follows the rounded corners of the box, the bottom ones too while nothing shows below it, so the
          * focus mark it carries for the search field traces the edge of the box rather than a square within it.
          */
 
-        border-start-start-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
-        border-start-end-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+        border-start-start-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
+        border-start-end-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
 
         &:has(+ section[hidden]) {
-            border-end-start-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
-            border-end-end-radius: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+            border-end-start-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
+            border-end-end-radius: calc(var(--skin--border-radius-050) - var(--skin--border-width));
         }
 
         &:has(> input:focus) {
-            outline: var(--tile--outline-focus);
-            outline-offset: calc(-2 * var(--tile--border-width));
+            outline: var(--skin--outline-focus);
+            outline-offset: calc(-2 * var(--skin--border-width));
         }
 
         & > .lucide {
-            color: var(--tile--color-label);
+            color: var(--skin--color-label);
         }
 
         /* The controls are set as one item of the row, side by side with no gap, since each pads its own glyph. */
@@ -141,19 +141,19 @@ tile-tally {
 
             /* The button gives up part of its padding to the fill, which leaves the glyph more air within it. */
 
-            padding: calc(var(--tile--spacing-025) * 0.75);
+            padding: calc(var(--skin--spacing-025) * 0.75);
             align-items: center;
 
             /* The fill is drawn in by its own padding, so the control reaches over it to sit by the edge of the facet. */
 
-            margin-right: calc(var(--tile--spacing-025) * -0.75);
+            margin-right: calc(var(--skin--spacing-025) * -0.75);
 
             background-clip: content-box;
             border-radius: 50%;
 
             & > .clear {
-                width: var(--tile--scaling-075);
-                height: var(--tile--scaling-075);
+                width: var(--skin--scaling-075);
+                height: var(--skin--scaling-075);
             }
 
         }
@@ -177,7 +177,7 @@ tile-tally {
             }
 
             &::placeholder {
-                color: var(--tile--color-label);
+                color: var(--skin--color-label);
             }
 
         }
@@ -189,7 +189,7 @@ tile-tally {
         max-block-size: var(--tile-tally-height);
         overflow-y: auto;
 
-        border-top-style: var(--tile--border-style);
+        border-top-style: var(--skin--border-style);
 
         /*
          * Each end of the box fades the options running past it, so a reader sees the list carry on beyond the edge
@@ -202,9 +202,9 @@ tile-tally {
 
         mask-image: linear-gradient(
             to bottom,
-            black var(--tile--border-width),
-            transparent var(--tile--border-width),
-            black calc(var(--tile--border-width) + var(--tile-tally-shade-top)),
+            black var(--skin--border-width),
+            transparent var(--skin--border-width),
+            black calc(var(--skin--border-width) + var(--tile-tally-shade-top)),
             black calc(100% - var(--tile-tally-shade-bottom)),
             transparent 100%
         );
@@ -213,14 +213,14 @@ tile-tally {
 
             animation: tile-tally-shade-top linear both, tile-tally-shade-bottom linear both;
             animation-timeline: scroll(self);
-            animation-range: 0 var(--tile--spacing-100), calc(100% - var(--tile--spacing-100)) 100%;
+            animation-range: 0 var(--skin--spacing-100), calc(100% - var(--skin--spacing-100)) 100%;
 
         }
 
         & > small {
             display: block;
-            padding: var(--tile--spacing-050);
-            color: var(--tile--color-label);
+            padding: var(--skin--spacing-050);
+            color: var(--skin--color-label);
         }
 
         /*
@@ -231,9 +231,9 @@ tile-tally {
         & > tile-note {
 
             margin: 0;
-            padding: var(--tile--spacing-050);
+            padding: var(--skin--spacing-050);
 
-            font-size: var(--tile--font-size-small);
+            font-size: var(--skin--font-size-small);
 
             & > :first-child > :first-child {
                 font-size: 1em;
@@ -246,7 +246,7 @@ tile-tally {
             display: grid;
 
             margin: 0;
-            padding: var(--tile--spacing-050);
+            padding: var(--skin--spacing-050);
 
             list-style-type: none;
 
@@ -258,7 +258,7 @@ tile-tally {
 
             & > li {
                 margin: 0;
-                color: var(--tile--color-gray-070);
+                color: var(--skin--color-gray-070);
             }
 
             /*
@@ -270,7 +270,7 @@ tile-tally {
 
             & > li.unavailable {
 
-                color: var(--tile--color-label);
+                color: var(--skin--color-label);
 
                 & a {
                     color: inherit;
@@ -289,7 +289,7 @@ tile-tally {
                     & > input,
                     & > span:not(:has(tile-link)),
                     & > small {
-                        opacity: var(--tile--opacity-disabled);
+                        opacity: var(--skin--opacity-disabled);
                     }
 
                 }
@@ -299,7 +299,7 @@ tile-tally {
             /* The name the facet supplies for the items holding no value is set at rest, apart from the names of values. */
 
             & > li.blank > label > span {
-                font-weight: var(--tile--font-weight);
+                font-weight: var(--skin--font-weight);
             }
 
             /*
@@ -312,7 +312,7 @@ tile-tally {
                 display: grid;
                 grid-template-columns: min-content minmax(0, 1fr) min-content;
                 align-items: center;
-                column-gap: var(--tile--spacing-050);
+                column-gap: var(--skin--spacing-050);
 
                 cursor: pointer;
 
@@ -324,7 +324,7 @@ tile-tally {
                     text-overflow: ellipsis;
                     white-space: nowrap;
 
-                    font-weight: var(--tile--font-weight-strong);
+                    font-weight: var(--skin--font-weight-strong);
 
                     /* A link cuts its own wording short, once capped to the room the name leaves it. */
 

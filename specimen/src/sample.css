@@ -40,24 +40,24 @@
     & .pair {
         display: inline-flex;
         align-items: center;
-        column-gap: var(--tile--spacing-075);
+        column-gap: var(--skin--spacing-075);
     }
 
     & > tbody > tr > td:last-child {
         width: 100%;
-        color: var(--tile--color-label);
+        color: var(--skin--color-label);
     }
 
 }
 
 .roundel {
     display: inline-block;
-    width: var(--tile--scaling-125);
-    height: var(--tile--scaling-125);
+    width: var(--skin--scaling-125);
+    height: var(--skin--scaling-125);
     border-radius: 50%; /* A roundel is a share of its own box, so the mark states the shape rather than a step. */
-    border-style: var(--tile--border-style);
-    border-width: var(--tile--border-width);
-    border-color: var(--tile--border-color);
+    border-style: var(--skin--border-style);
+    border-width: var(--skin--border-width);
+    border-color: var(--skin--border-color);
 }
 
 /*
@@ -72,10 +72,10 @@
     justify-content: center;
     width: 3em;
     height: 1.75em;
-    border-style: var(--tile--border-style);
-    border-width: var(--tile--border-width);
-    border-color: var(--tile--border-color);
-    border-radius: var(--tile--border-radius-025);
+    border-style: var(--skin--border-style);
+    border-width: var(--skin--border-width);
+    border-color: var(--skin--border-color);
+    border-radius: var(--skin--border-radius-025);
 }
 
 
@@ -88,7 +88,7 @@
 
     display: flex;
     padding-left: 0;
-    margin-bottom: var(--tile--spacing-100);
+    margin-bottom: var(--skin--spacing-100);
     list-style: none;
 
     /* The step margin a list gives its items would drop every step but the first below the line. */
@@ -107,30 +107,30 @@
 
     & > li > span {
         display: block;
-        height: var(--tile--scaling-200);
-        border-top-style: var(--tile--border-style);
-        border-bottom-style: var(--tile--border-style);
+        height: var(--skin--scaling-200);
+        border-top-style: var(--skin--border-style);
+        border-bottom-style: var(--skin--border-style);
     }
 
     & > li:first-child > span {
-        border-left-style: var(--tile--border-style);
-        border-top-left-radius: var(--tile--border-radius-025);
-        border-bottom-left-radius: var(--tile--border-radius-025);
+        border-left-style: var(--skin--border-style);
+        border-top-left-radius: var(--skin--border-radius-025);
+        border-bottom-left-radius: var(--skin--border-radius-025);
     }
 
     & > li:last-child > span {
-        border-right-style: var(--tile--border-style);
-        border-top-right-radius: var(--tile--border-radius-025);
-        border-bottom-right-radius: var(--tile--border-radius-025);
+        border-right-style: var(--skin--border-style);
+        border-top-right-radius: var(--skin--border-radius-025);
+        border-bottom-right-radius: var(--skin--border-radius-025);
     }
 
     /* The reset hands every element the page background, which a label under a swatch has no use for. */
 
     & > li > code {
         display: inline-block;
-        margin-top: var(--tile--spacing-025);
-        font-size: var(--tile--font-size-small);
-        color: var(--tile--color-label);
+        margin-top: var(--skin--spacing-025);
+        font-size: var(--skin--font-size-small);
+        color: var(--skin--color-label);
         background-color: transparent;
     }
 
@@ -140,11 +140,11 @@
 
 .ramp.chips {
 
-    gap: var(--tile--spacing-050);
+    gap: var(--skin--spacing-050);
 
     & > li > span {
-        border-style: var(--tile--border-style);
-        border-radius: var(--tile--border-radius-025);
+        border-style: var(--skin--border-style);
+        border-radius: var(--skin--border-radius-025);
     }
 
 }

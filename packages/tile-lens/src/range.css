@@ -25,15 +25,15 @@ tile-range {
     display: flex;
     flex-direction: column;
 
-    border-style: var(--tile--border-style);
-    border-radius: var(--tile--border-radius-050);
+    border-style: var(--skin--border-style);
+    border-radius: var(--skin--border-radius-050);
 
     /*
      * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
      * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
      */
 
-    background-color: var(--tile--background-color);
+    background-color: var(--skin--background-color);
 
     /* The parts are left transparent, so their square corners never mask the rounded ones of the box. */
 
@@ -55,18 +55,18 @@ tile-range {
         grid-auto-columns: min-content;
         grid-auto-flow: column;
         align-items: center;
-        column-gap: var(--tile--spacing-050);
+        column-gap: var(--skin--spacing-050);
 
         /* The row keeps room for the controls whether shown or not, so the facet holds still as they come and go. */
 
-        grid-template-rows: minmax(var(--tile--scaling-150), auto);
+        grid-template-rows: minmax(var(--skin--scaling-150), auto);
 
         /* The controls at the end stand as far from the edge as from the rules above and below them. */
 
-        padding-block: var(--tile--spacing-025);
-        padding-inline: var(--tile--spacing-050) var(--tile--spacing-025);
+        padding-block: var(--skin--spacing-025);
+        padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
 
-        color: var(--tile--color-label);
+        color: var(--skin--color-label);
 
         & > span:first-of-type {
             overflow: hidden;
@@ -90,14 +90,14 @@ tile-range {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 
-        border-top-style: var(--tile--border-style);
+        border-top-style: var(--skin--border-style);
 
         /*
          * The box bounds the fields, which keep the inset focus and invalid marks the base rules draw within them. A
          * field follows the rounded corner of the box it sits in, so the marks trace the edge of the box there.
          */
 
-        --tile-range-corner: calc(var(--tile--border-radius-050) - var(--tile--border-width));
+        --tile-range-corner: calc(var(--skin--border-radius-050) - var(--skin--border-width));
 
         & > input {
 
@@ -115,8 +115,8 @@ tile-range {
 
             /* The text lines up with the name in the header, and takes the air the header takes above and below it. */
 
-            padding-block: var(--tile--spacing-025);
-            padding-inline: var(--tile--spacing-050);
+            padding-block: var(--skin--spacing-025);
+            padding-inline: var(--skin--spacing-050);
 
             /*
              * The height is pinned to a line of text, since a native temporal input pads its entry mask on its own and
@@ -124,10 +124,10 @@ tile-range {
              */
 
             box-sizing: border-box;
-            block-size: calc(1lh + 2 * var(--tile--spacing-025));
+            block-size: calc(1lh + 2 * var(--skin--spacing-025));
 
             & + input {
-                border-inline-start-style: var(--tile--border-style);
+                border-inline-start-style: var(--skin--border-style);
             }
 
         }
@@ -142,9 +142,9 @@ tile-range {
             grid-column: 1 / -1;
 
             margin: 0;
-            padding: var(--tile--spacing-050);
+            padding: var(--skin--spacing-050);
 
-            font-size: var(--tile--font-size-small);
+            font-size: var(--skin--font-size-small);
 
             & > :first-child > :first-child {
                 font-size: 1em;
@@ -166,7 +166,7 @@ tile-range {
 
         & > input + input {
             border-inline-start-style: none;
-            border-top-style: var(--tile--border-style);
+            border-top-style: var(--skin--border-style);
             border-end-start-radius: var(--tile-range-corner);
         }
 

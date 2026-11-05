@@ -27,9 +27,9 @@ tile-info {
     /* Consecutive panels are set apart by a rule, so a screen groups properties by panel. */
 
     & + & {
-        margin-top: var(--tile--spacing-075);
-        padding-top: var(--tile--spacing-075);
-        border-top-style: var(--tile--border-style);
+        margin-top: var(--skin--spacing-075);
+        padding-top: var(--skin--spacing-075);
+        border-top-style: var(--skin--border-style);
     }
 
     /*
@@ -43,11 +43,11 @@ tile-info {
      */
 
     &:not(:first-child, & + &, :is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, hr) + &) {
-        margin-top: var(--tile--spacing-100);
+        margin-top: var(--skin--spacing-100);
     }
 
     &:not(:has(+ &)):not(:last-child) {
-        margin-bottom: var(--tile--spacing-100);
+        margin-bottom: var(--skin--spacing-100);
     }
 
     & > dl {
@@ -60,7 +60,7 @@ tile-info {
         display: grid;
         grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
         align-items: baseline;
-        gap: var(--tile--spacing-010) var(--tile--spacing-050);
+        gap: var(--skin--spacing-010) var(--skin--spacing-050);
 
         margin: 0;
 
@@ -119,7 +119,7 @@ tile-info {
 
                     /* The room a marked item leaves to its chevron: the glyph and the gap before the item. */
 
-                    --tile-info-chevron-width: calc(0.5em + var(--tile--spacing-050));
+                    --tile-info-chevron-width: calc(0.5em + var(--skin--spacing-050));
 
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -148,8 +148,8 @@ tile-info {
                         inline-size: var(--tile-info-chevron-width);
                         position: relative;
                         top: calc((1ex - 1cap) / 2);
-                        padding-right: var(--tile--spacing-050);
-                        color: var(--tile--color-disabled);
+                        padding-right: var(--skin--spacing-050);
+                        color: var(--skin--color-disabled);
                     }
 
                 }
@@ -170,7 +170,7 @@ tile-info {
 
     &:not([place="spread"]) > dl {
 
-        column-gap: var(--tile--spacing-075);
+        column-gap: var(--skin--spacing-075);
 
         & > dd {
             white-space: normal;

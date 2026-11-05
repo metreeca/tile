@@ -118,7 +118,7 @@
  *
  * **Styling**
  *
- * A glyph is drawn at `--tile--scaling-100`, in the colour of the text around it and at `--tile--stroke-width`, so a
+ * A glyph is drawn at `--skin--scaling-100`, in the colour of the text around it and at `--skin--stroke-width`, so a
  * control restyles its icon by restyling itself and a theme carries every icon along; the `size` prop plays no part,
  * the stylesheet overriding it. A one-off takes a `class`, which Lucide merges into the `lucide lucide-<name>` list
  * it already carries, or a `style`, which lands on the element and outranks both the stylesheet and the attributes
@@ -137,13 +137,13 @@
  *
  * ```css
  * .urgent {
- *     color: var(--tile--color-fail);
+ *     color: var(--skin--color-fail);
  * }
  *
  * tile-toolbar .lucide {
- *     width: var(--tile--scaling-150);
- *     height: var(--tile--scaling-150);
- *     stroke-width: var(--tile--stroke-width);
+ *     width: var(--skin--scaling-150);
+ *     height: var(--skin--scaling-150);
+ *     stroke-width: var(--skin--stroke-width);
  * }
  * ```
  *

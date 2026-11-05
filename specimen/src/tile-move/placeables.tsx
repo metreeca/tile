@@ -20,7 +20,7 @@
  * @module
  */
 
-import { css, tile } from "@metreeca/skin";
+import { css, skin } from "@metreeca/skin";
 import { Style } from "@metreeca/tile-hive/style";
 import { Placeable } from "@metreeca/tile-move/placeable";
 import { Fragment } from "preact";
@@ -33,9 +33,9 @@ const types = ["Bug", "Task"];
 // each state tints its column along the flow, from cool to hot
 
 const states = [
-	{ label: "To do", tint: tile.colorHeat010 },
-	{ label: "Doing", tint: tile.colorHeat060 },
-	{ label: "Done", tint: tile.colorHeat080 }
+	{ label: "To do", tint: skin.colorHeat010 },
+	{ label: "Doing", tint: skin.colorHeat060 },
+	{ label: "Done", tint: skin.colorHeat080 }
 ];
 
 const issues = [

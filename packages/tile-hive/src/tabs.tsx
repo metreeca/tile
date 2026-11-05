@@ -82,7 +82,7 @@ export function Tabs({
 	 * mark the chosen tab wears stays either way, so the choice is as plain under one step as under the other. No
 	 * loud step is offered, a rule being as far as a strip goes.
 	 *
-	 * Tabs stating nothing take the look the area around them is written in, from the `--tile--look` token the design
+	 * Tabs stating nothing take the look the area around them is written in, from the `--skin--look` token the design
 	 * system carries, which is `normal` where nothing assigns it; an area written loud lands on `normal` as well,
 	 * there being no step above it here. A look stated here answers to that alone, so a strip asking for the rule
 	 * keeps it inside a quietened panel.

@@ -26,7 +26,7 @@ tile-sortable {
 
     position: relative; /* holds the status announcing a move refused, which would otherwise escape scrolled lists */
 
-    gap: var(--tile--spacing-150);
+    gap: var(--skin--spacing-150);
 
     & > section {
 
@@ -58,7 +58,7 @@ tile-sortable {
              */
 
             &[data-target] {
-                background-color: var(--tile--background-color-info);
+                background-color: var(--skin--background-color-info);
             }
 
         }

@@ -20,7 +20,7 @@
  * @module
  */
 
-import { tile } from "@metreeca/skin";
+import { skin } from "@metreeca/skin";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Style } from "@metreeca/tile-hive/style";
@@ -118,7 +118,7 @@ export function Buttons() {
 		<p>A disabled button leaves its mode behind and takes the greyed colour every inactive control shares, since
 			a control that answers nothing has nothing to say about what it would do.</p>
 
-		<p>A button stating no look takes the one the area around it is written in, from <code>{tile.look}</code>.
+		<p>A button stating no look takes the one the area around it is written in, from <code>{skin.look}</code>.
 			The row below wraps its controls in a <code>Style</code> area assigning it once, and holds three buttons
 			that ask for nothing, plus one that asks to be loud and stays loud.</p>
 

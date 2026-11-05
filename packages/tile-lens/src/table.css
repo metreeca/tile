@@ -49,7 +49,7 @@ tile-table {
      */
 
     & td.repeated {
-        color: var(--tile--color-label);
+        color: var(--skin--color-label);
     }
 
     /*
@@ -58,7 +58,7 @@ tile-table {
      */
 
     &[striped] tbody > tr:nth-child(odd) > td {
-        background-color: var(--tile--background-color-stripe);
+        background-color: var(--skin--background-color-stripe);
     }
 
 }

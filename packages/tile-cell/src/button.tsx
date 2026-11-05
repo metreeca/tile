@@ -53,7 +53,7 @@ export function Button({
 	disabled,
 	expanded,
 
-	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--tile--look`
+	look, // deliberately left undefaulted, so an unstated look falls through to the ambient `--skin--look`
 	mode = "normal",
 	type = "button",
 
@@ -94,7 +94,7 @@ export function Button({
 	 * colour does not reach: `subtle` keeps no rule and reads as part of the text around it, `strong` is bounded and
 	 * set in the strong weight, and `normal` sits between the two. What the button means is stated apart, by `mode`.
 	 *
-	 * A button stating nothing takes the look the area around it is written in, from the `--tile--look` token the
+	 * A button stating nothing takes the look the area around it is written in, from the `--skin--look` token the
 	 * design system carries, which is `normal` where nothing assigns it. Stating a look here answers to that alone,
 	 * so one loud control in a quietened toolbar stays loud.
 	 */

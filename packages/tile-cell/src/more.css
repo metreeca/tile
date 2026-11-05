@@ -21,9 +21,9 @@ tile-more {
     display: grid;
     place-items: center;
 
-    padding: var(--tile--spacing-050);
+    padding: var(--skin--spacing-050);
 
-    color: var(--tile--color-disabled);
+    color: var(--skin--color-disabled);
 
     /*
      * The mark turns at twice the slowest step, as the shell's busy mark does, waiting covering no distance and so
@@ -32,7 +32,7 @@ tile-more {
      */
 
     & > svg {
-        animation: tile-more-turn calc(2 * var(--tile--duration-slow)) linear infinite;
+        animation: tile-more-turn calc(2 * var(--skin--duration-slow)) linear infinite;
     }
 
 }

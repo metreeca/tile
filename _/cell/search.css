@@ -27,7 +27,7 @@ tile-search {
     border-style: solid;
     border-radius: 2ex;
 
-    background-color: #FFF; /* !!! var(--tile--background-color) not working */
+    background-color: #FFF; /* !!! var(--skin--background-color) not working */
 
     & > * {
         grid-row: 1;
@@ -67,7 +67,7 @@ tile-search {
         }
 
         :is(tile-keywords[disabled]) > & {
-            color: var(--tile--color-disabled);
+            color: var(--skin--color-disabled);
         }
 
     }

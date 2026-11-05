@@ -61,7 +61,7 @@ export function Box({
 }: {
 
 	/**
-	 * The value each token takes on the box and inside it, keyed by {@link @metreeca/tile!index.Token token name}; a
+	 * The value each token takes on the box and inside it, keyed by {@link @metreeca/skin!index.Token token name}; a
 	 * token left out or given `undefined` keeps whatever the cascade already gives it, and the box is left unpadded,
 	 * square, flat and painted as what encloses it.
 	 */

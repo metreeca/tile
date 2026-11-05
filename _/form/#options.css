@@ -19,7 +19,7 @@ tile-options {
     overflow: visible !important;
 
     & > select.default {
-        color: var(--tile--color-disabled);
+        color: var(--skin--color-disabled);
     }
 
 }

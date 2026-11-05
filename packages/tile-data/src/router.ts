@@ -52,11 +52,16 @@
  * | `/collection/:slug`    | exact     | `/collection/{slug}`         | `/`          |
  * | `/collection/`         | subtree   | `/collection/`               | `/`          |
  * |                        |           | `/collection/{path}`         | `/{path}`    |
+ * | `/collection/;view`    | annexed   | `/collection/;view` alone    | `/`          |
+ * | `/collection/:slug;v`  | annexed   | `/collection/{slug};v` alone | `/`          |
  * | `*`                    | catch-all | any route                    | the route    |
  *
  * - **Named steps**: `:slug` standing for a whole path step matches any non-empty step, where `slug` is a sequence of
  *   word characters: `/users/:id` matches `/users/123`, but neither `/users/` nor `/users/123/posts`
  * - **Subtrees**: a pattern ending with `/`, except the root `/`, matches the route up to it and every route below it
+ * - **Annexes**: a pattern ending with a non-empty annex, as `/;info`, `/resource;info` or `/collection/;info`, matches
+ *   the route only while it carries exactly that annex, and never acts as a subtree; a pattern without annex matches
+ *   whatever annex the route carries, so an annexed pattern goes before the plain pattern it refines
  * - **Catch-all**: `*` matches any route; placed last, it handles the routes the patterns before it leave unhandled,
  *   as a not-found view shown within the layout of the section or as a redirection; `*` is rejected within any other
  *   pattern, so `/users/*` and `/*` are not glob patterns but invalid ones
@@ -74,8 +79,43 @@
  * | `/people/:id` | `/users/:id` | `/people/123` | `/users/123` |
  * | `/old/`       | `/new/`      | `/old/a/b`    | `/new/a/b`   |
  * | `*`           | `/`          | `/missing`    | `/`          |
+ * | `/;old`       | `/;new`      | `/;old`       | `/;new`      |
+ * | `/;info`      | `/about;`    | `/;info`      | `/about`     |
+ *
+ * A redirection carries the annex of the route along, unless its target names an annex of its own, which takes its
+ * place; a target ending with a bare `;` drops the annex, landing on the route alone.
  *
  * Redirections are followed until a view is reached, and rejected if they lead back to a route already visited.
+ *
+ * # Annexes
+ *
+ * A route may carry an annex, an opaque string attached to its last step after a `;`, as in `/courses/;grid` or
+ * `/courses/123;lessons`. An annex keeps view state in the location, such as the presentation a view is switched to,
+ * where the query is already taken by collection filters and the hash by heading anchors.
+ *
+ * The `;` separator follows the per-segment parameter practice noted in
+ * [RFC 3986 §3.3](https://www.rfc-editor.org/rfc/rfc3986#section-3.3), which allows it unencoded within a path step
+ * and leaves its meaning to the application; an encoded `%3B` is part of the step, as
+ * [RFC 3986 §2.2](https://www.rfc-editor.org/rfc/rfc3986#section-2.2) tells reserved characters and their encodings
+ * apart. The annex is confined to the last step, so that the route without it is the plain IRI of the resource on show.
+ *
+ * The annex takes part in matching only for patterns naming one, as described under *Route Patterns*:
+ * {@link useRoute} returns the route without its annex, and {@link useAnnex} the annex alone. As with the query, the
+ * view parses the annex itself; a bare `;` carries an empty annex, read as none.
+ *
+ * On a root or a collection the annex follows the trailing `/`: `/courses;grid` is the route `/courses`, matched as
+ * such rather than as the collection `/courses/`, so a collection carries its annex as `/courses/;grid`.
+ *
+ * A change to the annex alone renders the components reading it again, without mounting the views afresh, so a view
+ * switching presentation keeps the state it reached, unless it moves the route to a view of another pattern.
+ *
+ * A view moves to another annex through a route built from {@link useRoute}, as `${route};table`, rather than through
+ * a relative `;table`: [RFC 3986 §5.2.3](https://www.rfc-editor.org/rfc/rfc3986#section-5.2.3) resolves a relative
+ * path by replacing the last step of the base, so `;table` sets the annex of a root or a collection, but moves the
+ * resource `/courses/123` to `/courses/;table`. The router resolves references as the RFC prescribes, like the
+ * browser does, so a link lands on the same page whether followed by the router, opened in a new tab or copied. Being
+ * a path, the annexed route leaves the query and the hash behind, so a view keeping its filters across a change of
+ * annex restores them from its own state, such as the history state, rather than from the location.
  *
  * # Sections
  *
@@ -117,7 +157,6 @@ import { app } from "./index.js";
 const Wildcard = "*";
 
 const ActiveAttribute = "active";
-const TargetAttribute = "target";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,13 +167,19 @@ const TargetAttribute = "target";
 const RouterContext = createContext<Readonly<{
 
 	/**
-	 * The route in the browser address bar, as returned by {@link useRoute}.
+	 * The route in the browser address bar without its annex, as returned by {@link useRoute}.
 	 */
 	route: string
 
 	/**
-	 * The route and the query the last navigation moved to, keying the views {@link Routes} renders, so that a
-	 * navigation changing the query alone mounts them afresh, while a query replaced outside the router leaves them.
+	 * The annex of the route in the browser address bar, as returned by {@link useAnnex}.
+	 */
+	annex: string
+
+	/**
+	 * The route without its annex and the query the last navigation moved to, keying the views {@link Routes} renders:
+	 * a navigation changing the query mounts them afresh, while a change of annex alone, or a query replaced outside
+	 * the router through `history.replaceState`, leaves them mounted with the state they reached.
 	 */
 	place: string
 
@@ -146,6 +191,7 @@ const RouterContext = createContext<Readonly<{
 }>>({
 
 	route: "",
+	annex: "",
 	place: "",
 
 	navigate: () => {}
@@ -204,7 +250,15 @@ export interface Router {
 	(route: string | {
 
 		/**
-		 * The route to navigate to; the current route if omitted.
+		 * True to replace the current history entry rather than add one; navigating to the current route always does.
+		 *
+		 * @defaultValue false
+		 */
+		replace?: boolean
+
+
+		/**
+		 * The route to navigate to, along with any annex it carries; the current route if omitted.
 		 */
 		route?: string
 
@@ -218,13 +272,6 @@ export interface Router {
 		 */
 		state?: unknown
 
-		/**
-		 * True to replace the current history entry rather than add one; navigating to the current route always does.
-		 *
-		 * @defaultValue false
-		 */
-		replace?: boolean
-
 	}): void;
 
 }
@@ -235,14 +282,14 @@ export interface Router {
 /**
  * Tracks the current route.
  *
- * Provides the current route and a navigator to the components below it, through {@link useRoute} and
- * {@link useRouter}, and renders again whenever the route changes, whether through navigation or browser history.
- * The views for the current route are selected by the {@link Routes} nested below it.
+ * Provides the current route, its annex and a navigator to the components below it, through {@link useRoute},
+ * {@link useAnnex} and {@link useRouter}, and renders again whenever the route or its annex changes, whether through
+ * navigation or browser history. The views for the current route are selected by the {@link Routes} nested below it.
  *
  * Takes over plain clicks anywhere in the page, leaving clicks with a modifier key or already handled to the browser:
  *
  * - a link to the same site is followed without reloading the page, unless it points at a fragment of the current
- *   page or targets another browsing context
+ *   page or targets another browsing context through a `target` attribute other than `_self`
  * - a link to another site opens in a new browsing context
  * - an image outside any link toggles its `active` attribute, which the `@metreeca/tile` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
@@ -272,7 +319,8 @@ export function Router({
 
 	const [place, setPlace] = useState(here);
 
-	const route = place.replace(/\?.*$/, "");
+	const { route, annex } = split(place.replace(/\?.*$/, ""));
+	const query = place.replace(/^[^?]*/, "");
 
 	const sync = () => setPlace(here()); // renders again only if the place actually changed
 
@@ -281,7 +329,12 @@ export function Router({
 
 		function click(event: MouseEvent): void {
 
-			const plain = isPlain(event);
+			const plain = !event.altKey
+				&& !event.ctrlKey
+				&& !event.metaKey
+				&& !event.shiftKey
+				&& !event.defaultPrevented;
+
 			const origin = event.target instanceof Element ? event.target : undefined;
 
 			const anchor = origin?.closest("a");
@@ -289,7 +342,7 @@ export function Router({
 
 			if ( plain && anchor
 				&& !anchor.getAttribute("href")?.startsWith("#")
-				&& (anchor.getAttribute(TargetAttribute) ?? "_self") === "_self"
+				&& (anchor.getAttribute("target") ?? "_self") === "_self"
 			) {
 
 				event.preventDefault();
@@ -305,14 +358,6 @@ export function Router({
 
 			}
 
-
-			function isPlain(event: MouseEvent) {
-				return !event.altKey
-					&& !event.ctrlKey
-					&& !event.metaKey
-					&& !event.shiftKey
-					&& !event.defaultPrevented;
-			}
 
 			function follow(href: string): void {
 
@@ -443,7 +488,19 @@ export function Router({
 	}, []);
 
 
-	return createElement(RouterContext.Provider, { value: { route, place, navigate } }, children);
+	return createElement(RouterContext.Provider, {
+		value: { route, annex, place: `${route}${query}`, navigate } // the annex alone leaves the views mounted
+	}, children);
+
+
+	/**
+	 * Identifies the place the browser location stands at.
+	 *
+	 * @returns The location path and query, the hash left out as it never moves the page to another view
+	 */
+	function here(): string {
+		return `${location.pathname}${location.search}`;
+	}
 
 }
 
@@ -462,13 +519,15 @@ export function Router({
  * Mounts the view afresh whenever a navigation moves the location, the query included, so that a view reads the query
  * as it mounts: a link from `/courses/` to `/courses/?~label=art` mounts the catalogue again with the new criteria. A
  * query replaced through `history.replaceState` outside the router, as a view recording its own state in the location
- * does, leaves the view mounted with the state it reached, until the next navigation moves the location again.
+ * does, leaves the view mounted with the state it reached, until the next navigation moves the location again. A
+ * navigation changing the annex alone leaves the view mounted too, rendering again only what reads the annex.
  *
  * @param options The routes configuration
  *
  * @returns The view for the current route
  *
- * @throws {@link !Error Error} If a pattern other than `*` lacks a leading `/` or holds `*`, whatever the current route
+ * @throws {@link !Error Error} If a pattern other than `*` lacks a leading `/`, holds `*`, or holds `;` anywhere but
+ * before a non-empty annex on its last step, as soon as the table renders, whatever the route
  * @throws {@link !Error Error} If the route, or one it redirects to, matches no pattern and no enclosing catch-all
  * @throws {@link !Error Error} If redirections lead back to a route already visited
  */
@@ -486,7 +545,7 @@ export function Routes({
 
 }): ComponentChildren {
 
-	const { route, place, navigate } = useContext(RouterContext);
+	const { route, annex, place, navigate } = useContext(RouterContext);
 	const { path, wild } = useContext(RoutesContext);
 
 	const table = isDefined(children[Wildcard]) || !isDefined(wild)
@@ -494,7 +553,7 @@ export function Routes({
 		: { ...children, [Wildcard]: wild }; // the inherited catch-all goes last, as if declared here
 
 	const invalid = Object.keys(table).find(glob =>
-		glob !== Wildcard && (!glob.startsWith("/") || glob.includes("*"))
+		glob !== Wildcard && !/^\/[^*;]*(?:;[^*/]+)?$/.test(glob) // rooted, no wildcard, an annex on the last step only
 	);
 
 	if ( isDefined(invalid) ) {
@@ -502,13 +561,12 @@ export function Routes({
 	}
 
 	const section = path.endsWith("/") ? route.slice(path.length-1) : "/"; // the route as the table sees it
-	const settled = settle(section);
+	const origin = attach(section, annex);
+	const settled = settle(origin);
 
-	const target = settled === section ? undefined
-		: settled === "/" ? path
-			: `${path.replace(/\/$/, "")}${settled}`;
+	const target = settled === origin ? undefined : relocate(split(settled));
 
-	const hit = lookup(section);
+	const hit = lookup(origin);
 
 
 	useLayoutEffect(() => { // moves the location before the blank render paints; the router renders again on its own
@@ -551,7 +609,25 @@ export function Routes({
 
 
 	/**
-	 * Follows the redirections of the table from a section route.
+	 * Locates a section route, along with the annex it carries, within the whole route.
+	 *
+	 * @returns The whole route the section route stands for, carrying its annex
+	 */
+	function relocate({ route, annex }: Readonly<{ route: string, annex: string }>): string {
+		return attach(route === "/" ? path : `${path.replace(/\/$/, "")}${route}`, annex);
+	}
+
+	/**
+	 * Attaches an annex to the last step of a route.
+	 *
+	 * @returns The route carrying the annex, or the route alone for an empty annex
+	 */
+	function attach(route: string, annex: string): string {
+		return annex ? `${route};${annex}` : route;
+	}
+
+	/**
+	 * Follows the redirections of the table from a section route carrying its annex.
 	 *
 	 * @returns The route the redirections lead to, the section route itself if it is not redirected
 	 */
@@ -574,22 +650,27 @@ export function Routes({
 	}
 
 	/**
-	 * Resolves the redirection the table defines for a section route.
+	 * Resolves the redirection the table defines for a section route carrying its annex.
 	 *
-	 * @returns The route the section route is redirected to, or undefined if it is not redirected
+	 * @returns The route the section route is redirected to, carrying the annex the target names or else the one of
+	 * the section route; undefined if the table maps the section route to a view or matches no pattern for it
 	 */
-	function redirect(route: string): undefined | string {
+	function redirect(section: string): undefined | string {
 
-		const hit = lookup(route);
+		const hit = lookup(section);
 
 		if ( isDefined(hit) && isString(hit.entry) ) {
 
 			const { entry, steps } = hit;
 			const tail = steps.groups?.$;
 
-			const filled = entry.replace(/(?<=\/):(\w+)(?=[/?#]|$)/g, (_, step) => steps.groups?.[step] ?? "");
+			const filled = entry.replace(/(?<=\/):(\w+)(?=[/;?#]|$)/g, (_, step) => steps.groups?.[step] ?? "");
+			const { route, annex } = split(filled);
 
-			return isDefined(tail) && filled.endsWith("/") ? `${filled.slice(0, -1)}${tail}` : filled;
+			return attach(
+				isDefined(tail) && route.endsWith("/") ? `${route.slice(0, -1)}${tail}` : route,
+				route === filled ? split(section).annex : annex // a target naming no annex carries the current one along
+			);
 
 		} else {
 
@@ -600,15 +681,18 @@ export function Routes({
 	}
 
 	/**
-	 * Looks up the first pattern of the table matching a section route, in table order.
+	 * Looks up the first pattern of the table matching a section route carrying its annex, in table order.
 	 *
 	 * @returns The matching pattern, its entry and the steps it captured, or undefined if no pattern matches
 	 */
-	function lookup(route: string) {
+	function lookup(section: string) {
+
+		const { route, annex } = split(section);
 
 		return Object.entries(table).flatMap(([glob, entry]) => {
 
-			const steps = pattern(glob).exec(route);
+			const { route: stem, annex: label } = split(glob);
+			const steps = label && label !== annex ? null : pattern(stem, !label).exec(route);
 
 			return isNull(steps) ? [] : [{ glob, entry, steps }];
 
@@ -617,10 +701,13 @@ export function Routes({
 
 		/**
 		 * Compiles a route pattern, capturing named steps under their name and the route below a subtree under `$`.
+		 *
+		 * @param glob The route pattern without its annex
+		 * @param open True if a pattern ending with `/` is a subtree, false for a pattern naming an annex
 		 */
-		function pattern(glob: string): RegExp {
+		function pattern(glob: string, open: boolean): RegExp {
 
-			const subtree = glob.length > 1 && glob.endsWith("/");
+			const subtree = open && glob.length > 1 && glob.endsWith("/");
 			const steps = subtree ? glob.slice(0, -1) : glob;
 
 			return glob === Wildcard ? /^.*$/ : new RegExp(`^${steps
@@ -656,20 +743,37 @@ export function useRouter(): Router {
  *
  * Renders the component again whenever the route changes, whether through navigation or browser history.
  *
- * @returns The current route, as carried by the location path; an empty string outside any router
+ * @returns The current route, as carried by the location path without its annex; an empty string outside any router
  */
 export function useRoute(): string {
 	return useContext(RouterContext).route;
+}
+
+/**
+ * Retrieves the annex of the current route.
+ *
+ * Renders the component again whenever the annex changes, whether through navigation or browser history. The views
+ * below the router stay mounted, so a view switching presentation keeps the state it reached.
+ *
+ * @returns The annex after the `;` on the last step of the current route, as it appears in the location path and left
+ * to the caller to parse; an empty string if the route carries none, or outside any router
+ */
+export function useAnnex(): string {
+	return useContext(RouterContext).annex;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Identifies the place the browser location stands at.
+ * Splits a route into its steps and the annex its last step carries.
  *
- * @returns The location path and query, the hash left out as it never moves the page to another view
+ * @returns The route without the annex, and the annex following the first `;` of the last step, empty if none
  */
-function here(): string {
-	return `${location.pathname}${location.search}`;
+function split(route: string): Readonly<{ route: string, annex: string }> {
+
+	const [, steps = route, annex = ""] = /^(.*?\/[^/;]*)(?:;([^/]*))?$/.exec(route) ?? [];
+
+	return { route: steps, annex };
+
 }

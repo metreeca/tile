@@ -19,7 +19,7 @@ import { useEffect } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Router, Routes, useRoute, useRouter } from "./router.js";
+import { Router, Routes, useAnnex, useRoute, useRouter } from "./router.js";
 
 
 vi.hoisted(() => {
@@ -31,6 +31,7 @@ type Routing = Parameters<typeof Routes>[0]["children"];
 
 
 const Here: FunctionComponent = () => createElement("output", {}, useRoute());
+const Annex: FunctionComponent = () => createElement("output", {}, useAnnex());
 
 
 function shell(children: ComponentChildren): void {
@@ -118,6 +119,39 @@ describe("Router", () => {
 
 			expect(location.pathname).toBe("/other");
 			expect(text()).toBe("other");
+
+		});
+
+		it("should resolve relative annex links as relative paths, as the browser does", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid?q=1#h");
+
+			mount({
+				"/courses/:id": createElement("a", { href: ";table" }, "link"),
+				"/courses/": createElement("p", {}, "list")
+			});
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/courses/;table");
+			expect(location.search).toBe("");
+			expect(location.hash).toBe("");
+
+		});
+
+		it("should follow annex links built from the current route", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid?q=1#h");
+
+			const Link: FunctionComponent = () => createElement("a", { href: `${useRoute()};table` }, "link");
+
+			mount({ "/courses/:id": createElement(Link, {}) });
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/courses/123;table");
+			expect(location.search).toBe("");
+			expect(location.hash).toBe("");
 
 		});
 
@@ -427,12 +461,197 @@ describe("Routes", () => {
 
 	});
 
+	describe("annexes", () => {
+
+		it("should match the root route carrying an annex", async () => {
+
+			history.replaceState(null, "", "/;grid");
+
+			mount({ "/": createElement("p", {}, "home") });
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should match the root of a subtree carrying an annex as the root of the section", async () => {
+
+			history.replaceState(null, "", "/courses/;grid");
+
+			mount({ "/courses/": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
+
+			expect(text()).toBe("list");
+
+		});
+
+		it("should match routes below a subtree carrying an annex", async () => {
+
+			history.replaceState(null, "", "/courses/123;lessons");
+
+			mount({ "/courses/": createElement(section({ "/:id": createElement(Here, {}) }), {}) });
+
+			expect(text()).toBe("/courses/123");
+
+		});
+
+		it("should match named steps without their annex", async () => {
+
+			history.replaceState(null, "", "/users/123;posts");
+
+			mount({ "/users/:id": createElement(Here, {}) });
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should take an annex before a trailing slash as the annex of the step", async () => {
+
+			history.replaceState(null, "", "/courses;grid");
+
+			mount({ "/courses/": createElement("p", {}, "list"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/courses");
+
+		});
+
+		it("should carry the annex along redirections", async () => {
+
+			history.replaceState(null, "", "/people/123;posts");
+
+			mount({ "/people/:id": "/users/:id", "/users/:id": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/users/123;posts");
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should carry the annex along section redirections", async () => {
+
+			history.replaceState(null, "", "/users/;grid");
+
+			mount({
+				"/users/": createElement(section({
+					"/": "/all",
+					"/all": createElement(Here, {})
+				}), {})
+			});
+
+			expect(location.pathname).toBe("/users/all;grid");
+			expect(text()).toBe("/users/all");
+
+		});
+
+		it("should match annexed patterns for routes carrying the same annex", async () => {
+
+			history.replaceState(null, "", "/;info");
+
+			mount({ "/;info": createElement("p", {}, "info"), "/": createElement("p", {}, "home") });
+
+			expect(text()).toBe("info");
+
+		});
+
+		it("should skip annexed patterns for routes carrying another annex or none", async () => {
+
+			const table = { "/;info": createElement("p", {}, "info"), "/": createElement("p", {}, "home") };
+
+			history.replaceState(null, "", "/;grid");
+			mount(table);
+			expect(text()).toBe("home");
+
+			history.replaceState(null, "", "/");
+			mount(table);
+			expect(text()).toBe("home");
+
+		});
+
+		it("should match annexed patterns on named steps", async () => {
+
+			history.replaceState(null, "", "/courses/123;lessons");
+
+			mount({ "/courses/:id;lessons": createElement(Here, {}) });
+
+			expect(text()).toBe("/courses/123");
+
+		});
+
+		it("should match annexed collection patterns as exact patterns rather than subtrees", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid");
+
+			mount({ "/courses/;grid": createElement("p", {}, "list"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/courses/123");
+
+		});
+
+		it("should match annexed patterns within sections", async () => {
+
+			history.replaceState(null, "", "/users/;info");
+
+			mount({
+				"/users/": createElement(section({
+					"/;info": createElement("p", {}, "info"),
+					"/": createElement("p", {}, "list")
+				}), {})
+			});
+
+			expect(text()).toBe("info");
+
+		});
+
+		it("should replace the annex with the one the redirection names", async () => {
+
+			history.replaceState(null, "", "/;old");
+
+			mount({ "/;old": "/;new", "/": createElement(Annex, {}) });
+
+			expect(location.pathname).toBe("/;new");
+			expect(text()).toBe("new");
+
+		});
+
+		it("should drop the annex on redirections to a bare separator", async () => {
+
+			history.replaceState(null, "", "/;info");
+
+			mount({ "/;info": "/about;", "/about": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/about");
+			expect(text()).toBe("/about");
+
+		});
+
+		it("should reject redirection loops through annexes", async () => {
+
+			history.replaceState(null, "", "/;a");
+
+			expect(() => mount({ "/;a": "/;b", "/;b": "/;a", "/": createElement("p", {}) }))
+				.toThrow("redirection loop");
+
+		});
+
+		it("should reject annex separators in steps other than the last", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "/users;grid/123": createElement("p", {}) }))
+				.toThrow("invalid route pattern </users;grid/123>");
+
+		});
+
+		it("should reject empty annexes", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "/users;": createElement("p", {}) }))
+				.toThrow("invalid route pattern </users;>");
+
+		});
+
+	});
+
 	describe("remounting", () => {
 
 		/**
 		 * Mounts a view counting how many times it is mounted, alongside a link and the navigator.
 		 */
-		function counting() {
+		function counting(href = "/catalogue/?~label=art") {
 
 			const mounts = vi.fn();
 			const navigators = vi.fn<(navigate: ReturnType<typeof useRouter>) => void>();
@@ -443,7 +662,7 @@ describe("Routes", () => {
 
 				navigators(useRouter());
 
-				return createElement("a", { href: "/catalogue/?~label=art" }, "link");
+				return createElement("a", { href }, "link");
 
 			};
 
@@ -495,6 +714,41 @@ describe("Routes", () => {
 
 			act(() => history.replaceState(null, "", "/catalogue/?~label=art"));
 			act(() => navigate()({ title: "Catalogue" })); // a title alone moves nowhere
+
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should leave the view mounted on a navigation changing the annex alone", async () => {
+
+			const { mounts, navigate } = counting();
+
+			act(() => navigate()(";table"));
+
+			expect(location.pathname).toBe("/catalogue/;table");
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should leave the view mounted on a link changing the annex alone", async () => {
+
+			const { mounts } = counting(";table");
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/catalogue/;table");
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should leave the view mounted on browser history navigation changing the annex alone", async () => {
+
+			const { mounts } = counting();
+
+			act(() => {
+				history.replaceState(null, "", "/catalogue/;table");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
 
 			expect(mounts).toHaveBeenCalledTimes(1);
 
@@ -779,6 +1033,114 @@ describe("useRoute", () => {
 
 	});
 
+	it("should return the current route without its annex", async () => {
+
+		history.replaceState(null, "", "/courses/;grid");
+
+		shell(createElement(Here, {}));
+
+		expect(text()).toBe("/courses/");
+
+	});
+
+});
+
+
+describe("useAnnex", () => {
+
+	it("should return an empty annex outside any router", async () => {
+
+		act(() => render(createElement(Annex, {}), document.body));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return an empty annex for a route carrying none", async () => {
+
+		history.replaceState(null, "", "/courses/123");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return the annex of the last step", async () => {
+
+		history.replaceState(null, "", "/courses/123;lessons");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("lessons");
+
+	});
+
+	it("should return the annex of the root route", async () => {
+
+		history.replaceState(null, "", "/;grid");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("grid");
+
+	});
+
+	it("should return an empty annex for a bare separator", async () => {
+
+		history.replaceState(null, "", "/courses/;");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return the annex as it appears in the location path", async () => {
+
+		history.replaceState(null, "", "/courses/;view=grid;sort=label");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("view=grid;sort=label");
+
+	});
+
+	it("should leave the query and the hash out", async () => {
+
+		history.replaceState(null, "", "/courses/;grid?q=1#h");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("grid");
+
+	});
+
+	it("should ignore separators in steps other than the last", async () => {
+
+		history.replaceState(null, "", "/courses;grid/123");
+
+		shell(createElement("p", {}, createElement(Here, {}), " ", createElement(Annex, {})));
+
+		expect(text()).toBe("/courses;grid/123 ");
+
+	});
+
+	it("should render again on browser history navigation changing the annex", async () => {
+
+		history.replaceState(null, "", "/;grid");
+
+		shell(createElement(Annex, {}));
+
+		act(() => {
+			history.replaceState(null, "", "/;table");
+			window.dispatchEvent(new PopStateEvent("popstate"));
+		});
+
+		expect(text()).toBe("table");
+
+	});
+
 });
 
 
@@ -913,6 +1275,101 @@ describe("useRouter", () => {
 
 		expect(handed.length).toBeGreaterThan(1);
 		expect(handed.at(-1)).toBe(handed[0]);
+
+	});
+
+	describe("annexes", () => {
+
+		it("should navigate to a route carrying an annex", async () => {
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, "/courses/;table");
+
+			expect(location.pathname).toBe("/courses/;table");
+			expect(text()).toBe("/courses/");
+
+		});
+
+		it("should resolve relative annexes on collections, dropping the query and the hash", async () => {
+
+			history.replaceState(null, "", "/courses/;grid?q=1#h");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			const length = history.length;
+
+			navigate(navigators, ";table");
+
+			expect(location.pathname).toBe("/courses/;table");
+			expect(location.search).toBe("");
+			expect(location.hash).toBe("");
+			expect(history.length).toBe(length + 1);
+
+		});
+
+		it("should resolve relative annexes on resources as relative paths, replacing the last step", async () => {
+
+			history.replaceState(null, "", "/courses/123");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, ";table");
+
+			expect(location.pathname).toBe("/courses/;table");
+
+		});
+
+		it("should navigate to annexed routes built from the current route", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid?q=1");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, `${text()};table`); // the probe shows the current route
+
+			expect(location.pathname).toBe("/courses/123;table");
+			expect(location.search).toBe("");
+
+		});
+
+		it("should replace the annex through the navigation details", async () => {
+
+			history.replaceState(null, "", "/courses/;grid");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, { route: ";table", replace: true });
+
+			expect(location.pathname).toBe("/courses/;table");
+
+		});
+
+		it("should read a bare separator as an empty annex", async () => {
+
+			history.replaceState(null, "", "/courses/;grid?q=1");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, ";");
+
+			expect(location.pathname).toBe("/courses/;");
+			expect(location.search).toBe("");
+			expect(text()).toBe("/courses/");
+
+		});
 
 	});
 

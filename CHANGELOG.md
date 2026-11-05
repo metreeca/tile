@@ -32,6 +32,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — an image standing alone in a paragraph reads as a figure, centred and scaled down to the measure
 - `@metreeca/tile` — `spacing010` spacing step, the narrowest on the ladder, for compact runs such as the rows of a
   property panel, which can now sit closer together than the 0.25em step allowed
+- `@metreeca/tile-data/router` — route annexes, which keep view state such as the selected presentation after a `;`
+  on the last step of a route. `useAnnex` reads the annex, while `useRoute` returns the plain resource route. Only
+  patterns naming an annex match on it, and redirections carry it along unless their target names one of its own. A
+  change of annex alone leaves the views mounted with their state and renders again the components reading it
 
 ### Changed
 

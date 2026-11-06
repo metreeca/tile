@@ -25,7 +25,6 @@
 
 import { AutoDelay, classes, keys } from "@metreeca/clay-cell";
 import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
 import { Link } from "@metreeca/clay-cell/link";
 import { More } from "@metreeca/clay-cell/more";
 import { Note } from "@metreeca/clay-cell/note";
@@ -34,6 +33,7 @@ import type { Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { isReference } from "@metreeca/qest/state";
 import type { TallyBucket, TallyCases } from "@metreeca/tile/tally";
+import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold } from "./index.core.js";
@@ -174,7 +174,7 @@ export function Tally({
 
 		<header>
 
-			<Icon.Options/>
+			<SquareCheckBigIcon/>
 
 			<input type="search" value={text} placeholder={name} aria-label={"Search"}
 
@@ -190,7 +190,7 @@ export function Tally({
 
 					look={"subtle"}
 
-					icon={<Icon.Clear class={"clear"}/>}
+					icon={<XIcon class={"clear"}/>}
 					title={"Clear"}
 
 					onClick={() => search("")}
@@ -199,7 +199,7 @@ export function Tally({
 
 					look={"subtle"}
 
-					icon={<Icon.Reset/>}
+					icon={<XCircleIcon/>}
 					title={"Reset"}
 
 					onClick={() => {

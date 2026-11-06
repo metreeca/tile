@@ -12,8 +12,8 @@ components never handle caching, batching or validation themselves, and stay foc
 # Installation
 
 ```shell
-npm install preact          # peer dependency
 npm install @metreeca/tile  # this package
+npm install preact          # peer dependency
 ```
 
 > [!WARNING]

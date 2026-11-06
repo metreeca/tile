@@ -28,7 +28,7 @@ import type { Frame } from "@metreeca/blue/value";
 import { classes } from "@metreeca/clay-cell";
 import { Button } from "@metreeca/clay-cell/button";
 import { Hint } from "@metreeca/clay-cell/hint";
-import { Icon } from "@metreeca/clay-cell/icon";
+import "@metreeca/clay-cell/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
 import { Link } from "@metreeca/clay-cell/link";
 import { Note } from "@metreeca/clay-cell/note";
 import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
@@ -36,6 +36,7 @@ import type { Relay } from "@metreeca/core/relay";
 import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@metreeca/qest/model";
 import type { Collections } from "@metreeca/tile/collection";
 import type { MembersCases, Ordering } from "@metreeca/tile/members";
+import { ChevronDownIcon, ChevronRightIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import "./table.css";
 
@@ -195,7 +196,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 							</th>
 						)}
 
-						<th>{reset && <Button icon={<Icon.Sort/>} title={"Reset Order"} onClick={reset}/>}</th>
+						<th>{reset && <Button icon={<ChevronsUpDownIcon/>} title={"Reset Order"} onClick={reset}/>}</th>
 
 					</tr>
 				</thead>
@@ -211,7 +212,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 						)}
 
 						<td>{opt(identifier(item), id => <Link href={id}>
-							<Icon.Open aria-label={"Open"}/>
+							<ChevronRightIcon aria-label={"Open"}/>
 						</Link>)}</td>
 
 					</tr>
@@ -306,7 +307,7 @@ function mark(order: Optional<Order>): ComponentChildren {
 
 	const sign = direction(order);
 
-	return sign > 0 ? <Icon.Increasing/> : sign < 0 ? <Icon.Decreasing/> : <Icon.Sort/>;
+	return sign > 0 ? <ChevronDownIcon/> : sign < 0 ? <ChevronUpIcon/> : <ChevronsUpDownIcon/>;
 
 }
 

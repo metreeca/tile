@@ -16,13 +16,23 @@
 
 import { app } from "@metreeca/clay";
 import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
 import { Link } from "@metreeca/clay-cell/link";
 import { Logo } from "@metreeca/clay-cell/logo";
 import { useFetch } from "@metreeca/clay/fetch";
 import { Shell } from "@metreeca/clay-hive/shell";
 import { Style } from "@metreeca/clay-hive/style";
 import { TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
+import {
+	ChevronsLeftRightIcon,
+	ChevronsRightLeftIcon,
+	LockIcon,
+	LogInIcon,
+	LogOutIcon,
+	PanelLeftCloseIcon,
+	PanelLeftOpenIcon,
+	SearchIcon,
+	UnlockIcon
+} from "lucide-preact";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
@@ -79,7 +89,7 @@ export function Page({
 		meta={<>
 
 			<Button
-				icon={lock ? <Icon.Unlock/> : <Icon.Lock/>}
+				icon={lock ? <UnlockIcon/> : <LockIcon/>}
 				look="subtle"
 				title={lock ? "Release the tray" : "Lock the tray"}
 				onClick={edit}
@@ -90,14 +100,14 @@ export function Page({
 		head={<>
 
 			<Button
-				icon={main ? <Icon.PanelLeftOpen/> : <Icon.PanelLeftClose/>}
+				icon={main ? <PanelLeftOpenIcon/> : <PanelLeftCloseIcon/>}
 				look="subtle"
 				title={main ? "Show the tray" : "Hide the tray"}
 				onClick={() => setMain(!main)}
 			/>
 
 			<Button
-				icon={wide ? <Icon.ChevronsRightLeft/> : <Icon.ChevronsLeftRight/>}
+				icon={wide ? <ChevronsRightLeftIcon/> : <ChevronsLeftRightIcon/>}
 				look="subtle"
 				title={wide ? "Cap the measure" : "Take the width"}
 				onClick={() => setWide(!wide)}
@@ -112,7 +122,7 @@ export function Page({
 			<small>v{VERSION}</small>
 
 			<Button
-				icon={<Icon.Search/>}
+				icon={<SearchIcon/>}
 				look="subtle"
 				name="Run an exchange"
 				title="Run an exchange"
@@ -130,7 +140,7 @@ export function Page({
 				<small>{user}</small>
 
 				<Button
-					icon={<Icon.LogOut/>}
+					icon={<LogOutIcon/>}
 					look="subtle"
 					name="Sign out"
 					title="Sign out"
@@ -140,7 +150,7 @@ export function Page({
 			</>
 
 			: <Button
-				icon={<Icon.LogIn/>}
+				icon={<LogInIcon/>}
 				look="subtle"
 				name="Sign in"
 				title="Sign in"

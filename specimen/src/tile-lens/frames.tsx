@@ -22,12 +22,12 @@
 
 import { id, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { Icon } from "@metreeca/clay-cell/icon";
 import { Fetch } from "@metreeca/clay/fetch";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Store, useResource } from "@metreeca/tile";
 import { Frame } from "@metreeca/tile-lens/frame";
+import { FileIcon } from "lucide-preact";
 
 
 const entry = "https://example.com/catalogue/1";
@@ -90,7 +90,7 @@ function Sample({
 
 	const item = useResource({ entry, shape: Item, model: { id: {}, label: {}, comment: {} } });
 
-	return <Frame resource={item} placeholder={<Icon.File/>}>{item => <>
+	return <Frame resource={item} placeholder={<FileIcon/>}>{item => <>
 		<h2>{item.label}</h2>
 		<p>{item.comment}</p>
 	</>}</Frame>;

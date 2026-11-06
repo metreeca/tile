@@ -25,9 +25,10 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
+import "@metreeca/clay-cell/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
 import type { Lazy } from "@metreeca/core";
 import type { Collection, Collections } from "@metreeca/tile/collection";
+import { XCircleIcon } from "lucide-preact";
 
 
 /**
@@ -69,7 +70,7 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
 		look={"subtle"}
 
-		icon={<Icon.Reset/>}
+		icon={<XCircleIcon/>}
 		title={"Clear Filters"}
 
 		onClick={collection.clear}

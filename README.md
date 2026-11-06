@@ -13,7 +13,6 @@ tokens alone: components render without the skin stylesheet, and follow the plat
 # Installation
 
 ```shell
-npm install preact                    # peer dependency
 npm install @metreeca/skin            # design system stylesheet, optional
 npm install @metreeca/tile            # linked data store
 npm install @metreeca/tile-<package>  # one per package the app takes up
@@ -24,9 +23,9 @@ npm install @metreeca/tile-<package>  # one per package the app takes up
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add the views, forms and value text the app's screens need, each from its own package. Packages that render take
-Preact as a peer dependency, as their README states. An app brands whatever Tile renders by overriding the
-[@metreeca/skin] tokens, as its [theming guide](https://github.com/metreeca/skin#theming) explains for each family.
+Add the views, forms and value text the app's screens need, each from its own package, with the peer dependencies its
+README lists. An app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as its
+[theming guide](https://github.com/metreeca/skin#theming) explains for each family of tokens it defines.
 
 | Package               | Description             |
 |-----------------------|-------------------------|

@@ -24,7 +24,6 @@ import { integer } from "@metreeca/blue/number";
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { Icon } from "@metreeca/clay-cell/icon";
 import { More } from "@metreeca/clay-cell/more";
 import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject } from "@metreeca/core";
@@ -34,6 +33,7 @@ import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile";
 import { Table } from "@metreeca/tile-lens/table";
+import { TableIcon } from "lucide-preact";
 
 
 const entry = "https://example.com/courses/";
@@ -121,7 +121,7 @@ function Listing({
 
 	return <>
 
-		<Table name="Courses" hierarchy members={members} placeholder={<Icon.Table/>} columns={{
+		<Table name="Courses" hierarchy members={members} placeholder={<TableIcon/>} columns={{
 			Area: { sort: "area", render: item => item.area },
 			Course: { sort: "label", render: item => item.label },
 			Year: { sort: "year", align: "end", render: item => item.year }

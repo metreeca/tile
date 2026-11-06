@@ -23,7 +23,8 @@
  */
 
 import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
+import "@metreeca/clay-cell/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-preact";
 
 
 /**
@@ -68,7 +69,7 @@ export function Disclosure({
 
 		look={"subtle"}
 
-		icon={open ? <Icon.Collapse/> : <Icon.Expand/>}
+		icon={open ? <ChevronDownIcon/> : <ChevronRightIcon/>}
 		title={open ? "Collapse" : "Expand"}
 
 		onClick={onToggle}

@@ -13,8 +13,9 @@ their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an
 # Installation
 
 ```shell
-npm install preact               # peer dependency
 npm install @metreeca/tile-lens  # this package
+npm install preact               # peer dependency
+npm install lucide-preact        # peer dependency
 ```
 
 > [!WARNING]
@@ -40,3 +41,7 @@ npm install @metreeca/tile-lens  # this package
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/metreeca/tile?tab=Apache-2.0-1-ov-file) file for details.
+
+The views draw their glyphs with [Lucide](https://lucide.dev/), licensed under ISC, with the icons derived from
+[Feather](https://feathericons.com/) under MIT. An app distributing a build that includes the views must ship both
+notices with it. The `LICENSE` file of the `lucide-preact` package carries them, ready to copy into a notice file.

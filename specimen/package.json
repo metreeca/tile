@@ -21,6 +21,7 @@
     "@metreeca/skin": "^0.1.0",
     "@metreeca/tile": "^0.6.1",
     "@metreeca/tile-lens": "^0.6.1",
+    "lucide-preact": "^1.47.0",
     "preact": "^10.29.8"
   },
   "devDependencies": {

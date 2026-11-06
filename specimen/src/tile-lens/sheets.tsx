@@ -24,7 +24,6 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
 import { More } from "@metreeca/clay-cell/more";
 import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject, isString } from "@metreeca/core";
@@ -35,6 +34,7 @@ import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile";
 import { Sheet } from "@metreeca/tile-lens/sheet";
+import { ChevronDownIcon, ChevronUpIcon, ListIcon } from "lucide-preact";
 import { useEffect, useState } from "preact/hooks";
 
 
@@ -133,13 +133,13 @@ function Listing({
 				onKeyDown={event => event.key === "Enter" && search(draft)}
 			/>
 			<Button
-				icon={order === "asc" ? <Icon.Increasing/> : <Icon.Decreasing/>}
+				icon={order === "asc" ? <ChevronDownIcon/> : <ChevronUpIcon/>}
 				label={order === "asc" ? "Increasing" : "Decreasing"}
 				onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
 			/>
 		</div>
 
-		<Sheet members={members} placeholder={<Icon.List/>}>{item =>
+		<Sheet members={members} placeholder={<ListIcon/>}>{item =>
 			<div>{item.label}</div>
 		}</Sheet>
 

@@ -25,7 +25,6 @@
 
 import { AutoDelay, keys } from "@metreeca/clay-cell";
 import { Button } from "@metreeca/clay-cell/button";
-import { Icon } from "@metreeca/clay-cell/icon";
 import { Note } from "@metreeca/clay-cell/note";
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
@@ -34,6 +33,7 @@ import { createState } from "@metreeca/core/state";
 import { isLiteral, type Literal } from "@metreeca/qest/state";
 import type { RangeCases } from "@metreeca/tile/range";
 import type { Type } from "@metreeca/tile-type";
+import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide-preact";
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { createFold } from "./index.core.js";
@@ -149,7 +149,7 @@ export function Range({
 	useEffect(() => edit === undefined || !edit.valid || Masked.has(input)
 		? undefined
 		: cancel(setTimeout(apply, AutoDelay)), [edit]);
-	const Glyph = Glyphs[type.label] ?? Icon.Type;
+	const Glyph = Glyphs[type.label] ?? TypeIcon;
 
 	const bounded = range({ ready: ({ lower, upper }) => lower !== undefined || upper !== undefined }) ?? false;
 	const failed = range({ error: () => true }) ?? false;
@@ -189,7 +189,7 @@ export function Range({
 
 					look={"subtle"}
 
-					icon={<Icon.Reset/>}
+					icon={<XCircleIcon/>}
 					title={"Reset"}
 
 					onClick={() => {
@@ -391,12 +391,12 @@ const Masked: ReadonlySet<string> = new Set(["date", "time", "datetime-local"]);
  */
 const Glyphs: Readonly<Record<string, Optional<ComponentType>>> = {
 
-	integer: Icon.Hash,
-	decimal: Icon.Hash,
-	year: Icon.Calendar,
-	date: Icon.Calendar,
-	time: Icon.Clock,
-	instant: Icon.Calendar
+	integer: HashIcon,
+	decimal: HashIcon,
+	year: CalendarIcon,
+	date: CalendarIcon,
+	time: ClockIcon,
+	instant: CalendarIcon
 
 };
 

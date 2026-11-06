@@ -59,6 +59,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/clay-hive/tabs` — tab labels, and the menu standing in for them where they would not fit, sit closer to
   the rule closing off the strip
 - `@metreeca/clay-hive/toast` — `Toast` width scales with the font size of the surrounding text rather than the root
+- `@metreeca/tile-lens` — the views draw their glyphs with `lucide-preact`, a new peer dependency the app installs once
+  for every package drawing them, rather than through `@metreeca/clay-cell/icon`; an app distributing a build ships
+  the Lucide licence notices the package README names, as it does for any other third-party code the build includes
 - `@metreeca/clay-cell/markdown` — GitHub alerts and highlighted code are styled by the `@metreeca/skin` base
   stylesheet rather than by the widget, so all Markdown on a page reads alike, and a note takes the subtle accent
 - `@metreeca/clay-cell/note` — **breaking**: `Note` levels follow the five-step scale, a new `notable` level starring a

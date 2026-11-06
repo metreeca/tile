@@ -13,8 +13,8 @@ take their look from the [@metreeca/skin](https://metreeca.github.io/skin/) toke
 # Installation
 
 ```shell
-npm install preact               # peer dependency
 npm install @metreeca/tile-form  # this package
+npm install preact               # peer dependency
 ```
 
 > [!WARNING]

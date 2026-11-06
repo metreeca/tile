@@ -36,8 +36,8 @@ import type { Type } from "@metreeca/tile/types";
 import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide-preact";
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
-import { createFold } from "./index.core.js";
-import { cancel, Disclosure, leave } from "./index.js";
+import { createFold } from "../index.core.js";
+import { cancel, Disclosure, leave } from "../index.js";
 import "./range.css";
 
 

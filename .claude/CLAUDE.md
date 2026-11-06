@@ -91,7 +91,9 @@ what it imports.
   state they adopt, and is the only package taking the `@metreeca/keep` stack; every other package builds on it
 - **One widget package**: resource and collection views, facets and editing widgets share `tile-widgets` whatever
   their role. They share one stack, and forms reuse what views draw, so a split by role spares nobody an install and
-  forces a placement call on every new widget
+  forces a placement call on every new widget. Within the package, each role takes a folder of its own, reached as a
+  subpath: `viewers` for the resource and collection views, `filters` for the facets narrowing a collection, and
+  `editors` for the widgets writing resources back, while the parts they draw alike stay at the package root
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
   install a third-party stack, as charts drawn over a plotting or mapping engine would
 

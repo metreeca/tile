@@ -37,7 +37,7 @@ import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useKeywords } from "@metreeca/tile/keywords";
 import { useMembers } from "@metreeca/tile/members";
 import { useQuery } from "@metreeca/tile/query";
-import { Sheet } from "@metreeca/tile-widgets/sheet";
+import { Sheet } from "@metreeca/tile-widgets/viewers/sheet";
 import { ChevronDownIcon, ChevronUpIcon, ListIcon } from "lucide-preact";
 import { useEffect, useState } from "preact/hooks";
 

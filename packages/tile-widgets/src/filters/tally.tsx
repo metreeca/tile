@@ -36,8 +36,8 @@ import type { TallyBucket, TallyCases } from "@metreeca/tile/tally";
 import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
-import { createFold } from "./index.core.js";
-import { cancel, Disclosure, leave } from "./index.js";
+import { createFold } from "../index.core.js";
+import { cancel, Disclosure, leave } from "../index.js";
 import "./tally.css";
 
 

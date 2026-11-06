@@ -49,7 +49,7 @@ tile-placeable {
 
             /*
              * A cell a card is dragged over takes the provisional tint, telling where the card would land: stated,
-             * not settled, which is what the info step says, where the accent would read as a warning.
+             * not settled, which is what the note step says, where the accent would read as a warning.
              */
 
             &[data-target] {

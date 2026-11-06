@@ -36,6 +36,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   on the last step of a route. `useAnnex` reads the annex, while `useRoute` returns the plain resource route. Only
   patterns naming an annex match on it, and redirections carry it along unless their target names one of its own. A
   change of annex alone leaves the views mounted with their state and renders again the components reading it
+- `@metreeca/tile-cell/button` — `publish` mode, for an action taking a result out to others that deserves a moment's
+  attention without being risky, painted in the flag hue so it sits between `commit` and `alert` in a row of buttons
+- `@metreeca/tile-data/board` — `paused` status, for work halted with nothing wrong and waiting to be resumed, which a
+  `Toast` marks with a pause glyph on the flag tint and keeps in view until its post is cleared
 
 ### Changed
 
@@ -63,6 +67,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   own fetches nothing from Google Fonts (migration: also import `@metreeca/tile/fonts.css` to keep the default faces)
 - `@metreeca/tile-cell/markdown` — GitHub alerts and highlighted code are styled by the `@metreeca/skin` base
   stylesheet rather than by the widget, so all Markdown on a page reads alike, and a note takes the subtle accent
+- `@metreeca/tile-cell/note` — **breaking**: `Note` levels follow the five-step scale, a new `notable` level starring a
+  passage not to be missed (migration: `info`, `highlight` and `warning` become `neutral`, `positive` and `negative`)
 
 ### Removed
 

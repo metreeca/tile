@@ -194,13 +194,15 @@ export interface Post {
  * What the system says has happened.
  *
  * The scale the design system states for reported things: `pending` is still under way, `success` completed as
- * intended, `warning` completed with caveats, `failure` failed to complete, `defect` broke through a fault of the
- * interface itself rather than of anything it was asked to do, and `normal` has nothing to report.
+ * intended, `paused` was halted with nothing wrong and waits to be resumed, `warning` completed with caveats, `failure`
+ * failed to complete, `defect` broke through a fault of the interface itself rather than of anything it was asked to
+ * do, and `normal` passes no verdict at all, leaving the message to speak for itself.
  */
 export type Status =
 	| "normal"
 	| "pending"
 	| "success"
+	| "paused"
 	| "warning"
 	| "failure"
 	| "defect";

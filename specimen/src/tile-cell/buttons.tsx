@@ -57,6 +57,7 @@ const actions: ReadonlyArray<Action> = [
 	[ "normal", "Close", Icon.Close ],
 	[ "safe", "OK", Icon.Accept ],
 	[ "commit", "Save", Icon.Save ],
+	[ "publish", "Share", Icon.Share2 ],
 	[ "alert", "Overwrite", Icon.Alert ],
 	[ "danger", "Delete", Icon.Delete ]
 
@@ -107,10 +108,10 @@ export function Buttons() {
 		<p>How loud a button appears is set by <code>look</code>, told in room, weight and rule and never in colour,
 			so the ladder holds in an interface printed in one ink.</p>
 
-		<p>What activating a button will do is set by <code>mode</code>, told in colour on the four-step scale, and
+		<p>What activating a button will do is set by <code>mode</code>, told in colour on the five-step scale, and
 			the two compose without meeting: a table below for each of the three forms a button is carried in, running
-			every mode against every look. The four steps are painted alike, a tinted fill told apart by hue, so they
-			read as four meanings rather than as four degrees of loudness. Since no step is told by colour alone, every
+			every mode against every look. The five steps are painted alike, a tinted fill told apart by hue, so they
+			read as five meanings rather than as five degrees of loudness. Since no step is told by colour alone, every
 			button here states the same thing in its glyph and its label.</p>
 
 		{forms.map(([ form, sample ]) => <Matrix key={form} form={form} sample={sample}/>)}

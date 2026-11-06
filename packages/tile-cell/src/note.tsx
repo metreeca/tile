@@ -62,22 +62,22 @@ export function Note({
 
 	/**
 	 * How much attention the passage deserves, told in the weight of the headline and the colour of the mark on the
-	 * four-step scale every meaning in the interface lands on: `info` states something no verdict has been passed on
-	 * (`info`), `highlight` singles out a passage worth having (`pass`), `warning` carries a caveat the reader is to
-	 * weigh (`warn`), `critical` tells of a failure (`fail`), and `normal`, the default, says nothing in particular
-	 * and takes no colour at all. A level is never told in colour alone, so a note carrying one says the same thing
-	 * in its mark and its wording.
+	 * five-step scale every meaning in the interface lands on: `neutral` states something no verdict has been passed
+	 * on (`note`), `positive` tells of something standing as intended (`pass`), `notable` singles out a passage not to
+	 * be missed, with nothing wrong (`flag`), `negative` carries a caveat the reader is to weigh (`warn`), `critical`
+	 * tells of a failure (`fail`), and `normal`, the default, says nothing in particular and takes no colour at all.
+	 * A level is never told in colour alone, so a note carrying one says the same thing in its mark and its wording.
 	 *
 	 * A note telling of a failure is read out as soon as it reaches the page rather than waiting to be come upon.
 	 */
-	level?: "normal" | "info" | "highlight" | "warning" | "critical"
+	level?: "normal" | "neutral" | "positive" | "notable" | "negative" | "critical"
 
 
 	/**
 	 * The glyph marking the notice, kept out of the accessibility tree unless it carries a label of its own, so that
-	 * the note is read by its headline; the mark matching the level if omitted, that is a check for a highlight, a
-	 * warning sign for a caution, an alert for a failure and an information mark otherwise. A note the reader answers
-	 * shows no mark at all, so what is given here plays no part alongside `onAccept`.
+	 * the note is read by its headline; the mark matching the level if omitted, that is a check for a positive note,
+	 * a star for a notable one, a warning sign for a negative one, an alert for a failure and an information mark
+	 * otherwise. A note the reader answers shows no mark, so what is given here plays no part alongside `onAccept`.
 	 */
 	icon?: ComponentChildren
 
@@ -110,8 +110,9 @@ export function Note({
 
 } & ({ onAccept?: undefined } | { text: string })) {
 
-	const $icon = icon ?? (level === "highlight" ? <Icon.CircleCheck/>
-			: level === "warning" ? <Icon.Alert/>
+	const $icon = icon ?? (level === "positive" ? <Icon.CircleCheck/>
+			: level === "notable" ? <Icon.Star/>
+			: level === "negative" ? <Icon.Alert/>
 				: level === "critical" ? <Icon.CircleAlert/>
 					: <Icon.Info/>
 	);

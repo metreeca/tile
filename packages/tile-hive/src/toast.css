@@ -320,6 +320,15 @@ tile-toast {
 
         }
 
+        &[status="paused"] > div > div {
+
+            --tile-toast-tint: var(--skin--background-color-flag);
+            & > svg {
+                color: var(--skin--color-flag);
+            }
+
+        }
+
         &[status="warning"] > div > div {
 
             --tile-toast-tint: var(--skin--background-color-warn);

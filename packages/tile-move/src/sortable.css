@@ -53,8 +53,8 @@ tile-sortable {
 
             /*
              * A list an item is dragged over takes the provisional tint, the item landing there telling the same
-             * story in place: where the item would land is stated, not settled, which is what the info step says,
-             * where the accent would read as a warning.
+             * story in place: where the item would land is stated, not settled, which is what the note step says,
+             * where the accent would read as a warning about the move rather than as a hint of where it lands.
              */
 
             &[data-target] {

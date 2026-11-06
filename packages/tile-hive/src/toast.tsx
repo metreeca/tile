@@ -79,9 +79,10 @@ export function Toast({
 	/**
 	 * The milliseconds the toast of a `normal` or `success` post is shown before it is taken away, counted from the
 	 * moment the post was put up or last updated; the post itself stays on the board. The toasts of `pending`,
-	 * `warning`, `failure` and `defect` posts stay until their posts are cleared, as do those of actionable posts
-	 * whatever their status where an `onAction` handler is given, so nothing still under way, asking for attention or
-	 * waiting to be acted on goes unseen. No toast is taken away on its own if not positive, or if omitted.
+	 * `paused`, `warning`, `failure` and `defect` posts stay until their posts are cleared, as do those of actionable
+	 * posts whatever their status where an `onAction` handler is given, so nothing still under way, waiting to be
+	 * resumed, asking for attention or waiting to be acted on goes unseen. No toast is taken away on its own if the
+	 * value is not positive or omitted, and every toast then stays in view until its post is cleared from the board.
 	 */
 	timeout?: number
 
@@ -305,11 +306,12 @@ function refreshed({ shown, expired }: Stack, posts: readonly Post[]): Stack {
  *
  * @param status The status of a post
  *
- * @returns The glyph telling `status`: the one a note marks the matching level with, or a bug for a `defect`
+ * @returns The glyph for `status`: the mark of the matching note level, a pause for `paused`, or a bug for a `defect`
  */
 function glyph(status: Status) {
 	return status === "pending" ? <Icon.RefreshCw/>
 		: status === "success" ? <Icon.CircleCheck/>
+			: status === "paused" ? <Icon.CirclePause/>
 			: status === "warning" ? <Icon.Alert/>
 				: status === "failure" ? <Icon.CircleAlert/>
 					: status === "defect" ? <Icon.Bug/>

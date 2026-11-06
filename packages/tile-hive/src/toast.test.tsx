@@ -146,6 +146,7 @@ describe("Toast()", () => {
 			{ instance: "urn:test:normal", status: "normal", message: "Normal" },
 			{ instance: "urn:test:pending", status: "pending", message: "Pending" },
 			{ instance: "urn:test:success", status: "success", message: "Success" },
+			{ instance: "urn:test:paused", status: "paused", message: "Paused" },
 			{ instance: "urn:test:warning", status: "warning", message: "Warning" },
 			{ instance: "urn:test:failure", status: "failure", message: "Failure" },
 			{ instance: "urn:test:defect", status: "defect", message: "Defect" }
@@ -153,8 +154,8 @@ describe("Toast()", () => {
 
 		const glyphs = Array.from(document.querySelectorAll("tile-toast > div > div > div > svg"), glyph => glyph.innerHTML);
 
-		expect(glyphs).toHaveLength(6);
-		expect(new Set(glyphs).size).toBe(6);
+		expect(glyphs).toHaveLength(7);
+		expect(new Set(glyphs).size).toBe(7);
 
 	});
 

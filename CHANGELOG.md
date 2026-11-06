@@ -17,24 +17,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   narrowing them, and `useQuery` keeping the page criteria in the browser location
 - `@metreeca/tile` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
   reach of the reader: every lens retrieves under them, and clearing the collection keeps them in place
-- `@metreeca/clay/asset` — `useAsset` retrieving a static asset such as a Markdown guide by its path alone, in
-  the media type its extension names, and dropping the previous text as soon as the path changes
 - `@metreeca/tile-lens` — `Frame` resource frame, `Table` collection table, `Tally` and `Range` facets, `Clear`
   collection reset and `Count` collection counter
-- `@metreeca/clay-cell` — `Markdown` document, `Toc` table of contents and `Path` breadcrumb trail, disclosure
-  states on `Button` (`expanded`, `controls`), query entries on links, and the `Icon.Reset` and `Icon.Options` glyph
-  roles
-- `@metreeca/clay-hive` — `Card` resource summary and `Info` property panel, wrapping long values in the body of a
-  page and keeping them to one line in a sidebar
-- `@metreeca/clay-cell/markdown` — image width hints, so `chart.png#50` sets a picture at half the width of its block
-- `@metreeca/clay/router` — route annexes, which keep view state such as the selected presentation after a `;`
-  on the last step of a route. `useAnnex` reads the annex, while `useRoute` returns the plain resource route. Only
-  patterns naming an annex match on it, and redirections carry it along unless their target names one of its own. A
-  change of annex alone leaves the views mounted with their state and renders again the components reading it
-- `@metreeca/clay-cell/button` — `publish` mode, for an action taking a result out to others that deserves a moment's
-  attention without being risky, painted in the flag hue so it sits between `commit` and `alert` in a row of buttons
-- `@metreeca/clay/board` — `paused` status, for work halted with nothing wrong and waiting to be resumed, which a
-  `Toast` marks with a pause glyph on the flag tint and keeps in view until its post is cleared
 
 ### Changed
 
@@ -45,44 +29,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   become the whole of `@metreeca/tile`, which takes over the name the design system leaves (migration: import `app`
   and those hooks from `@metreeca/clay`, and replace `@metreeca/tile-data/store` with `@metreeca/tile` in imports)
 - `@metreeca/tile-cell`, `@metreeca/tile-hive` and `@metreeca/tile-move` — **breaking**: moved to
-  [@metreeca/clay](https://github.com/metreeca/clay) as `@metreeca/clay-cell`, `@metreeca/clay-hive` and
-  `@metreeca/clay-move`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration: replace the
-  `tile-cell`, `tile-hive` and `tile-move` package names in dependencies and import paths, and `tile-` with `clay-` in
-  the selectors and custom properties stylesheets aim at their elements, inline styles included)
+  [@metreeca/clay](https://github.com/metreeca/clay), the widgets and layouts as `@metreeca/clay-widgets`, the
+  Markdown document and its table of contents as `@metreeca/clay-markdown`, and the movable items as
+  `@metreeca/clay-dnd`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration: replace the package
+  names in dependencies and import paths, and `tile-` with `clay-` in the selectors and custom properties that
+  stylesheets and inline styles aim at the elements, wherever an app restyles or retunes them)
 - `@metreeca/tile` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
   shared by every lens on it, rather than retrieving items (migration: retrieve items through `useMembers`)
 - `@metreeca/tile-lens/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by `useMembers`
   in place of the `entry`, `shape` and `model` props
-- `@metreeca/clay-cell/icon` — `Icon.Clear` is drawn as a plain cross, the circled one moving to `Icon.Reset`
-- `@metreeca/clay-cell/link` — `strong` links take the link colour, and `subtle` and `strong` links are underlined
-  under the pointer; every link draws its underline within the line, so containers clipping their content keep it
-- `@metreeca/clay-hive/tabs` — tab labels, and the menu standing in for them where they would not fit, sit closer to
-  the rule closing off the strip
-- `@metreeca/clay-hive/toast` — `Toast` width scales with the font size of the surrounding text rather than the root
 - `@metreeca/tile-lens` — the views draw their glyphs with `lucide-preact`, a new peer dependency the app installs once
-  for every package drawing them, rather than through `@metreeca/clay-cell/icon`; an app distributing a build ships
+  for every package drawing them, rather than through the `Icon` glyph roles; an app distributing a build ships
   the Lucide licence notices the package README names, as it does for any other third-party code the build includes
-- `@metreeca/clay-cell/markdown` — GitHub alerts and highlighted code are styled by the `@metreeca/skin` base
-  stylesheet rather than by the widget, so all Markdown on a page reads alike, and a note takes the subtle accent
-- `@metreeca/clay-cell/note` — **breaking**: `Note` levels follow the five-step scale, a new `notable` level starring a
-  passage not to be missed (migration: `info`, `highlight` and `warning` become `neutral`, `positive` and `negative`)
 
 ### Removed
 
 - `@metreeca/tile` — **breaking**: the design system moves to its own `@metreeca/skin` package, renaming the
   `--tile--*` tokens to `--skin--*`, the `tile` token map to `skin` and the `tile` cascade layer to `skin` (migration:
   depend on `@metreeca/skin`, import from it, and replace the `--tile--` prefix in stylesheets and inline styles)
-
-### Fixed
-
-- `@metreeca/clay-cell` — subtle links give hover feedback, and the logo mark is centred on the capitals beside it
-- `@metreeca/clay-hive/toast` — toast marks set further apart from their message
-- `@metreeca/clay-hive/shell` — the waiting mark stands over the control it replaces, so the header end holds still
-- `@metreeca/clay-cell/button` — status buttons hold AA contrast in every state: the label takes the page text on the
-  fills the pointer and the press deepen, and an `alert` button takes it at rest as well, where the caution stroke
-  fell short on its own tint
-- `@metreeca/clay-cell`, `@metreeca/clay-hive/toast` — caution glyphs on notes and toasts take the caution anchor,
-  which now holds the mark budget on the page and the tint, rather than its stroke
 
 ### Security
 

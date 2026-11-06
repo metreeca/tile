@@ -1,7 +1,7 @@
 {
   "private": true,
   "version": "0.7.0",
-  "description": "Minimalist model-driven UI toolkit for linked data resources.",
+  "description": "Linked data UI toolkit for Preact.",
   "type": "module",
   "workspaces": [
     "packages/*"

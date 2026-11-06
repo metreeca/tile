@@ -1,6 +1,6 @@
 # @metreeca/tile
 
-Minimalist model-driven UI toolkit for linked data resources.
+Linked data UI toolkit for Preact.
 
 Preact views and forms for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. The
 [@metreeca/blue](https://github.com/metreeca/blue) shapes shared with the server decide what a screen shows, what a

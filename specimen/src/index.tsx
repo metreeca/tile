@@ -24,6 +24,8 @@
  */
 
 import "@metreeca/skin/presets/roboto.css";
+import { Fetch } from "@metreeca/clay/fetch";
+import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
@@ -31,8 +33,6 @@ import { TileCell, TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
 import { TileHive, TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { TileLens, TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
 import { TileMove, TileMovePath } from "@metreeca/specimen/tile-move/index.js";
-import { Fetch } from "@metreeca/tile/fetch";
-import { Router, Routes } from "@metreeca/tile/router";
 import { host } from "@metreeca/tile-hive";
 import { render } from "preact";
 import "./index.css";

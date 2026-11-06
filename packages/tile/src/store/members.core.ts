@@ -20,7 +20,7 @@
  * Holds how far a list or a table has read into a long collection and the order it shows the items in, so that the
  * view reads a long collection as the reader scrolls through it rather than retrieving it all at once.
  *
- * @module
+ * @module store/members.core
  */
 
 import { assert, type Optional } from "@metreeca/core";

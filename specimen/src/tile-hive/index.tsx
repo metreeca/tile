@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Routes } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Boxes } from "@metreeca/specimen/tile-hive/boxes.js";
 import { Cards } from "@metreeca/specimen/tile-hive/cards.js";
@@ -26,7 +27,6 @@ import { Styles } from "@metreeca/specimen/tile-hive/styles.js";
 import { Tabbed } from "@metreeca/specimen/tile-hive/tabbed.js";
 import { Toasts } from "@metreeca/specimen/tile-hive/toasts.js";
 import { Link } from "@metreeca/tile-cell/link";
-import { Routes } from "@metreeca/tile/router";
 
 
 export const TileHivePath = "/tile-hive/";

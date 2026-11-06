@@ -20,7 +20,7 @@
  * Binds a component to a resource held by the {@link "store"!Store shared store}, so that a view renders what the
  * store holds and writes changes back to it without driving exchanges of its own.
  *
- * @module
+ * @module store/resource
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -118,7 +118,7 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
  * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
  * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
  * is reported through the binding alone and never reaches the page: only a missing {@link "store"!Store Store} context
- * or an unforeseen failure does, for an enclosing {@link "board"!Board Board} context to take up.
+ * or an unforeseen failure does, for an enclosing {@link @metreeca/clay!board.Board Board} context to take up.
  *
  * The template may be fixed or replaced at runtime, and one stating something different has the resource retrieved
  * again, while a copy stating the same, as a template written inline at the call site is on every render, retrieves

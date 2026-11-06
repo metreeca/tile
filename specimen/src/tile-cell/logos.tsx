@@ -20,8 +20,8 @@
  * @module
  */
 
+import { app } from "@metreeca/clay";
 import { Logo } from "@metreeca/tile-cell/logo";
-import { app } from "@metreeca/tile";
 import { Style } from "@metreeca/tile-hive/style";
 import "./index.css";
 

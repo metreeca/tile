@@ -20,17 +20,17 @@
  * Binds a list or a table to the members of a shared collection, so that it retrieves them batch by batch as the
  * reader scrolls through them, rather than the whole collection at once, however long it grows.
  *
- * @module
+ * @module store/members
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { type Items, items, type Slice } from "@metreeca/blue/value";
+import { useModel } from "@metreeca/clay/model";
 import { type Lazy, opt, type Optional } from "@metreeca/core";
 import { createRelay, type Option, type Relay } from "@metreeca/core/relay";
 import { equals, immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
 import type { Template } from "@metreeca/qest/model";
-import { useModel } from "../model.js";
 import type { Collection, Collections } from "./collection.core.js";
 import { useEntry } from "./index.core.js";
 import { useStore } from "./index.js";

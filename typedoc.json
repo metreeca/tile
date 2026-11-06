@@ -30,6 +30,9 @@
     "@dnd-kit/dom": {
       "*": "https://dndkit.com/"
     },
+    "@metreeca/clay": {
+      "*": "https://metreeca.github.io/clay/"
+    },
     "@metreeca/core": {
       "*": "https://metreeca.github.io/core/"
     },

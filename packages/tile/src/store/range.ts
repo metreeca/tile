@@ -20,7 +20,7 @@
  * Binds a range control to a shared collection, so that it shows the lowest and highest values the items hold for an
  * expression and narrows every lens over the collection to the items whose values fall between the bounds it sets.
  *
- * @module
+ * @module store/range
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

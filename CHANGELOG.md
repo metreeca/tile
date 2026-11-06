@@ -17,7 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   narrowing them, and `useQuery` keeping the page criteria in the browser location
 - `@metreeca/tile/store` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
   reach of the reader: every lens retrieves under them, and clearing the collection keeps them in place
-- `@metreeca/tile/asset` — `useAsset` retrieving a static asset such as a Markdown guide by its path alone, in
+- `@metreeca/clay/asset` — `useAsset` retrieving a static asset such as a Markdown guide by its path alone, in
   the media type its extension names, and dropping the previous text as soon as the path changes
 - `@metreeca/tile-lens` — `Frame` resource frame, `Table` collection table, `Tally` and `Range` facets, `Clear`
   collection reset and `Count` collection counter
@@ -27,21 +27,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-hive` — `Card` resource summary and `Info` property panel, wrapping long values in the body of a
   page and keeping them to one line in a sidebar
 - `@metreeca/tile-cell/markdown` — image width hints, so `chart.png#50` sets a picture at half the width of its block
-- `@metreeca/tile/router` — route annexes, which keep view state such as the selected presentation after a `;`
+- `@metreeca/clay/router` — route annexes, which keep view state such as the selected presentation after a `;`
   on the last step of a route. `useAnnex` reads the annex, while `useRoute` returns the plain resource route. Only
   patterns naming an annex match on it, and redirections carry it along unless their target names one of its own. A
   change of annex alone leaves the views mounted with their state and renders again the components reading it
 - `@metreeca/tile-cell/button` — `publish` mode, for an action taking a result out to others that deserves a moment's
   attention without being risky, painted in the flag hue so it sits between `commit` and `alert` in a row of buttons
-- `@metreeca/tile/board` — `paused` status, for work halted with nothing wrong and waiting to be resumed, which a
+- `@metreeca/clay/board` — `paused` status, for work halted with nothing wrong and waiting to be resumed, which a
   `Toast` marks with a pause glyph on the flag tint and keeps in view until its post is cleared
 
 ### Changed
 
 - Upgrade `@metreeca/blue` to `^0.13.1`
 - Upgrade `@metreeca/keep` and `@metreeca/keep-rest` to `^0.12.2`
-- `@metreeca/tile-data` — **breaking**: renamed to `@metreeca/tile`, taking over the name the design system leaves
-  (migration: replace `@metreeca/tile-data` with `@metreeca/tile` in dependencies and import paths)
+- `@metreeca/tile-data` — **breaking**: split in two. The app contexts and the `asset`, `board`, `fetch`, `model`,
+  `router` and `storage` hooks move to [@metreeca/clay](https://github.com/metreeca/clay), while the `store` bindings
+  stay in `@metreeca/tile`, which takes over the name the design system leaves (migration: import `app` and those
+  hooks from `@metreeca/clay` in place of `@metreeca/tile-data`, and `store` from `@metreeca/tile/store`)
 - `@metreeca/tile/store` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
   shared by every lens on it, rather than retrieving items (migration: retrieve items through `useMembers`)
 - `@metreeca/tile-lens/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by `useMembers`

@@ -23,8 +23,8 @@
  * @module
  */
 
+import { useFetching } from "@metreeca/clay/fetch";
 import { Icon } from "@metreeca/tile-cell/icon";
-import { useFetching } from "@metreeca/tile/fetch";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
 import "./shell.css";
@@ -40,7 +40,7 @@ import "./shell.css";
  * column alone. Every slot is optional and one left out takes no room, so a screen with no tray footer closes up
  * rather than holding a gap for it.
  *
- * Waiting is stated by the shell itself: while the {@link @metreeca/tile!fetch.Fetch shared client} has exchanges
+ * Waiting is stated by the shell itself: while the {@link @metreeca/clay!fetch.Fetch shared client} has exchanges
  * in flight, the frame fades, marks itself busy for assistive technology, and shows a turning mark at the end of the
  * content header, in place of whatever navigation sits there, and `done` is taken off show along with it, so no way
  * out is offered while the exchange it would abandon is running. Nothing else moves while it stands: a screen with no

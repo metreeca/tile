@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile",
   "version": "0.7.0",
-  "description": "Preact contexts and hooks for @metreeca/tile interfaces.",
+  "description": "Preact linked data store for @metreeca/tile interfaces.",
   "keywords": [
     "typescript",
     "preact",
@@ -28,10 +28,6 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": {
-      "@metreeca/source": "./src/index.ts",
-      "default": "./dist/index.js"
-    },
     "./store": {
       "@metreeca/source": "./src/store/index.ts",
       "default": "./dist/store/index.js"
@@ -57,6 +53,7 @@
   },
   "dependencies": {
     "@metreeca/blue": "^0.13.1",
+    "@metreeca/clay": "^0.1.0",
     "@metreeca/core": "^0.13.0",
     "@metreeca/http": "^0.5.0",
     "@metreeca/keep": "^0.12.2",

@@ -20,7 +20,7 @@
  * Binds a search box to a shared collection, so that the keywords it hands over narrow what every lens over the
  * collection shows; pacing the keywords as the reader types is left to the search box.
  *
- * @module
+ * @module store/keywords
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

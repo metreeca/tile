@@ -63,9 +63,9 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests --environment happy-dom run"
   },
   "dependencies": {
+    "@metreeca/clay": "^0.1.0",
     "@metreeca/core": "^0.13.0",
     "@metreeca/skin": "^0.1.0",
-    "@metreeca/tile": "^0.7.0",
     "hast-util-heading-rank": "^3.0.0",
     "hast-util-to-jsx-runtime": "^2.3.7",
     "lucide-preact": "^1.47.0",

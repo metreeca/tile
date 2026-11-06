@@ -22,7 +22,7 @@
  * reader's criteria back through its transitions, so that a facet narrowing the collection narrows what every other
  * lens shows, counters and lists alike, with no wiring between the lenses beyond the collection they are all handed.
  *
- * @module
+ * @module store/collection.core
  */
 
 import { getShapeTarget } from "@metreeca/blue/reference";

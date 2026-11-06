@@ -22,16 +22,16 @@
  * them to the resources and collections it holds, so that a view stays in step with the store without driving
  * exchanges of its own.
  *
- * @module
+ * @module store
  */
 
+import { useFetch } from "@metreeca/clay/fetch";
 import { error, type Optional } from "@metreeca/core";
 import type { Fetch } from "@metreeca/http";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
-import { useFetch } from "../fetch.js";
 
 export * from "./actions.js";
 export * from "./collection.js";
@@ -53,7 +53,7 @@ const Context = createContext<Optional<Store>>(undefined);
  * Offers a shared resource store to nested components.
  *
  * The store performs its exchanges through the shared fetch client of the innermost enclosing
- * {@link "fetch"!Fetch Fetch} context, so it shares the services and the busy status configured there.
+ * {@link @metreeca/clay!fetch.Fetch Fetch} context, so it shares the services and the busy status configured there.
  *
  * The store is assembled as the context first renders and kept for as long as it lives, so that pending operations
  * are not disturbed by the interface around them: a factory handed over later never replaces the store in use.

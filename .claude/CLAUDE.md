@@ -29,6 +29,8 @@ repository **NEVER** reimplements them behind the interface.
   rendering layer every binding package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
+- [@metreeca/clay](https://github.com/metreeca/clay) - Minimalist component toolkit for Preact interfaces, providing
+  the app contexts, routing, fetch, board and model hooks every binding package is wired to
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
   providing the query model the state components expose
 - [@metreeca/blue](https://github.com/metreeca/blue) - Declarative blueprints for model-driven linked data processing,
@@ -64,7 +66,7 @@ alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs
 emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`tile` for the contexts and hooks a component is wired to,
+appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to,
 `tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-move` for the items a
 reader moves and the drag and drop bindings behind them, `tile-lens` and `tile-form` for the views and forms built over
 them). The drag and drop library behind `tile-move` appears **ONLY** there, and is **NEVER** handed out: a consumer
@@ -134,7 +136,7 @@ Metreeca register.
 # Component State
 
 A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
-`@metreeca/tile/model`, reading data and transitions straight off the model:
+`@metreeca/clay/model`, reading data and transitions straight off the model:
 
 ```tsx
 const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));

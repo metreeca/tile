@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { Routes } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Placeables } from "@metreeca/specimen/tile-move/placeables.js";
 import { Sorting } from "@metreeca/specimen/tile-move/sorting.js";
 import { Link } from "@metreeca/tile-cell/link";
-import { Routes } from "@metreeca/tile/router";
 
 
 export const TileMovePath = "/tile-move/";

@@ -29,13 +29,13 @@
  * const courses = useCollection({ entry: "/courses/", shape: Course, query, onChange: setQuery });
  * ```
  *
- * @module
+ * @module store/query
  */
 
+import { useRoute } from "@metreeca/clay/router";
 import type { Optional } from "@metreeca/core";
 import { type Criteria, decodeCriteria, encodeCriteria } from "@metreeca/qest/model";
 import { useEffect, useState } from "preact/hooks";
-import { useRoute } from "../router.js";
 
 
 /**
@@ -49,7 +49,7 @@ import { useRoute } from "../router.js";
  *
  * Writing the criteria replaces them in both places without adding a history entry or touching its state, so the
  * history keeps one entry per page however many times the reader narrows it. Criteria written by the component never
- * mount it again: a navigation to another query does, as described by {@link "router"!Routes Routes}.
+ * mount it again: a navigation to another query does, as described by {@link @metreeca/clay!router.Routes Routes}.
  *
  * References in the criteria are handed over absolute, resolved against the location where it states them relative,
  * and kept root-relative in the location where they share its origin, so that links carrying them stay portable.

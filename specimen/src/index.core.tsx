@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { app } from "@metreeca/clay";
+import { useFetch } from "@metreeca/clay/fetch";
 import { TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
 import { TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
@@ -22,8 +24,6 @@ import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Link } from "@metreeca/tile-cell/link";
 import { Logo } from "@metreeca/tile-cell/logo";
-import { app } from "@metreeca/tile";
-import { useFetch } from "@metreeca/tile/fetch";
 import { Shell } from "@metreeca/tile-hive/shell";
 import { Style } from "@metreeca/tile-hive/style";
 import type { ComponentChildren } from "preact";

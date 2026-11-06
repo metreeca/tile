@@ -21,7 +21,7 @@
  * it is offered to consumers, so the package can retune the bindings without a release note: the hooks built on them,
  * whether binding a resource or a collection, carry the behaviour documented for each of them.
  *
- * @module
+ * @module store/index.core
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

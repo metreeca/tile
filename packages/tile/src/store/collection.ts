@@ -21,16 +21,16 @@
  * and its counters show the same items, and a facet narrowing the collection narrows what every other lens shows,
  * with no wiring between the lenses themselves beyond the collection they are handed.
  *
- * @module
+ * @module store/collection
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
+import { useModel } from "@metreeca/clay/model";
 import type { Lazy } from "@metreeca/core";
 import type { IRI } from "@metreeca/core/resource";
 import { equals } from "@metreeca/core/values";
 import type { Criteria } from "@metreeca/qest/model";
 import { useEffect, useState } from "preact/hooks";
-import { useModel } from "../model.js";
 import { type Collection, type Collections, createCollection, getCollection, type Sole } from "./collection.core.js";
 import { resolveTarget } from "./index.core.js";
 

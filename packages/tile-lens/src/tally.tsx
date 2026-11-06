@@ -23,6 +23,7 @@
  * @module
  */
 
+import { useModel } from "@metreeca/clay/model";
 import type { Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { isReference } from "@metreeca/qest/state";
@@ -32,7 +33,6 @@ import { Icon } from "@metreeca/tile-cell/icon";
 import { Link } from "@metreeca/tile-cell/link";
 import { More } from "@metreeca/tile-cell/more";
 import { Note } from "@metreeca/tile-cell/note";
-import { useModel } from "@metreeca/tile/model";
 import type { TallyBucket, TallyCases } from "@metreeca/tile/store/tally";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";

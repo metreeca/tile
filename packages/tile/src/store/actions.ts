@@ -20,7 +20,7 @@
  * Lets a component add items to and remove items from a collection held by the {@link "store"!Store shared store},
  * while the lenses showing the collection follow the change on their own, as the store signals it.
  *
- * @module
+ * @module store/actions
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

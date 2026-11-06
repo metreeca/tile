@@ -23,6 +23,7 @@
  * @module
  */
 
+import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { createState } from "@metreeca/core/state";
@@ -31,7 +32,6 @@ import { AutoDelay, keys } from "@metreeca/tile-cell";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Note } from "@metreeca/tile-cell/note";
-import { useModel } from "@metreeca/tile/model";
 import type { RangeCases } from "@metreeca/tile/store/range";
 import type { Type } from "@metreeca/tile-type";
 import { type ComponentType, createElement } from "preact";

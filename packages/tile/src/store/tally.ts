@@ -20,12 +20,13 @@
  * Binds a facet to a shared collection, so that it lists the values the items hold for an expression with the number
  * of items holding each, and narrows every lens over the collection to the items holding the values the reader picks.
  *
- * @module
+ * @module store/tally
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import { getShapeBranches } from "@metreeca/blue/union";
 import { effective, items, type Range } from "@metreeca/blue/value";
+import { useModel } from "@metreeca/clay/model";
 import { error, isArray, isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import { ascending, by } from "@metreeca/core/order";
 import { createRelay, type Option as Outcome, type Relay } from "@metreeca/core/relay";
@@ -39,7 +40,6 @@ import {
 	type Option,
 	type Template
 } from "@metreeca/qest/model";
-import { useModel } from "../model.js";
 import type { Collection, Collections } from "./collection.core.js";
 import { useEntry } from "./index.core.js";
 import { useStore } from "./index.js";

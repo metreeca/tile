@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { Router } from "@metreeca/clay/router";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useQuery } from "./query.js";
-import { Router } from "../router.js";
 
 
 describe("useQuery()", () => {

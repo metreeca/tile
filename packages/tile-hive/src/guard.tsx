@@ -23,7 +23,7 @@
  * @module
  */
 
-import { useBoard } from "@metreeca/tile/board";
+import { useBoard } from "@metreeca/clay/board";
 import { type ComponentChildren, createElement } from "preact";
 import { useErrorBoundary } from "preact/hooks";
 import "./guard.css";
@@ -33,7 +33,7 @@ import "./guard.css";
  * Creates a guarded area.
  *
  * Renders what it holds until a component inside it fails while rendering, updating or running an effect, then shows
- * the fallback in its place and raises the failure on the {@link @metreeca/tile!board.Board board} enclosing the
+ * the fallback in its place and raises the failure on the {@link @metreeca/clay!board.Board board} enclosing the
  * guard, so a reader learns what went wrong while the screen around the guard keeps working. Guards nest: the innermost
  * one around the failing component takes the failure up, and a guard further out keeps rendering what it holds, the
  * inner guard showing its fallback among the rest, so a failure is confined as narrowly as guards are placed.

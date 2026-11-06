@@ -23,9 +23,9 @@
  * @module
  */
 
+import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import { keys } from "@metreeca/tile-cell";
-import { useModel } from "@metreeca/tile/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createTabs, type Tabs } from "./tabs.core.js";

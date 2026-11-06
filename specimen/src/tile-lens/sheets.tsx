@@ -23,6 +23,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
+import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject, isString } from "@metreeca/core";
 import { by, locale, reverse } from "@metreeca/core/order";
 import { getIRIBase } from "@metreeca/core/resource";
@@ -32,7 +33,6 @@ import { decodeTemplate } from "@metreeca/qest/model";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
-import { Fetch } from "@metreeca/tile/fetch";
 import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useEffect, useState } from "preact/hooks";

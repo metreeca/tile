@@ -5,14 +5,16 @@ Minimalist model-driven UI toolkit for linked data resources.
 Preact components for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. Resource models shared with
 the server drive what screens show, what forms accept and how values are validated, so neither side restates them.
 
-Screens are composed in JSX from general-purpose widgets and layouts alongside linked data views and forms. The
-[@metreeca/skin] design system is optional: components work without it and follow the platform colour scheme with it.
+Screens are composed in JSX from general-purpose widgets and layouts alongside linked data views and forms, wired
+through the contexts and hooks of [@metreeca/clay](https://github.com/metreeca/clay). The [@metreeca/skin] design
+system is optional: components work without it and follow the platform colour scheme with it.
 
 # Installation
 
 ```shell
 npm install @metreeca/skin            # design system package, optional
-npm install @metreeca/tile            # Preact contexts and hooks
+npm install @metreeca/clay            # Preact contexts and hooks
+npm install @metreeca/tile            # Preact linked data store
 npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 ```
 
@@ -29,7 +31,7 @@ optional and styles whatever a binding renders. An app brands it by overriding i
 | Package               | Description                          |
 |-----------------------|--------------------------------------|
 | [@metreeca/tile-type] | Shape-driven value text              |
-| [@metreeca/tile]      | Contexts and hooks                   |
+| [@metreeca/tile]      | Linked data store                    |
 | [@metreeca/tile-cell] | Widgets and controls                 |
 | [@metreeca/tile-hive] | Layouts and containers               |
 | [@metreeca/tile-move] | Movable items and the move lifecycle |

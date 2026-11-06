@@ -4,11 +4,6 @@
     "composite": true,
     "customConditions": []
   },
-  "references": [
-    {
-      "path": "../tile/tsconfig.build.json"
-    }
-  ],
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",

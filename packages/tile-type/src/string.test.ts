@@ -16,6 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
+import { duration } from "./duration.js";
 import { string } from "./string.js";
 
 
@@ -33,6 +34,18 @@ describe("string", () => {
 	it("should reject other values", async () => {
 		// @ts-expect-error checking runtime rejection of an untyped value
 		expect(() => string.format(1)).toThrow(TypeError);
+	});
+
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(string.as(string)).toBe(string);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => string.as(duration)).toThrow(TypeError);
+		});
+
 	});
 
 });

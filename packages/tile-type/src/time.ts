@@ -21,26 +21,10 @@
  */
 
 import { isString } from "@metreeca/core";
-import { time as shape } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
-import type { Configurable } from "./index.js";
-import { configurable, isMoment, lexical, malformed, mismatched, Offset, toMoment } from "./index.core.js";
-
-
-const valid = lexical(shape());
-
-/**
- * Times stated to the minute, as a `time` input yields them unless it shows seconds.
- */
-const Minutes = /^\d{2}:\d{2}$/;
-
-
-/**
- * The moment a time falls on at the UTC epoch, so it is shown as stated whatever its offset.
- */
-function epoch(value: string): string {
-	return `1970-01-01T${value.replace(Offset, "")}Z`;
-}
+import type { Type } from "./index.js";
+import { dropOffset, fromTime, toTime } from "./_/core/temporal.js";
+import { malformed, mismatched, inconvertible } from "./index.core.js";
 
 
 /**
@@ -56,35 +40,50 @@ export type TimeOpts = {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Time type.
  *
  * Shows `xsd:time` values as the localised time of day they state, whatever their offset, and moves them to and from
  * the `HH:MM:SS` form a `time` input works on; input stated to the minute is stored with zero seconds.
  */
-export const time: Configurable<TimeOpts, string> = configurable(({ style = "short" }) => immutable({
+export const time: Type<string, TimeOpts> = immutable({
 
 	label: "time",
 
-	format(value, { locales } = {}) {
+
+	format(value, { locales, style = "short" } = {}) {
+
 		return isString(value)
 			? new Intl.DateTimeFormat(locales, { timeStyle: style, timeZone: "UTC" })
-				.format(toMoment("time", valid, value, epoch))
+				.format(toTime(value) ?? malformed("time", value))
 			: mismatched("time", value);
+
 	},
 
 	write(value) {
+
 		return !isString(value) ? mismatched("time", value)
-			: isMoment(valid, value, epoch) ? value.replace(Offset, "")
+			: toTime(value) ? dropOffset(value)
 				: malformed("time", value);
+
 	},
 
 	parse(text) {
 
-		const value = Minutes.test(text) ? `${text}:00` : text;
+		const value = fromTime(text);
 
-		return isMoment(valid, value, epoch) ? value : malformed("time", text);
+		return toTime(value) ? value : malformed("time", text);
+
+	},
+
+
+	as(type) {
+
+		return type === time ? type
+			: inconvertible("time", type);
 
 	}
 
-}));
+});

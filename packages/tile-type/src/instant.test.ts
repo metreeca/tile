@@ -16,7 +16,10 @@
 
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { instant } from "./instant.js";
+import { date } from "./date.js";
+import { instant, instantDate } from "./instant.js";
+import { time } from "./time.js";
+import { year } from "./year.js";
 
 
 beforeAll(() => {
@@ -37,14 +40,17 @@ describe("instant", () => {
 		});
 
 		it("should show numeric dates with the configured time style", async () => {
-			expect(instant({ timeStyle: "medium" }).format("2024-03-05T12:30:00Z", {
-				locales: "it-IT"
+			expect(instant.format("2024-03-05T12:30:00Z", {
+				locales: "it-IT",
+				timeStyle: "medium"
 			})).toBe("05/03/2024, 13:30:00");
 		});
 
 		it("should show the configured styles", async () => {
-			expect(instant({ dateStyle: "short", timeStyle: "medium" }).format("2024-03-05T12:30:00Z", {
-				locales: "it-IT"
+			expect(instant.format("2024-03-05T12:30:00Z", {
+				locales: "it-IT",
+				dateStyle: "short",
+				timeStyle: "medium"
 			})).toBe("05/03/24, 13:30:00");
 		});
 
@@ -113,6 +119,96 @@ describe("instant", () => {
 			expect(() => instant.parse("2024-01-15")).toThrow(SyntaxError);
 			expect(() => instant.parse("2024-01-15T13:30Z")).toThrow(SyntaxError);
 			expect(() => instant.parse("2024-01-15T25:30")).toThrow(SyntaxError);
+		});
+
+	});
+
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(instant.as(instant)).toBe(instant);
+		});
+
+		describe("as dates", () => {
+
+			const days = instant.as(date);
+
+			it("should take the date label", async () => {
+				expect(days.label).toBe("date");
+			});
+
+			it("should show the local day an instant falls on", async () => {
+				expect(days.format("2024-03-05T23:30:00Z", { locales: "en-US" })).toBe("3/6/2024");
+				expect(instantDate.format("2024-03-05T23:30:00Z", { locales: "en-US", style: "long" })).toBe("March 6, 2024");
+			});
+
+			it("should write the local day an instant falls on", async () => {
+				expect(days.write("2024-03-05T23:30:00Z")).toBe("2024-03-06");
+			});
+
+			it("should read days as the instant of their local midnight", async () => {
+				expect(days.parse("2024-03-06")).toBe("2024-03-05T23:00:00.000Z");
+			});
+
+			it("should read upper bounds as the last instant of their local day", async () => {
+				expect(days.parse("2024-03-06", { upper: true })).toBe("2024-03-06T22:59:59.999Z");
+				expect(days.parse("2024-03-30", { upper: true })).toBe("2024-03-30T22:59:59.999Z"); // before the DST switch
+				expect(days.parse("2024-03-31", { upper: true })).toBe("2024-03-31T21:59:59.999Z"); // on the DST switch
+			});
+
+			it("should reject malformed instants", async () => {
+				expect(() => days.format("2024-03-05")).toThrow(SyntaxError);
+				expect(() => days.write("2024-03-05")).toThrow(SyntaxError);
+			});
+
+			it("should reject malformed days", async () => {
+				expect(() => days.parse("2024-02-30")).toThrow(SyntaxError);
+			});
+
+		});
+
+		describe("as years", () => {
+
+			const years = instant.as(year);
+
+			it("should take the year label", async () => {
+				expect(years.label).toBe("year");
+			});
+
+			it("should show the local year an instant falls in", async () => {
+				expect(years.format("2023-12-31T23:30:00Z", { locales: "en-US" })).toBe("2024");
+			});
+
+			it("should write the local year an instant falls in", async () => {
+				expect(years.write("2023-12-31T23:30:00Z")).toBe("2024");
+			});
+
+			it("should read years as their first local instant, or their last as upper bounds", async () => {
+				expect(years.parse("2024")).toBe("2023-12-31T23:00:00.000Z");
+				expect(years.parse("2024", { upper: true })).toBe("2024-12-31T22:59:59.999Z");
+			});
+
+			it("should reject malformed values", async () => {
+				expect(() => years.format("2024-03-05")).toThrow(SyntaxError);
+				expect(() => years.parse("24")).toThrow(SyntaxError);
+			});
+
+		});
+
+		it("should yield the same type whenever shown as the same type", async () => {
+			expect(instant.as(date)).toBe(instant.as(date));
+			expect(instant.as(year).as(date)).toBe(instant.as(date));
+		});
+
+		it("should show values as instants do", async () => {
+			expect(instant.as(date).as(instant)).toBe(instant);
+			expect(instant.as(date).as(year).write("2023-12-31T23:30:00Z")).toBe("2024");
+			expect(instant.as(year).as(date).write("2023-12-31T23:30:00Z")).toBe("2024-01-01");
+			expect(() => instant.as(date).as(time)).toThrow(TypeError);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => instant.as(time)).toThrow(TypeError);
 		});
 
 	});

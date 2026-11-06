@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - `@metreeca/tile-type` — new package of shape-driven value types, showing a stored value to a reader, handing it to
-  a native input and reading back what the input yields, with `toType` picking the default type for a shape
+  a native input and reading back what the input yields, with `toType` picking the default type for a shape and
+  `as()` showing a value as another type, as `instant.as(date)` shows and bounds instants by day
 - `@metreeca/tile/store` — collection lenses sharing one collection across a screen: `useMembers` growing the
   items a batch at a time, `useActions` adding and removing them, `useCount`, `useKeywords`, `useTally` and `useRange`
   narrowing them, and `useQuery` keeping the page criteria in the browser location
@@ -50,6 +51,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   under the pointer; every link draws its underline within the line, so containers clipping their content keep it
 - `@metreeca/tile-hive/tabs` — tab labels, and the menu standing in for them where they would not fit, sit closer to
   the rule closing off the strip
+- `@metreeca/tile-hive/toast` — `Toast` width scales with the font size of the surrounding text rather than the root
 - `@metreeca/tile-cell/markdown` — GitHub alerts and highlighted code are styled by the `@metreeca/skin` base
   stylesheet rather than by the widget, so all Markdown on a page reads alike, and a note takes the subtle accent
 - `@metreeca/tile-cell/note` — **breaking**: `Note` levels follow the five-step scale, a new `notable` level starring a

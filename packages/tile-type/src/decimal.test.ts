@@ -17,6 +17,7 @@
 import { describe, expect, it } from "vitest";
 
 import { decimal } from "./decimal.js";
+import { integer } from "./integer.js";
 
 
 describe("decimal", () => {
@@ -33,12 +34,17 @@ describe("decimal", () => {
 		});
 
 		it("should show the configured fractional digits", async () => {
-			expect(decimal({ fractionDigits: 2 }).format(1.5, { locales: "en-US" })).toBe("1.50");
-			expect(decimal({ fractionDigits: 2 }).format(1.239, { locales: "en-US" })).toBe("1.24");
+			expect(decimal.format(1.5, { locales: "en-US", fractionDigits: 2 })).toBe("1.50");
+			expect(decimal.format(1.239, { locales: "en-US", fractionDigits: 2 })).toBe("1.24");
 		});
 
 		it("should abbreviate large numbers when configured", async () => {
-			expect(decimal({ compact: true }).format(12345.6, { locales: "en-US" })).toBe("12K");
+			expect(decimal.format(12345.6, { locales: "en-US", compact: true })).toBe("12K");
+		});
+
+		it("should reject illegal fractional digits", async () => {
+			expect(() => decimal.format(1, { fractionDigits: -1 })).toThrow(RangeError);
+			expect(() => decimal.format(1, { fractionDigits: 1.5 })).toThrow(RangeError);
 		});
 
 		it("should reject other values", async () => {
@@ -53,7 +59,7 @@ describe("decimal", () => {
 
 		it("should write every digit, whatever the presentation", async () => {
 			expect(decimal.write(1.23456)).toBe("1.23456");
-			expect(decimal({ fractionDigits: 0 }).write(1.5)).toBe("1.5");
+			expect(decimal.write(1.5, { fractionDigits: 0 })).toBe("1.5");
 		});
 
 	});
@@ -73,11 +79,14 @@ describe("decimal", () => {
 
 	});
 
-	describe("configuration", () => {
+	describe("as()", () => {
 
-		it("should reject illegal fractional digits", async () => {
-			expect(() => decimal({ fractionDigits: -1 })).toThrow(RangeError);
-			expect(() => decimal({ fractionDigits: 1.5 })).toThrow(RangeError);
+		it("should show itself as itself", async () => {
+			expect(decimal.as(decimal)).toBe(decimal);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => decimal.as(integer)).toThrow(TypeError);
 		});
 
 	});

@@ -75,4 +75,12 @@ describe("reference", () => {
 
 	});
 
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(reference.as(reference)).toBe(reference);
+		});
+
+	});
+
 });

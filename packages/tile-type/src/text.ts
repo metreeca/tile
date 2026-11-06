@@ -21,11 +21,11 @@
  */
 
 import { isString } from "@metreeca/core";
-import { isTag, isTagRange, matchTag } from "@metreeca/core/language";
+import { isTag, matchTag } from "@metreeca/core/language";
 import { immutable } from "@metreeca/core/values";
-import type { Dictionary } from "@metreeca/qest/state";
-import type { Options, Type } from "./index.js";
-import { isDictionary, mismatched } from "./index.core.js";
+import { type Dictionary, isDictionary } from "@metreeca/qest/state";
+import { inconvertible, mismatched } from "./index.core.js";
+import type { Type } from "./index.js";
 
 
 /**
@@ -41,39 +41,51 @@ export const text: Type<Dictionary> = immutable({
 
 	label: "text",
 
+
 	format(value, options) {
+
 		return text.write(value, options);
+
 	},
 
 	write(value, { locales } = {}) {
 
-		const texts: Readonly<Record<string, string | readonly string[]>> = isDictionary(value)
-			? value
-			: mismatched("text", value);
+		const entries = Object.entries(isDictionary(value) ? value : mismatched("text", value));
 
-		const matched = requested(locales)
+		const preferred = locales === undefined
+			? [new Intl.NumberFormat().resolvedOptions().locale]
+			: [locales].flat().map(String);
+
+		const matched = preferred
 			.filter(isTag)
-			.map(locale => Object.keys(texts).find(tag => isTagRange(tag) && matchTag(locale, tag)))
-			.find(tag => tag !== undefined);
+			.map(locale => entries.find(([tag]) => matchTag(locale, tag)))
+			.find(entry => entry !== undefined);
 
-		const chosen = texts[matched ?? "en"] ?? Object.values(texts)[0] ?? "";
+		const [, chosen] = matched ?? entries.find(([tag]) => tag === "en") ?? entries[0] ?? ["", ""];
 
-		return isString(chosen) ? chosen : new Intl.ListFormat(locales, { type: "unit", style: "short" }).format(chosen);
+		return isString(chosen) ? chosen : new Intl.ListFormat(locales, {
+			type: "unit",
+			style: "short"
+		}).format(chosen);
 
 	},
 
 	parse(text, { locales } = {}) {
-		return { [new Intl.Locale(requested(locales)[0] ?? "en").language]: text };
+
+		const [preferred = "en"] = locales === undefined
+			? [new Intl.NumberFormat().resolvedOptions().locale]
+			: [locales].flat().map(String);
+
+		return { [new Intl.Locale(preferred).language]: text };
+
+	},
+
+
+	as(type) {
+
+		return type === text ? type
+			: inconvertible("text", type);
+
 	}
 
 });
-
-
-/**
- * Lists the reader locales in order of preference, defaulting to the runtime locale.
- */
-function requested(locales: Options["locales"]): readonly string[] {
-	return locales === undefined
-		? [new Intl.NumberFormat().resolvedOptions().locale]
-		: [locales].flat().map(String);
-}

@@ -16,6 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
+import { instant } from "./instant.js";
 import { time } from "./time.js";
 
 
@@ -29,7 +30,7 @@ describe("time", () => {
 		});
 
 		it("should show the configured style", async () => {
-			expect(time({ style: "medium" }).format("14:30:15", { locales: "it-IT" })).toBe("14:30:15");
+			expect(time.format("14:30:15", { locales: "it-IT", style: "medium" })).toBe("14:30:15");
 		});
 
 		it("should show the time stated, whatever its offset", async () => {
@@ -64,6 +65,18 @@ describe("time", () => {
 		it("should reject other text", async () => {
 			expect(() => time.parse("")).toThrow(SyntaxError);
 			expect(() => time.parse("25:00")).toThrow(SyntaxError);
+		});
+
+	});
+
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(time.as(time)).toBe(time);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => time.as(instant)).toThrow(TypeError);
 		});
 
 	});

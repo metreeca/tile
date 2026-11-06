@@ -58,4 +58,12 @@ describe("boolean", () => {
 
 	});
 
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(boolean.as(boolean)).toBe(boolean);
+		});
+
+	});
+
 });

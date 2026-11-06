@@ -22,14 +22,8 @@
 
 import { error, isNumber } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
-import type { Configurable } from "./index.js";
-import { configurable, malformed, mismatched } from "./index.core.js";
-
-
-/**
- * Decimal text as a `number` input yields it.
- */
-const Digits = /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/;
+import { malformed, mismatched, inconvertible } from "./index.core.js";
+import type { Type } from "./index.js";
 
 
 /**
@@ -51,41 +45,58 @@ export type DecimalOpts = {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Decimal type.
  *
  * Shows numbers localised, and moves them to and from the plain decimal notation a `number` input works on, so an
  * edit carries every digit of the value, whatever the presentation rounds away.
  *
- * @throws {@link !RangeError RangeError} When configured, if `fractionDigits` is not an integer between 0 and 100
+ * @throws {@link !RangeError RangeError} On formatting, if `fractionDigits` is not an integer between 0 and 100
  */
-export const decimal: Configurable<DecimalOpts, number> = configurable(({ fractionDigits, compact = false }) => {
+export const decimal: Type<number, DecimalOpts> = immutable({
 
-	const presentation: Intl.NumberFormatOptions = fractionDigits === undefined ? {}
-		: Number.isInteger(fractionDigits) && fractionDigits >= 0 && fractionDigits <= 100 ? {
-			minimumFractionDigits: fractionDigits,
-			maximumFractionDigits: fractionDigits
-		}
-		: error(new RangeError(`illegal fraction digits <${fractionDigits}>`));
+	label: "decimal",
 
-	return immutable({
 
-		label: "decimal",
+	format(value, { locales, fractionDigits, compact = false } = {}) {
 
-		format(value, { locales } = {}) {
-			return isNumber(value)
-				? new Intl.NumberFormat(locales, { ...presentation, ...(compact ? { notation: "compact" } : {}) }).format(value)
-				: mismatched("decimal", value);
-		},
+		const number = isNumber(value) ? value : mismatched("decimal", value);
 
-		write(value) {
-			return isNumber(value) ? String(value) : mismatched("decimal", value);
-		},
+		const digits: Intl.NumberFormatOptions = fractionDigits === undefined ? {}
+			: Number.isInteger(fractionDigits) && fractionDigits >= 0 && fractionDigits <= 100 ? {
+				minimumFractionDigits: fractionDigits,
+				maximumFractionDigits: fractionDigits
+			}
+			: error(new RangeError(`illegal fraction digits <${fractionDigits}>`));
 
-		parse(text) {
-			return Digits.test(text) ? Number(text) : malformed("decimal", text);
-		}
+		const notation: Intl.NumberFormatOptions = compact ? { notation: "compact" } : {};
 
-	});
+		return new Intl.NumberFormat(locales, { ...digits, ...notation }).format(number);
+
+	},
+
+	write(value) {
+
+		return isNumber(value) ? String(value) : mismatched("decimal", value);
+
+	},
+
+	parse(text) {
+
+		return /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/.test(text) // decimal text as a number input yields it
+			? Number(text)
+			: malformed("decimal", text);
+
+	},
+
+
+	as(type) {
+
+		return type === decimal ? type
+			: inconvertible("decimal", type);
+
+	}
 
 });

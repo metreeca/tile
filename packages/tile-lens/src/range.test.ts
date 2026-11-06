@@ -419,6 +419,7 @@ describe("Range", () => {
 			expect(await inputs(date)).toEqual(["date", "date"]);
 			expect(await inputs(time)).toEqual(["time", "time"]);
 			expect(await inputs(instant)).toEqual(["datetime-local", "datetime-local"]);
+			expect(await inputs(instant.as(date))).toEqual(["date", "date"]);
 			expect(await inputs(string)).toEqual(["text", "text"]);
 
 		});
@@ -745,6 +746,29 @@ describe("Range", () => {
 			commit(upper(), "2010");
 
 			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ "<=year": 2010 }));
+
+		});
+
+		it("should bound instants shown as days by whole days", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds("2020-01-01T10:00:00Z", "2020-12-31T10:00:00Z"), { type: instant.as(date), onChange });
+
+			await ready();
+
+			commit(lower(), "2020-06-01");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({
+				">=year": new Date(2020, 5, 1).toISOString()
+			}));
+
+			commit(upper(), "2020-06-30");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({
+				">=year": new Date(2020, 5, 1).toISOString(),
+				"<=year": new Date(new Date(2020, 6, 1).getTime()-1).toISOString()
+			}));
 
 		});
 

@@ -21,20 +21,10 @@
  */
 
 import { isString } from "@metreeca/core";
-import { year as shape } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
 import type { Type } from "./index.js";
-import { lexical, malformed, mismatched, pad, toMoment } from "./index.core.js";
-
-
-const valid = lexical(shape());
-
-/**
- * Reads a year as the UTC moment it starts at, so it is shown as stated whatever its offset.
- */
-function toYear(value: string): Date {
-	return toMoment(year.label, valid, value, value => `${value.slice(0, 4)}-01-01T00:00:00Z`);
-}
+import { toUTCYear, toYear } from "./_/core/temporal.js";
+import { malformed, mismatched, inconvertible } from "./index.core.js";
 
 
 /**
@@ -47,18 +37,33 @@ export const year: Type<string> = immutable({
 
 	label: "year",
 
+
 	format(value, { locales } = {}) {
-		return isString(value)
-			? new Intl.DateTimeFormat(locales, { year: "numeric", timeZone: "UTC" }).format(toYear(value))
-			: mismatched(year.label, value);
+
+		const start = isString(value) ? toYear(value) ?? malformed("year", value) : mismatched("year", value);
+
+		return new Intl.DateTimeFormat(locales, { year: "numeric", timeZone: "UTC" }).format(start);
+
 	},
 
 	write(value) {
-		return isString(value) ? pad(toYear(value).getUTCFullYear(), 4) : mismatched(year.label, value);
+
+		return isString(value) ? toUTCYear(toYear(value) ?? malformed("year", value)) : mismatched("year", value);
+
 	},
 
 	parse(text) {
-		return valid(text) ? text : malformed(year.label, text);
+
+		return toYear(text) ? text : malformed("year", text);
+
+	},
+
+
+	as(type) {
+
+		return type === year ? type
+			: inconvertible("year", type);
+
 	}
 
 });

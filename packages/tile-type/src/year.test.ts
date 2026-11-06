@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { date } from "./date.js";
+import { duration } from "./duration.js";
+import { instant } from "./instant.js";
+import { time } from "./time.js";
 import { year } from "./year.js";
+
+
+beforeAll(() => {
+	vi.stubEnv("TZ", "Europe/Rome"); // UTC+1 in winter, UTC+2 in summer
+});
+
+afterAll(() => {
+	vi.unstubAllEnvs();
+});
 
 
 describe("year", () => {
@@ -52,6 +65,21 @@ describe("year", () => {
 		it("should reject other text", async () => {
 			expect(() => year.parse("24")).toThrow(SyntaxError);
 			expect(() => year.parse("")).toThrow(SyntaxError);
+		});
+
+	});
+
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(year.as(year)).toBe(year);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => year.as(date)).toThrow(TypeError);
+			expect(() => year.as(instant)).toThrow(TypeError);
+			expect(() => year.as(time)).toThrow(TypeError);
+			expect(() => year.as(duration)).toThrow(TypeError);
 		});
 
 	});

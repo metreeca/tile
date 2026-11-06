@@ -23,9 +23,9 @@
 import { isObject, isString } from "@metreeca/core";
 import { getIRILabel, isIRI } from "@metreeca/core/resource";
 import { immutable } from "@metreeca/core/values";
-import type { Reference, Resource } from "@metreeca/qest/state";
+import { isDictionary, type Reference, type Resource } from "@metreeca/qest/state";
 import type { Type } from "./index.js";
-import { isDictionary, malformed, mismatched } from "./index.core.js";
+import { malformed, mismatched, inconvertible } from "./index.core.js";
 import { text } from "./text.js";
 
 
@@ -42,23 +42,38 @@ export const reference: Type<Reference | Resource> = immutable({
 
 	label: "reference",
 
+
 	format(value, options) {
+
 		return isString(value) ? getIRILabel(value) ?? value
 			: !isObject(value) ? mismatched("reference", value)
 				: isString(value.label) ? value.label
 					: isDictionary(value.label) ? text.format(value.label, options)
 						: isString(value.id) ? getIRILabel(value.id) ?? value.id
 							: "";
+
 	},
 
 	write(value) {
+
 		return isString(value) ? value
 			: isObject(value) && isString(value.id) ? value.id
 				: mismatched("reference", value);
+
 	},
 
 	parse(text) {
+
 		return isIRI(text, "internal") ? text : malformed("reference", text);
+
+	},
+
+
+	as(type) {
+
+		return type === reference ? type
+			: inconvertible("reference", type);
+
 	}
 
 });

@@ -19,26 +19,26 @@
  *
  * Defines the contract every value type honours: showing a stored value to a reader, handing it to a native input and
  * reading back what the input yields. Values are always kept in the form the store holds them, so a type never
- * restates the data model: the shape describing a value picks its default type, and a view or a field may choose
- * another one to show the same value differently, as a date shows only the day an instant falls on.
+ * restates the data model. The shape describing a value picks its default type. A view or a field may pass options to
+ * that type to show a value differently, or show the value as another type, as `instant.as(date)` shows only its day.
  *
- * Text is localised for the locales the caller names, falling back to the runtime default; temporal values follow the
- * runtime time zone. Nothing is read from the browser, so the same call works in a test, a server render or a page.
+ * Text is localised for the locales the caller names, falling back to the runtime default; instants follow the runtime
+ * time zone. Nothing is read from the browser, so the same call works in a test, a server render or a page.
  *
  * @module index
  */
 
+import { getShapeBranches, getStateBranch } from "@metreeca/blue/union";
+import type { Shape } from "@metreeca/blue/value";
 import { eager, type Lazy, opt, type Optional } from "@metreeca/core";
 import { xsd } from "@metreeca/core/datatype";
 import { immutable } from "@metreeca/core/values";
-import type { StringShape } from "@metreeca/blue/string";
-import { getShapeBranches, getStateBranch, type UnionShape } from "@metreeca/blue/union";
-import type { Shape } from "@metreeca/blue/value";
+import { attempt } from "./_/core/index.js";
 import { boolean } from "./boolean.js";
 import { date } from "./date.js";
 import { decimal } from "./decimal.js";
 import { duration } from "./duration.js";
-import { malformed, mismatched } from "./index.core.js";
+import { malformed, mismatched, inconvertible } from "./index.core.js";
 import { instant } from "./instant.js";
 import { integer } from "./integer.js";
 import { reference } from "./reference.js";
@@ -49,7 +49,9 @@ import { year } from "./year.js";
 
 
 /**
- * Reader context.
+ * Common options.
+ *
+ * The options every type accepts, whatever the values it handles.
  */
 export type Options = {
 
@@ -58,6 +60,14 @@ export type Options = {
 	 */
 	readonly locales?: Intl.LocalesArgument
 
+	/**
+	 * Whether text read back stands for the upper bound of a range; defaults to `false`.
+	 *
+	 * A type editing values at a coarser grain than the store holds them reads an upper bound as the last value it
+	 * spans, so the bound takes in all of it: `instant.as(date)` reads a day as its last instant, not its first.
+	 */
+	readonly upper?: boolean
+
 }
 
 /**
@@ -65,9 +75,17 @@ export type Options = {
  *
  * Shows a value kept in the form the store holds it, and moves it to and from the text a native input works on.
  *
+ * Every call takes the common options together with the options specific to the type. A view or a field passes
+ * the latter to show the same value differently, as `{ fractionDigits: 2 }` does for decimals.
+ *
+ * {@link Type.as} shows and edits the values of a type as another type does, so a widget expecting a type can work on
+ * them: `instant.as(date)` shows and edits instants as the day they fall on. It works where the stored values carry
+ * everything the other type shows: `instant.as(date)`, `instant.as(year)` and `date.as(year)`.
+ *
  * @typeParam V The value as the store holds it
+ * @typeParam O The options specific to this type, accepted by every call along with {@link Options}
  */
-export interface Type<V = unknown> {
+export type Type<V = unknown, O extends object = {}> = {
 
 	/**
 	 * The name of the type, for messages and for views choosing a control by type.
@@ -78,53 +96,64 @@ export interface Type<V = unknown> {
 	 * Shows a value.
 	 *
 	 * @param value The value to be shown
-	 * @param options The reader context
+	 * @param options The localisation options and the options specific to this type
 	 *
 	 * @returns The localised text a reader sees for `value`
 	 *
 	 * @throws {@link !TypeError TypeError} If `value` is not a value of this type
 	 * @throws {@link !SyntaxError SyntaxError} If `value` is a string not well-formed for this type
+	 * @throws {@link !RangeError RangeError} If an option specific to this type is out of range
 	 */
-	format(value: V, options?: Options): string
+	format(value: V, options?: Options & O): string
 
 	/**
 	 * Hands a value to a native input.
 	 *
 	 * @param value The value to be edited
-	 * @param options The reader context
+	 * @param options The localisation options and the options specific to this type
 	 *
 	 * @returns The text a native input for this type takes as its `value`
 	 *
 	 * @throws {@link !TypeError TypeError} If `value` is not a value of this type
 	 * @throws {@link !SyntaxError SyntaxError} If `value` is a string not well-formed for this type
 	 */
-	write(value: V, options?: Options): string
+	write(value: V, options?: Options & O): string
 
 	/**
 	 * Reads back what a native input yields.
 	 *
 	 * @param text The `value` of a native input for this type
-	 * @param options The reader context
+	 * @param options The localisation options and the options specific to this type
 	 *
 	 * @returns The value `text` stands for, in the form the store holds it
 	 *
 	 * @throws {@link !SyntaxError SyntaxError} If `text` is not well-formed for this type
 	 */
-	parse(text: string, options?: Options): V
+	parse(text: string, options?: Options & O): V
+
+
+	/**
+	 * Shows and edits values of this type as another type does.
+	 *
+	 * Values are still stored as this type holds them: only how they are shown and edited changes.
+	 *
+	 * A type shown as itself is returned as is. A converted type is converted again from the type it stores, so
+	 * `instant.as(date).as(year)` returns `instant.as(year)`, and the same pair of types always returns the same type.
+	 *
+	 * A widget taking the returned type thus sees no change from one render to the next.
+	 *
+	 * @param type The type values are shown and edited as
+	 *
+	 * @returns A type labelled and configured as `type`, working on values stored as this type holds them
+	 *
+	 * @throws {@link !TypeError TypeError} If values of this type cannot be shown as `type`
+	 */
+	as(type: Type<V>): Type<V>
 
 }
 
-/**
- * Configurable value type.
- *
- * A type used as is with its default presentation, or called with a configuration to obtain a variant presenting the
- * same values differently, as `decimal({ fractionDigits: 2 })` shows every decimal with two fractional digits.
- *
- * @typeParam C The configuration accepted
- * @typeParam V The value as the store holds it
- */
-export type Configurable<C, V> = Type<V> & ((config: C) => Type<V>)
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Picks the default type for a shape.
@@ -136,76 +165,89 @@ export type Configurable<C, V> = Type<V> & ((config: C) => Type<V>)
  *   {@link "duration"!duration duration} for `xsd:duration`, else {@link "string"!string string}
  * - **dictionary** — {@link "text"!text text}
  * - **reference** and **resource** — {@link "reference"!reference reference}
- * - **union** — a type routing each value to the default type of the single branch it belongs to, and reading input
- *   back as the first branch, in declaration order, that accepts it, so branches are best listed most specific first
+ * - **union** — a type showing each value with the default type of the branch it belongs to; input is read back by
+ *   the first branch, in declaration order, that accepts it, so the most specific branches are best listed first
  *
  * @param shape The shape describing the values
  *
- * @returns The type values described by `shape` are shown and edited with unless a view chooses another one
+ * @returns The default type for the values `shape` describes
  */
 export function toType(shape: Lazy<Shape>): Type {
 
 	const $shape = eager(shape);
 
-	return $shape.kind === "boolean" ? boolean
-		: $shape.kind === "number" ? $shape.integral ? integer : decimal
-			: $shape.kind === "string" ? toStringType($shape)
-				: $shape.kind === "dictionary" ? text
-					: $shape.kind === "reference" || $shape.kind === "resource" ? reference
-						: toUnionType($shape);
+	if ( $shape.kind === "boolean" ) {
 
-}
+		return boolean;
+
+	} else if ( $shape.kind === "number" ) {
+
+		return $shape.integral ? integer : decimal;
+
+	} else if ( $shape.kind === "string" ) {
+
+		return $shape.datatype === xsd.gYear ? year
+			: $shape.datatype === xsd.date ? date
+				: $shape.datatype === xsd.time ? time
+					: $shape.datatype === xsd.dateTime ? instant
+						: $shape.datatype === xsd.duration ? duration
+							: string;
+
+	} else if ( $shape.kind === "dictionary" ) {
+
+		return text;
+
+	} else if ( $shape.kind === "reference" || $shape.kind === "resource" ) {
+
+		return reference;
+
+	} else {
+
+		const branches = getShapeBranches($shape);
+		const types = branches.map(branch => toType(branch));
+
+		const route = (value: unknown) => opt(getStateBranch(value, branches), branch =>
+			types[branches.indexOf(branch)]
+		) ?? mismatched("union", value);
+
+		const union: Type = immutable({
+
+			label: "union",
 
 
-function toStringType({ datatype }: StringShape): Type {
-	return datatype === xsd.gYear ? year
-		: datatype === xsd.date ? date
-			: datatype === xsd.time ? time
-				: datatype === xsd.dateTime ? instant
-					: datatype === xsd.duration ? duration
-						: string;
-}
+			format(value, options) {
 
-function toUnionType(shape: UnionShape): Type {
+				return route(value).format(value, options);
 
-	const branches = getShapeBranches(shape);
-	const types = branches.map(branch => toType(branch));
+			},
 
-	const route = (value: unknown) => opt(getStateBranch(value, branches), toType) ?? mismatched("union", value);
+			write(value, options) {
 
-	return immutable({
+				return route(value).write(value, options);
 
-		label: "union",
+			},
 
-		format(value, options) {
-			return route(value).format(value, options);
-		},
+			parse(text, options) {
 
-		write(value, options) {
-			return route(value).write(value, options);
-		},
+				const parsed = types.reduce<Optional<{ readonly value: unknown }>>((parsed, type) =>
+					parsed ?? attempt(() => ({ value: type.parse(text, options) })), undefined
+				);
 
-		parse(text, options) {
+				return parsed === undefined ? malformed("union", text) : parsed.value;
 
-			const parsed = types.reduce<Optional<{ readonly value: unknown }>>((parsed, type) =>
-				parsed ?? attempt(() => ({ value: type.parse(text, options) })), undefined
-			);
+			},
 
-			return parsed === undefined ? malformed("union", text) : parsed.value;
 
-		}
+			as(type) {
 
-	});
+				return type === union ? type : inconvertible("union", type);
 
-}
+			}
 
-/**
- * Runs a computation, standing for its outcome with `undefined` where it fails.
- */
-function attempt<T>(computation: () => T): Optional<T> {
-	try {
-		return computation();
-	} catch {
-		return undefined;
+		});
+
+		return union;
+
 	}
+
 }

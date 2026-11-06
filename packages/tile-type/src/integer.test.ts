@@ -16,6 +16,7 @@
 
 import { describe, expect, it } from "vitest";
 
+import { decimal } from "./decimal.js";
 import { integer } from "./integer.js";
 
 
@@ -33,8 +34,8 @@ describe("integer", () => {
 		});
 
 		it("should abbreviate large numbers when configured", async () => {
-			expect(integer({ compact: true }).format(12345, { locales: "en-US" })).toBe("12K");
-			expect(integer({ compact: true }).format(1234567, { locales: "en-US" })).toBe("1.2M");
+			expect(integer.format(12345, { locales: "en-US", compact: true })).toBe("12K");
+			expect(integer.format(1234567, { locales: "en-US", compact: true })).toBe("1.2M");
 		});
 
 		it("should reject other values", async () => {
@@ -49,7 +50,7 @@ describe("integer", () => {
 
 		it("should write plain digits", async () => {
 			expect(integer.write(12345)).toBe("12345");
-			expect(integer({ compact: true }).write(12345)).toBe("12345");
+			expect(integer.write(12345, { compact: true })).toBe("12345");
 		});
 
 	});
@@ -65,6 +66,18 @@ describe("integer", () => {
 			expect(() => integer.parse("4.2")).toThrow(SyntaxError);
 			expect(() => integer.parse("")).toThrow(SyntaxError);
 			expect(() => integer.parse("x")).toThrow(SyntaxError);
+		});
+
+	});
+
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(integer.as(integer)).toBe(integer);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => integer.as(decimal)).toThrow(TypeError);
 		});
 
 	});

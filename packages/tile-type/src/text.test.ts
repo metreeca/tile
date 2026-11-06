@@ -72,4 +72,12 @@ describe("text", () => {
 
 	});
 
+	describe("as()", () => {
+
+		it("should show itself as itself", async () => {
+			expect(text.as(text)).toBe(text);
+		});
+
+	});
+
 });

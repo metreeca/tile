@@ -32,7 +32,7 @@
 @property --tile-toast-width {
     syntax: "*";
     inherits: true;
-    initial-value: 24rem;
+    initial-value: 24em;
 }
 
 

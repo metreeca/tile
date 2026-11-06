@@ -23,7 +23,7 @@
 import { isString } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
 import type { Type } from "./index.js";
-import { mismatched } from "./index.core.js";
+import { mismatched, inconvertible } from "./index.core.js";
 
 
 /**
@@ -35,16 +35,31 @@ export const string: Type<string> = immutable({
 
 	label: "string",
 
+
 	format(value) {
+
 		return string.write(value);
+
 	},
 
 	write(value) {
-		return isString(value) ? value : mismatched(string.label, value);
+
+		return isString(value) ? value : mismatched("string", value);
+
 	},
 
 	parse(text) {
+
 		return text;
+
+	},
+
+
+	as(type) {
+
+		return type === string ? type
+			: inconvertible("string", type);
+
 	}
 
 });

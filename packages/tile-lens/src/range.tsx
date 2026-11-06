@@ -103,8 +103,11 @@ export function Range({
 	compact?: boolean
 
 	/**
-	 * The type of the bounded values, choosing the native input the fields work on and how values are shown and read,
-	 * as picked for the shape describing them by {@link @metreeca/tile-type!index.toType toType}.
+	 * The type of the bounded values, choosing the native input the fields work on and how values are shown and read.
+	 *
+	 * The default type for a shape is picked by {@link @metreeca/tile-type!index.toType toType}. A type shown as another
+	 * offers a different input over the same values, as `instant.as(date)` bounds instants by day. The `To` field reads
+	 * its text as an upper bound, so a day or a year typed there takes in all of it.
 	 */
 	type: Type
 
@@ -335,7 +338,7 @@ export function Range({
 
 			const trimmed = text.trim();
 			const kept = trimmed === from || from === "" && trimmed === hint;
-			const bound = !valid || kept ? undefined : trimmed === "" ? null : parse(trimmed);
+			const bound = !valid || kept ? undefined : trimmed === "" ? null : parse(trimmed, field === "upper");
 
 			opt(bound, bound => range({
 				ready: ({ narrow }) => narrow(field === "lower" ? { lower: bound } : { upper: bound })
@@ -346,9 +349,9 @@ export function Range({
 		});
 	}
 
-	function parse(text: string): Optional<Literal> {
+	function parse(text: string, upper: boolean): Optional<Literal> {
 		try {
-			return opt(type.parse(text), value => isLiteral(value) ? value : undefined);
+			return opt(type.parse(text, { upper }), value => isLiteral(value) ? value : undefined);
 		} catch {
 			return undefined;
 		}

@@ -23,7 +23,7 @@
 import { isBoolean } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
 import type { Type } from "./index.js";
-import { malformed, mismatched } from "./index.core.js";
+import { malformed, mismatched, inconvertible } from "./index.core.js";
 
 
 /**
@@ -36,18 +36,33 @@ export const boolean: Type<boolean> = immutable({
 
 	label: "boolean",
 
+
 	format(value) {
+
 		return boolean.write(value);
+
 	},
 
 	write(value) {
-		return isBoolean(value) ? String(value) : mismatched(boolean.label, value);
+
+		return isBoolean(value) ? String(value) : mismatched("boolean", value);
+
 	},
 
 	parse(text) {
+
 		return text === "true" ? true
 			: text === "false" ? false
-				: malformed(boolean.label, text);
+				: malformed("boolean", text);
+
+	},
+
+
+	as(type) {
+
+		return type === boolean ? type
+			: inconvertible("boolean", type);
+
 	}
 
 });

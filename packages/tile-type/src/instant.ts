@@ -22,14 +22,18 @@
 
 import { isString } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
-import type { Configurable } from "./index.js";
-import { configurable, malformed, mismatched, pad, toInstant, toLocalDay } from "./index.core.js";
-
-
-/**
- * Wall-clock times as a `datetime-local` input yields them, to the minute and optionally to the millisecond.
- */
-const Local = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?$/;
+import { date, type DateOpts } from "./date.js";
+import type { Type } from "./index.js";
+import {
+	fromLocalDateTime,
+	fromLocalDay,
+	fromLocalDayEnd,
+	toInstant,
+	toLocalDateTime,
+	toNumericDateTime
+} from "./_/core/temporal.js";
+import { malformed, mismatched, inconvertible } from "./index.core.js";
+import { year } from "./year.js";
 
 
 /**
@@ -50,6 +54,8 @@ export type InstantOpts = {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Instant type.
  *
@@ -58,65 +64,135 @@ export type InstantOpts = {
  *
  * Instants are stored pinned to UTC with millisecond precision, as in `2024-03-05T13:30:00.000Z`; an instant stated
  * without an offset is taken as UTC. Text handed to an input carries milliseconds only for fractional seconds.
+ *
+ * Shown as {@link "date"!date date} or {@link "year"!year year} through {@link instantDate} and {@link instantYear},
+ * instants are shown and edited as the day or year they fall in within the runtime time zone.
  */
-export const instant: Configurable<InstantOpts, string> = configurable(({
-
-	dateStyle,
-	timeStyle = "short"
-
-}) => immutable({
+export const instant: Type<string, InstantOpts> = immutable({
 
 	label: "instant",
 
-	format(value, { locales } = {}) {
-		return isString(value)
-			? dateStyle === undefined
-				? toNumeric(locales, timeStyle, toInstant("instant", value))
-				: new Intl.DateTimeFormat(locales, { dateStyle, timeStyle }).format(toInstant("instant", value))
-			: mismatched("instant", value);
+
+	format(value, { locales, dateStyle, timeStyle = "short" } = {}) {
+
+		const moment = isString(value) ? toInstant(value) ?? malformed("instant", value) : mismatched("instant", value);
+
+		return dateStyle === undefined
+			? toNumericDateTime(locales, timeStyle, moment)
+			: new Intl.DateTimeFormat(locales, { dateStyle, timeStyle }).format(moment);
+
 	},
 
 	write(value) {
 
-		const date = isString(value) ? toInstant("instant", value) : mismatched("instant", value);
-
-		const day = toLocalDay(date);
-		const time = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-		const fraction = date.getMilliseconds() === 0 ? "" : `.${pad(date.getMilliseconds(), 3)}`;
-
-		return `${day}T${time}${fraction}`;
+		return isString(value)
+			? toLocalDateTime(toInstant(value) ?? malformed("instant", value))
+			: mismatched("instant", value);
 
 	},
 
 	parse(text) {
 
-		const date = Local.test(text) ? new Date(text) : undefined; // no offset, so read as local time
+		return (fromLocalDateTime(text) ?? malformed("instant", text)).toISOString();
 
-		return date === undefined || Number.isNaN(date.getTime()) ? malformed("instant", text) : date.toISOString();
+	},
+
+
+	as(type) {
+
+		return type === instant ? type
+			: type === date ? instantDate
+				: type === year ? instantYear
+					: inconvertible("instant", type);
 
 	}
 
-}));
-
+});
 
 /**
- * Formats an instant with a numeric date carrying the full year, as no date style does in every locale.
+ * Instant-as-date type.
  *
- * @param locales The locales to format for
- * @param timeStyle The localised time style
- * @param moment The instant to format
+ * Shows `xsd:dateTime` values as the localised day they fall on in the runtime time zone, and moves them to and from
+ * the `YYYY-MM-DD` form a `date` input works on, so a reader picks a day without stating a time of day.
  *
- * @returns `moment` as the `short` date style shows it, with its year widened to the full digits the locale writes
+ * A day read back is stored as its local midnight, or as its last millisecond if read as the upper bound of a range.
+ *
+ * Returned by `instant.as(date)`.
  */
-function toNumeric(locales: Intl.LocalesArgument, timeStyle: Intl.DateTimeFormatOptions["timeStyle"], moment: Date): string {
+export const instantDate: Type<string, DateOpts> = immutable({
 
-	const year = new Intl.DateTimeFormat(locales, { year: "numeric" })
-		.formatToParts(moment)
-		.find(({ type }) => type === "year")?.value;
+	label: "date",
 
-	return new Intl.DateTimeFormat(locales, { dateStyle: "short", timeStyle })
-		.formatToParts(moment)
-		.map(({ type, value }) => type === "year" && year !== undefined ? year : value)
-		.join("");
 
-}
+	format(value, options) {
+
+		return date.format(instantDate.write(value), options);
+
+	},
+
+	write(value) {
+
+		return instant.write(value).slice(0, 10);
+
+	},
+
+	parse(text, { upper } = {}) {
+
+		const day = date.parse(text);
+
+		return (upper ? fromLocalDayEnd(day) : fromLocalDay(day)).toISOString();
+
+	},
+
+
+	as(type) {
+
+		return instant.as(type);
+
+	}
+
+});
+
+/**
+ * Instant-as-year type.
+ *
+ * Shows `xsd:dateTime` values as the localised year they fall in, in the runtime time zone, and moves them to and from
+ * the four digits a `number` input works on, so a reader picks a year without stating a day or a time of day.
+ *
+ * A year read back is stored as the instant it starts at, or as its last millisecond if read as an upper bound.
+ *
+ * Returned by `instant.as(year)`.
+ */
+export const instantYear: Type<string> = immutable({
+
+	label: "year",
+
+
+	format(value, options) {
+
+		return year.format(instantYear.write(value), options);
+
+	},
+
+	write(value) {
+
+		return instant.write(value).slice(0, 4);
+
+	},
+
+	parse(text, { upper } = {}) {
+
+		const digits = year.write(year.parse(text));
+
+		return (upper ? fromLocalDayEnd(`${digits}-12-31`) : fromLocalDay(`${digits}-01-01`)).toISOString();
+
+	},
+
+
+	as(type) {
+
+		return instant.as(type);
+
+	}
+
+});

@@ -100,6 +100,14 @@ describe("toType()", () => {
 			expect(() => mixed.parse("x")).toThrow(SyntaxError);
 		});
 
+		it("should show itself as itself", async () => {
+			expect(mixed.as(mixed)).toBe(mixed);
+		});
+
+		it("should reject other types", async () => {
+			expect(() => mixed.as(string)).toThrow(TypeError);
+		});
+
 	});
 
 });

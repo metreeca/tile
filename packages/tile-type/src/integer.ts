@@ -22,14 +22,8 @@
 
 import { isNumber } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
-import type { Configurable } from "./index.js";
-import { configurable, malformed, mismatched } from "./index.core.js";
-
-
-/**
- * Integer text as a `number` input yields it.
- */
-const Digits = /^[-+]?\d+$/;
+import { inconvertible, malformed, mismatched } from "./index.core.js";
+import type { Type } from "./index.js";
 
 
 /**
@@ -45,6 +39,8 @@ export type IntegerOpts = {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Integer type.
  *
@@ -53,22 +49,41 @@ export type IntegerOpts = {
  *
  * Input is read as an integer: text standing for a fractional number is rejected rather than rounded.
  */
-export const integer: Configurable<IntegerOpts, number> = configurable(({ compact = false }) => immutable({
+export const integer: Type<number, IntegerOpts> = immutable({
 
 	label: "integer",
 
-	format(value, { locales } = {}) {
-		return isNumber(value)
-			? new Intl.NumberFormat(locales, compact ? { notation: "compact" } : { maximumFractionDigits: 0 }).format(value)
-			: mismatched("integer", value);
+
+	format(value, { locales, compact = false } = {}) {
+
+		const number = isNumber(value) ? value : mismatched("integer", value);
+
+		const notation: Intl.NumberFormatOptions = compact ? { notation: "compact" } : { maximumFractionDigits: 0 };
+
+		return new Intl.NumberFormat(locales, notation).format(number);
+
 	},
 
 	write(value) {
+
 		return isNumber(value) ? String(value) : mismatched("integer", value);
+
 	},
 
 	parse(text) {
-		return Digits.test(text) ? Number(text) : malformed("integer", text);
+
+		return /^[-+]?\d+$/.test(text) // integer text as a number input yields it
+			? Number(text)
+			: malformed("integer", text);
+
+	},
+
+
+	as(type) {
+
+		return type === integer ? type
+			: inconvertible("integer", type);
+
 	}
 
-}));
+});

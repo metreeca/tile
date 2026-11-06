@@ -23,9 +23,9 @@
  * @module
  */
 
-import { AutoDelay, keys } from "@metreeca/clay-cell";
-import { Button } from "@metreeca/clay-cell/button";
-import { Note } from "@metreeca/clay-cell/note";
+import { AutoDelay, keys } from "@metreeca/clay-widgets";
+import { Button } from "@metreeca/clay-widgets/button";
+import { Note } from "@metreeca/clay-widgets/note";
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";

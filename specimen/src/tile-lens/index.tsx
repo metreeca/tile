@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Link } from "@metreeca/clay-cell/link";
+import { Link } from "@metreeca/clay-widgets/link";
 import { Routes } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Frames } from "@metreeca/specimen/tile-lens/frames.js";

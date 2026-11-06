@@ -23,8 +23,8 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { Button } from "@metreeca/clay-cell/button";
-import { More } from "@metreeca/clay-cell/more";
+import { Button } from "@metreeca/clay-widgets/button";
+import { More } from "@metreeca/clay-widgets/more";
 import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject, isString } from "@metreeca/core";
 import { by, locale, reverse } from "@metreeca/core/order";

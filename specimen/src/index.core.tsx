@@ -15,12 +15,12 @@
  */
 
 import { app } from "@metreeca/clay";
-import { Button } from "@metreeca/clay-cell/button";
-import { Link } from "@metreeca/clay-cell/link";
-import { Logo } from "@metreeca/clay-cell/logo";
+import { Button } from "@metreeca/clay-widgets/button";
+import { Link } from "@metreeca/clay-widgets/link";
+import { Logo } from "@metreeca/clay-widgets/logo";
 import { useFetch } from "@metreeca/clay/fetch";
-import { Shell } from "@metreeca/clay-hive/shell";
-import { Style } from "@metreeca/clay-hive/style";
+import { Shell } from "@metreeca/clay-widgets/shell";
+import { Style } from "@metreeca/clay-widgets/style";
 import { TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
 import {
 	ChevronsLeftRightIcon,

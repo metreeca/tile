@@ -22,8 +22,8 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-cell/button";
-import "@metreeca/clay-cell/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
+import { Button } from "@metreeca/clay-widgets/button";
+import "@metreeca/clay-widgets/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-preact";
 
 

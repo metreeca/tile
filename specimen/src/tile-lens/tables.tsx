@@ -24,7 +24,7 @@ import { integer } from "@metreeca/blue/number";
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { More } from "@metreeca/clay-cell/more";
+import { More } from "@metreeca/clay-widgets/more";
 import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject } from "@metreeca/core";
 import { getIRIBase } from "@metreeca/core/resource";

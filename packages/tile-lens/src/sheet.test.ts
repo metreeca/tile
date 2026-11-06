@@ -17,7 +17,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { More } from "@metreeca/clay-cell/more";
+import { More } from "@metreeca/clay-widgets/more";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import { Store } from "@metreeca/tile";

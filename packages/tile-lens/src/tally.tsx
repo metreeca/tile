@@ -23,11 +23,11 @@
  * @module
  */
 
-import { AutoDelay, classes, keys } from "@metreeca/clay-cell";
-import { Button } from "@metreeca/clay-cell/button";
-import { Link } from "@metreeca/clay-cell/link";
-import { More } from "@metreeca/clay-cell/more";
-import { Note } from "@metreeca/clay-cell/note";
+import { AutoDelay, classes, keys } from "@metreeca/clay-widgets";
+import { Button } from "@metreeca/clay-widgets/button";
+import { Link } from "@metreeca/clay-widgets/link";
+import { More } from "@metreeca/clay-widgets/more";
+import { Note } from "@metreeca/clay-widgets/note";
 import { useModel } from "@metreeca/clay/model";
 import type { Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";

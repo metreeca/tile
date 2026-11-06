@@ -25,12 +25,12 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Frame } from "@metreeca/blue/value";
-import { classes } from "@metreeca/clay-cell";
-import { Button } from "@metreeca/clay-cell/button";
-import { Hint } from "@metreeca/clay-cell/hint";
-import "@metreeca/clay-cell/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
-import { Link } from "@metreeca/clay-cell/link";
-import { Note } from "@metreeca/clay-cell/note";
+import { classes } from "@metreeca/clay-widgets";
+import { Button } from "@metreeca/clay-widgets/button";
+import { Hint } from "@metreeca/clay-widgets/hint";
+import "@metreeca/clay-widgets/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
+import { Link } from "@metreeca/clay-widgets/link";
+import { Note } from "@metreeca/clay-widgets/note";
 import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@metreeca/qest/model";

@@ -25,8 +25,8 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Match, Model } from "@metreeca/blue/value";
-import { Hint } from "@metreeca/clay-cell/hint";
-import { Note } from "@metreeca/clay-cell/note";
+import { Hint } from "@metreeca/clay-widgets/hint";
+import { Note } from "@metreeca/clay-widgets/note";
 import type { Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import type { ResourceCases } from "@metreeca/tile/resource";

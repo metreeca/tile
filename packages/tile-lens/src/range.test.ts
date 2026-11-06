@@ -17,7 +17,7 @@
 import { number } from "@metreeca/blue/number";
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, resource } from "@metreeca/blue/resource";
-import { AutoDelay } from "@metreeca/clay-cell";
+import { AutoDelay } from "@metreeca/clay-widgets";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import type { Criteria } from "@metreeca/qest/model";

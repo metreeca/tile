@@ -99,17 +99,15 @@ tile-note {
     }
 
     &[level="info"] > :first-child > :first-child {
-        color: var(--skin--color-info);
+        color: var(--skin--color-note);
     }
 
     &[level="highlight"] > :first-child > :first-child {
         color: var(--skin--color-pass);
     }
 
-    /* The caution anchor is a fill holding 1.73:1 on the page, so the mark takes its stroke role instead. */
-
     &[level="warning"] > :first-child > :first-child {
-        color: var(--skin--color-warn-stroke);
+        color: var(--skin--color-warn);
     }
 
     &[level="critical"] > :first-child > :first-child {

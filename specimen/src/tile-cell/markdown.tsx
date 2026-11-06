@@ -22,7 +22,7 @@ values of their own. See the [guide](guide.md) or the [index](docs/index.md#toke
 
 | Token                  | Role                |
 |------------------------|---------------------|
-| \`--skin--color-info\`   | informative status  |
+| \`--skin--color-note\`   | informative status  |
 | \`--skin--color-fail\`   | failure status      |
 
 - [x] colours

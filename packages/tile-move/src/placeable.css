@@ -53,7 +53,7 @@ tile-placeable {
              */
 
             &[data-target] {
-                background-color: var(--skin--background-color-info);
+                background-color: var(--skin--background-color-note);
             }
 
         }

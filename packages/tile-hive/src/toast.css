@@ -303,9 +303,9 @@ tile-toast {
 
         &[status="pending"] > div > div {
 
-            --tile-toast-tint: var(--skin--background-color-info);
+            --tile-toast-tint: var(--skin--background-color-note);
             & > svg {
-                color: var(--skin--color-info);
+                color: var(--skin--color-note);
                 animation: tile-toast-turn calc(2 * var(--skin--duration-slow)) linear infinite;
             }
 
@@ -323,10 +323,9 @@ tile-toast {
         &[status="warning"] > div > div {
 
             --tile-toast-tint: var(--skin--background-color-warn);
-            /* The caution anchor is a fill holding 1.73:1 on the page, so the mark takes its stroke role instead. */
 
             & > svg {
-                color: var(--skin--color-warn-stroke);
+                color: var(--skin--color-warn);
             }
 
         }

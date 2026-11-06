@@ -94,7 +94,7 @@
         /* The well an item is dragged over keeps the tint the widget gives it. */
 
         &[data-target] {
-            background-color: var(--skin--background-color-info);
+            background-color: var(--skin--background-color-note);
         }
 
     }

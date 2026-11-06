@@ -221,17 +221,25 @@ tile-button {
 
     }
 
+    /*
+     * A status button paints its label in the stroke of its step, which holds AA on the step's tint alone: on the fills
+     * the pointer and the press deepen it to, the label takes the page text, and the caution label takes it at rest
+     * too, since the caution stroke is never set on its own tint.
+     */
+
     &[mode="safe"] > button:enabled {
 
-        color: var(--skin--color-info-stroke);
-        background-color: var(--skin--background-color-info);
+        color: var(--skin--color-note-stroke);
+        background-color: var(--skin--background-color-note);
 
         &:hover {
-            background-color: color-mix(in oklab, var(--skin--color-info) 12%, var(--skin--background-color-info));
+            color: var(--skin--color);
+            background-color: color-mix(in oklab, var(--skin--color-note) 12%, var(--skin--background-color-note));
         }
 
         &:active {
-            background-color: color-mix(in oklab, var(--skin--color-info) 24%, var(--skin--background-color-info));
+            color: var(--skin--color);
+            background-color: color-mix(in oklab, var(--skin--color-note) 24%, var(--skin--background-color-note));
         }
 
     }
@@ -242,10 +250,12 @@ tile-button {
         background-color: var(--skin--background-color-pass);
 
         &:hover {
+            color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-pass) 12%, var(--skin--background-color-pass));
         }
 
         &:active {
+            color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-pass) 24%, var(--skin--background-color-pass));
         }
 
@@ -253,7 +263,7 @@ tile-button {
 
     &[mode="alert"] > button:enabled {
 
-        color: var(--skin--color-warn-stroke);
+        color: var(--skin--color);
         background-color: var(--skin--background-color-warn);
 
         &:hover {
@@ -272,10 +282,12 @@ tile-button {
         background-color: var(--skin--background-color-fail);
 
         &:hover {
+            color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-fail) 12%, var(--skin--background-color-fail));
         }
 
         &:active {
+            color: var(--skin--color);
             background-color: color-mix(in oklab, var(--skin--color-fail) 24%, var(--skin--background-color-fail));
         }
 

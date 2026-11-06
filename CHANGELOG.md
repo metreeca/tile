@@ -76,6 +76,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-cell` — subtle links give hover feedback, and the logo mark is centred on the capitals beside it
 - `@metreeca/tile-hive/toast` — toast marks set further apart from their message
 - `@metreeca/tile-hive/shell` — the waiting mark stands over the control it replaces, so the header end holds still
+- `@metreeca/tile-cell/button` — status buttons hold AA contrast in every state: the label takes the page text on the
+  fills the pointer and the press deepen, and an `alert` button takes it at rest as well, where the caution stroke
+  fell short on its own tint
+- `@metreeca/tile-cell`, `@metreeca/tile-hive/toast` — caution glyphs on notes and toasts take the caution anchor,
+  which now holds the mark budget on the page and the tint, rather than its stroke
 
 ### Security
 

@@ -25,7 +25,7 @@
  */
 
 import { error, type Optional } from "@metreeca/core";
-import { malformed } from "../../index.core.js";
+import { malformed } from "../../types/index.core.js";
 
 
 /**

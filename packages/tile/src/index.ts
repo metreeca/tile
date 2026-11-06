@@ -15,7 +15,7 @@
  */
 
 /**
- * Preact linked data store.
+ * Preact linked data store and shape-driven value types.
  *
  * Offers the components of an interface one shared [store](https://metreeca.github.io/keep/) to read linked data
  * resources from and write them back to. The store is configured once, where the interface is assembled, rather than

@@ -23,7 +23,7 @@
 import { isString } from "@metreeca/core";
 import { immutable } from "@metreeca/core/values";
 import type { Type } from "./index.js";
-import { fromDay, toDate, toUTCDay } from "./_/core/temporal.js";
+import { fromDay, toDate, toUTCDay } from "../_/core/temporal.js";
 import { malformed, mismatched, inconvertible } from "./index.core.js";
 import { year } from "./year.js";
 

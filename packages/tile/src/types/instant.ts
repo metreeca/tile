@@ -31,7 +31,7 @@ import {
 	toInstant,
 	toLocalDateTime,
 	toNumericDateTime
-} from "./_/core/temporal.js";
+} from "../_/core/temporal.js";
 import { malformed, mismatched, inconvertible } from "./index.core.js";
 import { year } from "./year.js";
 

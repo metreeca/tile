@@ -25,7 +25,7 @@
  * Text is localised for the locales the caller names, falling back to the runtime default; instants follow the runtime
  * time zone. Nothing is read from the browser, so the same call works in a test, a server render or a page.
  *
- * @module index
+ * @module types
  */
 
 import { getShapeBranches, getStateBranch } from "@metreeca/blue/union";
@@ -33,7 +33,7 @@ import type { Shape } from "@metreeca/blue/value";
 import { eager, type Lazy, opt, type Optional } from "@metreeca/core";
 import { xsd } from "@metreeca/core/datatype";
 import { immutable } from "@metreeca/core/values";
-import { attempt } from "./_/core/index.js";
+import { attempt } from "../_/core/index.js";
 import { boolean } from "./boolean.js";
 import { date } from "./date.js";
 import { decimal } from "./decimal.js";

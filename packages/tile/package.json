@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile",
   "version": "0.7.0",
-  "description": "Preact linked data store for @metreeca/tile.",
+  "description": "Preact linked data store and shape-driven value types for @metreeca/tile.",
   "keywords": [
     "typescript",
     "preact",
@@ -32,6 +32,15 @@
       "@metreeca/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./types": {
+      "@metreeca/source": "./src/types/index.ts",
+      "default": "./dist/types/index.js"
+    },
+    "./types/*": {
+      "@metreeca/source": "./src/types/*.ts",
+      "default": "./dist/types/*.js"
+    },
+    "./types/*.core": null,
     "./*": {
       "@metreeca/source": "./src/hooks/*.ts",
       "default": "./dist/hooks/*.js"

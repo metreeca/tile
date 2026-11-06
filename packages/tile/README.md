@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
-Preact linked data store for [@metreeca/tile](https://github.com/metreeca/tile).
+Preact linked data store and shape-driven value types for [@metreeca/tile](https://github.com/metreeca/tile).
 
 The store an app shares with its screens, and the hooks that bind components to the resources and collections it holds.
 

@@ -9,9 +9,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- `@metreeca/tile-type` — new package of shape-driven value types, showing a stored value to a reader, handing it to
-  a native input and reading back what the input yields, with `toType` picking the default type for a shape and
-  `as()` showing a value as another type, as `instant.as(date)` shows and bounds instants by day
+- `@metreeca/tile/types` — shape-driven value types, showing a stored value to a reader, handing it to a native input
+  and reading back what the input yields, with `toType` picking the default type for a shape and `as()` showing a
+  value as another type, as `instant.as(date)` shows and bounds instants by day
 - `@metreeca/tile` — collection lenses sharing one collection across a screen: `useMembers` growing the
   items a batch at a time, `useActions` adding and removing them, `useCount`, `useKeywords`, `useTally` and `useRange`
   narrowing them, and `useQuery` keeping the page criteria in the browser location

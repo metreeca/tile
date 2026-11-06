@@ -24,16 +24,16 @@
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
+import { Button } from "@metreeca/clay-cell/button";
+import { Icon } from "@metreeca/clay-cell/icon";
 import type { Lazy } from "@metreeca/core";
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
 import type { Collection, Collections } from "@metreeca/tile/collection";
 
 
 /**
  * Creates a collection reset.
  *
- * Shows a subtle {@link @metreeca/tile-cell!button.Button button} marked by the {@link @metreeca/tile-cell!icon Reset}
+ * Shows a subtle {@link @metreeca/clay-cell!button.Button button} marked by the {@link @metreeca/clay-cell!icon Reset}
  * glyph, removing every criterion the reader set on the collection, so that every lens handed the same collection,
  * lists, facets and counters alike, follows along. The button is disabled while no criterion narrows the collection,
  * and is named for assistive technology by its `Clear Filters` hint, the glyph standing alone.

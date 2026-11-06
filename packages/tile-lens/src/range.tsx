@@ -23,15 +23,15 @@
  * @module
  */
 
+import { AutoDelay, keys } from "@metreeca/clay-cell";
+import { Button } from "@metreeca/clay-cell/button";
+import { Icon } from "@metreeca/clay-cell/icon";
+import { Note } from "@metreeca/clay-cell/note";
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { createState } from "@metreeca/core/state";
 import { isLiteral, type Literal } from "@metreeca/qest/state";
-import { AutoDelay, keys } from "@metreeca/tile-cell";
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { Note } from "@metreeca/tile-cell/note";
 import type { RangeCases } from "@metreeca/tile/range";
 import type { Type } from "@metreeca/tile-type";
 import { type ComponentType, createElement } from "preact";
@@ -57,17 +57,17 @@ import "./range.css";
  * bound as it was. Where the input orders its values natively, each field is constrained by the other, and an empty one
  * by the lowest or highest value on offer, so the two bounds never cross and stepping starts from a value items hold.
  *
- * A {@link @metreeca/tile-cell!button.Button button} marked by the {@link @metreeca/tile-cell!icon Reset}
+ * A {@link @metreeca/clay-cell!button.Button button} marked by the {@link @metreeca/clay-cell!icon Reset}
  * glyph, shown while a bound is set, removes both bounds and leaves the facet suggesting the values on offer again.
  *
  * A collapsible facet, one stating whether it is `compact`, folds down to its fields only while a bound is set.
  * Clicking its header opens it while the reader works on it, and focus leaving the facet closes it again; a disclosure
- * marked by the {@link @metreeca/tile-cell!icon Expand} glyph opens it to stay open, until the reader closes it by the
+ * marked by the {@link @metreeca/clay-cell!icon Expand} glyph opens it to stay open, until the reader closes it by the
  * same. A compact facet starts closed, any other starts open, as if opened by its disclosure.
  *
  * The facet is a group named by `name`, shown in its header beside a glyph marking the value type, and marked busy
  * while the values are retrieved for the first time; a failed retrieval is shown as a critical
- * {@link @metreeca/tile-cell!note.Note note} in place of the fields, which the reader cannot work on meanwhile.
+ * {@link @metreeca/clay-cell!note.Note note} in place of the fields, which the reader cannot work on meanwhile.
  *
  * ```tsx
  * const collection = useCollection({ entry: "/courses/", shape: Course });

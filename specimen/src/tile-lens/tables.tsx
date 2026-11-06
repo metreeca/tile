@@ -24,6 +24,8 @@ import { integer } from "@metreeca/blue/number";
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
+import { Icon } from "@metreeca/clay-cell/icon";
+import { More } from "@metreeca/clay-cell/more";
 import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject } from "@metreeca/core";
 import { getIRIBase } from "@metreeca/core/resource";
@@ -31,8 +33,6 @@ import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { More } from "@metreeca/tile-cell/more";
 import { Table } from "@metreeca/tile-lens/table";
 
 

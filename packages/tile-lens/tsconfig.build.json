@@ -9,9 +9,6 @@
       "path": "../tile/tsconfig.build.json"
     },
     {
-      "path": "../tile-cell/tsconfig.build.json"
-    },
-    {
       "path": "../tile-type/tsconfig.build.json"
     }
   ],

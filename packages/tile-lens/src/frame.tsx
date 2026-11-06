@@ -25,10 +25,10 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Match, Model } from "@metreeca/blue/value";
+import { Hint } from "@metreeca/clay-cell/hint";
+import { Note } from "@metreeca/clay-cell/note";
 import type { Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
-import { Hint } from "@metreeca/tile-cell/hint";
-import { Note } from "@metreeca/tile-cell/note";
 import type { ResourceCases } from "@metreeca/tile/resource";
 import { type ComponentChildren, createElement } from "preact";
 import "./frame.css";
@@ -47,7 +47,7 @@ import "./frame.css";
  * ```
  *
  * Where a `placeholder` is supplied, it fills the area, worded as still loading, until the resource is retrieved. A
- * missing resource or a failed exchange is shown as a critical {@link @metreeca/tile-cell!note.Note note} instead.
+ * missing resource or a failed exchange is shown as a critical {@link @metreeca/clay-cell!note.Note note} instead.
  *
  * @typeParam S The shape describing the resource
  * @typeParam T The template stating the values wanted from the resource

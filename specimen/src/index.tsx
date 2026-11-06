@@ -25,15 +25,12 @@
 
 import "@metreeca/skin/presets/roboto.css";
 import { Fetch } from "@metreeca/clay/fetch";
+import { host } from "@metreeca/clay-hive";
 import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
-import { TileCell, TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
-import { TileHive, TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
 import { TileLens, TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
-import { TileMove, TileMovePath } from "@metreeca/specimen/tile-move/index.js";
-import { host } from "@metreeca/tile-hive";
 import { render } from "preact";
 import "./index.css";
 
@@ -51,11 +48,8 @@ function Specimen() {
 
 			<Routes>{{
 
-				[Root]: TileCellPath,
+				[Root]: TileLensPath,
 
-				[TileCellPath]: <TileCell/>,
-				[TileHivePath]: <TileHive/>,
-				[TileMovePath]: <TileMove/>,
 				[TileLensPath]: <TileLens/>
 
 			}}</Routes>

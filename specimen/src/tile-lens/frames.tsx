@@ -22,11 +22,11 @@
 
 import { id, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
+import { Icon } from "@metreeca/clay-cell/icon";
 import { Fetch } from "@metreeca/clay/fetch";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Store, useResource } from "@metreeca/tile";
-import { Icon } from "@metreeca/tile-cell/icon";
 import { Frame } from "@metreeca/tile-lens/frame";
 
 

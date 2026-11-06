@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023-2026 Metreeca srl
+ * Copyright © 2025-2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
+/**** Controls ********************************************************************************************************/
+
 /*
- * The strip is a row and nothing else. The alignment, the gaps, the growth and the wrapping are settled by the widget
- * on the element, being chosen by whoever renders the strip rather than by a rule written ahead of time. Only the
- * split placements live here, as they reach the item set apart rather than the strip.
+ * A row of controls flows the way a toolbar would lay one out. The controls are spaced from one another rather than
+ * left to the single space between words, which reads as one run of text rather than as separate controls.
  */
 
-tile-strip {
-
+.controls {
     display: flex;
-    flex-direction: row;
-
-    &[place="head"] > :first-child {
-        margin-inline-end: auto;
-    }
-
-    &[place="tail"] > :last-child {
-        margin-inline-start: auto;
-    }
-
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--skin--spacing-150);
+    row-gap: var(--skin--spacing-050);
+    margin-bottom: var(--skin--spacing-100);
 }

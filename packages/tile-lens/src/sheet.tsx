@@ -25,10 +25,10 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Frame } from "@metreeca/blue/value";
+import { Hint } from "@metreeca/clay-cell/hint";
+import { Note } from "@metreeca/clay-cell/note";
 import { isObject, isString, type Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
-import { Hint } from "@metreeca/tile-cell/hint";
-import { Note } from "@metreeca/tile-cell/note";
 import type { Collections } from "@metreeca/tile/collection";
 import type { MembersCases } from "@metreeca/tile/members";
 import { type ComponentChildren, createElement, Fragment } from "preact";
@@ -40,7 +40,7 @@ import "./sheet.css";
  *
  * Lists the members of a collection, rendering each through `children`, and keeps in step with them: the items on
  * show stay where they stand while the next batch, a new order or new criteria are on their way. Asking for more is
- * left to the screen, which closes the list with a {@link @metreeca/tile-cell!more.More More} trigger handed `load`:
+ * left to the screen, which closes the list with a {@link @metreeca/clay-cell!more.More More} trigger handed `load`:
  *
  * ```tsx
  * const members = useMembers(collection, { model: { id: {}, label: {} } });
@@ -51,7 +51,7 @@ import "./sheet.css";
  * ```
  *
  * Where a `placeholder` is supplied, a list with nothing to show fills its area with it, worded as still loading or as
- * matching nothing. A failed exchange is shown as a critical {@link @metreeca/tile-cell!note.Note note} in place of the
+ * matching nothing. A failed exchange is shown as a critical {@link @metreeca/clay-cell!note.Note note} in place of the
  * list.
  *
  * @typeParam S The shape describing the resource holding the collection

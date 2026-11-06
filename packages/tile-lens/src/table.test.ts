@@ -360,7 +360,7 @@ describe("Table", () => {
 
 			mount(vi.fn(() => new Promise(() => {})), { placeholder: "Items" });
 
-			expect(document.querySelector("tile-hint")?.textContent).toContain("Loading");
+			expect(document.querySelector("clay-hint")?.textContent).toContain("Loading");
 
 		});
 
@@ -368,7 +368,7 @@ describe("Table", () => {
 
 			mount(catalogue([]), { placeholder: "Items" });
 
-			await vi.waitFor(() => expect(document.querySelector("tile-hint")?.textContent).toContain("No Matches"));
+			await vi.waitFor(() => expect(document.querySelector("clay-hint")?.textContent).toContain("No Matches"));
 
 		});
 
@@ -392,7 +392,7 @@ describe("Table", () => {
 
 			mount(vi.fn(async () => Promise.reject({ status: 503 })));
 
-			await vi.waitFor(() => expect(document.querySelector("tile-note[level=critical]")).not.toBeNull());
+			await vi.waitFor(() => expect(document.querySelector("clay-note[level=critical]")).not.toBeNull());
 
 			expect(document.querySelector("tile-table")).toBeNull();
 

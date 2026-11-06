@@ -97,7 +97,7 @@ it, not given a component-level alias.
 > [!NOTE]
 >
 > Design system tokens are double-dashed (`--skin--*`) and Tile knobs single-dashed (`--tile-<widget>-*`), as
-> `tile-shell` does for its column widths.
+> `tile-tally` does for its shade heights.
 
 ## Selectors
 

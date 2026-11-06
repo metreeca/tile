@@ -15,17 +15,14 @@
  */
 
 import { app } from "@metreeca/clay";
+import { Button } from "@metreeca/clay-cell/button";
+import { Icon } from "@metreeca/clay-cell/icon";
+import { Link } from "@metreeca/clay-cell/link";
+import { Logo } from "@metreeca/clay-cell/logo";
 import { useFetch } from "@metreeca/clay/fetch";
-import { TileCellPath } from "@metreeca/specimen/tile-cell/index.js";
-import { TileHivePath } from "@metreeca/specimen/tile-hive/index.js";
+import { Shell } from "@metreeca/clay-hive/shell";
+import { Style } from "@metreeca/clay-hive/style";
 import { TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
-import { TileMovePath } from "@metreeca/specimen/tile-move/index.js";
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { Link } from "@metreeca/tile-cell/link";
-import { Logo } from "@metreeca/tile-cell/logo";
-import { Shell } from "@metreeca/tile-hive/shell";
-import { Style } from "@metreeca/tile-hive/style";
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 
@@ -106,9 +103,6 @@ export function Page({
 				onClick={() => setWide(!wide)}
 			/>
 
-			<Link active look="strong" href={`${TileCellPath}*`}>Widgets and Controls</Link>
-			<Link active look="strong" href={`${TileHivePath}*`}>Layouts and Containers</Link>
-			<Link active look="strong" href={`${TileMovePath}*`}>Movable Items</Link>
 			<Link active look="strong" href={`${TileLensPath}*`}>Linked Data Views</Link>
 
 		</>}

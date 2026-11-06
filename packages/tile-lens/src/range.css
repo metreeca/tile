@@ -137,7 +137,7 @@ tile-range {
          * a note is handed elsewhere, so a facet failing never outweighs the facets around it, as a failing tally does.
          */
 
-        & > tile-note {
+        & > clay-note {
 
             grid-column: 1 / -1;
 

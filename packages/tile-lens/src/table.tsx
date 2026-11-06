@@ -25,15 +25,15 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Frame } from "@metreeca/blue/value";
+import { classes } from "@metreeca/clay-cell";
+import { Button } from "@metreeca/clay-cell/button";
+import { Hint } from "@metreeca/clay-cell/hint";
+import { Icon } from "@metreeca/clay-cell/icon";
+import { Link } from "@metreeca/clay-cell/link";
+import { Note } from "@metreeca/clay-cell/note";
 import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@metreeca/qest/model";
-import { classes } from "@metreeca/tile-cell";
-import { Button } from "@metreeca/tile-cell/button";
-import { Hint } from "@metreeca/tile-cell/hint";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { Link } from "@metreeca/tile-cell/link";
-import { Note } from "@metreeca/tile-cell/note";
 import type { Collections } from "@metreeca/tile/collection";
 import type { MembersCases, Ordering } from "@metreeca/tile/members";
 import { type ComponentChildren, createElement } from "preact";
@@ -73,7 +73,7 @@ export type Column<I> = {
  * Shows the members of a collection one row per item, with a column for each entry of `columns`, headed by its key,
  * and keeps in step with them: the rows on show stay where they stand while the next batch, a new order or new
  * criteria are on their way. Asking for more is left to the screen, which closes the table with a trigger handed
- * `load`, such as a {@link @metreeca/tile-cell!more.More More} fetching the next batch as it scrolls into view:
+ * `load`, such as a {@link @metreeca/clay-cell!more.More More} fetching the next batch as it scrolls into view:
  *
  * ```tsx
  * const members = useMembers(collection, { model: { id: {}, label: {}, year: {} }, order: { label: "asc" } });
@@ -89,16 +89,16 @@ export type Column<I> = {
  * The header of a sortable column is a button sorting the items on it, increasing first and reversing the order on
  * each further activation, marked by the direction the items are sorted in; the column the items are sorted on first
  * is announced as sorted. While the items are shown in an order other than the one they started in, a button marked
- * by the {@link @metreeca/tile-cell!icon Sort} glyph at the end of the header row restores it.
+ * by the {@link @metreeca/clay-cell!icon Sort} glyph at the end of the header row restores it.
  *
- * Items carrying an identifier end their row with a {@link @metreeca/tile-cell!link.Link link} to the resource it
+ * Items carrying an identifier end their row with a {@link @metreeca/clay-cell!link.Link link} to the resource it
  * names, followed by the enclosing router. In a `hierarchy`, the leading cells of a row repeating the ones above are
  * faded, so that items sharing their first values read as a group; cells are compared by the text they render, and a
  * cell rendering anything other than text or a number never counts as repeating. A `striped` table tints alternate
  * rows, which native tables are not, for listings whose rows run too wide to follow by their rules alone.
  *
  * Where a `placeholder` is supplied, a table with nothing to show fills its area with it, worded as still loading or
- * as matching nothing. A failed exchange is shown as a critical {@link @metreeca/tile-cell!note.Note note} instead.
+ * as matching nothing. A failed exchange is shown as a critical {@link @metreeca/clay-cell!note.Note note} instead.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items

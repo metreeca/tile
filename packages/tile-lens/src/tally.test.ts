@@ -17,11 +17,11 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
+import { AutoDelay } from "@metreeca/clay-cell";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import type { Criteria, Option } from "@metreeca/qest/model";
 import { Store, useCollection, useTally } from "@metreeca/tile";
-import { AutoDelay } from "@metreeca/tile-cell";
 import type { TallyBucket } from "@metreeca/tile/tally";
 import { type ComponentChildren, createElement, render } from "preact";
 import { act } from "preact/test-utils";
@@ -284,7 +284,7 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
 
-			expect(facet()?.querySelector("tile-more")).toBeNull();
+			expect(facet()?.querySelector("clay-more")).toBeNull();
 
 		});
 
@@ -567,7 +567,7 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
 
-			expect(facet()?.querySelector("tile-more")).not.toBeNull();
+			expect(facet()?.querySelector("clay-more")).not.toBeNull();
 
 		});
 
@@ -577,7 +577,7 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
 
-			expect(facet()?.querySelector("tile-more")).toBeNull();
+			expect(facet()?.querySelector("clay-more")).toBeNull();
 
 		});
 
@@ -585,7 +585,7 @@ describe("Tally", () => {
 
 			mount(vi.fn(async () => { throw new Error("failed"); }));
 
-			await vi.waitFor(() => expect(facet()?.querySelector("tile-note")?.textContent).toContain("Not Available"));
+			await vi.waitFor(() => expect(facet()?.querySelector("clay-note")?.textContent).toContain("Not Available"));
 
 		});
 

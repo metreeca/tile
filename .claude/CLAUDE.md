@@ -14,7 +14,7 @@
 Metreeca Tile is the user interface layer of the Metreeca model-driven stack: it turns the shapes and queries the rest
 of the stack already speaks into what an interface shows, narrows and writes back. The monorepo collects the headless
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
-`packages/tile-cell/`).
+`packages/tile-lens/`).
 
 Resource shapes come from `@metreeca/blue` and queries from `@metreeca/qest`: this repository **NEVER** defines a
 parallel model of its own, and a control offered for a property is decided by the shape describing it rather than by a
@@ -66,16 +66,12 @@ alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs
 emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to,
-`tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-move` for the items a
-reader moves and the drag and drop bindings behind them, `tile-lens` and `tile-form` for the views and forms built over
-them). The drag and drop library behind `tile-move` appears **ONLY** there, and is **NEVER** handed out: a consumer
-moves items through the `tile-move` widgets. A binding package adds observation and rendering over state it never redefines:
-behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour
-without restating it.
+appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to, `tile-lens` and
+`tile-form` for the views and forms built over them, assembled from the `@metreeca/clay` widgets and layouts). A
+binding package adds observation and rendering over state it never redefines: behaviour lives in framework-agnostic
+`@metreeca/core` state objects, so a second binding reaches the same behaviour without restating it.
 
-Packages are named after what they contribute, not after the library they contribute it with: `tile-move`, not
-`tile-dnd`.
+Packages are named after what they contribute, not after the library they contribute it with.
 
 # Package Summaries
 
@@ -91,7 +87,7 @@ The suffix names the project repository as `@metreeca/tile`, for every package a
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. The file is **NEVER** added for the sake of the summary: it earns its place by holding the
-surface the package's own modules are built out of, as `tile-cell` does for the props a widget declares. A package
+surface the package's own modules are built out of, as `tile` does for the store every binding reads from. A package
 with no such surface declares no root entry point, and its `package.json` `exports` carries no `"."` entry either. A
 root entry point **NEVER** re-exports the modules beside it: a screen takes the widgets it renders from their own
 modules, and nothing else along with them.
@@ -168,17 +164,16 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports. `tile-move` keeps there the item a reader moves by its grip or by its whole
-surface and the status announcing a move refused, which `Placeable` and `Sortable` both draw.
+stylesheet, which the module imports. `tile-lens` keeps there the parts its views draw alike.
 
 A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
 module, left out of the reference by `typedoc.json`, which names each such module: the documented
-module beside it is the only path a consumer imports, and carries the comment the catalogue is described by. `icon.ts`
-documents the `Icon` namespace it hands out, `icon.core.ts` names the glyph each role stands for.
+module beside it is the only path a consumer imports, and carries the comment the catalogue is described by.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported
-component, which the module path already places: `Tabs` in `tabs.tsx`, rendering `<tile-tabs>` styled by `tabs.css`.
+component, which the module path already places: `Table` in `table.tsx`, rendering `<tile-table>` styled by
+`table.css`.
 
 # Shared Utilities
 

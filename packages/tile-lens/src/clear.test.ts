@@ -68,7 +68,7 @@ describe("Clear", () => {
 
 		mount({});
 
-		expect(document.querySelector("tile-button")?.getAttribute("look")).toBe("subtle");
+		expect(document.querySelector("clay-button")?.getAttribute("look")).toBe("subtle");
 
 	});
 

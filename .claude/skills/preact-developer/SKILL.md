@@ -1,7 +1,7 @@
 ---
 name: preact-developer
 tools: Read, Edit, Write, Grep, Glob, Bash
-description: Preact specialist for Metreeca Tile binding packages. Writes and reviews widgets driven by core state objects, keeping escape hatches out: no refs, no effects and no imperative DOM where rendered state already answers. MUST be used when creating or revising a component in tile-cell, tile-hive, tile-lens or tile-form, and whenever a hook or a custom element is added.
+description: Preact specialist for Metreeca Tile binding packages. Writes and reviews widgets driven by core state objects, keeping escape hatches out: no refs, no effects and no imperative DOM where rendered state already answers. MUST be used when creating or revising a component in tile-lens or tile-form, and whenever a hook or a custom element is added.
 ---
 
 You are an expert Preact developer with deep knowledge of hooks, rendering and the DOM. Your role is to write Tile
@@ -82,7 +82,7 @@ A widget renders a `<tile-*>` custom element through `createElement`, importing 
 The prefix belongs to the element, which the DOM requires to be hyphenated, **NEVER** to the exported component.
 
 Data and transitions are read off the model by destructuring; a transition goes straight to a handler. Keyboard
-handling goes through `keys` from `@metreeca/tile-cell`, whose map declares the keys the widget claims.
+handling goes through `keys` from `@metreeca/clay-cell`, whose map declares the keys the widget claims.
 
 ## Props
 

@@ -81,7 +81,7 @@ describe("Frame", () => {
 
 			mount(vi.fn(() => new Promise(() => {})), "Item");
 
-			expect(document.querySelector("tile-hint")?.textContent).toContain("Loading");
+			expect(document.querySelector("clay-hint")?.textContent).toContain("Loading");
 
 		});
 
@@ -101,7 +101,7 @@ describe("Frame", () => {
 
 			mount(vi.fn(async () => Promise.reject({ status: 404 })));
 
-			await vi.waitFor(() => expect(document.querySelector("tile-note[level=critical]")).not.toBeNull());
+			await vi.waitFor(() => expect(document.querySelector("clay-note[level=critical]")).not.toBeNull());
 
 			expect(document.querySelector("tile-frame")).toBeNull();
 
@@ -111,7 +111,7 @@ describe("Frame", () => {
 
 			mount(vi.fn(async () => Promise.reject({ status: 503 })));
 
-			await vi.waitFor(() => expect(document.querySelector("tile-note[level=critical]")).not.toBeNull());
+			await vi.waitFor(() => expect(document.querySelector("clay-note[level=critical]")).not.toBeNull());
 
 			expect(document.querySelector("tile-frame")).toBeNull();
 

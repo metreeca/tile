@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { Link } from "@metreeca/clay-cell/link";
 import { Routes } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Frames } from "@metreeca/specimen/tile-lens/frames.js";
 import { Sheets } from "@metreeca/specimen/tile-lens/sheets.js";
 import { Tables } from "@metreeca/specimen/tile-lens/tables.js";
-import { Link } from "@metreeca/tile-cell/link";
-import "@metreeca/specimen/tile-cell/index.css";
+import "@metreeca/specimen/tile-lens/index.css";
 
 
 export const TileLensPath = "/tile-lens/";

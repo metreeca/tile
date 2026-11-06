@@ -22,8 +22,8 @@
  * @module
  */
 
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
+import { Button } from "@metreeca/clay-cell/button";
+import { Icon } from "@metreeca/clay-cell/icon";
 
 
 /**
@@ -31,8 +31,8 @@ import { Icon } from "@metreeca/tile-cell/icon";
  *
  * @param options The widget configuration
  *
- * @returns A button marked by the {@link @metreeca/tile-cell!icon Expand} glyph while the facet is closed and by
- *     the {@link @metreeca/tile-cell!icon Collapse} one while open, announcing which as its expanded state
+ * @returns A button marked by the {@link @metreeca/clay-cell!icon Expand} glyph while the facet is closed and by
+ *     the {@link @metreeca/clay-cell!icon Collapse} one while open, announcing which as its expanded state
  */
 export function Disclosure({
 

@@ -23,16 +23,16 @@
  * @module
  */
 
+import { AutoDelay, classes, keys } from "@metreeca/clay-cell";
+import { Button } from "@metreeca/clay-cell/button";
+import { Icon } from "@metreeca/clay-cell/icon";
+import { Link } from "@metreeca/clay-cell/link";
+import { More } from "@metreeca/clay-cell/more";
+import { Note } from "@metreeca/clay-cell/note";
 import { useModel } from "@metreeca/clay/model";
 import type { Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { isReference } from "@metreeca/qest/state";
-import { AutoDelay, classes, keys } from "@metreeca/tile-cell";
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { Link } from "@metreeca/tile-cell/link";
-import { More } from "@metreeca/tile-cell/more";
-import { Note } from "@metreeca/tile-cell/note";
 import type { TallyBucket, TallyCases } from "@metreeca/tile/tally";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
@@ -46,7 +46,7 @@ import "./tally.css";
  *
  * Lists the values the tally offers as checkboxes, each labelled by its name and by the number of items holding it,
  * grouping digits as the reader's locale does, so that ticking a value narrows the collection to the items holding
- * any of the values ticked. The name of a linked resource is a {@link @metreeca/tile-cell!link.Link link} to it, which
+ * any of the values ticked. The name of a linked resource is a {@link @metreeca/clay-cell!link.Link link} to it, which
  * takes the reader to the resource and leaves its checkbox as it stands. The items holding none of the values are
  * offered as `‹blank›`, a name the facet supplies itself. A value no item lets through under the other criteria
  * stays on offer with a count of `0`, so the list holds still, every value in its place, as other facets narrow the
@@ -54,20 +54,20 @@ import "./tally.css";
  * stays enabled to be unticked.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
- * it, as does a {@link @metreeca/tile-cell!button.Button button} marked by the
- * {@link @metreeca/tile-cell!icon Clear} glyph, shown while text is typed. While the field is empty, a button
- * marked by the {@link @metreeca/tile-cell!icon Reset} glyph takes its place as long as values are ticked and
+ * it, as does a {@link @metreeca/clay-cell!button.Button button} marked by the
+ * {@link @metreeca/clay-cell!icon Clear} glyph, shown while text is typed. While the field is empty, a button
+ * marked by the {@link @metreeca/clay-cell!icon Reset} glyph takes its place as long as values are ticked and
  * deselects them all, so the two never stand side by side. A long list is closed by a
- * {@link @metreeca/tile-cell!more.More More} trigger fetching the next batch as it scrolls into view.
+ * {@link @metreeca/clay-cell!more.More More} trigger fetching the next batch as it scrolls into view.
  *
  * A collapsible facet, one stating whether it is `compact`, folds down to the values ticked. Turning to the search
  * field opens it while the reader works on it, and focus leaving the facet closes it again, back to the values the
- * reader ticked; a disclosure marked by the {@link @metreeca/tile-cell!icon Expand} glyph opens it to stay open, until
+ * reader ticked; a disclosure marked by the {@link @metreeca/clay-cell!icon Expand} glyph opens it to stay open, until
  * the reader closes it by the same disclosure, whether the facet was opened by the disclosure itself or by the search
  * field. A compact facet starts closed, any other starts open, as if opened by its disclosure.
  *
  * The facet is a group named by `name`, marked busy while the values are retrieved for the first time; a failed
- * retrieval is shown as a critical {@link @metreeca/tile-cell!note.Note note} in place of the values.
+ * retrieval is shown as a critical {@link @metreeca/clay-cell!note.Note note} in place of the values.
  *
  * ```tsx
  * const collection = useCollection({ entry: "/courses/", shape: Course });

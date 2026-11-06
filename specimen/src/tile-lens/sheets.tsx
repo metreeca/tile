@@ -23,6 +23,9 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
+import { Button } from "@metreeca/clay-cell/button";
+import { Icon } from "@metreeca/clay-cell/icon";
+import { More } from "@metreeca/clay-cell/more";
 import { Fetch } from "@metreeca/clay/fetch";
 import { isNumber, isObject, isString } from "@metreeca/core";
 import { by, locale, reverse } from "@metreeca/core/order";
@@ -31,9 +34,6 @@ import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile";
-import { Button } from "@metreeca/tile-cell/button";
-import { Icon } from "@metreeca/tile-cell/icon";
-import { More } from "@metreeca/tile-cell/more";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useEffect, useState } from "preact/hooks";
 

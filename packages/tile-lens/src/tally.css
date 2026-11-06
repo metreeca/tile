@@ -137,7 +137,7 @@ tile-tally {
          * same, the fill being clipped rather than the button shrunk, so it is as easy to hit as the controls beside it.
          */
 
-        & > span > tile-button:has(> button > .clear) > button {
+        & > span > clay-button:has(> button > .clear) > button {
 
             /* The button gives up part of its padding to the fill, which leaves the glyph more air within it. */
 
@@ -229,7 +229,7 @@ tile-tally {
          * rather than to the space a note is handed elsewhere, so a facet failing never outweighs the facets around it.
          */
 
-        & > tile-note {
+        & > clay-note {
 
             margin: 0;
             padding: var(--skin--spacing-050);
@@ -288,7 +288,7 @@ tile-tally {
                     cursor: default;
 
                     & > input,
-                    & > span:not(:has(tile-link)),
+                    & > span:not(:has(clay-link)),
                     & > small {
                         opacity: var(--skin--opacity-disabled);
                     }
@@ -329,7 +329,7 @@ tile-tally {
 
                     /* A link cuts its own wording short, once capped to the room the name leaves it. */
 
-                    & > tile-link {
+                    & > clay-link {
                         max-width: 100%;
                     }
 

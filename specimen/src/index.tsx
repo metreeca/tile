@@ -23,7 +23,7 @@
  * @module
  */
 
-import "@metreeca/skin/index.css";
+import "@metreeca/skin/presets/roboto.css";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";

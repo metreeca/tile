@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile-form",
   "version": "0.7.0",
-  "description": "Preact linked data forms for @metreeca/tile interfaces.",
+  "description": "Preact linked data forms for @metreeca/tile.",
   "keywords": [
     "typescript",
     "preact",

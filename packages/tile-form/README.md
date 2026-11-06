@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile-form)](https://www.npmjs.com/package/@metreeca/tile-form)
 
-Preact linked data forms for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Preact linked data forms for [@metreeca/tile](https://github.com/metreeca/tile).
 
 Forms of resources driven by shapes: the model decides which properties are editable, what each accepts and when it
 is valid, so a model change reaches the interface with no form code to update by hand.

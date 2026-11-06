@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile-lens)](https://www.npmjs.com/package/@metreeca/tile-lens)
 
-Preact linked data views for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Preact linked data views for [@metreeca/tile](https://github.com/metreeca/tile).
 
 Views of resources and collections driven by shapes: the model decides which properties are shown, how each value
 reads and how a collection is narrowed, so a model change reaches the interface with no view code to update.

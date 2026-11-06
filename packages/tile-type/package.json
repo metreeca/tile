@@ -1,7 +1,7 @@
 {
   "name": "@metreeca/tile-type",
   "version": "0.7.0",
-  "description": "Shape-driven value text for @metreeca/tile interfaces.",
+  "description": "Shape-driven value text for @metreeca/tile.",
   "keywords": [
     "typescript",
     "json-ld",

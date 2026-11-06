@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@metreeca/tile-type)](https://www.npmjs.com/package/@metreeca/tile-type)
 
-Shape-driven value text for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
+Shape-driven value text for [@metreeca/tile](https://github.com/metreeca/tile).
 
 The text an interface shows for a linked data value, chosen by the shape that describes it and localised for the reader.
 

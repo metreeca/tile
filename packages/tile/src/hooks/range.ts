@@ -31,8 +31,8 @@ import type { Problem } from "@metreeca/http/success";
 import type { Criteria, Expression, Template } from "@metreeca/qest/model";
 import { isLiteral, type Literal } from "@metreeca/qest/state";
 import type { Collection, Collections } from "./collection.core.js";
-import { useEntry } from "./index.core.js";
-import { useStore } from "./index.js";
+import { useEntry } from "../index.core.js";
+import { useStore } from "../index.js";
 
 
 /**

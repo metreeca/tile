@@ -32,8 +32,8 @@ import { equals, immutable } from "@metreeca/core/values";
 import type { Problem } from "@metreeca/http/success";
 import type { Template } from "@metreeca/qest/model";
 import type { Collection, Collections } from "./collection.core.js";
-import { useEntry } from "./index.core.js";
-import { useStore } from "./index.js";
+import { useEntry } from "../index.core.js";
+import { useStore } from "../index.js";
 import { createMembers, type Ordering } from "./members.core.js";
 
 export type { Ordering } from "./members.core.js";

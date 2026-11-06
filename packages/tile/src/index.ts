@@ -33,16 +33,6 @@ import { createRESTStore } from "@metreeca/keep-rest";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
 
-export * from "./actions.js";
-export * from "./collection.js";
-export * from "./count.js";
-export * from "./keywords.js";
-export * from "./members.js";
-export * from "./query.js";
-export * from "./range.js";
-export * from "./resource.js";
-export * from "./tally.js";
-
 
 const Context = createContext<Optional<Store>>(undefined);
 

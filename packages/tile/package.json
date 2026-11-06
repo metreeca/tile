@@ -33,8 +33,8 @@
       "default": "./dist/index.js"
     },
     "./*": {
-      "@metreeca/source": "./src/*.ts",
-      "default": "./dist/*.js"
+      "@metreeca/source": "./src/hooks/*.ts",
+      "default": "./dist/hooks/*.js"
     },
     "./*.core": null
   },

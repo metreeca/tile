@@ -32,7 +32,7 @@ import { equals } from "@metreeca/core/values";
 import type { Criteria } from "@metreeca/qest/model";
 import { useEffect, useState } from "preact/hooks";
 import { type Collection, type Collections, createCollection, getCollection, type Sole } from "./collection.core.js";
-import { resolveTarget } from "./index.core.js";
+import { resolveTarget } from "../index.core.js";
 
 export type { Collection, Collections, Sole } from "./collection.core.js";
 

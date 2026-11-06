@@ -30,8 +30,8 @@ import { createRelay, type Relay } from "@metreeca/core/relay";
 import { getIRIParent, type IRI } from "@metreeca/core/resource";
 import type { Problem } from "@metreeca/http/success";
 import type { Reference } from "@metreeca/qest/state";
-import { resolveTarget, useEntry } from "./index.core.js";
-import { useStore } from "./index.js";
+import { resolveTarget, useEntry } from "../index.core.js";
+import { useStore } from "../index.js";
 
 
 /**

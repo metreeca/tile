@@ -31,7 +31,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { type Collection } from "./collection.core.js";
 import { useCollection } from "./collection.js";
-import { Store } from "./index.js";
+import { Store } from "../index.js";
 import { createTally } from "./tally.core.js";
 import { type TallyCases, useTally } from "./tally.js";
 

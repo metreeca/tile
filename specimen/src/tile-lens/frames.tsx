@@ -25,7 +25,8 @@ import { string } from "@metreeca/blue/string";
 import { Fetch } from "@metreeca/clay/fetch";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
-import { Store, useResource } from "@metreeca/tile";
+import { Store } from "@metreeca/tile";
+import { useResource } from "@metreeca/tile/resource";
 import { Frame } from "@metreeca/tile-lens/frame";
 import { FileIcon } from "lucide-preact";
 

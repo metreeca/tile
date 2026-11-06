@@ -34,7 +34,7 @@ import { type Problem, toProblem } from "@metreeca/http/success";
 import type { Template } from "@metreeca/qest/model";
 import type { Reference } from "@metreeca/qest/state";
 import type { Collection, Collections } from "./collection.core.js";
-import { useStore } from "./index.js";
+import { useStore } from "../index.js";
 
 
 /**

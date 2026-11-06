@@ -18,7 +18,7 @@ import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import type { Criteria } from "@metreeca/qest/model";
-import { useCollection } from "@metreeca/tile";
+import { useCollection } from "@metreeca/tile/collection";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

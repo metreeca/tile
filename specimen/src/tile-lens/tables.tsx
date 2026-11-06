@@ -31,7 +31,9 @@ import { getIRIBase } from "@metreeca/core/resource";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
-import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile";
+import { Store } from "@metreeca/tile";
+import { type Collection, useCollection } from "@metreeca/tile/collection";
+import { useMembers } from "@metreeca/tile/members";
 import { Table } from "@metreeca/tile-lens/table";
 import { TableIcon } from "lucide-preact";
 

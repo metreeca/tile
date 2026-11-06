@@ -27,7 +27,7 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "v
 
 import { resolveTarget } from "./index.core.js";
 import { Store, useStore } from "./index.js";
-import { useResource } from "./resource.js";
+import { useResource } from "./hooks/resource.js";
 
 
 const entry = "https://example.com/resource";

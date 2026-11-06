@@ -25,7 +25,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { type Actions, useActions } from "./actions.js";
 import { useCollection } from "./collection.js";
-import { Store } from "./index.js";
+import { Store } from "../index.js";
 
 
 const entry = "https://example.com/catalogue/";

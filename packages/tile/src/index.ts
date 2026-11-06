@@ -42,8 +42,9 @@ const Context = createContext<Optional<Store>>(undefined);
 /**
  * Offers a shared resource store to nested components.
  *
- * The store performs its exchanges through the fetch client the interface shares, so that they go through the same
- * services, such as authentication and progress tracking, as every other exchange the app performs.
+ * The store performs its exchanges through the fetch client of the innermost enclosing
+ * {@link @metreeca/clay!fetch.Fetch Fetch} context, so they share the services configured there, such as
+ * authentication and progress tracking, with every other exchange the app performs.
  *
  * The store is assembled as the context first renders and kept for as long as it lives, so that pending operations
  * are not disturbed by the interface around them: a factory handed over later never replaces the store in use.

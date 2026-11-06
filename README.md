@@ -6,14 +6,19 @@ Preact views and forms for [@metreeca/qest](https://github.com/metreeca/qest) li
 [@metreeca/blue](https://github.com/metreeca/blue) shapes shared with the server decide what a screen shows, what a
 form accepts and when a value is valid, so neither side restates the model the other already holds.
 
-Screens are composed in JSX and bound to the resources of a [@metreeca/keep](https://github.com/metreeca/keep) store,
-which keeps caching, batching and validation out of interface code. Their look comes from the [@metreeca/skin] design
-tokens alone: components render without the skin stylesheet, and follow the platform colour scheme once it is loaded.
+Screens are composed in JSX from linked data views and forms, running within the contexts and hooks of
+[@metreeca/clay](https://github.com/metreeca/clay). Views and forms bind to the resources of a
+[@metreeca/keep](https://github.com/metreeca/keep) store, which keeps caching, batching and validation out of
+interface code, so screens state what they present and the store settles how resources are exchanged.
+
+Their look comes from the [@metreeca/skin] design tokens alone: components render without the skin stylesheet, and
+follow the platform colour scheme once it is loaded, or whatever theme the app sets there instead.
 
 # Installation
 
 ```shell
 npm install @metreeca/skin            # design system stylesheet, optional
+npm install @metreeca/clay            # contexts and hooks the store runs within
 npm install @metreeca/tile            # linked data store and value types
 npm install @metreeca/tile-<package>  # one per package the app takes up
 ```

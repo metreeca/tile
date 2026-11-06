@@ -6,8 +6,9 @@ Preact linked data store and shape-driven value types for [@metreeca/tile](https
 
 The store an app shares with its screens, and the hooks that bind components to the resources and collections it holds.
 
-Reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store over the app's fetch client, so
-components never handle caching, batching or validation themselves, and stay focused on what they present.
+Reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store over the fetch client the app
+shares through its [@metreeca/clay](https://github.com/metreeca/clay) contexts, so components never handle caching,
+batching or validation themselves, and stay focused on what they present to the reader.
 
 # Installation
 

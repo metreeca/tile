@@ -23,7 +23,9 @@ hand-written mapping.
 Reads and writes go through a `@metreeca/keep` store: caching, batching and validation belong there, and this
 repository **NEVER** reimplements them behind the interface.
 
-What an interface draws rests on Preact and the `@metreeca/skin` design system alone.
+What an interface draws rests on Preact and the `@metreeca/skin` design system, running within the `@metreeca/clay`
+toolkit: Tile adds the linked data layer over the general-purpose contexts and hooks Clay provides, and **NEVER**
+restates them.
 
 # References
 
@@ -31,6 +33,8 @@ What an interface draws rests on Preact and the `@metreeca/skin` design system a
   rendering layer every binding package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
+- [@metreeca/clay](https://github.com/metreeca/clay) - Minimalist component toolkit for Preact interfaces, providing
+  the fetch, routing, board and model hooks the bindings are wired to
 - [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
   client the store exchanges resources through
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
@@ -73,8 +77,9 @@ appears **ONLY** in its own binding packages (`tile` for the store bindings a co
 never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the
 same behaviour without restating it.
 
-A binding package takes `@metreeca/skin` as its only styling dependency: its stylesheets read the skin tokens, and the
-interface follows whatever theme an app sets there.
+A binding package styles what it draws through the `@metreeca/skin` tokens: its stylesheets read the skin tokens, and
+the interface follows whatever theme an app sets there. A general-purpose context or hook a binding package needs
+belongs to `@metreeca/clay`, **NEVER** to a Tile package.
 
 Packages are named after what they contribute, not after the library they contribute it with.
 
@@ -124,8 +129,8 @@ Metreeca register.
 
 # Component State
 
-A component holding state declares it as a `@metreeca/core` state object and adopts it with a `useModel` hook,
-reading data and transitions straight off the model:
+A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
+`@metreeca/clay/model`, reading data and transitions straight off the model:
 
 ```tsx
 const { open, expand, collapse, toggle } = useModel(() => createFold());

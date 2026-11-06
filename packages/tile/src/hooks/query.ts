@@ -49,7 +49,9 @@ import { useEffect, useState } from "preact/hooks";
  *
  * Writing the criteria replaces them in both places without adding a history entry or touching its state, so the
  * history keeps one entry per page however many times the reader narrows it. Writing the criteria never mounts the
- * component again, so its state survives the change: only a navigation to another query mounts it again.
+ * component again, so its state survives the change: only a navigation to another query mounts it again, as
+ * described by {@link @metreeca/clay!router.Routes Routes}. The component renders below a
+ * {@link @metreeca/clay!router.Router Router}, which keeps charge of the location and the history.
  *
  * References in the criteria are handed over in absolute form, with relative ones resolved against the location. The
  * location keeps them root-relative where they share its origin, so that links carrying the criteria stay portable.

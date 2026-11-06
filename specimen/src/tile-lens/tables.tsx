@@ -31,8 +31,8 @@ import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
-import { Fetch } from "@metreeca/tile-data/fetch";
-import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile-data/store";
+import { Fetch } from "@metreeca/tile/fetch";
+import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile/store";
 import { Table } from "@metreeca/tile-lens/table";
 
 

@@ -23,7 +23,7 @@ import { Notes } from "@metreeca/specimen/tile-cell/notes.js";
 import { Paths } from "@metreeca/specimen/tile-cell/paths.js";
 import { Triggers } from "@metreeca/specimen/tile-cell/triggers.js";
 import { Link } from "@metreeca/tile-cell/link";
-import { Routes } from "@metreeca/tile-data/router";
+import { Routes } from "@metreeca/tile/router";
 
 
 export const TileCellPath = "/tile-cell/";

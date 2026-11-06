@@ -20,7 +20,7 @@ import { string } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import type { Criteria } from "@metreeca/qest/model";
-import { Store, useCollection, useCount } from "@metreeca/tile-data/store";
+import { Store, useCollection, useCount } from "@metreeca/tile/store";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

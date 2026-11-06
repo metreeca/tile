@@ -1,5 +1,5 @@
 {
-  "name": "@metreeca/tile-data",
+  "name": "@metreeca/tile",
   "version": "0.7.0",
   "description": "Preact contexts and hooks for @metreeca/tile interfaces.",
   "keywords": [
@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metreeca/tile.git",
-    "directory": "packages/tile-data"
+    "directory": "packages/tile"
   },
   "type": "module",
   "sideEffects": false,

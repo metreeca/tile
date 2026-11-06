@@ -60,8 +60,8 @@
   "dependencies": {
     "@metreeca/core": "^0.13.0",
     "@metreeca/skin": "^0.1.0",
-    "@metreeca/tile-cell": "^0.7.0",
-    "@metreeca/tile-data": "^0.7.0"
+    "@metreeca/tile": "^0.7.0",
+    "@metreeca/tile-cell": "^0.7.0"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",

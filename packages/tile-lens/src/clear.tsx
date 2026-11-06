@@ -27,7 +27,7 @@ import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Lazy } from "@metreeca/core";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
-import type { Collection, Collections } from "@metreeca/tile-data/store/collection";
+import type { Collection, Collections } from "@metreeca/tile/store/collection";
 
 
 /**
@@ -58,7 +58,7 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 }: {
 
 	/**
-	 * The collection reset, as handed by {@link @metreeca/tile-data!store/collection.useCollection useCollection}.
+	 * The collection reset, as handed by {@link @metreeca/tile!store/collection.useCollection useCollection}.
 	 */
 	collection: Collection<S, P>
 

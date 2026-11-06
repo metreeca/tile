@@ -12,6 +12,7 @@ Screens are composed in JSX from general-purpose widgets and layouts alongside l
 
 ```shell
 npm install @metreeca/skin            # design system package, optional
+npm install @metreeca/tile            # Preact contexts and hooks
 npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 ```
 
@@ -28,7 +29,7 @@ optional and styles whatever a binding renders. An app brands it by overriding i
 | Package               | Description                          |
 |-----------------------|--------------------------------------|
 | [@metreeca/tile-type] | Shape-driven value text              |
-| [@metreeca/tile-data] | Contexts and hooks                   |
+| [@metreeca/tile]      | Contexts and hooks                   |
 | [@metreeca/tile-cell] | Widgets and controls                 |
 | [@metreeca/tile-hive] | Layouts and containers               |
 | [@metreeca/tile-move] | Movable items and the move lifecycle |
@@ -39,7 +40,7 @@ optional and styles whatever a binding renders. An app brands it by overriding i
 
 [@metreeca/tile-type]: https://metreeca.github.io/tile/modules/_metreeca_tile-type.html
 
-[@metreeca/tile-data]: https://metreeca.github.io/tile/modules/_metreeca_tile-data.html
+[@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
 [@metreeca/tile-cell]: https://metreeca.github.io/tile/modules/_metreeca_tile-cell.html
 

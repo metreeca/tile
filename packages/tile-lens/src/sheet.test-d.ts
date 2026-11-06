@@ -17,7 +17,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { useCollection, useMembers } from "@metreeca/tile-data/store";
+import { useCollection, useMembers } from "@metreeca/tile/store";
 import { describe, expectTypeOf, it } from "vitest";
 import { Sheet } from "./sheet.js";
 

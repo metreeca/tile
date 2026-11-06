@@ -62,7 +62,7 @@ alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs
 emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`tile-data` for the contexts and hooks a component is wired to,
+appears **ONLY** in its own binding packages (`tile` for the contexts and hooks a component is wired to,
 `tile-cell` and `tile-hive` for the leaf and container components it is assembled from, `tile-move` for the items a
 reader moves and the drag and drop bindings behind them, `tile-lens` and `tile-form` for the views and forms built over
 them). The drag and drop library behind `tile-move` appears **ONLY** there, and is **NEVER** handed out: a consumer
@@ -70,8 +70,8 @@ moves items through the `tile-move` widgets. A binding package adds observation 
 behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the same behaviour
 without restating it.
 
-Packages are named after what they contribute, not after the library they contribute it with: `tile-data`, not
-`tile-hooks`.
+Packages are named after what they contribute, not after the library they contribute it with: `tile-move`, not
+`tile-dnd`.
 
 # Package Summaries
 
@@ -117,7 +117,7 @@ the move:
 # Component State
 
 A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
-`@metreeca/tile-data/model`, reading data and transitions straight off the model:
+`@metreeca/tile/model`, reading data and transitions straight off the model:
 
 ```tsx
 const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));

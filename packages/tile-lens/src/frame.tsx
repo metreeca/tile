@@ -29,7 +29,7 @@ import type { Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { Hint } from "@metreeca/tile-cell/hint";
 import { Note } from "@metreeca/tile-cell/note";
-import type { ResourceCases } from "@metreeca/tile-data/store/resource";
+import type { ResourceCases } from "@metreeca/tile/store/resource";
 import { type ComponentChildren, createElement } from "preact";
 import "./frame.css";
 
@@ -66,7 +66,7 @@ export function Frame<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
 }: {
 
 	/**
-	 * The resource shown, as handed by {@link @metreeca/tile-data!store/resource.useResource useResource}.
+	 * The resource shown, as handed by {@link @metreeca/tile!store/resource.useResource useResource}.
 	 */
 	resource: Relay<ResourceCases<S, T>>
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Board, type Post, usePosts } from "@metreeca/tile-data/board";
+import { Board, type Post, usePosts } from "@metreeca/tile/board";
 import { type JSX, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

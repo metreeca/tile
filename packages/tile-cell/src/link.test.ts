@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Router } from "@metreeca/tile-data/router";
+import { Router } from "@metreeca/tile/router";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

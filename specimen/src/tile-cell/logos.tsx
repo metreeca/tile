@@ -21,7 +21,7 @@
  */
 
 import { Logo } from "@metreeca/tile-cell/logo";
-import { app } from "@metreeca/tile-data";
+import { app } from "@metreeca/tile";
 import { Style } from "@metreeca/tile-hive/style";
 import "./index.css";
 

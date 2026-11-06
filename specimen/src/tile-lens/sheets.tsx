@@ -32,8 +32,8 @@ import { decodeTemplate } from "@metreeca/qest/model";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
-import { Fetch } from "@metreeca/tile-data/fetch";
-import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile-data/store";
+import { Fetch } from "@metreeca/tile/fetch";
+import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useEffect, useState } from "preact/hooks";
 

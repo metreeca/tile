@@ -9,7 +9,7 @@
       "path": "../tile-cell/tsconfig.build.json"
     },
     {
-      "path": "../tile-data/tsconfig.build.json"
+      "path": "../tile/tsconfig.build.json"
     }
   ],
   "exclude": [

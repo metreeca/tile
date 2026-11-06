@@ -23,7 +23,7 @@
  */
 
 import { opt } from "@metreeca/core";
-import { app } from "@metreeca/tile-data";
+import { app } from "@metreeca/tile";
 import { createElement } from "preact";
 import "./logo.css";
 

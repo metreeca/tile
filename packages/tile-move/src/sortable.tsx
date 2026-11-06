@@ -28,7 +28,7 @@ import { pointerIntersection } from "@dnd-kit/collision";
 import { isSortable } from "@dnd-kit/dom/sortable";
 import { isString, opt, type Optional } from "@metreeca/core";
 import { equals } from "@metreeca/core/values";
-import { useModel } from "@metreeca/tile-data/model";
+import { useModel } from "@metreeca/tile/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
 import { DragDrop, useDroppable } from "./index.core.js";

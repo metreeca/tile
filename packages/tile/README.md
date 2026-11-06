@@ -1,6 +1,6 @@
-# @metreeca/tile-data
+# @metreeca/tile
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile-data)](https://www.npmjs.com/package/@metreeca/tile-data)
+[![npm](https://img.shields.io/npm/v/@metreeca/tile)](https://www.npmjs.com/package/@metreeca/tile)
 
 Preact contexts and hooks for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
@@ -10,8 +10,8 @@ framework-agnostic `@metreeca/core` state object into the state of a Preact comp
 # Installation
 
 ```shell
-npm install preact               # peer dependency
-npm install @metreeca/tile-data  # this package
+npm install preact          # peer dependency
+npm install @metreeca/tile  # this package
 ```
 
 > [!WARNING]
@@ -29,7 +29,7 @@ npm install @metreeca/tile-data  # this package
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-data.html).
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile.html).
 
 {TBD: usage overview and examples}
 

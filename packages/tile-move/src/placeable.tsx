@@ -26,7 +26,7 @@
 
 import { type DragEndEvent } from "@dnd-kit/dom";
 import { isString, opt, type Optional } from "@metreeca/core";
-import { useModel } from "@metreeca/tile-data/model";
+import { useModel } from "@metreeca/tile/model";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
 import { DragDrop, useDroppable } from "./index.core.js";

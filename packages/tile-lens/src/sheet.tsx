@@ -29,8 +29,8 @@ import { isObject, isString, type Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { Hint } from "@metreeca/tile-cell/hint";
 import { Note } from "@metreeca/tile-cell/note";
-import type { Collections } from "@metreeca/tile-data/store/collection";
-import type { MembersCases } from "@metreeca/tile-data/store/members";
+import type { Collections } from "@metreeca/tile/store/collection";
+import type { MembersCases } from "@metreeca/tile/store/members";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import "./sheet.css";
 
@@ -72,7 +72,7 @@ export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 }: {
 
 	/**
-	 * The collection members listed, as handed by {@link @metreeca/tile-data!store/members.useMembers useMembers}.
+	 * The collection members listed, as handed by {@link @metreeca/tile!store/members.useMembers useMembers}.
 	 */
 	members: Relay<MembersCases<S, P, T>>
 

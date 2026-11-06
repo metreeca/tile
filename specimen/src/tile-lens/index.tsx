@@ -19,7 +19,7 @@ import { Frames } from "@metreeca/specimen/tile-lens/frames.js";
 import { Sheets } from "@metreeca/specimen/tile-lens/sheets.js";
 import { Tables } from "@metreeca/specimen/tile-lens/tables.js";
 import { Link } from "@metreeca/tile-cell/link";
-import { Routes } from "@metreeca/tile-data/router";
+import { Routes } from "@metreeca/tile/router";
 import "@metreeca/specimen/tile-cell/index.css";
 
 

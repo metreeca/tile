@@ -64,8 +64,8 @@
     "@metreeca/http": "^0.5.0",
     "@metreeca/qest": "^0.13.0",
     "@metreeca/skin": "^0.1.0",
+    "@metreeca/tile": "^0.7.0",
     "@metreeca/tile-cell": "^0.7.0",
-    "@metreeca/tile-data": "^0.7.0",
     "@metreeca/tile-type": "^0.7.0"
   },
   "devDependencies": {

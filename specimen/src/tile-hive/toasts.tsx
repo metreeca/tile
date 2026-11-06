@@ -21,7 +21,7 @@
  */
 
 import { Button } from "@metreeca/tile-cell/button";
-import { type Post, usePosts, useBoard, Board } from "@metreeca/tile-data/board";
+import { type Post, usePosts, useBoard, Board } from "@metreeca/tile/board";
 import { Toast } from "@metreeca/tile-hive/toast";
 import "../tile-cell/index.css";
 

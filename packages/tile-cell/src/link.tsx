@@ -23,7 +23,7 @@
  * @module
  */
 
-import { useRoute } from "@metreeca/tile-data/router";
+import { useRoute } from "@metreeca/tile/router";
 import { isString, type Scalar } from "@metreeca/core";
 import {
 	type ComponentChildren,
@@ -41,7 +41,7 @@ import "./link.css";
  *
  * Shows its content on a native anchor, so the link role, the activation by `Enter`, the tab stop, the focus ring and
  * the browser's own handling of modified clicks come with it rather than having to be asked for. A plain click on a
- * route of the same site is followed by the enclosing {@link @metreeca/tile-data!router.Router Router} without
+ * route of the same site is followed by the enclosing {@link @metreeca/tile!router.Router Router} without
  * reloading the page.
  *
  * An `active` link, while the route it points at is current, is set apart from its neighbours by an underline in the
@@ -49,7 +49,7 @@ import "./link.css";
  * routes nested under it, so a navigation menu tells the reader where they are whether or not they see it. The anchor
  * also carries an empty `active` attribute, for a stylesheet of the consumer's own to read.
  *
- * Reads the current route, so it renders below the {@link @metreeca/tile-data!router.Router Router}.
+ * Reads the current route, so it renders below the {@link @metreeca/tile!router.Router Router}.
  *
  * @param options The widget configuration
  *

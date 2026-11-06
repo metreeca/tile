@@ -25,7 +25,7 @@
 
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
-import { type Post, type Status, useBoard, usePosts } from "@metreeca/tile-data/board";
+import { type Post, type Status, useBoard, usePosts } from "@metreeca/tile/board";
 import { createElement } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import "./toast.css";
@@ -34,7 +34,7 @@ import "./toast.css";
 /**
  * Creates a toast stack.
  *
- * Floats the posts standing on the enclosing {@link @metreeca/tile-data!board.Board Board} over an edge of the screen,
+ * Floats the posts standing on the enclosing {@link @metreeca/tile!board.Board Board} over an edge of the screen,
  * one toast each, newest nearest the edge, each marked by a glyph telling its status, so an interface tells the reader
  * how its operations are going without laying out room for them. A post updated on the board is updated where it
  * stands, a post put up slides in, and a post cleared fades out while the others stay put.

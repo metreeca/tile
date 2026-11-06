@@ -23,14 +23,16 @@ hand-written mapping.
 Reads and writes go through a `@metreeca/keep` store: caching, batching and validation belong there, and this
 repository **NEVER** reimplements them behind the interface.
 
+What an interface draws rests on Preact and the `@metreeca/skin` design system alone.
+
 # References
 
 - [Preact](https://preactjs.com/guide/v10/getting-started) - Fast 3kB alternative to React with the same API, the
   rendering layer every binding package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
-- [@metreeca/clay](https://github.com/metreeca/clay) - Minimalist component toolkit for Preact interfaces, providing
-  the app contexts, routing, fetch, board and model hooks every binding package is wired to
+- [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
+  client the store exchanges resources through
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
   providing the query model the state components expose
 - [@metreeca/blue](https://github.com/metreeca/blue) - Declarative blueprints for model-driven linked data processing,
@@ -67,9 +69,12 @@ emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to, `tile-lens` and
-`tile-form` for the views and forms built over them, assembled from the `@metreeca/clay` widgets and layouts). A
-binding package adds observation and rendering over state it never redefines: behaviour lives in framework-agnostic
-`@metreeca/core` state objects, so a second binding reaches the same behaviour without restating it.
+`tile-form` for the views and forms built over them). A binding package adds observation and rendering over state it
+never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the
+same behaviour without restating it.
+
+A binding package takes `@metreeca/skin` as its only styling dependency: its stylesheets read the skin tokens, and the
+interface follows whatever theme an app sets there.
 
 Packages are named after what they contribute, not after the library they contribute it with.
 
@@ -81,7 +86,7 @@ Every package states its summary in three places, which **MUST** be kept aligned
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
   project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
-  that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
+  that already states it (`Linked data views`, not `Preact linked data views`)
 
 The suffix names the project repository as `@metreeca/tile`, for every package alike.
 
@@ -102,18 +107,6 @@ table of them: the catalogue grows with every module added, and the generated na
 samples for a single module belong to that module's own documentation. The section **NEVER** stands in for the
 generated index.
 
-# Skills
-
-These skills carry the conventions this repository is held to, whether they sit in `.claude/skills/` or have since
-moved to the personal set. Each states the model it governs and what it takes precedence over, so the routing survives
-the move:
-
-| Skill              | When to activate                                                            |
-|--------------------|-----------------------------------------------------------------------------|
-| `preact-developer` | Writing or reviewing a widget, a hook or a custom element                   |
-| `css-developer`    | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
-| `a11y-developer`   | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
-
 # Design Precedent
 
 [Atlassian](https://atlassian.design/) is the design system Tile is closest to. Check it before settling a component
@@ -131,11 +124,11 @@ Metreeca register.
 
 # Component State
 
-A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
-`@metreeca/clay/model`, reading data and transitions straight off the model:
+A component holding state declares it as a `@metreeca/core` state object and adopts it with a `useModel` hook,
+reading data and transitions straight off the model:
 
 ```tsx
-const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));
+const { open, expand, collapse, toggle } = useModel(() => createFold());
 ```
 
 - A transition renders the component again on its own, so a handler just calls it; a transition changing nothing
@@ -147,10 +140,11 @@ const { labels, active, select } = useModel(() => createTabs({ labels: Object.ke
   again from the factory whenever one changes, losing the state it reached:
 
   ```tsx
-  const { model: slice, focus } = useModel(() => createWindow({ model }), [model]); // a new query starts from the first items
+  const options = useModel(() => createTally({ size }), [entry, field, expression, size]); // a new query starts over
   ```
-- Behaviour outgrowing a single widget moves to a sibling `*.core.ts` module as a headless component of its own, leaving
-  the widget only what it renders: `Tabs` in `tabs.tsx`, the state it adopts in `tabs.core.ts`.
+- Behaviour outgrowing a single widget or hook moves to a sibling `*.core.ts` module as a headless component of its
+  own, leaving the module beside it only what it renders or binds: `useTally` in `tally.ts`, the state it adopts in
+  `tally.core.ts`.
 
 A `*.core.ts` module carries what the module beside it is built on. Where that is behaviour, the module is a headless
 component in its own right and **NEVER** an internal appendix of the widget: it carries **NO** dependency on Preact, is
@@ -164,11 +158,8 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports. `tile-lens` keeps there the parts its views draw alike.
-
-A module handing out a third-party catalogue under names of its own keeps the bare re-exports in a sibling `*.core.ts`
-module, left out of the reference by `typedoc.json`, which names each such module: the documented
-module beside it is the only path a consumer imports, and carries the comment the catalogue is described by.
+stylesheet, which the module imports. `tile-lens` keeps there the parts its views draw alike, and the fold state they
+adopt in `index.core.ts`.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module
 imports. The prefix is carried by the element, which the DOM requires to be hyphenated, and **NEVER** by the exported

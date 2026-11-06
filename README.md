@@ -5,18 +5,17 @@ Minimalist model-driven UI toolkit for linked data resources.
 Preact components for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. Resource models shared with
 the server drive what screens show, what forms accept and how values are validated, so neither side restates them.
 
-Screens are composed in JSX from linked data views and forms alongside the general-purpose widgets, layouts, contexts
-and hooks of [@metreeca/clay](https://github.com/metreeca/clay). The [@metreeca/skin] design system is optional: Tile
-and Clay components work without it and follow the platform colour scheme with it.
+Screens are composed in JSX from linked data views and forms, bound to the resources of a
+[@metreeca/keep](https://github.com/metreeca/keep) store. Components take their look from the [@metreeca/skin] design
+tokens: they work without its stylesheet, and follow the platform colour scheme with it.
 
 # Installation
 
 ```shell
-npm install @metreeca/skin            # design system package, optional
-npm install @metreeca/clay            # Preact contexts and hooks
-npm install @metreeca/clay-<layer>    # Preact widgets and layouts, one package per layer
-npm install @metreeca/tile            # Preact linked data store
-npm install @metreeca/tile-<layer>    # Preact package, one per component layer
+npm install preact                  # peer dependency
+npm install @metreeca/skin          # design system stylesheet, optional
+npm install @metreeca/tile          # linked data store
+npm install @metreeca/tile-<layer>  # one package per component layer
 ```
 
 > [!WARNING]
@@ -24,17 +23,16 @@ npm install @metreeca/tile-<layer>    # Preact package, one per component layer
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add a binding package for each component layer an app assembles its screens from. Bindings render with Preact and take
-it as a peer dependency: check the package README for what each one expects. The [@metreeca/skin] design system is
-optional and styles whatever a binding renders. An app brands it by overriding its tokens, as its
-[theming guide](https://github.com/metreeca/skin#theming) explains for colours, faces and every other family.
+Add a package for each component layer an app assembles its screens from. The rendering layers take Preact as a peer
+dependency: check the package README for what each one expects. An app brands whatever they render by overriding the
+[@metreeca/skin] tokens, as its [theming guide](https://github.com/metreeca/skin#theming) explains for every family.
 
-| Package               | Description                          |
-|-----------------------|--------------------------------------|
-| [@metreeca/tile-type] | Shape-driven value text              |
-| [@metreeca/tile]      | Linked data store                    |
-| [@metreeca/tile-lens] | Linked data views                    |
-| [@metreeca/tile-form] | Linked data forms                    |
+| Package               | Description             |
+|-----------------------|-------------------------|
+| [@metreeca/tile-type] | Shape-driven value text |
+| [@metreeca/tile]      | Linked data store       |
+| [@metreeca/tile-lens] | Linked data views       |
+| [@metreeca/tile-form] | Linked data forms       |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 

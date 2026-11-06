@@ -36,12 +36,18 @@ app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as i
 |--------------------------|------------------------------------------------|
 | [@metreeca/tile]         | Linked data store and shape-driven value types |
 | [@metreeca/tile-widgets] | Linked data widgets                            |
+| [@metreeca/tile-charts]  | Linked data charts (planned)                   |
+| [@metreeca/tile-topics]  | SKOS topic widgets (planned)                   |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
 [@metreeca/tile-widgets]: https://metreeca.github.io/tile/modules/_metreeca_tile-widgets.html
+
+[@metreeca/tile-charts]: https://metreeca.github.io/tile/modules/_metreeca_tile-charts.html
+
+[@metreeca/tile-topics]: https://metreeca.github.io/tile/modules/_metreeca_tile-topics.html
 
 # Usage
 

@@ -95,7 +95,11 @@ what it imports.
   subpath: `viewers` for the resource and collection views, `filters` for the facets narrowing a collection, and
   `editors` for the widgets writing resources back, while the parts they draw alike stay at the package root
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
-  install a third-party stack, as charts drawn over a plotting or mapping engine would
+  install a third-party stack, as `tile-charts` does for its plotting and mapping engines
+- **Vocabularies apart**: widgets bound to a domain vocabulary rather than to any shape get a package of their own,
+  as `tile-topics` does for SKOS concept schemes, so apps that never use the vocabulary never track its releases
+- **Stubs private**: a package laid down ahead of its widgets carries a doc-only root module and `"private": true`
+  until it holds an API, so it compiles and is documented as planned, but cannot be published empty
 
 A package holding a collection takes a plural name (`tile-widgets`), and one holding a single capability takes the
 name of that capability. Packages are named after what they contribute, never after the library they contribute it

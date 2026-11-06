@@ -15,8 +15,8 @@ take their look from the [@metreeca/skin](https://metreeca.github.io/skin/) toke
 
 ```shell
 npm install @metreeca/tile-widgets  # this package
-npm install preact               # peer dependency
-npm install lucide-preact        # peer dependency
+npm install preact                  # peer dependency
+npm install lucide-preact           # peer dependency
 ```
 
 > [!WARNING]

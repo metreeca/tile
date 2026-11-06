@@ -20,7 +20,7 @@
  * Binds a search box to a shared collection, so that the keywords it hands over narrow what every lens over the
  * collection shows; pacing the keywords as the reader types is left to the search box.
  *
- * @module store/keywords
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -58,7 +58,7 @@ export interface Keywords {
  *
  * Narrows the collection to the items whose `expression` contains the keywords, trimmed. The keywords start from those
  * already narrowing the collection, and follow them whenever they are changed or cleared elsewhere, as by
- * {@link "store/collection"!Collection.clear clear}, so that a search box always shows what narrows the list.
+ * {@link "collection"!Collection.clear clear}, so that a search box always shows what narrows the list.
  *
  * The keywords are applied and handed back trimmed at every {@link Keywords.search search}, so the search box holds the
  * text as the reader types it, spaces between words included, and decides on its own when to hand it over.
@@ -66,7 +66,7 @@ export interface Keywords {
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
- * @param collection The collection narrowed, as handed by {@link "store/collection"!useCollection useCollection}
+ * @param collection The collection narrowed, as handed by {@link "collection"!useCollection useCollection}
  * @param expression The expression the keywords are matched against, as a property path: `label`
  *
  * @returns The keywords narrowing `collection` and the transition updating them

@@ -29,7 +29,7 @@
  * const courses = useCollection({ entry: "/courses/", shape: Course, query, onChange: setQuery });
  * ```
  *
- * @module store/query
+ * @module
  */
 
 import { useRoute } from "@metreeca/clay/router";

@@ -20,7 +20,7 @@
  * Binds a range control to a shared collection, so that it shows the lowest and highest values the items hold for an
  * expression and narrows every lens over the collection to the items whose values fall between the bounds it sets.
  *
- * @module store/range
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -121,19 +121,19 @@ export type RangeCases = {
 /**
  * Binds a component to a range over a shared collection.
  *
- * Retrieves through the store offered by the innermost enclosing {@link "store"!Store Store} context the lowest and
+ * Retrieves through the store offered by the innermost enclosing {@link "index"!Store Store} context the lowest and
  * highest values the items let through by the collection criteria hold for `expression`, its own bounds included, and
  * retrieves them again whenever the criteria change or the store signals a change to the collection.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
- * @param collection The collection narrowed, as handed by {@link "store/collection"!useCollection useCollection}
+ * @param collection The collection narrowed, as handed by {@link "collection"!useCollection useCollection}
  * @param expression The expression the bounds apply to, as a property path possibly behind a transform pipe: `year`
  *
  * @returns A {@link Relay} over the {@link RangeCases} of the binding
  *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  */
 export function useRange<S extends Lazy<ResourceShape>, P extends Collections<S>>(
 

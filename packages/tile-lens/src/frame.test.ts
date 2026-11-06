@@ -18,7 +18,7 @@ import { id, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
-import { Store, useResource } from "@metreeca/tile/store";
+import { Store, useResource } from "@metreeca/tile";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

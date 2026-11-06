@@ -17,10 +17,10 @@
 /**
  * Shared collection actions.
  *
- * Lets a component add items to and remove items from a collection held by the {@link "store"!Store shared store},
+ * Lets a component add items to and remove items from a collection held by the {@link "index"!Store shared store},
  * while the lenses showing the collection follow the change on their own, as the store signals it.
  *
- * @module store/actions
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -87,12 +87,12 @@ export interface Actions<S extends Lazy<ResourceShape>, P extends Collections<S>
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
- * @param collection The collection acted on, as handed by {@link "store/collection"!useCollection useCollection}
+ * @param collection The collection acted on, as handed by {@link "collection"!useCollection useCollection}
  *
  * @returns The {@link Actions} on `collection`, writing through the store offered by the innermost enclosing
- *     {@link "store"!Store Store} context, the same store every lens over the collection reads
+ *     {@link "index"!Store Store} context, the same store every lens over the collection reads
  *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  */
 export function useActions<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 

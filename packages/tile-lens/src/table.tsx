@@ -34,8 +34,8 @@ import { Hint } from "@metreeca/tile-cell/hint";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Link } from "@metreeca/tile-cell/link";
 import { Note } from "@metreeca/tile-cell/note";
-import type { Collections } from "@metreeca/tile/store/collection";
-import type { MembersCases, Ordering } from "@metreeca/tile/store/members";
+import type { Collections } from "@metreeca/tile/collection";
+import type { MembersCases, Ordering } from "@metreeca/tile/members";
 import { type ComponentChildren, createElement } from "preact";
 import "./table.css";
 
@@ -142,7 +142,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 
 	/**
-	 * The collection members shown, as handed by {@link @metreeca/tile!store/members.useMembers useMembers}.
+	 * The collection members shown, as handed by {@link @metreeca/tile!members.useMembers useMembers}.
 	 */
 	members: Relay<MembersCases<S, P, T>>
 

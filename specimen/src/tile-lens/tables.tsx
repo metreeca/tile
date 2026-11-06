@@ -30,9 +30,9 @@ import { getIRIBase } from "@metreeca/core/resource";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
+import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
-import { type Collection, Store, useCollection, useMembers } from "@metreeca/tile/store";
 import { Table } from "@metreeca/tile-lens/table";
 
 

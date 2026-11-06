@@ -26,8 +26,8 @@
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
-import type { Collection, Collections } from "@metreeca/tile/store/collection";
-import type { CountCases } from "@metreeca/tile/store/count";
+import type { Collection, Collections } from "@metreeca/tile/collection";
+import type { CountCases } from "@metreeca/tile/count";
 import { createElement } from "preact";
 import "./count.css";
 
@@ -64,13 +64,13 @@ export function Count<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 }: {
 
 	/**
-	 * The collection counted, as handed by {@link @metreeca/tile!store/collection.useCollection useCollection},
+	 * The collection counted, as handed by {@link @metreeca/tile!collection.useCollection useCollection},
 	 * telling whether the reader narrows it and so whether the counter speaks of items or of matches.
 	 */
 	collection: Collection<S, P>
 
 	/**
-	 * The count of the collection, as handed by {@link @metreeca/tile!store/count.useCount useCount}.
+	 * The count of the collection, as handed by {@link @metreeca/tile!count.useCount useCount}.
 	 */
 	count: Relay<CountCases>
 

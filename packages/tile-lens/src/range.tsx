@@ -32,7 +32,7 @@ import { AutoDelay, keys } from "@metreeca/tile-cell";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { Note } from "@metreeca/tile-cell/note";
-import type { RangeCases } from "@metreeca/tile/store/range";
+import type { RangeCases } from "@metreeca/tile/range";
 import type { Type } from "@metreeca/tile-type";
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
@@ -112,7 +112,7 @@ export function Range({
 	type: Type
 
 	/**
-	 * The range offered, as handed by {@link @metreeca/tile!store/range.useRange useRange}.
+	 * The range offered, as handed by {@link @metreeca/tile!range.useRange useRange}.
 	 */
 	range: Relay<RangeCases>
 

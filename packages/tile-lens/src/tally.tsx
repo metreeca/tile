@@ -33,7 +33,7 @@ import { Icon } from "@metreeca/tile-cell/icon";
 import { Link } from "@metreeca/tile-cell/link";
 import { More } from "@metreeca/tile-cell/more";
 import { Note } from "@metreeca/tile-cell/note";
-import type { TallyBucket, TallyCases } from "@metreeca/tile/store/tally";
+import type { TallyBucket, TallyCases } from "@metreeca/tile/tally";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold } from "./index.core.js";
@@ -106,12 +106,12 @@ export function Tally({
 	name: string
 
 	/**
-	 * The tally offered, as handed by {@link @metreeca/tile!store/tally.useTally useTally}.
+	 * The tally offered, as handed by {@link @metreeca/tile!tally.useTally useTally}.
 	 */
 	tally: Relay<TallyCases>
 
 	/**
-	 * Renders the name of a value; the {@link @metreeca/tile!store/tally.TallyBucket.label label} of the value,
+	 * Renders the name of a value; the {@link @metreeca/tile!tally.TallyBucket.label label} of the value,
 	 * if omitted. The items holding none are always named `‹blank›` by the facet itself, so the reader tells a name it
 	 * supplies from the values in the data. The name of a linked resource is set within a link to it, so the name holds
 	 * no control of its own, as a link or button nested within it would be invalid inside the link.

@@ -17,10 +17,10 @@
 /**
  * Shared resource bindings.
  *
- * Binds a component to a resource held by the {@link "store"!Store shared store}, so that a view renders what the
+ * Binds a component to a resource held by the {@link "index"!Store shared store}, so that a view renders what the
  * store holds and writes changes back to it without driving exchanges of its own.
  *
- * @module store/resource
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -108,7 +108,7 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
 /**
  * Binds a component to a resource held by the shared store.
  *
- * Retrieves the resource from the store offered by the innermost enclosing {@link "store"!Store Store} context and
+ * Retrieves the resource from the store offered by the innermost enclosing {@link "index"!Store Store} context and
  * keeps the component in step with it, so that a view renders what the store holds and writes changes back without
  * driving exchanges of its own: the resource is retrieved again whenever the store signals a change to it, whoever
  * made it.
@@ -117,7 +117,7 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
  * view shows them where it shows the resource and offers to retry from there; an operation the view called also
  * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
  * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
- * is reported through the binding alone and never reaches the page: only a missing {@link "store"!Store Store} context
+ * is reported through the binding alone and never reaches the page: only a missing {@link "index"!Store Store} context
  * or an unforeseen failure does, for an enclosing {@link @metreeca/clay!board.Board Board} context to take up.
  *
  * The template may be fixed or replaced at runtime, and one stating something different has the resource retrieved
@@ -141,7 +141,7 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
  *     supersedes it, including while the resource is retrieved again after a change, under a new identifier or on
  *     reload, so that a view never blanks out between retrievals
  *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical
  */
 export function useResource<S extends Lazy<ResourceShape>, T extends Model<S, T>>({

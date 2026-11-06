@@ -25,8 +25,8 @@ import { string } from "@metreeca/blue/string";
 import { Fetch } from "@metreeca/clay/fetch";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
+import { Store, useResource } from "@metreeca/tile";
 import { Icon } from "@metreeca/tile-cell/icon";
-import { Store, useResource } from "@metreeca/tile/store";
 import { Frame } from "@metreeca/tile-lens/frame";
 
 

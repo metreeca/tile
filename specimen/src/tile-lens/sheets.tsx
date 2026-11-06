@@ -30,10 +30,10 @@ import { getIRIBase } from "@metreeca/core/resource";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { decodeTemplate } from "@metreeca/qest/model";
+import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile";
 import { Button } from "@metreeca/tile-cell/button";
 import { Icon } from "@metreeca/tile-cell/icon";
 import { More } from "@metreeca/tile-cell/more";
-import { type Collection, Store, useCollection, useKeywords, useMembers, useQuery } from "@metreeca/tile/store";
 import { Sheet } from "@metreeca/tile-lens/sheet";
 import { useEffect, useState } from "preact/hooks";
 

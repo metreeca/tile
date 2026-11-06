@@ -17,11 +17,11 @@
 /**
  * Shared collection bindings.
  *
- * Binds a set of lenses to one collection held by the {@link "store"!Store shared store}, so that a list, its facets
+ * Binds a set of lenses to one collection held by the {@link "index"!Store shared store}, so that a list, its facets
  * and its counters show the same items, and a facet narrowing the collection narrows what every other lens shows,
  * with no wiring between the lenses themselves beyond the collection they are handed.
  *
- * @module store/collection
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -47,7 +47,7 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
  * collection never carries over the criteria the reader set on the previous one, which may not even apply to it.
  *
  * The collecting property may be left for the shape to settle, as
- * {@link "store/collection.core"!createCollection createCollection} does, and is typed against the shape: only a
+ * {@link "collection.core"!createCollection createCollection} does, and is typed against the shape: only a
  * collection of resources the shape holds is accepted, and omitting it fails to compile unless the shape holds exactly
  * one, so that the error reaches the author at build time rather than the reader at run time.
  *
@@ -119,7 +119,7 @@ export function useCollection<S extends Lazy<ResourceShape>, P extends Collectio
 
 	/**
 	 * Takes the reader's criteria whenever they change, so that a page may keep them wherever it likes, as in the
-	 * location through {@link "store/query"!useQuery useQuery}; never called with the criteria the collection is
+	 * location through {@link "query"!useQuery useQuery}; never called with the criteria the collection is
 	 * created with, which the page handed over itself and so already keeps wherever it took them from.
 	 */
 	readonly onChange?: (criteria: Criteria) => void

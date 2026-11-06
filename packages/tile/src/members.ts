@@ -20,7 +20,7 @@
  * Binds a list or a table to the members of a shared collection, so that it retrieves them batch by batch as the
  * reader scrolls through them, rather than the whole collection at once, however long it grows.
  *
- * @module store/members
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -135,7 +135,7 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
 /**
  * Binds a component to the members of a shared collection.
  *
- * Retrieves from the store offered by the innermost enclosing {@link "store"!Store Store} context the first items of
+ * Retrieves from the store offered by the innermost enclosing {@link "index"!Store Store} context the first items of
  * the collection, narrowed by the collection criteria, one more batch each time the view asks for more. The members
  * start over the first batch, and again whenever the collection criteria, the model or the sort order change; the
  * model and the sort order are compared by content, so they may be written inline.
@@ -151,7 +151,7 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
  *
  * @returns A {@link Relay} over the {@link MembersCases} of the binding
  *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  * @throws {@link !TypeError TypeError} If `batch` isn't a positive integer
  */
 export function useMembers<

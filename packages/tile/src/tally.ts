@@ -20,7 +20,7 @@
  * Binds a facet to a shared collection, so that it lists the values the items hold for an expression with the number
  * of items holding each, and narrows every lens over the collection to the items holding the values the reader picks.
  *
- * @module store/tally
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -195,7 +195,7 @@ export type TallyBucket = {
 /**
  * Binds a component to the tally of a shared collection.
  *
- * Retrieves through the store offered by the innermost enclosing {@link "store"!Store Store} context the values the
+ * Retrieves through the store offered by the innermost enclosing {@link "index"!Store Store} context the values the
  * items hold for `expression` and the number of items holding each, twice: under no criteria, so that the list of
  * values stays stable as other facets narrow the collection, and under the collection criteria other than its own,
  * for the counts. Selected values are kept on top of both, whatever the keywords and the page on show.
@@ -206,14 +206,14 @@ export type TallyBucket = {
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
- * @param collection The collection narrowed, as handed by {@link "store/collection"!useCollection useCollection}
+ * @param collection The collection narrowed, as handed by {@link "collection"!useCollection useCollection}
  * @param expression The expression the options are values of, as a property path possibly behind a transform pipe, as
  *     in `university` or `year:released`, relative to the items of the collection
  * @param options The label of resource options and the number of options on show, all of them where omitted or zero
  *
  * @returns A {@link Relay} over the {@link TallyCases} of the binding
  *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  * @throws {@link !Error Error} If `expression` or `label` is malformed
  * @throws {@link !RangeError RangeError} If `expression` reaches no value, literals mixed with resources, nested
  *     resources, or linked resources with `label` omitted; or if `label` reaches anything but exactly one text

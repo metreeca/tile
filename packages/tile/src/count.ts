@@ -20,7 +20,7 @@
  * Binds a counter to a shared collection, so that it tells how many items the collection criteria let through and
  * follows every lens narrowing them, with no exchange of its own beyond the count.
  *
- * @module store/count
+ * @module
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
@@ -84,7 +84,7 @@ export type CountCases = {
 /**
  * Binds a component to the count of a shared collection.
  *
- * Counts through the store offered by the innermost enclosing {@link "store"!Store Store} context the items the
+ * Counts through the store offered by the innermost enclosing {@link "index"!Store Store} context the items the
  * collection scope and the reader's criteria let through. The items are counted again whenever the criteria change or
  * the store signals a change to the collection, whoever made it, so that a counter keeps in step with every list.
  *
@@ -92,11 +92,11 @@ export type CountCases = {
  * @typeParam P The property of the resource collecting the items
  *
  * @param collection The collection whose items are counted under its scope and the reader's criteria, as handed by
- *     {@link "store/collection"!useCollection useCollection} to every lens over it
+ *     {@link "collection"!useCollection useCollection} to every lens over it
  *
  * @returns A {@link Relay} over the {@link CountCases} of the binding
  *
- * @throws {@link !Error Error} If called outside any {@link "store"!Store Store} context
+ * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  */
 export function useCount<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 

@@ -68,7 +68,7 @@
     ],
     "exclude": [
       "**/packages/tile-cell/src/icon.core.ts",
-      "**/packages/tile/src/store/index.core.ts",
+      "**/packages/tile/src/index.core.ts",
       "**/packages/tile-move/src/index.core.ts",
       "**/packages/tile-move/src/index.tsx",
       "**/packages/tile-lens/src/index.tsx",

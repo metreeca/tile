@@ -12,10 +12,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile-type` — new package of shape-driven value types, showing a stored value to a reader, handing it to
   a native input and reading back what the input yields, with `toType` picking the default type for a shape and
   `as()` showing a value as another type, as `instant.as(date)` shows and bounds instants by day
-- `@metreeca/tile/store` — collection lenses sharing one collection across a screen: `useMembers` growing the
+- `@metreeca/tile` — collection lenses sharing one collection across a screen: `useMembers` growing the
   items a batch at a time, `useActions` adding and removing them, `useCount`, `useKeywords`, `useTally` and `useRange`
   narrowing them, and `useQuery` keeping the page criteria in the browser location
-- `@metreeca/tile/store` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
+- `@metreeca/tile` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
   reach of the reader: every lens retrieves under them, and clearing the collection keeps them in place
 - `@metreeca/clay/asset` — `useAsset` retrieving a static asset such as a Markdown guide by its path alone, in
   the media type its extension names, and dropping the previous text as soon as the path changes
@@ -42,9 +42,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Upgrade `@metreeca/keep` and `@metreeca/keep-rest` to `^0.12.2`
 - `@metreeca/tile-data` — **breaking**: split in two. The app contexts and the `asset`, `board`, `fetch`, `model`,
   `router` and `storage` hooks move to [@metreeca/clay](https://github.com/metreeca/clay), while the `store` bindings
-  stay in `@metreeca/tile`, which takes over the name the design system leaves (migration: import `app` and those
-  hooks from `@metreeca/clay` in place of `@metreeca/tile-data`, and `store` from `@metreeca/tile/store`)
-- `@metreeca/tile/store` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
+  become the whole of `@metreeca/tile`, which takes over the name the design system leaves (migration: import `app`
+  and those hooks from `@metreeca/clay`, and replace `@metreeca/tile-data/store` with `@metreeca/tile` in imports)
+- `@metreeca/tile` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
   shared by every lens on it, rather than retrieving items (migration: retrieve items through `useMembers`)
 - `@metreeca/tile-lens/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by `useMembers`
   in place of the `entry`, `shape` and `model` props

@@ -16,7 +16,7 @@
 
 import { id, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { useResource } from "@metreeca/tile/store";
+import { useResource } from "@metreeca/tile";
 import { describe, expectTypeOf, it } from "vitest";
 import { Frame } from "./frame.js";
 

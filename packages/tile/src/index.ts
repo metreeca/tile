@@ -15,14 +15,14 @@
  */
 
 /**
- * Shared resource store.
+ * Preact linked data store.
  *
  * Offers the components of an interface one [store](https://metreeca.github.io/keep/) to read resources from and
  * write them back to, configured once where the interface is assembled rather than at every call site, and binds
  * them to the resources and collections it holds, so that a view stays in step with the store without driving
  * exchanges of its own.
  *
- * @module store
+ * @module index
  */
 
 import { useFetch } from "@metreeca/clay/fetch";

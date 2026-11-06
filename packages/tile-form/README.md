@@ -4,9 +4,10 @@
 
 Preact linked data forms for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-Forms driven by shapes: the model decides which properties are editable, what each accepts and when it is valid.
+Forms of resources driven by shapes: the model decides which properties are editable, what each accepts and when it
+is valid, so a model change reaches the interface with no form code to update by hand.
 
-Changes are committed through the [@metreeca/keep](https://github.com/metreeca/keep) store the app provides, and forms
+Forms commit their changes through the [@metreeca/tile](https://github.com/metreeca/tile) store the app provides, and
 take their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an app restates for its brand.
 
 # Installation

@@ -30,8 +30,8 @@ import { createState } from "@metreeca/core/state";
 /**
  * Headless facet fold.
  *
- * A transition yields a new fold and leaves this one as it stands. One changing nothing yields this fold itself, which
- * a rendering layer takes as nothing to redraw, so a facet already open is never drawn again on opening.
+ * A transition returns a new fold and leaves this one unchanged. A transition changing nothing returns this fold
+ * itself, which a rendering layer takes as nothing to redraw, so a facet already open is never drawn again on opening.
  */
 export interface Fold {
 

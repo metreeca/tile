@@ -4,9 +4,10 @@
 
 Preact linked data views for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-Resource views driven by shapes: a model change reaches the interface with no view code to update.
+Views of resources and collections driven by shapes: the model decides which properties are shown, how each value
+reads and how a collection is narrowed, so a model change reaches the interface with no view code to update.
 
-Data is read through the [@metreeca/keep](https://github.com/metreeca/keep) store the app provides, and views take
+Views read their data through the [@metreeca/tile](https://github.com/metreeca/tile) store the app provides, and take
 their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an app restates for its brand.
 
 # Installation

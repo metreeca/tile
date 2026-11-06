@@ -17,8 +17,8 @@
 /**
  * Preact linked data forms.
  *
- * Turns a described resource into an editable form: the shape decides which properties are offered and what each one
- * accepts, and changes are committed through the store the app publishes once they have been validated against it.
+ * Turns a linked data resource into an editable form: its shape decides which properties are offered, what each one
+ * accepts and when it is valid, and valid changes are committed through the store the app provides to its screens.
  *
  * @module index
  */

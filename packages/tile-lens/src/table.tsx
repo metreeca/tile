@@ -17,8 +17,8 @@
 /**
  * Collection table.
  *
- * Offers the table a screen shows the members of a collection in, one row per item and one column per value, so that
- * the reader compares items side by side and sorts them on any column the screen makes sortable.
+ * Offers a table for showing the members of a collection, one row per item and one column per value. The reader
+ * compares items side by side, and sorts them on any column the screen makes sortable without leaving the table.
  *
  * @module
  */
@@ -70,10 +70,10 @@ export type Column<I> = {
 /**
  * Creates a collection table.
  *
- * Shows the members of a collection one row per item, with a column for each entry of `columns`, headed by its key,
- * and keeps in step with them: the rows on show stay where they stand while the next batch, a new order or new
- * criteria are on their way. Asking for more is left to the screen, which closes the table with a trigger handed
- * `load`, such as a {@link @metreeca/clay-cell!more.More More} fetching the next batch as it scrolls into view:
+ * Shows the members of a collection one row per item, with a column for each entry of `columns`, headed by its key, and
+ * keeps in step with them: the rows on show stay where they stand while the next batch, a new order or new criteria are
+ * on their way. Asking for more is left to the screen, which closes the table with a trigger handed `load`, such as a
+ * button fetching the next batch when activated, or one fetching it as it scrolls into view:
  *
  * ```tsx
  * const members = useMembers(collection, { model: { id: {}, label: {}, year: {} }, order: { label: "asc" } });
@@ -83,22 +83,23 @@ export type Column<I> = {
  *     Year: { sort: "year", align: "end", render: item => item.year }
  * }}/>
  *
- * {members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+ * {members({ ready: ({ load }) => load && <button onClick={() => load()}>More</button> })}
  * ```
  *
- * The header of a sortable column is a button sorting the items on it, increasing first and reversing the order on
- * each further activation, marked by the direction the items are sorted in; the column the items are sorted on first
- * is announced as sorted. While the items are shown in an order other than the one they started in, a button marked
- * by the {@link @metreeca/clay-cell!icon Sort} glyph at the end of the header row restores it.
+ * The header of a sortable column is a button sorting the items on it, increasing first and reversing the order on each
+ * further activation, marked by the direction the items are sorted in; the column the items are sorted on first is
+ * announced as sorted. While the items are shown in an order other than the one they started in, a button marked by the
+ * sort glyph at the end of the header row restores the order the items were first shown in.
  *
- * Items carrying an identifier end their row with a {@link @metreeca/clay-cell!link.Link link} to the resource it
- * names, followed by the enclosing router. In a `hierarchy`, the leading cells of a row repeating the ones above are
- * faded, so that items sharing their first values read as a group; cells are compared by the text they render, and a
- * cell rendering anything other than text or a number never counts as repeating. A `striped` table tints alternate
- * rows, which native tables are not, for listings whose rows run too wide to follow by their rules alone.
+ * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details.
  *
- * Where a `placeholder` is supplied, a table with nothing to show fills its area with it, worded as still loading or
- * as matching nothing. A failed exchange is shown as a critical {@link @metreeca/clay-cell!note.Note note} instead.
+ * In a `hierarchy`, the leading cells of a row repeating the ones above are faded, so that items sharing their first
+ * values read as a group. Cells are compared by the text they render, and a cell rendering anything other than text or
+ * a number never counts as repeating. A `striped` table tints alternate rows, which native tables don't do, to guide
+ * the eye along rows too wide to follow by their rules alone.
+ *
+ * Where a `placeholder` is supplied, a table with nothing to show fills its area with it, worded as still loading or as
+ * matching nothing. A failed exchange is shown as a critical note instead, telling the reader why no rows are listed.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items

@@ -17,8 +17,8 @@
 /**
  * Collection range facet.
  *
- * Offers the facet a reader narrows a collection with by bounding the values its items hold, showing the lowest and
- * highest values on offer, so every lens over the same collection follows the bounds set.
+ * Offers a facet that narrows a collection to the items whose values fall between two bounds. The facet suggests the
+ * lowest and highest values on offer, and every lens over the same collection follows the bounds the reader sets.
  *
  * @module
  */
@@ -44,30 +44,32 @@ import "./range.css";
 /**
  * Creates a collection range facet.
  *
- * Shows a `From` and a `To` field on the native input the value type works on, a `number` input for numbers and years,
- * a `date`, `time` or `datetime-local` one for temporal values, and a `text` one otherwise. Each field holds the bound
- * narrowing the collection, if one is set, and suggests the lowest or highest value on offer, formatted as the type
- * shows it, while it is empty; an empty temporal field shows its suggestion as text, since the native input draws its
- * own entry mask instead, and turns into the native input as it takes focus. A field taking focus selects the text it
- * shows, so whatever the reader types replaces it rather than adding to it. A bound is applied once the reader pauses
- * typing or stepping through values, at once on `Enter` or on leaving the field, so a run of steps narrows the
- * collection once; a temporal field waits for `Enter` or for the reader to leave it, since its mask reports every
- * segment changed as a value of its own, and text the field rejects, as a year typed partway falls short of the
- * lowest one on offer, waits as well. An emptied field removes its bound, and text the type cannot read leaves the
- * bound as it was. Where the input orders its values natively, each field is constrained by the other, and an empty one
- * by the lowest or highest value on offer, so the two bounds never cross and stepping starts from a value items hold.
+ * Shows a `From` and a `To` field on the native input suited to the value type: a `number` input for numbers and years,
+ * a `date`, `time` or `datetime-local` input for temporal values, and a `text` input otherwise. Each field holds its
+ * bound, if one is set. While empty, it suggests the lowest or highest value on offer, formatted as the type shows it.
+ * An empty temporal field shows its suggestion as text, because the native input would draw its own entry mask in its
+ * place, and turns into the native input as it takes focus. A field taking focus selects its text, so whatever the
+ * reader types replaces it rather than adding to it.
  *
- * A {@link @metreeca/clay-cell!button.Button button} marked by the {@link @metreeca/clay-cell!icon Reset}
- * glyph, shown while a bound is set, removes both bounds and leaves the facet suggesting the values on offer again.
+ * A bound is applied once the reader pauses typing or stepping through values, or at once on `Enter` or on leaving the
+ * field, so a run of steps narrows the collection only once. A temporal field waits for `Enter` or for the reader to
+ * leave it, because its entry mask signals every segment change as a new value. Text the field rejects waits as well,
+ * such as a year typed partway that falls short of the lowest one on offer. An emptied field removes its bound, and
+ * text the type cannot read leaves the bound unchanged. Where the input orders its values natively, each field is
+ * constrained by the other, and an empty one by the lowest or highest value on offer. The two bounds never cross, and
+ * stepping through values starts from a value the items hold.
+ *
+ * A button marked by the reset glyph, shown while a bound is set, removes both bounds at once and leaves the facet
+ * suggesting the values on offer again, as it did before the reader set either.
  *
  * A collapsible facet, one stating whether it is `compact`, folds down to its fields only while a bound is set.
  * Clicking its header opens it while the reader works on it, and focus leaving the facet closes it again; a disclosure
- * marked by the {@link @metreeca/clay-cell!icon Expand} glyph opens it to stay open, until the reader closes it by the
- * same. A compact facet starts closed, any other starts open, as if opened by its disclosure.
+ * marked by the expand glyph opens it to stay open, until the reader closes it by the same disclosure. A compact facet
+ * starts closed, any other starts open, as if opened by its disclosure when first rendered.
  *
  * The facet is a group named by `name`, shown in its header beside a glyph marking the value type, and marked busy
- * while the values are retrieved for the first time; a failed retrieval is shown as a critical
- * {@link @metreeca/clay-cell!note.Note note} in place of the fields, which the reader cannot work on meanwhile.
+ * while the values are retrieved for the first time; a failed retrieval is shown as a critical note in place of the
+ * fields, which the reader cannot work on until a later retrieval brings the values back.
  *
  * ```tsx
  * const collection = useCollection({ entry: "/courses/", shape: Course });
@@ -92,13 +94,16 @@ export function Range({
 }: {
 
 	/**
-	 * The name of the facet, naming what its bounds apply to, as in `Year`: shown in its header, which names the group.
+	 * The name of the facet, stating what its bounds apply to, as in `Year`.
+	 *
+	 * The name is shown in the header of the facet, and labels the group for assistive technology.
 	 */
 	name: string
 
 	/**
-	 * Whether the facet starts closed, showing its fields only while a bound is set, or open, as if opened by its
-	 * disclosure; the reader opens and closes it by the disclosure or its header either way; always open if omitted.
+	 * Whether the facet starts closed, showing its fields only while a bound is set; open from the start if omitted.
+	 *
+	 * Either way, the reader opens and closes the facet by its disclosure or by clicking its header.
 	 */
 	compact?: boolean
 

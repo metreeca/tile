@@ -17,8 +17,8 @@
 /**
  * Collection list.
  *
- * Offers the list a screen shows the members of a collection in, so that a long collection is read as the reader
- * scrolls through it, a trigger placed after the list asking for the next batch as it comes into view.
+ * Offers a list for showing the members of a collection. A long collection is read batch by batch, as a trigger the
+ * screen places after the list asks for the next one, so the reader never waits for the whole collection at once.
  *
  * @module
  */
@@ -38,21 +38,20 @@ import "./sheet.css";
 /**
  * Creates a collection list.
  *
- * Lists the members of a collection, rendering each through `children`, and keeps in step with them: the items on
- * show stay where they stand while the next batch, a new order or new criteria are on their way. Asking for more is
- * left to the screen, which closes the list with a {@link @metreeca/clay-cell!more.More More} trigger handed `load`:
+ * Lists the members of a collection, rendering each through `children`, and keeps in step with them: the items on show
+ * stay where they stand while the next batch, a new order or new criteria are on their way. Asking for more is left to
+ * the screen, which closes the list with a trigger handed `load`, such as a button fetching the next batch:
  *
  * ```tsx
  * const members = useMembers(collection, { model: { id: {}, label: {} } });
  *
  * <Sheet members={members}>{item => <div>{item.label}</div>}</Sheet>
  *
- * {members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+ * {members({ ready: ({ load }) => load && <button onClick={() => load()}>More</button> })}
  * ```
  *
  * Where a `placeholder` is supplied, a list with nothing to show fills its area with it, worded as still loading or as
- * matching nothing. A failed exchange is shown as a critical {@link @metreeca/clay-cell!note.Note note} in place of the
- * list.
+ * matching nothing. A failed exchange is shown as a critical note instead, telling the reader why no items are listed.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items

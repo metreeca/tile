@@ -17,8 +17,8 @@
 /**
  * Resource frame.
  *
- * Offers the frame a screen shows a single resource in, the companion to the {@link "sheet"!Sheet Sheet} listing the
- * members of a collection, so that a resource is read in place while it is retrieved, kept in step or found missing.
+ * Offers a frame for showing a single resource, the companion to the {@link "sheet"!Sheet Sheet} listing the members
+ * of a collection. The resource is read in place while it is retrieved, kept in step with the store or found missing.
  *
  * @module
  */
@@ -47,7 +47,7 @@ import "./frame.css";
  * ```
  *
  * Where a `placeholder` is supplied, it fills the area, worded as still loading, until the resource is retrieved. A
- * missing resource or a failed exchange is shown as a critical {@link @metreeca/clay-cell!note.Note note} instead.
+ * missing resource or a failed exchange is shown as a critical note instead, so the reader learns why nothing shows.
  *
  * @typeParam S The shape describing the resource
  * @typeParam T The template stating the values wanted from the resource

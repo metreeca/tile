@@ -17,8 +17,8 @@
 /**
  * Collection tally facet.
  *
- * Offers the facet a reader narrows a collection with by picking among the values its items hold, each shown with the
- * number of items holding it, so every lens over the same collection follows the values picked.
+ * Offers a facet that narrows a collection to the items holding the values the reader picks. Each value is shown with
+ * the number of items holding it, and every lens over the same collection follows the values picked.
  *
  * @module
  */
@@ -46,28 +46,25 @@ import "./tally.css";
  *
  * Lists the values the tally offers as checkboxes, each labelled by its name and by the number of items holding it,
  * grouping digits as the reader's locale does, so that ticking a value narrows the collection to the items holding
- * any of the values ticked. The name of a linked resource is a {@link @metreeca/clay-cell!link.Link link} to it, which
- * takes the reader to the resource and leaves its checkbox as it stands. The items holding none of the values are
- * offered as `‹blank›`, a name the facet supplies itself. A value no item lets through under the other criteria
- * stays on offer with a count of `0`, so the list holds still, every value in its place, as other facets narrow the
- * collection; its checkbox is disabled unless ticked, since ticking it would empty the collection, while a ticked one
- * stays enabled to be unticked.
+ * any of the values ticked. The name of a linked resource is a link to it, which takes the reader to the resource and
+ * leaves its checkbox as it stands. The items holding none of the values are offered as `‹blank›`, a name the facet
+ * supplies itself. A value no item lets through under the other criteria stays on offer with a count of `0`, so the
+ * list holds still, every value in its place, as other facets narrow the collection; its checkbox is disabled unless
+ * ticked, since ticking it would empty the collection, while a ticked one stays enabled to be unticked.
  *
  * A search field narrows the values on offer once the reader pauses typing, at once on `Enter`, and `Escape` empties
- * it, as does a {@link @metreeca/clay-cell!button.Button button} marked by the
- * {@link @metreeca/clay-cell!icon Clear} glyph, shown while text is typed. While the field is empty, a button
- * marked by the {@link @metreeca/clay-cell!icon Reset} glyph takes its place as long as values are ticked and
- * deselects them all, so the two never stand side by side. A long list is closed by a
- * {@link @metreeca/clay-cell!more.More More} trigger fetching the next batch as it scrolls into view.
+ * it, as does a button marked by the clear glyph, shown while text is typed. While the field is empty, a button marked
+ * by the reset glyph takes its place as long as values are ticked and deselects them all, so the two never stand side
+ * by side. A long list is closed by a trigger fetching the next batch as it scrolls into view.
  *
  * A collapsible facet, one stating whether it is `compact`, folds down to the values ticked. Turning to the search
  * field opens it while the reader works on it, and focus leaving the facet closes it again, back to the values the
- * reader ticked; a disclosure marked by the {@link @metreeca/clay-cell!icon Expand} glyph opens it to stay open, until
- * the reader closes it by the same disclosure, whether the facet was opened by the disclosure itself or by the search
- * field. A compact facet starts closed, any other starts open, as if opened by its disclosure.
+ * reader ticked; a disclosure marked by the expand glyph opens it to stay open, until the reader closes it by the same
+ * disclosure, whether the facet was opened by the disclosure itself or by the search field. A compact facet starts
+ * closed, any other starts open, as if opened by its disclosure when first rendered.
  *
  * The facet is a group named by `name`, marked busy while the values are retrieved for the first time; a failed
- * retrieval is shown as a critical {@link @metreeca/clay-cell!note.Note note} in place of the values.
+ * retrieval is shown as a critical note in place of the values, until a later retrieval brings them back.
  *
  * ```tsx
  * const collection = useCollection({ entry: "/courses/", shape: Course });
@@ -94,14 +91,17 @@ export function Tally({
 }: {
 
 	/**
-	 * Whether the facet starts closed, showing only the values ticked, or open, as if opened by its disclosure; the
-	 * reader opens and closes it by the disclosure or the search field either way; always open if omitted.
+	 * Whether the facet starts closed, showing only the values ticked; open from the start if omitted.
+	 *
+	 * Either way, the reader opens and closes the facet by its disclosure or by turning to its search field.
 	 */
 	compact?: boolean
 
 	/**
-	 * The name of the facet, naming what its values are values of, as in `University`: the accessible name of the
-	 * group, and the hint the search field shows while empty, which doubles as the visible title of the facet.
+	 * The name of the facet, stating what its values describe, as in `University`.
+	 *
+	 * The name labels the group for assistive technology, and the empty search field shows it as a hint, which doubles
+	 * as the visible title of the facet.
 	 */
 	name: string
 
@@ -111,10 +111,11 @@ export function Tally({
 	tally: Relay<TallyCases>
 
 	/**
-	 * Renders the name of a value; the {@link @metreeca/tile!tally.TallyBucket.label label} of the value,
-	 * if omitted. The items holding none are always named `‹blank›` by the facet itself, so the reader tells a name it
-	 * supplies from the values in the data. The name of a linked resource is set within a link to it, so the name holds
-	 * no control of its own, as a link or button nested within it would be invalid inside the link.
+	 * Renders the name of a value; the {@link @metreeca/tile!tally.TallyBucket.label label} of the value if omitted.
+	 *
+	 * The items holding none of the values are always named `‹blank›` by the facet, so the reader can tell that name
+	 * from the values in the data. The name of a linked resource is set within a link to it, so the rendered name must
+	 * hold no control of its own: a link or a button nested inside the link would be invalid markup.
 	 *
 	 * @param bucket The value to be named, never the `‹blank›` option the facet names itself
 	 */

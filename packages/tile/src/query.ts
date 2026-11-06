@@ -48,11 +48,11 @@ import { useEffect, useState } from "preact/hooks";
  * - the criteria last written for the route in the session, as when the page is reached through a plain link
  *
  * Writing the criteria replaces them in both places without adding a history entry or touching its state, so the
- * history keeps one entry per page however many times the reader narrows it. Criteria written by the component never
- * mount it again: a navigation to another query does, as described by {@link @metreeca/clay!router.Routes Routes}.
+ * history keeps one entry per page however many times the reader narrows it. Writing the criteria never mounts the
+ * component again, so its state survives the change: only a navigation to another query mounts it again.
  *
- * References in the criteria are handed over absolute, resolved against the location where it states them relative,
- * and kept root-relative in the location where they share its origin, so that links carrying them stay portable.
+ * References in the criteria are handed over in absolute form, with relative ones resolved against the location. The
+ * location keeps them root-relative where they share its origin, so that links carrying the criteria stay portable.
  *
  * @returns The criteria as they stand for this render, and a setter replacing them; empty criteria leave the location
  *     with no query, the path and the hash staying in place whatever the criteria written

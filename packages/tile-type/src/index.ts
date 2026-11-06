@@ -15,7 +15,7 @@
  */
 
 /**
- * Shape-driven value types.
+ * Shape-driven value text.
  *
  * Defines the contract every value type honours: showing a stored value to a reader, handing it to a native input and
  * reading back what the input yields. Values are always kept in the form the store holds them, so a type never
@@ -78,9 +78,9 @@ export type Options = {
  * Every call takes the common options together with the options specific to the type. A view or a field passes
  * the latter to show the same value differently, as `{ fractionDigits: 2 }` does for decimals.
  *
- * {@link Type.as} shows and edits the values of a type as another type does, so a widget expecting a type can work on
- * them: `instant.as(date)` shows and edits instants as the day they fall on. It works where the stored values carry
- * everything the other type shows: `instant.as(date)`, `instant.as(year)` and `date.as(year)`.
+ * {@link Type.as} shows and edits the values of a type as another type does, so a view or a field expecting that type
+ * can work on them: `instant.as(date)` shows and edits instants as the day they fall on. It works where the stored
+ * values carry everything the other type shows: `instant.as(date)`, `instant.as(year)` and `date.as(year)`.
  *
  * @typeParam V The value as the store holds it
  * @typeParam O The options specific to this type, accepted by every call along with {@link Options}
@@ -140,7 +140,7 @@ export type Type<V = unknown, O extends object = {}> = {
 	 * A type shown as itself is returned as is. A converted type is converted again from the type it stores, so
 	 * `instant.as(date).as(year)` returns `instant.as(year)`, and the same pair of types always returns the same type.
 	 *
-	 * A widget taking the returned type thus sees no change from one render to the next.
+	 * A view or a field taking the returned type thus sees no change from one render to the next.
 	 *
 	 * @param type The type values are shown and edited as
 	 *

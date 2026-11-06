@@ -101,7 +101,7 @@ const Local = new RegExp(String.raw`^${day}T${clock}(?::\d{2}(?:\.\d{1,3})?)?$`)
 
 /**
  * The components of a well-formed `xsd:duration` value, captured by unit in lexical order; at least one is stated, and
- * a time part marked by `T` states at least one of its own.
+ * a time part marked by `T` states at least one of its own hours, minutes or seconds.
  */
 const Components = new RegExp(String.raw`^(?<negative>-)?P(?!$)${datePart}(?:T(?=\d)${timePart})?$`);
 
@@ -184,6 +184,8 @@ export function toInstant(value: string): Optional<Date> {
 /**
  * Drops the offset a time or instant states.
  *
+ * @param value The time or instant in lexical form
+ *
  * @returns `value` with its trailing offset removed, if any
  */
 export function dropOffset(value: string): string {
@@ -196,6 +198,8 @@ export function dropOffset(value: string): string {
 /**
  * Names the UTC year a moment falls in.
  *
+ * @param moment The moment to convert
+ *
  * @returns The year `moment` falls in, in the four-digit form a `number` input works on
  */
 export function toUTCYear(moment: Date): string {
@@ -204,6 +208,8 @@ export function toUTCYear(moment: Date): string {
 
 /**
  * Names the UTC day a moment falls on.
+ *
+ * @param moment The moment to convert
  *
  * @returns The day `moment` falls on in UTC, in the `YYYY-MM-DD` form a `date` input works on
  */
@@ -214,6 +220,8 @@ export function toUTCDay(moment: Date): string {
 /**
  * Names the local day a moment falls on.
  *
+ * @param moment The moment to convert
+ *
  * @returns The day `moment` falls on in the runtime time zone, in the `YYYY-MM-DD` form a `date` input works on
  */
 export function toLocalDay(moment: Date): string {
@@ -222,6 +230,8 @@ export function toLocalDay(moment: Date): string {
 
 /**
  * Names the local wall-clock time a moment falls on.
+ *
+ * @param moment The moment to convert
  *
  * @returns The date and time `moment` falls on in the runtime time zone, in the `YYYY-MM-DDTHH:MM:SS` form a
  *     `datetime-local` input works on, carrying milliseconds only for fractional seconds

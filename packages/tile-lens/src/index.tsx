@@ -31,8 +31,8 @@ import { Icon } from "@metreeca/clay-cell/icon";
  *
  * @param options The widget configuration
  *
- * @returns A button marked by the {@link @metreeca/clay-cell!icon Expand} glyph while the facet is closed and by
- *     the {@link @metreeca/clay-cell!icon Collapse} one while open, announcing which as its expanded state
+ * @returns A button marked by the expand glyph while the facet is closed and by the collapse glyph while open,
+ *     announcing to assistive technology whether the facet is expanded or collapsed
  */
 export function Disclosure({
 
@@ -55,7 +55,7 @@ export function Disclosure({
 	controls: string
 
 	/**
-	 * What the reader activating the disclosure is handed to.
+	 * Called when the reader activates the disclosure.
 	 */
 	onToggle: () => void
 

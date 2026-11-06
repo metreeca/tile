@@ -24,12 +24,6 @@
       "SyntaxError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
       "TypeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError"
     },
-    "@metreeca/clay": {
-      "*": "https://metreeca.github.io/clay/"
-    },
-    "@metreeca/clay-cell": {
-      "*": "https://metreeca.github.io/clay/"
-    },
     "@metreeca/core": {
       "*": "https://metreeca.github.io/core/"
     },

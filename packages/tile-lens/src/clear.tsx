@@ -17,8 +17,8 @@
 /**
  * Collection reset.
  *
- * Offers the control a reader drops every criterion narrowing a collection with, so that every lens showing it goes
- * back to the whole collection in a single step rather than one facet at a time.
+ * Offers a control that drops every criterion narrowing a collection, so that every lens showing the collection goes
+ * back to all of its items in a single step, rather than one facet at a time.
  *
  * @module
  */
@@ -33,10 +33,9 @@ import type { Collection, Collections } from "@metreeca/tile/collection";
 /**
  * Creates a collection reset.
  *
- * Shows a subtle {@link @metreeca/clay-cell!button.Button button} marked by the {@link @metreeca/clay-cell!icon Reset}
- * glyph, removing every criterion the reader set on the collection, so that every lens handed the same collection,
- * lists, facets and counters alike, follows along. The button is disabled while no criterion narrows the collection,
- * and is named for assistive technology by its `Clear Filters` hint, the glyph standing alone.
+ * Shows a subtle button marked by the reset glyph, removing every criterion the reader set on the collection, so that
+ * every lens handed the same collection, lists, facets and counters alike, follows along. The button is disabled while
+ * no criterion narrows the collection, and its `Clear Filters` hint names it for assistive technology.
  *
  * ```tsx
  * const collection = useCollection({ entry: "/courses/", shape: Course });

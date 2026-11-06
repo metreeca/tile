@@ -88,7 +88,7 @@ export type MembersCases<S extends Lazy<ResourceShape>, P extends Collections<S>
 		 * ignored, so that a trigger left in view never asks twice for the same batch:
 		 *
 		 * ```tsx
-		 * {members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+		 * {members({ ready: ({ load }) => load && <button onClick={() => load()}>More</button> })}
 		 * ```
 		 */
 		load?(): void

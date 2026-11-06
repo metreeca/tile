@@ -4,8 +4,10 @@
 
 Preact linked data store for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-The shared store a Tile app provides and the hooks binding its components to the resources and collections it holds,
-read from and written to a [@metreeca/keep](https://github.com/metreeca/keep) store over the app's fetch client.
+The store an app shares with its screens, and the hooks that bind components to the resources and collections it holds.
+
+Reads and writes go through a [@metreeca/keep](https://github.com/metreeca/keep) store over the app's fetch client, so
+components never handle caching, batching or validation themselves, and stay focused on what they present.
 
 # Installation
 

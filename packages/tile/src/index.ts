@@ -17,10 +17,10 @@
 /**
  * Preact linked data store.
  *
- * Offers the components of an interface one [store](https://metreeca.github.io/keep/) to read resources from and
- * write them back to, configured once where the interface is assembled rather than at every call site, and binds
- * them to the resources and collections it holds, so that a view stays in step with the store without driving
- * exchanges of its own.
+ * Offers the components of an interface one shared [store](https://metreeca.github.io/keep/) to read linked data
+ * resources from and write them back to. The store is configured once, where the interface is assembled, rather than
+ * at every call site. Components bind to the resources and collections it holds, so that every view stays in step
+ * with the store and none has to drive exchanges of its own, or track the changes made by others.
  *
  * @module index
  */
@@ -52,8 +52,8 @@ const Context = createContext<Optional<Store>>(undefined);
 /**
  * Offers a shared resource store to nested components.
  *
- * The store performs its exchanges through the shared fetch client of the innermost enclosing
- * {@link @metreeca/clay!fetch.Fetch Fetch} context, so it shares the services and the busy status configured there.
+ * The store performs its exchanges through the fetch client the interface shares, so that they go through the same
+ * services, such as authentication and progress tracking, as every other exchange the app performs.
  *
  * The store is assembled as the context first renders and kept for as long as it lives, so that pending operations
  * are not disturbed by the interface around them: a factory handed over later never replaces the store in use.

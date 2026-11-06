@@ -117,7 +117,7 @@ export type TallyCases = {
 		 * offered:
 		 *
 		 * ```tsx
-		 * {tally({ ready: ({ load }) => load && <More onLoad={load}/> })}
+		 * {tally({ ready: ({ load }) => load && <button onClick={() => load()}>More</button> })}
 		 * ```
 		 */
 		load?(): void
@@ -177,8 +177,8 @@ export type TallyBucket = {
 	readonly value: Option
 
 	/**
-	 * The name the value is shown by: the literal as text or the label of the resource; absent only for `null`, which
-	 * the presenting widget names itself, as no value stands behind it to supply a name of its own.
+	 * The name the value is shown by: the literal as text or the label of the resource. Absent only for `null`, which
+	 * has no value behind it to supply a name, so the view showing the tally has to name it itself.
 	 */
 	readonly label?: string
 

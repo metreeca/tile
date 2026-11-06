@@ -4,8 +4,10 @@
 
 Shape-driven value text for [@metreeca/tile](https://github.com/metreeca/tile) interfaces.
 
-The text an interface shows for a linked data value, chosen by the shape describing it and localised for the reader,
-along with the conversions that let native inputs edit the values whose stored form they can't take directly.
+The text an interface shows for a linked data value, chosen by the shape that describes it and localised for the reader.
+
+Conversions to and from the forms native inputs accept let those inputs edit values whose stored form they can't take
+directly. The package takes no rendering layer, so every Tile binding formats and parses values alike.
 
 # Installation
 

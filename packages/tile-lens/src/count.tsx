@@ -64,8 +64,9 @@ export function Count<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 }: {
 
 	/**
-	 * The collection counted, as handed by {@link @metreeca/tile!collection.useCollection useCollection},
-	 * telling whether the reader narrows it and so whether the counter speaks of items or of matches.
+	 * The collection counted, as handed by {@link @metreeca/tile!collection.useCollection useCollection}.
+	 *
+	 * Whether the reader narrows the collection decides if the counter speaks of items or of matches.
 	 */
 	collection: Collection<S, P>
 

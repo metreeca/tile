@@ -26,6 +26,10 @@ import type { Optional } from "@metreeca/core";
 /**
  * Runs a computation that may fail.
  *
+ * @typeParam T The outcome of the computation
+ *
+ * @param computation The computation to run
+ *
  * @returns The outcome of `computation`, or `undefined` if it throws
  */
 export function attempt<T>(computation: () => T): Optional<T> {

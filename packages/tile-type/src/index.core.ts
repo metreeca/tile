@@ -28,6 +28,9 @@ import { error } from "@metreeca/core";
 /**
  * Rejects a value that doesn't fit a type.
  *
+ * @param label The label of the type rejecting `value`
+ * @param value The value that doesn't fit the type
+ *
  * @throws {@link !TypeError TypeError} Always
  */
 export function mismatched(label: string, value: unknown): never {
@@ -37,6 +40,9 @@ export function mismatched(label: string, value: unknown): never {
 /**
  * Rejects text that is not well-formed for a type.
  *
+ * @param label The label of the type rejecting `text`
+ * @param text The text that is not well-formed for the type
+ *
  * @throws {@link !SyntaxError SyntaxError} Always
  */
 export function malformed(label: string, text: string): never {
@@ -45,6 +51,9 @@ export function malformed(label: string, text: string): never {
 
 /**
  * Rejects showing the values of a type as another type.
+ *
+ * @param label The label of the type whose values can't be shown as `type`
+ * @param type The type requested for the values
  *
  * @throws {@link !TypeError TypeError} Always
  */

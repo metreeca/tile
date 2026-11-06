@@ -30,7 +30,7 @@ import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
-import { TileLens, TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
+import { TileWidgets, TileWidgetsPath } from "@metreeca/specimen/tile-widgets/index.js";
 import { render } from "preact";
 import "./index.css";
 
@@ -48,9 +48,9 @@ function Specimen() {
 
 			<Routes>{{
 
-				[Root]: TileLensPath,
+				[Root]: TileWidgetsPath,
 
-				[TileLensPath]: <TileLens/>
+				[TileWidgetsPath]: <TileWidgets/>
 
 			}}</Routes>
 

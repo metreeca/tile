@@ -34,7 +34,7 @@ import { decodeTemplate } from "@metreeca/qest/model";
 import { Store } from "@metreeca/tile";
 import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useMembers } from "@metreeca/tile/members";
-import { Table } from "@metreeca/tile-lens/table";
+import { Table } from "@metreeca/tile-widgets/table";
 import { TableIcon } from "lucide-preact";
 
 

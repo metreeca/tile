@@ -1,7 +1,7 @@
 {
-  "name": "@metreeca/tile-lens",
+  "name": "@metreeca/tile-widgets",
   "version": "0.7.0",
-  "description": "Preact linked data views for @metreeca/tile.",
+  "description": "Preact linked data widgets for @metreeca/tile.",
   "keywords": [
     "typescript",
     "preact",
@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metreeca/tile.git",
-    "directory": "packages/tile-lens"
+    "directory": "packages/tile-widgets"
   },
   "type": "module",
   "sideEffects": [

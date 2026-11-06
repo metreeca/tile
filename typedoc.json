@@ -62,7 +62,7 @@
     ],
     "exclude": [
       "**/packages/tile/src/index.core.ts",
-      "**/packages/tile-lens/src/index.tsx",
+      "**/packages/tile-widgets/src/index.tsx",
       "**/*.test.ts",
       "**/*.test.tsx",
       "**/*.test-d.ts"

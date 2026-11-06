@@ -20,7 +20,7 @@ follow the platform colour scheme once it is loaded, or whatever theme the app s
 npm install @metreeca/skin            # design system stylesheet, optional
 npm install @metreeca/clay            # contexts and hooks the store runs within
 npm install @metreeca/tile            # linked data store and value types
-npm install @metreeca/tile-<package>  # one per package the app takes up
+npm install @metreeca/tile-widgets    # linked data views and facets
 ```
 
 > [!WARNING]
@@ -28,23 +28,20 @@ npm install @metreeca/tile-<package>  # one per package the app takes up
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-Add the views and forms the app's screens need, each from its own package, with the peer dependencies its README
-lists. An app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as its
+Add the widgets package where the app's screens show linked data, with the peer dependencies its README lists. An
+app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as its
 [theming guide](https://github.com/metreeca/skin#theming) explains for each family of tokens it defines.
 
-| Package               | Description                                    |
-|-----------------------|------------------------------------------------|
-| [@metreeca/tile]      | Linked data store and shape-driven value types |
-| [@metreeca/tile-lens] | Linked data views                              |
-| [@metreeca/tile-form] | Linked data forms                              |
+| Package                  | Description                                    |
+|--------------------------|------------------------------------------------|
+| [@metreeca/tile]         | Linked data store and shape-driven value types |
+| [@metreeca/tile-widgets] | Linked data widgets                            |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 
-[@metreeca/tile-lens]: https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html
-
-[@metreeca/tile-form]: https://metreeca.github.io/tile/modules/_metreeca_tile-form.html
+[@metreeca/tile-widgets]: https://metreeca.github.io/tile/modules/_metreeca_tile-widgets.html
 
 # Usage
 

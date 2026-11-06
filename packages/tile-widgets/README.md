@@ -1,19 +1,20 @@
-# @metreeca/tile-lens
+# @metreeca/tile-widgets
 
-[![npm](https://img.shields.io/npm/v/@metreeca/tile-lens)](https://www.npmjs.com/package/@metreeca/tile-lens)
+[![npm](https://img.shields.io/npm/v/@metreeca/tile-widgets)](https://www.npmjs.com/package/@metreeca/tile-widgets)
 
-Preact linked data views for [@metreeca/tile](https://github.com/metreeca/tile).
+Preact linked data widgets for [@metreeca/tile](https://github.com/metreeca/tile).
 
-Views of resources and collections driven by shapes: the model decides which properties are shown, how each value
-reads and how a collection is narrowed, so a model change reaches the interface with no view code to update.
+Views of resources and collections, and the facets narrowing them, driven by shapes: the model decides which
+properties are shown, how each value reads and how a collection is narrowed, so a model change reaches the interface
+with no widget code to update by hand, on whichever screens the app shows the affected resources.
 
-Views read their data through the [@metreeca/tile](https://github.com/metreeca/tile) store the app provides, and take
-their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an app restates for its brand.
+Widgets read their data through the [@metreeca/tile](https://github.com/metreeca/tile) store the app provides, and
+take their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an app restates for its brand.
 
 # Installation
 
 ```shell
-npm install @metreeca/tile-lens  # this package
+npm install @metreeca/tile-widgets  # this package
 npm install preact               # peer dependency
 npm install lucide-preact        # peer dependency
 ```
@@ -28,7 +29,7 @@ npm install lucide-preact        # peer dependency
 > [!NOTE]
 >
 > This section introduces essential concepts; for complete coverage, see the
-> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-lens.html).
+> [API reference](https://metreeca.github.io/tile/modules/_metreeca_tile-widgets.html).
 
 {TBD: usage overview and examples}
 

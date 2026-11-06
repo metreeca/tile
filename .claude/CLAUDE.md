@@ -14,7 +14,7 @@
 Metreeca Tile is the user interface layer of the Metreeca model-driven stack: it turns the shapes and queries the rest
 of the stack already speaks into what an interface shows, narrows and writes back. The monorepo collects the headless
 state packages and the rendering-layer bindings, each sitting directly under `packages/` (for example
-`packages/tile-lens/`).
+`packages/tile-widgets/`).
 
 Resource shapes come from `@metreeca/blue` and queries from `@metreeca/qest`: this repository **NEVER** defines a
 parallel model of its own, and a control offered for a property is decided by the shape describing it rather than by a
@@ -61,7 +61,7 @@ restates them.
 # Package Layout
 
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
-immediately under `packages/` (for example `packages/tile-lens`).
+immediately under `packages/` (for example `packages/tile-widgets`).
 
 A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
 those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
@@ -72,16 +72,32 @@ alongside `dist`: deleting `dist` by hand leaves that cache claiming the outputs
 emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
-appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to, `tile-lens` and
-`tile-form` for the views and forms built over them). A binding package adds observation and rendering over state it
-never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding reaches the
-same behaviour without restating it.
+appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to, `tile-widgets`
+for the views, facets and editing widgets built over them). A binding package adds observation and rendering over
+state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding
+reaches the same behaviour without restating it.
 
 A binding package styles what it draws through the `@metreeca/skin` tokens: its stylesheets read the skin tokens, and
 the interface follows whatever theme an app sets there. A general-purpose context or hook a binding package needs
 belongs to `@metreeca/clay`, **NEVER** to a Tile package.
 
-Packages are named after what they contribute, not after the library they contribute it with.
+## Package Distribution
+
+A package boundary is drawn only where it spares a consumer something: an install, a peer dependency, or a release to
+track. Bundle weight never justifies a split, since every module keeps its own subpath export and an app bundles only
+what it imports.
+
+- **Store apart**: `tile` holds the store, the resource and collection bindings, the value types and the headless
+  state they adopt, and is the only package taking the `@metreeca/keep` stack; every other package builds on it
+- **One widget package**: resource and collection views, facets and editing widgets share `tile-widgets` whatever
+  their role. They share one stack, and forms reuse what views draw, so a split by role spares nobody an install and
+  forces a placement call on every new widget
+- **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
+  install a third-party stack, as charts drawn over a plotting or mapping engine would
+
+A package holding a collection takes a plural name (`tile-widgets`), and one holding a single capability takes the
+name of that capability. Packages are named after what they contribute, never after the library they contribute it
+with.
 
 # Package Summaries
 
@@ -163,7 +179,7 @@ drops a symbol whose module is excluded, re-exported or not, so excluding these 
 A binding package whose widgets draw the same parts alike keeps them in an `index.tsx` module: it holds rendering,
 never behaviour, offers consumers nothing, and so is left out of the reference by `typedoc.json` and blocked by a
 `"./index": null` entry, the package declaring no root entry point. Its rules sit in the package `index.css`
-stylesheet, which the module imports. `tile-lens` keeps there the parts its views draw alike, and the fold state they
+stylesheet, which the module imports. `tile-widgets` keeps there the parts its widgets draw alike, and the fold state they
 adopt in `index.core.ts`.
 
 A widget renders a `<tile-*>` custom element through `createElement`, with its rules in a sibling stylesheet the module

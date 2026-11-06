@@ -21,7 +21,7 @@ import { Logo } from "@metreeca/clay-widgets/logo";
 import { useFetch } from "@metreeca/clay/fetch";
 import { Shell } from "@metreeca/clay-widgets/shell";
 import { Style } from "@metreeca/clay-widgets/style";
-import { TileLensPath } from "@metreeca/specimen/tile-lens/index.js";
+import { TileWidgetsPath } from "@metreeca/specimen/tile-widgets/index.js";
 import {
 	ChevronsLeftRightIcon,
 	ChevronsRightLeftIcon,
@@ -113,7 +113,7 @@ export function Page({
 				onClick={() => setWide(!wide)}
 			/>
 
-			<Link active look="strong" href={`${TileLensPath}*`}>Linked Data Views</Link>
+			<Link active look="strong" href={`${TileWidgetsPath}*`}>Linked Data Widgets</Link>
 
 		</>}
 

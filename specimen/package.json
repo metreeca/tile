@@ -19,7 +19,7 @@
     "@metreeca/qest": "^0.13.0",
     "@metreeca/skin": "^0.1.0",
     "@metreeca/tile": "^0.7.0",
-    "@metreeca/tile-lens": "^0.7.0",
+    "@metreeca/tile-widgets": "^0.7.0",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8"
   },

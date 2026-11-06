@@ -17,18 +17,18 @@
 import { Link } from "@metreeca/clay-widgets/link";
 import { Routes } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
-import { Frames } from "@metreeca/specimen/tile-lens/frames.js";
-import { Sheets } from "@metreeca/specimen/tile-lens/sheets.js";
-import { Tables } from "@metreeca/specimen/tile-lens/tables.js";
-import "@metreeca/specimen/tile-lens/index.css";
+import { Frames } from "@metreeca/specimen/tile-widgets/frames.js";
+import { Sheets } from "@metreeca/specimen/tile-widgets/sheets.js";
+import { Tables } from "@metreeca/specimen/tile-widgets/tables.js";
+import "@metreeca/specimen/tile-widgets/index.css";
 
 
-export const TileLensPath = "/tile-lens/";
+export const TileWidgetsPath = "/tile-widgets/";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function TileLens() {
+export function TileWidgets() {
 
 	const sections = {
 
@@ -45,7 +45,7 @@ export function TileLens() {
 		tray={<>
 
 			{Object.keys(sections).map(label =>
-				<Link key={label} active look="subtle" href={`${TileLensPath}${path(label)}`}>{label}</Link>
+				<Link key={label} active look="subtle" href={`${TileWidgetsPath}${path(label)}`}>{label}</Link>
 			)}
 
 		</>}

@@ -25,6 +25,8 @@ repository **NEVER** reimplements them behind the interface.
 
 # References
 
+- [Preact](https://preactjs.com/guide/v10/getting-started) - Fast 3kB alternative to React with the same API, the
+  rendering layer every binding package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,
@@ -113,6 +115,21 @@ the move:
 | `preact-developer` | Writing or reviewing a widget, a hook or a custom element                   |
 | `css-developer`    | Writing or reviewing a stylesheet, or introducing a token, colour or measure |
 | `a11y-developer`   | Creating or revising a widget, or adding a role, `aria-*`, tabindex or keys  |
+
+# Design Precedent
+
+[Atlassian](https://atlassian.design/) is the design system Tile is closest to. Check it before settling a component
+contract or a theming question:
+
+- A **component question** goes to the [Forge UI Kit](https://developer.atlassian.com/platform/forge/ui-kit/components/)
+  for how a component surface is cut, and to the design system for the behaviour a component owes
+- A **theming question** goes to the [token layer](https://atlassian.design/foundations/tokens): where upstream solves a
+  variant through tokens, a Tile component solving it through props is a tell worth questioning
+
+Upstream precedent is an argument, never a mandate. Tile is shape-driven: where a control is decided by the shape
+describing a property, an Atlassian page describing a hand-wired mapping does not transfer. Ideas travel freely, while
+prose, tables and figures stay upstream: link them, never reproduce them, and write whatever is borrowed in the
+Metreeca register.
 
 # Component State
 

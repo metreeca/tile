@@ -17,7 +17,7 @@
 import { number } from "@metreeca/blue/number";
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, resource } from "@metreeca/blue/resource";
-import { AutoDelay } from "@metreeca/clay-widgets";
+import { AutoDelay } from "../index.js";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import type { Criteria } from "@metreeca/qest/model";
@@ -531,7 +531,7 @@ describe("Range", () => {
 
 			mount(vi.fn(async () => { throw new Error("failed"); }));
 
-			await vi.waitFor(() => expect(facet()?.querySelector("clay-note")?.textContent).toContain("Not Available"));
+			await vi.waitFor(() => expect(facet()?.querySelector("tile-note")?.textContent).toContain("Not Available"));
 
 		});
 

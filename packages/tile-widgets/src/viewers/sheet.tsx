@@ -25,13 +25,12 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Frame } from "@metreeca/blue/value";
-import { Hint } from "@metreeca/clay-widgets/hint";
-import { Note } from "@metreeca/clay-widgets/note";
 import { isObject, isString, type Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import type { Collections } from "@metreeca/tile/collection";
 import type { MembersCases } from "@metreeca/tile/members";
 import { type ComponentChildren, createElement, Fragment } from "preact";
+import { Failure, Hint } from "../index.js";
 import "./sheet.css";
 
 
@@ -90,17 +89,17 @@ export function Sheet<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 	return members({
 
-		blank: () => placeholder && <Hint>{placeholder}<span>Loading…</span></Hint>,
+		blank: () => placeholder && <Hint placeholder={placeholder} text={"Loading…"}/>,
 
 		ready: ({ state }) => state.length === 0
 
-			? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
+			? placeholder && <Hint placeholder={placeholder} text={"No Matches"}/>
 
 			: createElement("tile-sheet", {}, state.map(item =>
 				<Fragment key={key(item)}>{children(item)}</Fragment>
 			)),
 
-		error: () => <Note level="critical"><div>Not Available</div></Note>
+		error: () => <Failure/>
 
 	});
 

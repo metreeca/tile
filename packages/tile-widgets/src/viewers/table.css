@@ -53,12 +53,12 @@ tile-table {
     }
 
     /*
-     * A striped table tints alternate rows, which native tables leave to their rules alone. The stripe is painted rather
-     * than assigned to the background token, which derives from it and would cycle.
+     * The trailing column holds its controls alone and takes no share of the room the values spread over, which the
+     * design system hands an empty last header as a spacer, so the values stay on one line wherever the page allows.
      */
 
-    &[striped] tbody > tr:nth-child(odd) > td {
-        background-color: var(--skin--background-color-stripe);
+    & th:last-child {
+        width: 0;
     }
 
 }

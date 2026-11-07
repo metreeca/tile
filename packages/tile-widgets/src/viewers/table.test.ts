@@ -331,7 +331,7 @@ describe("Table", () => {
 	describe("striping", () => {
 
 		function striped(): boolean {
-			return document.querySelector("tile-table")?.hasAttribute("striped") ?? false;
+			return document.querySelector("tile-table > table")?.hasAttribute("data-striped") ?? false;
 		}
 
 		it("should mark the table as striped if asked to", async () => {
@@ -362,7 +362,7 @@ describe("Table", () => {
 
 			mount(vi.fn(() => new Promise(() => {})), { placeholder: "Items" });
 
-			expect(document.querySelector("clay-hint")?.textContent).toContain("Loading");
+			expect(document.querySelector("tile-hint")?.textContent).toContain("Loading");
 
 		});
 
@@ -370,7 +370,7 @@ describe("Table", () => {
 
 			mount(catalogue([]), { placeholder: "Items" });
 
-			await vi.waitFor(() => expect(document.querySelector("clay-hint")?.textContent).toContain("No Matches"));
+			await vi.waitFor(() => expect(document.querySelector("tile-hint")?.textContent).toContain("No Matches"));
 
 		});
 
@@ -394,7 +394,7 @@ describe("Table", () => {
 
 			mount(vi.fn(async () => Promise.reject({ status: 503 })));
 
-			await vi.waitFor(() => expect(document.querySelector("clay-note[level=critical]")).not.toBeNull());
+			await vi.waitFor(() => expect(document.querySelector("tile-note[role=alert]")).not.toBeNull());
 
 			expect(document.querySelector("tile-table")).toBeNull();
 

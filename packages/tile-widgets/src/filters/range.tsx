@@ -23,9 +23,6 @@
  * @module
  */
 
-import { AutoDelay, keys } from "@metreeca/clay-widgets";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Note } from "@metreeca/clay-widgets/note";
 import { useModel } from "@metreeca/clay/model";
 import { opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
@@ -37,7 +34,7 @@ import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { createFold } from "../index.core.js";
-import { cancel, Disclosure, leave } from "../index.js";
+import { AutoDelay, cancel, Disclosure, Failure, keys, leave } from "../index.js";
 import "./range.css";
 
 
@@ -185,11 +182,8 @@ export function Range({
 
 			<span>
 
-				{bounded && <Button
+				{bounded && <button type="button"
 
-					look={"subtle"}
-
-					icon={<XCircleIcon/>}
 					title={"Reset"}
 
 					onClick={() => {
@@ -197,7 +191,7 @@ export function Range({
 						range({ ready: ({ clear }) => clear() });
 					}}
 
-				/>}
+				><XCircleIcon/></button>}
 
 				{collapsible && <Disclosure open={open} controls={`${id}-fields`} onToggle={toggle}/>}
 
@@ -226,7 +220,7 @@ export function Range({
 
 			</>,
 
-			error: () => <Note level="critical" text={"Not Available"}/>
+			error: () => <Failure/>
 
 		})}</section>
 

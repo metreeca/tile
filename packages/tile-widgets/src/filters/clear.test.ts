@@ -64,11 +64,11 @@ describe("Clear", () => {
 
 	});
 
-	it("should take the subtle look", async () => {
+	it("should render a plain button inside its own element", async () => {
 
 		mount({});
 
-		expect(document.querySelector("clay-button")?.getAttribute("look")).toBe("subtle");
+		expect(document.querySelector("tile-clear > button")?.getAttribute("type")).toBe("button");
 
 	});
 

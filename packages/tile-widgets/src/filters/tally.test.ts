@@ -17,7 +17,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, optional, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { AutoDelay } from "@metreeca/clay-widgets";
+import { AutoDelay } from "../index.js";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import type { Criteria, Option } from "@metreeca/qest/model";
@@ -286,7 +286,7 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
 
-			expect(facet()?.querySelector("clay-more")).toBeNull();
+			expect(facet()?.querySelector("tile-more")).toBeNull();
 
 		});
 
@@ -569,7 +569,7 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
 
-			expect(facet()?.querySelector("clay-more")).not.toBeNull();
+			expect(facet()?.querySelector("tile-more")).not.toBeNull();
 
 		});
 
@@ -579,7 +579,7 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
 
-			expect(facet()?.querySelector("clay-more")).toBeNull();
+			expect(facet()?.querySelector("tile-more")).toBeNull();
 
 		});
 
@@ -587,7 +587,7 @@ describe("Tally", () => {
 
 			mount(vi.fn(async () => { throw new Error("failed"); }));
 
-			await vi.waitFor(() => expect(facet()?.querySelector("clay-note")?.textContent).toContain("Not Available"));
+			await vi.waitFor(() => expect(facet()?.querySelector("tile-note")?.textContent).toContain("Not Available"));
 
 		});
 

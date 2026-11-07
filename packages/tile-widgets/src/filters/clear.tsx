@@ -24,11 +24,11 @@
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
-import { Button } from "@metreeca/clay-widgets/button";
-import "@metreeca/clay-widgets/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
 import type { Lazy } from "@metreeca/core";
 import type { Collection, Collections } from "@metreeca/tile/collection";
 import { XCircleIcon } from "lucide-preact";
+import { createElement } from "preact";
+import "../index.css";
 
 
 /**
@@ -64,17 +64,14 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
 }) {
 
-	return <Button
+	return createElement("tile-clear", {}, <button type="button"
 
 		disabled={Object.keys(collection.query).length === 0}
 
-		look={"subtle"}
-
-		icon={<XCircleIcon/>}
 		title={"Clear Filters"}
 
 		onClick={collection.clear}
 
-	/>;
+	><XCircleIcon/></button>);
 
 }

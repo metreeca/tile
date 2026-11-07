@@ -17,7 +17,7 @@
 import { reference } from "@metreeca/blue/reference";
 import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
-import { More } from "@metreeca/clay-widgets/more";
+import { More } from "../index.js";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import { Store } from "@metreeca/tile";
@@ -181,7 +181,7 @@ describe("Sheet", () => {
 
 			await vi.waitFor(() => expect(shown()).toHaveLength(batch/2));
 
-			expect(document.querySelector("clay-more")).toBeNull();
+			expect(document.querySelector("tile-more")).toBeNull();
 
 		});
 
@@ -193,7 +193,7 @@ describe("Sheet", () => {
 
 			mount(vi.fn(() => new Promise(() => {})), "Items");
 
-			expect(document.querySelector("clay-hint")?.textContent).toContain("Loading");
+			expect(document.querySelector("tile-hint")?.textContent).toContain("Loading");
 
 		});
 
@@ -201,7 +201,7 @@ describe("Sheet", () => {
 
 			mount(catalogue([]), "Items");
 
-			await vi.waitFor(() => expect(document.querySelector("clay-hint")?.textContent).toContain("No Matches"));
+			await vi.waitFor(() => expect(document.querySelector("tile-hint")?.textContent).toContain("No Matches"));
 
 		});
 
@@ -225,7 +225,7 @@ describe("Sheet", () => {
 
 			mount(vi.fn(async () => Promise.reject({ status: 503 })));
 
-			await vi.waitFor(() => expect(document.querySelector("clay-note[level=critical]")).not.toBeNull());
+			await vi.waitFor(() => expect(document.querySelector("tile-note[role=alert]")).not.toBeNull());
 
 			expect(document.querySelector("tile-sheet")).toBeNull();
 

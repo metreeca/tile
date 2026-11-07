@@ -25,12 +25,11 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Match, Model } from "@metreeca/blue/value";
-import { Hint } from "@metreeca/clay-widgets/hint";
-import { Note } from "@metreeca/clay-widgets/note";
 import type { Lazy } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import type { ResourceCases } from "@metreeca/tile/resource";
 import { type ComponentChildren, createElement } from "preact";
+import { Failure, Hint } from "../index.js";
 import "./frame.css";
 
 
@@ -85,11 +84,11 @@ export function Frame<S extends Lazy<ResourceShape>, T extends Model<S, T>>({
 
 	return resource({
 
-		blank: () => placeholder && <Hint>{placeholder}<span>Loading…</span></Hint>,
+		blank: () => placeholder && <Hint placeholder={placeholder} text={"Loading…"}/>,
 
 		ready: ({ state }) => createElement("tile-frame", {}, children(state)),
 
-		error: () => <Note level="critical"><div>Not Available</div></Note>
+		error: () => <Failure/>
 
 	});
 

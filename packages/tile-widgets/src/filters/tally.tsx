@@ -23,11 +23,6 @@
  * @module
  */
 
-import { AutoDelay, classes, keys } from "@metreeca/clay-widgets";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Link } from "@metreeca/clay-widgets/link";
-import { More } from "@metreeca/clay-widgets/more";
-import { Note } from "@metreeca/clay-widgets/note";
 import { useModel } from "@metreeca/clay/model";
 import type { Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
@@ -37,7 +32,7 @@ import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold } from "../index.core.js";
-import { cancel, Disclosure, leave } from "../index.js";
+import { AutoDelay, cancel, classes, Disclosure, Failure, keys, leave, More } from "../index.js";
 import "./tally.css";
 
 
@@ -186,20 +181,14 @@ export function Tally({
 
 			<span>
 
-				{text !== "" ? <Button
+				{text !== "" ? <button type="button"
 
-					look={"subtle"}
-
-					icon={<XIcon class={"clear"}/>}
 					title={"Clear"}
 
 					onClick={() => search("")}
 
-				/> : ticked && <Button
+				><XIcon class={"clear"}/></button> : ticked && <button type="button"
 
-					look={"subtle"}
-
-					icon={<XCircleIcon/>}
 					title={"Reset"}
 
 					onClick={() => {
@@ -207,7 +196,7 @@ export function Tally({
 						tally({ ready: ({ clear }) => clear() });
 					}}
 
-				/>}
+				><XCircleIcon/></button>}
 
 				{collapsible && <Disclosure open={open} controls={id} onToggle={toggle}/>}
 
@@ -236,7 +225,7 @@ export function Tally({
 							/>
 
 							<span>{isReference(bucket.value)
-								? <Link href={bucket.value}>{Name(bucket)}</Link>
+								? <a href={bucket.value}>{Name(bucket)}</a>
 								: Name(bucket)
 							}</span>
 							{" "}
@@ -250,7 +239,7 @@ export function Tally({
 
 			</>,
 
-			error: () => <Note level="critical" text={"Not Available"}/>
+			error: () => <Failure/>
 
 		})}</section>
 

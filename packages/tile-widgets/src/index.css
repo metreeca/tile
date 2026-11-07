@@ -1,0 +1,162 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+/**** Glyphs **********************************************************************************************************/
+
+/*
+ * A glyph rides with the text it sits in, so a control marked with one needs no measure of its own. The rule is keyed
+ * by the class lucide puts on every glyph, there being no element of ours to key it by.
+ */
+
+:is(tile-clear, tile-table, tile-tally, tile-range, tile-note, tile-more) .lucide {
+
+    display: inline-block;
+
+    width: var(--skin--scaling-100);
+    height: var(--skin--scaling-100);
+
+    stroke-width: var(--skin--stroke-width);
+
+}
+
+
+/**** Controls ********************************************************************************************************/
+
+/*
+ * The controls a widget carries stay on the page rather than boxed as the fields of a form are: a glyph or a label in
+ * the text colour, which Skin turns to the hover colour under the pointer, while a control marked by a glyph alone
+ * keeps a square target at least as tall as a line of text, so it is as easy to hit as a labelled one.
+ */
+
+:is(tile-clear, tile-table, tile-tally, tile-range) button {
+
+    display: inline-flex;
+    vertical-align: middle;
+    justify-content: center;
+    column-gap: var(--skin--spacing-025);
+
+    min-width: var(--skin--scaling-150);
+    min-height: var(--skin--scaling-150);
+
+    padding: var(--skin--spacing-025);
+
+    border-style: none;
+
+    & > * {
+        background-color: transparent;
+    }
+
+}
+
+
+/**** Hints ***********************************************************************************************************/
+
+/*
+ * A widget with nothing to show yet fills its area with the glyph of what it will show, faded and drawn thin, over the
+ * reason in the label colour, so the reader sees where the content goes before it arrives.
+ */
+
+tile-hint {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: var(--skin--spacing-100);
+
+    width: 100%;
+    height: 100%;
+
+    text-align: center;
+    color: var(--skin--color-label);
+
+    & > svg:first-child {
+
+        aspect-ratio: 1;
+
+        width: 100%;
+        height: 100%;
+
+        max-width: 20%; /* Optical measure, a fifth of the area the content will take. */
+        max-height: 20%;
+
+        color: var(--skin--color-disabled);
+        stroke-width: calc(0.3 * var(--skin--stroke-width));
+
+    }
+
+    & > span {
+        font-size: var(--skin--font-size-large);
+    }
+
+}
+
+
+/**** Notes ***********************************************************************************************************/
+
+/*
+ * A failure stands centred in place of the widget, its glyph in the failure colour beside the text in the strong
+ * weight, so it reads as a notice about the widget rather than as part of the content it failed to show.
+ */
+
+tile-note {
+
+    display: flex;
+    align-items: center;
+    column-gap: var(--skin--spacing-050);
+
+    width: fit-content;
+    margin: auto;
+
+    white-space: nowrap;
+    font-weight: var(--skin--font-weight-strong);
+
+    & > .lucide {
+        color: var(--skin--color-fail);
+    }
+
+}
+
+
+/**** Triggers ********************************************************************************************************/
+
+/*
+ * The trigger growing a list turns in the disabled colour while the next batch is fetched, centred below the list.
+ */
+
+tile-more {
+
+    display: grid;
+    place-items: center;
+
+    padding: var(--skin--spacing-050);
+
+    color: var(--skin--color-disabled);
+
+    & > svg {
+        animation: tile-more-turn calc(2 * var(--skin--duration-slow)) linear infinite;
+    }
+
+}
+
+@keyframes tile-more-turn {
+
+    to {
+        rotate: 1turn;
+    }
+
+}

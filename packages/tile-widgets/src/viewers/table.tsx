@@ -25,12 +25,6 @@
 
 import type { ResourceShape } from "@metreeca/blue/resource";
 import type { Frame } from "@metreeca/blue/value";
-import { classes } from "@metreeca/clay-widgets";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Hint } from "@metreeca/clay-widgets/hint";
-import "@metreeca/clay-widgets/icon.css"; // sizes the glyphs to the text, until @metreeca/skin carries the rule
-import { Link } from "@metreeca/clay-widgets/link";
-import { Note } from "@metreeca/clay-widgets/note";
 import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
 import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@metreeca/qest/model";
@@ -38,6 +32,7 @@ import type { Collections } from "@metreeca/tile/collection";
 import type { MembersCases, Ordering } from "@metreeca/tile/members";
 import { ChevronDownIcon, ChevronRightIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
+import { classes, Failure, Hint } from "../index.js";
 import "./table.css";
 
 
@@ -165,13 +160,13 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 	return members({
 
-		blank: () => placeholder && <Hint>{placeholder}<span>Loading…</span></Hint>,
+		blank: () => placeholder && <Hint placeholder={placeholder} text={"Loading…"}/>,
 
 		ready: ({ state, order, sort, reset }) => state.length === 0
 
-			? placeholder && <Hint>{placeholder}<span>No Matches</span></Hint>
+			? placeholder && <Hint placeholder={placeholder} text={"No Matches"}/>
 
-			: createElement("tile-table", { striped },<table aria-label={name}>
+			: createElement("tile-table", {}, <table aria-label={name} data-striped={striped || undefined}>
 
 				<thead>
 					<tr>
@@ -182,21 +177,16 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 								aria-sort={expression === undefined ? undefined : announced(order, expression)}
 							>
 
-								{expression === undefined ? header : <Button
-
-									look="subtle"
-
-									icon={mark(order[expression])}
-									label={header}
-
+								{expression === undefined ? header : <button type="button"
 									onClick={() => sort({ [expression]: direction(order[expression]) > 0 ? "desc" : "asc" })}
-
-								/>}
+								>{mark(order[expression])}{header}</button>}
 
 							</th>
 						)}
 
-						<th>{reset && <Button icon={<ChevronsUpDownIcon/>} title={"Reset Order"} onClick={reset}/>}</th>
+						<th>{reset && <button type="button" title={"Reset Order"} onClick={reset}>
+							<ChevronsUpDownIcon/>
+						</button>}</th>
 
 					</tr>
 				</thead>
@@ -211,16 +201,16 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 							</td>
 						)}
 
-						<td>{opt(identifier(item), id => <Link href={id}>
+						<td>{opt(identifier(item), id => <a href={id} title={"Open"}>
 							<ChevronRightIcon aria-label={"Open"}/>
-						</Link>)}</td>
+						</a>)}</td>
 
 					</tr>
 				)}</tbody>
 
 			</table>),
 
-		error: () => <Note level="critical"><div>Not Available</div></Note>
+		error: () => <Failure/>
 
 	});
 

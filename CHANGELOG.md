@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — collection lenses sharing one collection across a screen: `useMembers` growing the
   items a batch at a time, `useActions` adding and removing them, `useCount`, `useKeywords`, `useTally` and `useRange`
   narrowing them, and `useQuery` keeping the page criteria in the browser location
+- `@metreeca/tile` — `locale` on `Store`, retrieving localised content in the languages the reader prefers, so every
+  binding shows, searches and sorts text in one language; it defaults to the languages the browser reports
 - `@metreeca/tile` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
   reach of the reader: every lens retrieves under them, and clearing the collection keeps them in place
 - `@metreeca/tile-lens` — `Frame` resource frame, `Table` collection table, `Tally` and `Range` facets, `Clear`

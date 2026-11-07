@@ -94,7 +94,7 @@ describe("useCount()", () => {
 		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
 			entry,
 			model: { members: { "?university": ["u1"], "~label": "item", "count=count:": {} } }
-		})));
+		}), expect.anything()));
 
 	});
 
@@ -107,7 +107,7 @@ describe("useCount()", () => {
 		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
 			entry,
 			model: { members: { "~label": "item", "?university": ["u1"], "count=count:": {} } }
-		})));
+		}), expect.anything()));
 
 	});
 
@@ -120,7 +120,7 @@ describe("useCount()", () => {
 		await vi.waitFor(() => expect(lookup).toHaveBeenCalledWith(expect.objectContaining({
 			entry,
 			model: { members: { "?university": ["u1"], "count=count:": {} } }
-		})));
+		}), expect.anything()));
 
 	});
 

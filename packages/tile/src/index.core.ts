@@ -28,12 +28,13 @@ import type { ResourceShape } from "@metreeca/blue/resource";
 import { getShapeBranches } from "@metreeca/blue/union";
 import { effective, type Range } from "@metreeca/blue/value";
 import { isArray, isIdentifier, isObject, isString, type Lazy, type Optional } from "@metreeca/core";
+import type { Tag } from "@metreeca/core/language";
 import type { Option } from "@metreeca/core/relay";
 import { type IRI, isIRI, resolve } from "@metreeca/core/resource";
 import { equals, immutable } from "@metreeca/core/values";
 import { NotFound } from "@metreeca/http";
 import { type Problem, toProblem } from "@metreeca/http/success";
-import type { Store } from "@metreeca/keep";
+import type { Store, StoreClient } from "@metreeca/keep";
 import { decodeProbe, isBinding, isSelector, type Probe } from "@metreeca/qest/model";
 import type { Reference } from "@metreeca/qest/state";
 import { useEffect, useState } from "preact/hooks";
@@ -269,6 +270,61 @@ export function useEntry<V, W extends object>({
 				return Promise.reject(error);
 
 			});
+	}
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Lists the languages localised content is retrieved in for a reader.
+ *
+ * The store matches language tags exactly, so each tag the reader prefers is followed by its primary language, which
+ * lets a reader asking for `en-US` see content tagged `en`. The undetermined `und` tag closes the list, so that values
+ * stated in no particular language are shown to every reader once no preferred language is found.
+ *
+ * @param languages The language tags the reader prefers, most preferred first
+ *
+ * @returns The tags localised content is retrieved in, most preferred first and each listed once
+ */
+export function toLocale(languages: readonly Tag[]): readonly Tag[] {
+	return [...new Set([...languages.flatMap(tag => [tag, tag.replace(/-.*$/, "")]), "und"])];
+}
+
+/**
+ * Retrieves localised content from a store in a given language priority.
+ *
+ * @param store The store retrieved from
+ * @param locale The language priority applied to every retrieval stating none of its own
+ *
+ * @returns A store forwarding every operation to `store`, retrieving under `locale` unless a retrieval states its own
+ */
+export function localise(store: Store, locale: readonly Tag[]): Store {
+
+	return immutable({
+
+		...client(store),
+
+		observe: (observer, resources) => store.observe(observer, resources),
+		execute: task => store.execute(target => task(client(target))),
+		close: () => store.close()
+
+	} satisfies Store);
+
+
+	function client(target: StoreClient): StoreClient {
+		return immutable({
+
+			lookup: (request, scope) => target.lookup(request, { locale, ...scope }),
+
+			create: request => target.create(request),
+			update: request => target.update(request),
+			delete: request => target.delete(request),
+			insert: request => target.insert(request),
+			remove: request => target.remove(request)
+
+		} satisfies StoreClient);
 	}
 
 }

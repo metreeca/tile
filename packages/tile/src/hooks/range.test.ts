@@ -104,7 +104,7 @@ describe("useRange()", () => {
 					"min=min:year": {}, "max=max:year": {}
 				}
 			}
-		})));
+		}), expect.anything()));
 
 	});
 
@@ -122,7 +122,7 @@ describe("useRange()", () => {
 					"min=min:year": {}, "max=max:year": {}
 				}
 			}
-		})));
+		}), expect.anything()));
 
 	});
 

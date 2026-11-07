@@ -131,9 +131,8 @@ afterEach(async () => {
 
 describe("useStore()", () => {
 
-	it("should retrieve the store offered by the enclosing context", async () => {
+	function offered(store: Backend, locale?: readonly string[]): Backend {
 
-		const store = backend({});
 		const seen = vi.fn<(store: Backend) => void>();
 
 		function Probe() {
@@ -146,10 +145,57 @@ describe("useStore()", () => {
 
 		act(() => render(createElement(Store, {
 			factory: () => store,
+			locale,
 			children: createElement(Probe, {})
 		}), document.body));
 
-		expect(seen).toHaveBeenCalledWith(store);
+		return seen.mock.lastCall![0]; // test harness: Probe has rendered at least once
+	}
+
+
+	it("should retrieve a store forwarding to the one offered by the enclosing context", async () => {
+
+		const create = vi.fn(async () => entry);
+		const request = { entry, shape, model, state: {} };
+
+		await offered(backend({ create })).create(request as never); // ;(cast) test mock: the fake store reads nothing
+
+		expect(create).toHaveBeenCalledWith(request);
+
+	});
+
+	it("should retrieve under the reader's languages, their primary tags and the undetermined tag", async () => {
+
+		vi.stubGlobal("navigator", { languages: ["it-IT", "en"] });
+
+		const lookup = vi.fn(async () => resource);
+
+		await offered(backend({ lookup })).lookup({ entry, shape, model });
+
+		expect(lookup).toHaveBeenCalledWith({ entry, shape, model }, { locale: ["it-IT", "it", "en", "und"] });
+
+	});
+
+	it("should retrieve under the locale given to the context", async () => {
+
+		const lookup = vi.fn(async () => resource);
+
+		await offered(backend({ lookup }), ["fr"]).lookup({ entry, shape, model });
+
+		expect(lookup).toHaveBeenCalledWith({ entry, shape, model }, { locale: ["fr"] });
+
+	});
+
+	it("should retrieve under the scope given by the caller, filling in the locale alone", async () => {
+
+		const lookup = vi.fn(async () => resource);
+		const store = offered(backend({ lookup }), ["fr"]);
+
+		await store.lookup({ entry, shape, model }, { locale: ["de"] });
+		await store.lookup({ entry, shape, model }, { limit: 5 });
+
+		expect(lookup).toHaveBeenNthCalledWith(1, { entry, shape, model }, { locale: ["de"] });
+		expect(lookup).toHaveBeenNthCalledWith(2, { entry, shape, model }, { locale: ["fr"], limit: 5 });
 
 	});
 
@@ -183,7 +229,7 @@ describe("useResource()", () => {
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
-			expect(lookup).toHaveBeenCalledWith({ entry, shape, model });
+			expect(lookup).toHaveBeenCalledWith({ entry, shape, model }, expect.anything());
 
 		});
 
@@ -197,7 +243,7 @@ describe("useResource()", () => {
 
 			await settled(`ready ${JSON.stringify(resource)}`);
 
-			expect(lookup).toHaveBeenCalledWith({ entry, shape, model });
+			expect(lookup).toHaveBeenCalledWith({ entry, shape, model }, expect.anything());
 
 		});
 
@@ -228,7 +274,7 @@ describe("useResource()", () => {
 				entry,
 				shape: Calendar,
 				model: { events: { label: {}, "?university": ["https://example.com/universities/coimbra"] } }
-			});
+			}, expect.anything());
 
 		});
 
@@ -286,7 +332,7 @@ describe("useResource()", () => {
 
 			bind("https://example.com/other");
 
-			expect(lookup).toHaveBeenLastCalledWith({ entry: "https://example.com/other", shape, model });
+			expect(lookup).toHaveBeenLastCalledWith({ entry: "https://example.com/other", shape, model }, expect.anything());
 			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
 
 		});
@@ -319,7 +365,7 @@ describe("useResource()", () => {
 
 			bind(wider);
 
-			expect(lookup).toHaveBeenLastCalledWith({ entry, shape, model: wider });
+			expect(lookup).toHaveBeenLastCalledWith({ entry, shape, model: wider }, expect.anything());
 			expect(text()).toBe(`ready ${JSON.stringify(resource)}`);
 
 		});

@@ -27,11 +27,13 @@
 
 import { useFetch } from "@metreeca/clay/fetch";
 import { error, type Optional } from "@metreeca/core";
+import type { Tag } from "@metreeca/core/language";
 import type { Fetch } from "@metreeca/http";
 import type { Store } from "@metreeca/keep";
 import { createRESTStore } from "@metreeca/keep-rest";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
+import { localise, toLocale } from "./index.core.js";
 
 
 const Context = createContext<Optional<Store>>(undefined);
@@ -46,16 +48,21 @@ const Context = createContext<Optional<Store>>(undefined);
  * {@link @metreeca/clay!fetch.Fetch Fetch} context, so they share the services configured there, such as
  * authentication and progress tracking, with every other exchange the app performs.
  *
- * The store is assembled as the context first renders and kept for as long as it lives, so that pending operations
- * are not disturbed by the interface around them: a factory handed over later never replaces the store in use.
+ * Localised content is retrieved in the languages the reader prefers, so every component shows, searches and sorts
+ * text in the same language without stating one: a retrieval stating its own language priority keeps it.
  *
- * @param options The factory the store is assembled by, and the components it is offered to
+ * The store is assembled as the context first renders and kept for as long as it lives, so that pending operations
+ * are not disturbed by the interface around them: a factory or a locale handed over later is ignored.
+ *
+ * @param options The factory the store is assembled by, the languages it retrieves localised content in, and the
+ *     components it is offered to, which reach the store at whatever depth they render below the context
  *
  * @returns The nested components, with the store offered to them
  */
 export function Store({
 
 	factory = fetch => createRESTStore({ fetch }),
+	locale,
 
 	children
 
@@ -67,6 +74,12 @@ export function Store({
 	factory?: (fetch: Fetch) => Store
 
 	/**
+	 * The language tags localised content is retrieved in, most preferred first; defaults to the languages the browser
+	 * reports for the reader, each followed by its primary language, and then to content tagged as undetermined.
+	 */
+	locale?: readonly Tag[]
+
+	/**
 	 * The components the store is offered to.
 	 */
 	children: ComponentChildren
@@ -75,7 +88,7 @@ export function Store({
 
 	const fetch = useFetch();
 
-	const [store] = useState(() => factory(fetch));
+	const [store] = useState(() => localise(factory(fetch), locale ?? toLocale(navigator.languages)));
 
 	return createElement(Context.Provider, { value: store, children });
 
@@ -92,5 +105,7 @@ export function Store({
  * @throws {@link !Error Error} If called outside any {@link Store} context
  */
 export function useStore(): Store {
+
 	return useContext(Context) ?? error(new Error("missing <Store> context"));
+
 }

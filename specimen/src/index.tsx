@@ -31,6 +31,8 @@ import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
 import { Root } from "@metreeca/specimen/index.core.js";
 import { TileWidgets, TileWidgetsPath } from "@metreeca/specimen/tile-widgets/index.js";
+import { toys } from "@metreeca/specimen/toys.js";
+import { Store } from "@metreeca/tile";
 import { render } from "preact";
 import "./index.css";
 
@@ -44,17 +46,21 @@ function Specimen() {
 
 	return <Fetch fetch={createFetch(mock({ delay: 1000 }))}>
 
-		<Router>
+		<Store factory={() => toys}>
 
-			<Routes>{{
+			<Router>
 
-				[Root]: TileWidgetsPath,
+				<Routes>{{
 
-				[TileWidgetsPath]: <TileWidgets/>
+					[Root]: TileWidgetsPath,
 
-			}}</Routes>
+					[TileWidgetsPath]: <TileWidgets/>
 
-		</Router>
+				}}</Routes>
+
+			</Router>
+
+		</Store>
 
 	</Fetch>;
 

@@ -20,7 +20,6 @@ import { Link } from "@metreeca/clay-widgets/link";
 import { Logo } from "@metreeca/clay-widgets/logo";
 import { useFetch } from "@metreeca/clay/fetch";
 import { Shell } from "@metreeca/clay-widgets/shell";
-import { Style } from "@metreeca/clay-widgets/style";
 import { TileWidgetsPath } from "@metreeca/specimen/tile-widgets/index.js";
 import {
 	ChevronsLeftRightIcon,
@@ -80,11 +79,11 @@ export function Page({
 		main={main}
 		wide={wide}
 
-		logo={<Style css={{ fontSize: "fontSizeLarge" }}>
+		logo={<span class="brand">
 
 			<Link look="strong" href={Root}><Logo/><span>{app.name}</span></Link>
 
-		</Style>}
+		</span>}
 
 		meta={<>
 

@@ -35,6 +35,10 @@ export default defineConfig(() => ({ // https://vite.dev/config/
         preact()
     ],
 
+    optimizeDeps: {
+        exclude: ["oxigraph"] // loads its WebAssembly module from beside its own script, which pre-bundling moves
+    },
+
     build: {
 
         outDir: resolve("dist"),

@@ -25,3 +25,13 @@ clay-shell {
     --clay-shell-tray-width: 15rem;
 
 }
+
+/*
+ * The app name stands out from the frame around it, set a step over the running text.
+ */
+
+.brand {
+
+    font-size: var(--skin--font-size-large);
+
+}

@@ -20,65 +20,27 @@
  * @module
  */
 
-import { reference } from "@metreeca/blue/reference";
-import { id, multiple, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
 import { Button } from "@metreeca/clay-widgets/button";
 import { More } from "@metreeca/clay-widgets/more";
-import { Fetch } from "@metreeca/clay/fetch";
-import { isNumber, isObject, isString } from "@metreeca/core";
-import { by, locale, reverse } from "@metreeca/core/order";
-import { getIRIBase } from "@metreeca/core/resource";
-import { createFetch } from "@metreeca/http";
-import { mock } from "@metreeca/http/mock";
-import { decodeTemplate } from "@metreeca/qest/model";
-import { Store } from "@metreeca/tile";
+import { base, Products } from "@metreeca/specimen/toys.js";
 import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useKeywords } from "@metreeca/tile/keywords";
 import { useMembers } from "@metreeca/tile/members";
 import { useQuery } from "@metreeca/tile/query";
+import { text } from "@metreeca/tile/types/text";
 import { Sheet } from "@metreeca/tile-widgets/viewers/sheet";
 import { ChevronDownIcon, ChevronUpIcon, ListIcon } from "lucide-preact";
 import { useEffect, useState } from "preact/hooks";
 
 
-const entry = "https://example.com/catalogue/";
-
-const Item = resource({ id: id(), label: required(string()) });
-const Catalogue = resource({ id: id(), members: multiple(reference(Item)) });
-
-const items = Array.from({ length: 1000 }, (_, index) => ({
-	id: `${entry}${index + 1}`,
-	label: `Item ${String(index + 1).padStart(4, "0")}`
-}));
-
-const byLabel = by((item: { readonly label: string }) => item.label, locale());
-
-
-/**
- * Answers a collection query over the sample items, narrowed by label keywords, sorted and limited as the query asks.
- */
-async function serve(request: Request): Promise<Response> {
-
-	const query = decodeTemplate(new URL(request.url).search.slice(1), { base: getIRIBase(entry) });
-	const members: { readonly [key: string]: unknown } = isObject(query.members) ? query.members : {};
-
-	const keywords = isString(members["~label"]) ? members["~label"].toLowerCase() : "";
-	const order = members["^label"] === "desc" ? reverse(byLabel) : byLabel;
-	const limit = isNumber(members["#"]) && members["#"] > 0 ? members["#"] : items.length;
-
-	return Response.json({
-		members: items.filter(({ label }) => label.toLowerCase().includes(keywords)).sort(order).slice(0, limit)
-	});
-
-}
+const entry = `${base}products/`;
 
 
 /**
  * Creates the sheets section.
  *
- * Shows a collection listed a batch at a time from a store answering after a delay, growing as the reader scrolls to
- * its end, narrowed by keywords kept in the location, and starting again from the first items when the order changes.
+ * Shows the toy products listed a batch at a time, growing as the reader scrolls to the end, narrowed by keywords kept
+ * in the location, and starting again from the first products when the order changes.
  *
  * @returns The sheets section
  */
@@ -86,27 +48,23 @@ export function Sheets() {
 
 	const [query, setQuery] = useQuery();
 
-	const collection = useCollection({ entry, shape: Catalogue, query, onChange: setQuery });
+	const collection = useCollection({ entry, shape: Products, query, onChange: setQuery });
 
-	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
+	return <>
 
-		<Store>
+		<p>A sheet lists the members of a collection held by the store, closed by a trigger fetching the next batch as
+			the reader scrolls to it, and starts again from the first items when the order changes. The keywords
+			narrowing it are kept in the location, so they survive a reload.</p>
 
-			<p>A sheet lists the members of a collection held by the store, closed by a trigger fetching the next
-				batch as the reader scrolls to it, and starts again from the first items when the order changes. The
-				keywords narrowing it are kept in the location, so they survive a reload.</p>
+		<Listing collection={collection}/>
 
-			<Listing collection={collection}/>
-
-		</Store>
-
-	</Fetch>;
+	</>;
 
 }
 
 
 /**
- * Lists the sample collection, narrowed and sorted as the reader picks.
+ * Lists the toy products by name, narrowed and sorted as the reader picks.
  */
 function Listing({
 
@@ -114,20 +72,25 @@ function Listing({
 
 }: {
 
-	collection: Collection<typeof Catalogue, "members">
+	collection: Collection<typeof Products, "members">
 
 }) {
 
 	const [order, setOrder] = useState<"asc" | "desc">("asc");
 
-	const members = useMembers(collection, { model: { id: {}, label: {} }, order: { label: order } });
-	const { text, search } = useKeywords(collection, "label");
+	const members = useMembers(collection, {
+		model: { id: {}, sku: {}, label: { "*": {} } },
+		order: { name: order },
+		batch: 20
+	});
+
+	const { text: keywords, search } = useKeywords(collection, "name");
 
 	// the box holds the text as typed and follows the keywords whenever they change elsewhere
 
-	const [draft, setDraft] = useState(text);
+	const [draft, setDraft] = useState(keywords);
 
-	useEffect(() => setDraft(text), [text]);
+	useEffect(() => setDraft(keywords), [keywords]);
 
 	return <>
 
@@ -144,7 +107,7 @@ function Listing({
 		</div>
 
 		<Sheet members={members} placeholder={<ListIcon/>}>{item =>
-			<div>{item.label}</div>
+			<div><code>{item.sku}</code> {text.write(item.label)}</div>
 		}</Sheet>
 
 		{members({ ready: ({ load }) => load && <More onLoad={load}/> })}

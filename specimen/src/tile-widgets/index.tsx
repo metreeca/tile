@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Link } from "@metreeca/clay-widgets/link";
-import { Routes } from "@metreeca/clay/router";
+import { Routes, useRoute } from "@metreeca/clay/router";
 import { Page } from "@metreeca/specimen/index.core.js";
 import { Frames } from "@metreeca/specimen/tile-widgets/frames.js";
 import { Sheets } from "@metreeca/specimen/tile-widgets/sheets.js";
@@ -38,17 +37,20 @@ export function TileWidgets() {
 
 	};
 
+	const route = useRoute();
+
 	const path = (label: string) => label.toLowerCase();
 
 	return <Page
 
-		tray={<>
+		tray={<nav aria-label="Sections"><ul>{Object.keys(sections).map(label => {
 
-			{Object.keys(sections).map(label =>
-				<Link key={label} active look="subtle" href={`${TileWidgetsPath}${path(label)}`}>{label}</Link>
-			)}
+			const href = `${TileWidgetsPath}${path(label)}`;
 
-		</>}
+			return <li key={label}><a href={href} aria-current={route === href ? "page" : undefined}>{label}</a></li>;
+
+		})}</ul></nav>}
+
 	>
 
 		<Routes>{{

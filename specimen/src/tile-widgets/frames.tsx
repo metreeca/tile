@@ -20,64 +20,44 @@
  * @module
  */
 
-import { id, required, resource } from "@metreeca/blue/resource";
-import { string } from "@metreeca/blue/string";
-import { Fetch } from "@metreeca/clay/fetch";
-import { createFetch } from "@metreeca/http";
-import { mock } from "@metreeca/http/mock";
-import { Store } from "@metreeca/tile";
+import { base, Product } from "@metreeca/specimen/toys.js";
 import { useResource } from "@metreeca/tile/resource";
+import { text } from "@metreeca/tile/types/text";
 import { Frame } from "@metreeca/tile-widgets/viewers/frame";
 import { FileIcon } from "lucide-preact";
 
 
-const entry = "https://example.com/catalogue/1";
-const missing = "https://example.com/catalogue/0";
-
-const Item = resource({ id: id(), label: required(string()), comment: required(string()) });
-
-
-/**
- * Answers a resource query for the sample item, and finds any other resource missing.
- */
-async function serve(request: Request): Promise<Response> {
-	return new URL(request.url).pathname === new URL(entry).pathname
-		? Response.json({ id: entry, label: "Item 0001", comment: "The first item of the catalogue." })
-		: new Response(null, { status: 404 });
-}
+const entry = `${base}products/AF-001`;
+const missing = `${base}products/XX-000`;
 
 
 /**
  * Creates the frames section.
  *
- * Shows a resource retrieved from a store answering after a delay, beside a resource the store finds missing.
+ * Shows a toy product retrieved from the store, beside a product the store finds missing.
  *
  * @returns The frames section
  */
 export function Frames() {
 
-	return <Fetch fetch={createFetch(mock({ serve, delay: 1000 }))}>
+	return <>
 
-		<Store>
+		<p>A frame shows a single resource held by the store, marking its area while the resource is retrieved and
+			keeping it on show while a change is retrieved again.</p>
 
-			<p>A frame shows a single resource held by the store, marking its area while the resource is retrieved and
-				keeping it on show while a change is retrieved again.</p>
+		<Sample entry={entry}/>
 
-			<Sample entry={entry}/>
+		<p>A resource the store finds missing is shown as a note in place of the frame.</p>
 
-			<p>A resource the store finds missing is shown as a note in place of the frame.</p>
+		<Sample entry={missing}/>
 
-			<Sample entry={missing}/>
-
-		</Store>
-
-	</Fetch>;
+	</>;
 
 }
 
 
 /**
- * Shows a sample resource.
+ * Shows a toy product.
  */
 function Sample({
 
@@ -89,11 +69,15 @@ function Sample({
 
 }) {
 
-	const item = useResource({ entry, shape: Item, model: { id: {}, label: {}, comment: {} } });
+	const product = useResource({
+		entry,
+		shape: Product,
+		model: { id: {}, label: { "*": {} }, comment: { "*": {} } }
+	});
 
-	return <Frame resource={item} placeholder={<FileIcon/>}>{item => <>
-		<h2>{item.label}</h2>
-		<p>{item.comment}</p>
+	return <Frame resource={product} placeholder={<FileIcon/>}>{product => <>
+		<h2>{text.write(product.label)}</h2>
+		<p>{product.comment && text.write(product.comment)}</p>
 	</>}</Frame>;
 
 }

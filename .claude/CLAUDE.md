@@ -33,8 +33,8 @@ restates them.
   rendering layer every binding package renders with and takes as a peer dependency
 - [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
   the headless components are built on
-- [@metreeca/clay](https://github.com/metreeca/clay) - Minimalist component toolkit for Preact interfaces, providing
-  the fetch, routing, board and model hooks the bindings are wired to
+- [@metreeca/clay](https://github.com/metreeca/clay) - Minimalist UI toolkit for Preact, providing the fetch,
+  routing, board and model hooks the bindings are wired to
 - [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
   client the store exchanges resources through
 - [@metreeca/qest](https://github.com/metreeca/qest) - Foundations for client-driven, queryable REST/JSON APIs,

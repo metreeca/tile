@@ -30,10 +30,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   and those hooks from `@metreeca/clay`, and replace `@metreeca/tile-data/store` with `@metreeca/tile` in imports)
 - `@metreeca/tile-cell`, `@metreeca/tile-hive` and `@metreeca/tile-move` — **breaking**: moved to
   [@metreeca/clay](https://github.com/metreeca/clay), the widgets and layouts as `@metreeca/clay-widgets`, the
-  Markdown document and its table of contents as `@metreeca/clay-markdown`, and the movable items as
-  `@metreeca/clay-dnd`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration: replace the package
-  names in dependencies and import paths, and `tile-` with `clay-` in the selectors and custom properties that
-  stylesheets and inline styles aim at the elements, wherever an app restyles or retunes them)
+  Markdown document with its table of contents as `@metreeca/clay-markdown`, and the movable items as the `transfer`
+  and `roving` modules of `@metreeca/clay`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration:
+  replace the package names in dependencies and import paths, and `tile-` with `clay-` in the selectors and custom
+  properties that stylesheets and inline styles aim at the elements, wherever an app restyles or retunes them)
 - `@metreeca/tile` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
   shared by every lens on it, rather than retrieving items (migration: retrieve items through `useMembers`)
 - `@metreeca/tile-lens/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by `useMembers`

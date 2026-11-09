@@ -20,44 +20,88 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { More } from "@metreeca/clay-widgets/more";
+import { Card } from "@metreeca/clay-widgets/card";
 import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { base, Products } from "@metreeca/specimen/toys.js";
-import { type Collection, useCollection } from "@metreeca/tile/collection";
-import { useKeywords } from "@metreeca/tile/keywords";
+import { useCollection } from "@metreeca/tile/collection";
 import { useMembers } from "@metreeca/tile/members";
-import { useQuery } from "@metreeca/tile/query";
 import { text } from "@metreeca/tile/types/text";
 import { Sheet } from "@metreeca/tile-widgets/viewers/sheet";
-import { ChevronDownIcon, ChevronUpIcon, ListIcon } from "lucide-preact";
-import { useEffect, useState } from "preact/hooks";
+import { BikeIcon, BlocksIcon, DicesIcon, ListIcon, ShieldIcon, SparklesIcon } from "lucide-preact";
 
 
 const entry = `${base}products/`;
+
+const price = new Intl.NumberFormat("en", { style: "currency", currency: "EUR" });
+
+const glyphs: Readonly<Record<string, typeof SparklesIcon>> = {
+	AF: ShieldIcon,
+	BG: DicesIcon,
+	BS: BlocksIcon,
+	OT: BikeIcon
+};
 
 
 /**
  * Creates the sheets section.
  *
- * Shows the toy products listed a batch at a time, growing as the reader scrolls to the end, narrowed by keywords kept
- * in the location, and starting again from the first products when the order changes.
+ * Shows the premium toy products as a gallery of cards.
  *
  * @returns The sheets section
  */
 export function Sheets() {
 
-	const [query, setQuery] = useQuery();
+	const collection = useCollection({ entry, shape: Products, scope: { ">=price": 80 } });
 
-	const collection = useCollection({ entry, shape: Products, query, onChange: setQuery });
+	const members = useMembers(collection, {
+		model: {
+			id: {},
+			sku: {},
+			label: { "*": {} },
+			comment: { "*": {} },
+			condition: {},
+			price: {},
+			change: {},
+			stock: {},
+			vendor: { id: {}, label: {} },
+			reviews: { rating: {} }
+		},
+		order: { name: "asc" }
+	});
 
 	return <>
 
-		<p>A sheet lists the members of a collection held by the store, closed by a trigger fetching the next batch as
-			the reader scrolls to it, and starts again from the first items when the order changes. The keywords
-			narrowing it are kept in the location, so they survive a reload.</p>
+		<p>A sheet lists the members of a collection held by the store, rendering each as the screen sees fit, here as
+			a gallery of cards for the products priced 80 or more.</p>
 
-		<Listing collection={collection}/>
+		<div class="samples">
+			<Sample>
+
+				<Sheet members={members} placeholder={<ListIcon/>}>{item => {
+
+					const Glyph = glyphs[item.sku.slice(0, 2)] ?? SparklesIcon;
+
+					return <Card look="strong"
+						title={text.write(item.label)}
+						badge={<Price value={item.price} change={item.change}/>}
+						image={<Glyph/>}
+					>
+
+						{item.comment && <p>{text.write(item.comment)}</p>}
+
+						<small>
+							<Rating values={(item.reviews ?? []).map(review => review.rating)}/>
+							<span>{item.vendor.label}</span>
+							{item.condition !== "new" && <span>{item.condition}</span>}
+							<Stock value={item.stock}/>
+						</small>
+
+					</Card>;
+
+				}}</Sheet>
+
+			</Sample>
+		</div>
 
 	</>;
 
@@ -65,60 +109,65 @@ export function Sheets() {
 
 
 /**
- * Lists the toy products by name, narrowed and sorted as the reader picks.
+ * Shows a price beside its latest change, marked as rising or falling.
  */
-function Listing({
+function Price({
 
-	collection
+	value,
+	change
 
 }: {
 
-	collection: Collection<typeof Products, "members">
+	value: number
+	change?: number
 
 }) {
 
-	const [order, setOrder] = useState<"asc" | "desc">("asc");
+	return <span class="price">
+		{price.format(value)}
+		{change !== undefined && change !== 0 && <em class={change > 0 ? "rising" : "falling"}>
+			{change > 0 ? "▲" : "▼"} {Math.abs(change).toFixed(1)}%
+		</em>}
+	</span>;
 
-	const members = useMembers(collection, {
-		model: { id: {}, sku: {}, label: { "*": {} } },
-		order: { name: order },
-		batch: 20
-	});
+}
 
-	const { text: keywords, search } = useKeywords(collection, "name");
+/**
+ * Shows the average of review ratings as a run of five stars, or nothing for an item no one reviewed.
+ */
+function Rating({
 
-	// the box holds the text as typed and follows the keywords whenever they change elsewhere
+	values
 
-	const [draft, setDraft] = useState(keywords);
+}: {
 
-	useEffect(() => setDraft(keywords), [keywords]);
+	values: readonly number[]
 
-	return <>
+}) {
 
-		<div class="controls">
-			<input type="search" placeholder="Keywords" value={draft}
-				onInput={event => setDraft(event.currentTarget.value)}
-				onKeyDown={event => event.key === "Enter" && search(draft)}
-			/>
-			<Button
-				icon={order === "asc" ? <ChevronDownIcon/> : <ChevronUpIcon/>}
-				label={order === "asc" ? "Increasing" : "Decreasing"}
-				onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
-			/>
-		</div>
+	const average = values.length === 0 ? 0 : Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
 
-		<div class="samples">
-			<Sample label="sorted by name">
+	return values.length > 0 && <span class="rating" title={`${values.length} reviews`}>
+		{"★".repeat(average)}{"☆".repeat(5 - average)}
+	</span>;
 
-				<Sheet members={members} placeholder={<ListIcon/>}>{item =>
-					<div><code>{item.sku}</code> {text.write(item.label)}</div>
-				}</Sheet>
+}
 
-				{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+/**
+ * Shows how many items are in stock, telling sold out and back-ordered items apart.
+ */
+function Stock({
 
-			</Sample>
-		</div>
+	value
 
-	</>;
+}: {
+
+	value: number
+
+}) {
+
+	return value > 0 ? <span class="stock">{value} in stock</span>
+		: value === 0 ? <span class="stock" data-out="">sold out</span>
+			: <span class="stock" data-out="">back soon</span>;
 
 }

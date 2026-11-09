@@ -86,6 +86,93 @@ clay-strip[look]:has(> tile-count) {
 }
 
 
+/**** Gallery *********************************************************************************************************/
+
+/*
+ * A sheet of cards lays them out as a gallery, as many to a row as the width holds, every row as tall as the tallest
+ * card. Descriptions are clipped to three lines, so a long one never stretches the gallery out of proportion.
+ */
+
+tile-sheet:has(> clay-card) {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    grid-auto-rows: 1fr;
+    gap: var(--skin--spacing-100);
+
+    & > clay-card {
+
+        margin: 0;
+        align-content: start;
+        transition: box-shadow var(--skin--duration-fast) var(--skin--easing-standard);
+
+        &:hover {
+            box-shadow: var(--skin--box-shadow-raised);
+        }
+
+        /* The glyph standing for the product rides with the text it sits in, so it is scaled through the font size. */
+
+        & > i {
+            font-size: var(--skin--scaling-200);
+            line-height: 1;
+            color: var(--skin--color-link);
+        }
+
+        /* The description may shrink below its unwrapped width, or it squeezes the price and the glyph out. */
+
+        & > div {
+            min-width: 0;
+        }
+
+        & p {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        & small {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: var(--skin--spacing-075);
+            margin-top: var(--skin--spacing-050);
+            color: var(--skin--color-label);
+        }
+
+    }
+
+    .price {
+        font-weight: var(--skin--font-weight-strong);
+
+        & > em {
+            margin-inline-start: var(--skin--spacing-050);
+            font-style: normal;
+            font-size: var(--skin--font-size-small);
+        }
+
+        & > .rising {
+            color: var(--skin--color-pass);
+        }
+
+        & > .falling {
+            color: var(--skin--color-fail);
+        }
+    }
+
+    .rating {
+        color: var(--skin--color-warn);
+        letter-spacing: var(--skin--letter-spacing-caps);
+    }
+
+    .stock[data-out] {
+        color: var(--skin--color-fail);
+    }
+
+}
+
+
 /**** Samples *********************************************************************************************************/
 
 /*

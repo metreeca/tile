@@ -31,7 +31,7 @@ import "./index.css";
  * Creates an outlined sample.
  *
  * Sets a widget in a dashed outline, as large as what it holds or as the set around it stretches it to, and names
- * what the sample shows beneath it.
+ * what the sample shows beneath it, where a label is given.
  *
  * @param options The widget configuration
  *
@@ -40,9 +40,9 @@ import "./index.css";
 export function Sample({ label, children }: {
 
 	/**
-	 * What the sample shows.
+	 * What the sample shows; no caption is set beneath the outline if omitted.
 	 */
-	label: ComponentChildren
+	label?: ComponentChildren
 
 	/**
 	 * The widget the outline holds.
@@ -52,6 +52,6 @@ export function Sample({ label, children }: {
 }) {
 	return <figure class="sample">
 		<div>{children}</div>
-		<figcaption>{label}</figcaption>
+		{label && <figcaption>{label}</figcaption>}
 	</figure>;
 }

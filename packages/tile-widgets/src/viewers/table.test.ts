@@ -192,16 +192,21 @@ describe("Table", () => {
 
 	describe("tooltips", () => {
 
-		it("should show each column label whole", async () => {
+		it("should hint the order each sortable column sorts the items in next", async () => {
 
-			mount(catalogue(rows));
+			mount(catalogue(rows), { order: { label: "asc" } });
 
 			await vi.waitFor(() => expect(cells()).toHaveLength(3));
 
-			const headers = document.querySelectorAll("tile-table thead th");
+			const titles = ["Year", "Label", "Code"].map(text =>
+				[header(text).getAttribute("title"), header(text).querySelector("button")?.getAttribute("title") ?? null]
+			);
 
-			expect(Array.from(headers, th => th.getAttribute("title")).slice(0, 3))
-				.toEqual(["Year", "Label", "Code"]);
+			expect(titles).toEqual([
+				[null, "Sort Ascending"],
+				[null, "Sort Descending"],
+				[null, null]
+			]);
 
 		});
 

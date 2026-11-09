@@ -85,15 +85,16 @@ export type Column<I> = {
  * ```
  *
  * The label heading a sortable column is a button sorting the items on it, increasing first and reversing the order on
- * each further activation. Every column the items are sorted on is marked by the direction they are sorted in, and the
- * one they are sorted on first is announced as sorted. A button marked by the sort glyph at the end of the header row
- * restores the order the items were first shown in, and is disabled while they are shown in that order.
+ * each further activation, its tooltip naming the order it applies next. Every column the items are sorted on is
+ * marked by the direction they are sorted in, and the one they are sorted on first is announced as sorted. A button
+ * marked by the sort glyph at the end of the header row, its tooltip naming it as resetting the sort order, restores
+ * the order the items were first shown in, and is disabled while they are shown in that order already.
  *
  * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details,
  * unless `link` is turned off for screens where the items have no details of their own to open.
  *
- * Values hold to one line, clipped with an ellipsis where they outgrow their cells, and column labels, texts and
- * numbers are shown whole in a tooltip, so a clipped one is never out of the reader's reach.
+ * Values hold to one line, clipped with an ellipsis where they outgrow their cells, and texts and numbers are shown
+ * whole in a tooltip, so a clipped one is never out of the reader's reach, however narrow its column gets.
  *
  * In a `hierarchy`, items sharing their first values read as a group: a leading value repeating the one above is shown
  * once, in a cell spanning the rows of its group, and stays in view under the headers while those rows scroll past.
@@ -195,14 +196,20 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 						{entries.map(([header, { sort: expression, align }]) =>
 
-							<th key={header} scope="col" title={header} class={classes({ end: align === "end" })}
+							<th key={header} scope="col" class={classes({ end: align === "end" })}
 								aria-sort={expression === undefined ? undefined : announced(order, expression)}
 							>
 
-								{expression === undefined ? header : <button type="button" onClick={event => {
-									freeze(measure(event));
-									sort({ [expression]: direction(order[expression]) > 0 ? "desc" : "asc" });
-								}}>{header}{mark(order[expression])}</button>}
+								{expression === undefined ? header : <button type="button"
+
+									title={direction(order[expression]) > 0 ? "Sort Descending" : "Sort Ascending"}
+
+									onClick={event => {
+										freeze(measure(event));
+										sort({ [expression]: direction(order[expression]) > 0 ? "desc" : "asc" });
+									}}
+
+								>{header}{mark(order[expression])}</button>}
 
 							</th>
 						)}

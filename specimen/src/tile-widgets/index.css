@@ -29,3 +29,58 @@
     row-gap: var(--skin--spacing-050);
     margin-bottom: var(--skin--spacing-100);
 }
+
+
+/**** Facets **********************************************************************************************************/
+
+/*
+ * Facets stand in a column beside the items they narrow, as a search page lays them out, and move above the items
+ * where the page is too narrow to hold both side by side.
+ */
+
+.facets {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) 3fr;
+    align-items: start;
+    gap: var(--skin--spacing-150);
+
+    margin-block-start: var(--skin--spacing-100);
+
+    @media (width < 48rem) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    & > aside {
+
+        display: grid;
+        gap: var(--skin--spacing-100);
+
+        /* The category facet shows five values in full, the rest scrolling within it. */
+
+        & > tile-tally[aria-label="Category"] {
+            --tile-tally-rows: 5;
+        }
+
+        /* The condition facet offers plain values, set in the label colour apart from the names of linked resources. */
+
+        & > tile-tally[aria-label="Condition"] li > label > span {
+            color: var(--skin--color-label);
+        }
+
+    }
+
+    & > section {
+        min-width: 0;
+    }
+}
+
+
+/**** Matches *********************************************************************************************************/
+
+/* The strip telling the matches is padded as a facet header is, so it lines up with the facets below it. */
+
+clay-strip[look]:has(> tile-count) {
+    min-block-size: var(--skin--scaling-150);
+    padding-block: var(--skin--spacing-025);
+    padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
+}

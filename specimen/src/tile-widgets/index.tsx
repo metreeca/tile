@@ -22,8 +22,10 @@
 
 import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Frames } from "@metreeca/specimen/tile-widgets/frames.js";
+import { Ranges } from "@metreeca/specimen/tile-widgets/ranges.js";
 import { Sheets } from "@metreeca/specimen/tile-widgets/sheets.js";
 import { Tables } from "@metreeca/specimen/tile-widgets/tables.js";
+import { Tallies } from "@metreeca/specimen/tile-widgets/tallies.js";
 import "@metreeca/specimen/tile-widgets/index.css";
 
 
@@ -31,7 +33,10 @@ const samples: readonly Sample[] = [
 
 	{ id: "sheet", group: "Viewers", title: "Sheet", view: <Sheets/> },
 	{ id: "frame", group: "Viewers", title: "Frame", view: <Frames/> },
-	{ id: "table", group: "Viewers", title: "Table", view: <Tables/> }
+	{ id: "table", group: "Viewers", title: "Table", view: <Tables/> },
+
+	{ id: "tally", group: "Filters", title: "Tally", view: <Tallies/> },
+	{ id: "range", group: "Filters", title: "Range", view: <Ranges/> }
 
 ];
 

@@ -16,8 +16,8 @@
 
 /*
  * A range is a bounded box stacking a header over the two fields, set apart by a rule. The header carries the glyph
- * marking the value type, the name and the controls; the fields sit side by side, split by a rule, save for temporal
- * fields carrying a time of day as well, which are too wide to share a line and are stacked instead.
+ * marking the value type, the name and the controls; the fields sit side by side, split by a rule, save for date fields
+ * with or without a time of day, whose entry mask and picker button are too wide to share a line and are stacked.
  */
 
 tile-range {

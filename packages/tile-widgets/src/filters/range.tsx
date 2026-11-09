@@ -164,7 +164,7 @@ export function Range({
 		"aria-labelledby": `${id}-name`,
 		"aria-busy": range({ blank: () => true }),
 
-		"wide": input === "datetime-local" || undefined,
+		"wide": input === "date" || input === "datetime-local" || undefined,
 
 		"onFocusOut": collapsible ? (event: FocusEvent) => leave(event, collapse) : undefined
 

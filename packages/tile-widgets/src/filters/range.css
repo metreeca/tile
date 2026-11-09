@@ -105,6 +105,10 @@ tile-range {
             border-style: none;
             border-radius: 0;
 
+            /* The rule splitting the fields matches the rules of the box, rather than the edge of a standalone field. */
+
+            border-color: var(--skin--border-color);
+
             &:first-child {
                 border-end-start-radius: var(--tile-range-corner);
             }

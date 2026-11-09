@@ -61,12 +61,6 @@
             --tile-tally-rows: 5;
         }
 
-        /* The condition facet offers plain values, set in the label colour apart from the names of linked resources. */
-
-        & > tile-tally[aria-label="Condition"] li > label > span {
-            color: var(--skin--color-label);
-        }
-
     }
 
     & > section {

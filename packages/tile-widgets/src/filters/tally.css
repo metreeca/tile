@@ -103,30 +103,13 @@ tile-tally {
         }
 
         /*
-         * The search clear acts on the field alone, so it reads a step quieter than the reset of the facet: a smaller
-         * glyph, and a round hover fill held to the box around it. The control keeps the full pointer target all the
-         * same, the fill being clipped rather than the button shrunk, so it is as easy to hit as the controls beside it.
+         * The search clear acts on the field alone, so it reads a step quieter than the reset of the facet through a
+         * smaller glyph, while keeping the full pointer target, as easy to hit as the controls beside it.
          */
 
-        & > span > button:has(> .clear) {
-
-            /* The button gives up part of its padding to the fill, which leaves the glyph more air within it. */
-
-            padding: calc(var(--skin--spacing-025) * 0.75);
-            align-items: center;
-
-            /* The fill is drawn in by its own padding, so the control reaches over it to sit by the edge of the facet. */
-
-            margin-right: calc(var(--skin--spacing-025) * -0.75);
-
-            background-clip: content-box;
-            border-radius: 50%;
-
-            & > .clear {
-                width: var(--skin--scaling-075);
-                height: var(--skin--scaling-075);
-            }
-
+        & > span > button > .clear {
+            width: var(--skin--scaling-075);
+            height: var(--skin--scaling-075);
         }
 
         /* The field leaves its focus mark to the header, which draws it around the glyph and controls as well. */
@@ -209,9 +192,8 @@ tile-tally {
             list-style-type: none;
 
             /*
-             * The options are rows of a list, packed line on line rather than spaced out as prose list items are. Their
-             * text is set a step lighter than the copy, since its strong weight would otherwise read too dark, holding
-             * 13.6:1 on the page and 12.1:1 on the stripe in the light scheme, 7.55:1 and 7.10:1 in the dark one.
+             * The options are rows of a list, packed line on line rather than spaced out as prose list items are, and
+             * set in the label colour, so they read as the values of a control rather than as part of the content.
              */
 
             & > li {
@@ -221,20 +203,17 @@ tile-tally {
                 grid-template-columns: subgrid;
 
                 margin: 0;
-                color: var(--skin--color-gray-070);
+                color: var(--skin--color-label);
 
             }
 
             /*
-             * Counts are set in the label colour, so they read as guidance beside the names they qualify, holding the
-             * 4.5:1 a text role owes in both schemes. An option no item lets through under the other criteria takes
-             * the label colour for its name as well, and the name of a linked resource keeps its underline. Its 0
-             * count gives way to a centred dot in the place of the digit, so the column reads as one of figures.
+             * An option no item lets through under the other criteria sets the name of a linked resource in the label
+             * colour too, keeping its underline. Its 0 count gives way to a centred dot in the place of the digit, so
+             * the column of counts still reads as one of figures, aligned down the list with the counts around it.
              */
 
             & > li.unavailable {
-
-                color: var(--skin--color-label);
 
                 & a {
                     color: inherit;
@@ -256,19 +235,20 @@ tile-tally {
                 }
 
                 /*
-                 * Unless ticked, such an option is disabled and fades as a disabled control does, contrast being owed
-                 * by no inactive control. A ticked one stays at full strength, since it is still there to be unticked.
-                 * The name of a linked resource fades alike, so every option the other criteria rule out reads as such.
+                 * Unless ticked, such an option is disabled and takes the disabled colour, as a disabled control does,
+                 * the name of a linked resource included. A ticked one keeps the label colour, since it is still there
+                 * to be unticked, so every option the other criteria rule out without a tick reads as out of reach.
                  */
 
                 &:has(input:disabled) > label {
 
                     cursor: default;
+                    color: var(--skin--color-disabled);
 
-                    & > input,
-                    & > span,
+                    /* The count follows, in place of the colour Skin gives small print. */
+
                     & > small {
-                        opacity: var(--skin--opacity-disabled);
+                        color: inherit;
                     }
 
                 }
@@ -318,7 +298,6 @@ tile-tally {
 
                 & > small {
                     justify-self: end;
-                    color: var(--skin--color-label);
                     font-variant-numeric: tabular-nums;
                 }
 

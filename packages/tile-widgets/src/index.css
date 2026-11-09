@@ -42,12 +42,11 @@
  * keeps a square target at least as tall as a line of text, so it is as easy to hit as a labelled one.
  */
 
-:is(tile-clear, tile-table, tile-tally, tile-range) button {
+:is(tile-clear, tile-tally, tile-range) button {
 
     display: inline-flex;
     vertical-align: middle;
     justify-content: center;
-    column-gap: var(--skin--spacing-025);
 
     min-width: var(--skin--scaling-150);
     min-height: var(--skin--scaling-150);
@@ -55,10 +54,6 @@
     padding: var(--skin--spacing-025);
 
     border-style: none;
-
-    & > * {
-        background-color: transparent;
-    }
 
 }
 

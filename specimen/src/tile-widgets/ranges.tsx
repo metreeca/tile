@@ -48,7 +48,7 @@ export function Ranges() {
 			products match, and the table lists them.</p>
 
 		<div class="samples">
-			<Sample label="narrowed by price and launch date">
+			<Sample>
 				<Faceted collection={collection}>
 					<Range name="Price" type={decimal} range={useRange(collection, "price")}/>
 					<Range name="Launched" compact type={date} range={useRange(collection, "launched")}/>

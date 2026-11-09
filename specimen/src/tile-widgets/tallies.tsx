@@ -46,7 +46,7 @@ export function Tallies() {
 			how many products match, and the table lists them.</p>
 
 		<div class="samples">
-			<Sample label="narrowed by category, condition and vendor">
+			<Sample>
 				<Faceted collection={collection}>
 					<Tally name="Category" tally={useTally(collection, "categories", { label: "label", size: 5 })}/>
 					<Tally name="Condition" tally={useTally(collection, "condition")}/>

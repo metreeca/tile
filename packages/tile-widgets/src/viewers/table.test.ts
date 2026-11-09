@@ -303,15 +303,15 @@ describe("Table", () => {
 
 	});
 
-	describe("order reset", () => {
+	describe("sort order reset", () => {
 
-		it("should be withheld while the items are in the starting order", async () => {
+		it("should be disabled while the items are in the starting order", async () => {
 
 			mount(catalogue(rows));
 
 			await vi.waitFor(() => expect(cells()).toHaveLength(3));
 
-			expect(reset()).toBeNull();
+			expect(reset()?.disabled).toBe(true);
 
 		});
 
@@ -325,12 +325,12 @@ describe("Table", () => {
 
 			act(() => sorter("Year")!.click());
 
-			await vi.waitFor(() => expect(reset()).not.toBeNull());
+			await vi.waitFor(() => expect(reset()?.disabled).toBe(false));
 
 			act(() => reset()!.click());
 
 			await vi.waitFor(() => expect(models(lookup).at(-1)).toMatchObject({ members: { "^label": "asc" } }));
-			await vi.waitFor(() => expect(reset()).toBeNull());
+			await vi.waitFor(() => expect(reset()?.disabled).toBe(true));
 
 		});
 

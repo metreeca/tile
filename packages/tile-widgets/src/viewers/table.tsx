@@ -86,8 +86,8 @@ export type Column<I> = {
  *
  * The label heading a sortable column is a button sorting the items on it, increasing first and reversing the order on
  * each further activation. Every column the items are sorted on is marked by the direction they are sorted in, and the
- * one they are sorted on first is announced as sorted. While the items are shown in an order other than the one they
- * started in, a button marked by the sort glyph at the end of the header row restores the order first shown.
+ * one they are sorted on first is announced as sorted. A button marked by the sort glyph at the end of the header row
+ * restores the order the items were first shown in, and is disabled while they are shown in that order.
  *
  * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details.
  *
@@ -195,9 +195,9 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 							</th>
 						)}
 
-						<th>{reset && <button type="button" title={"Reset Order"} onClick={reset}>
+						<th><button type="button" title={"Reset Sort Order"} disabled={!reset} onClick={reset}>
 							<ChevronsUpDownIcon/>
-						</button>}</th>
+						</button></th>
 
 					</tr>
 				</thead>

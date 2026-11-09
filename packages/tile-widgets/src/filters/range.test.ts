@@ -517,6 +517,36 @@ describe("Range", () => {
 
 		});
 
+		it("should let ordered fields take values off the steps from the values on offer", async () => {
+
+			const steps = async (type: Type, min: unknown, max: unknown) => {
+
+				act(() => render(null, document.body));
+				mount(bounds(min, max), { type });
+
+				await ready();
+
+				focus(lower(), "focusin");
+
+				await act(async () => {});
+
+				const from = lower()?.step;
+
+				focus(lower(), "focusout", upper());
+				focus(upper(), "focusin");
+
+				await act(async () => {});
+
+				return [from, upper()?.step];
+
+			};
+
+			expect(await steps(decimal, 9.99, 199.99)).toEqual(["any", "any"]);
+			expect(await steps(time, "10:15:30", "18:00:00")).toEqual(["any", "any"]);
+			expect(await steps(instant, "2020-01-01T10:15:30Z", "2020-12-31T10:00:00Z")).toEqual(["any", "any"]);
+
+		});
+
 		it("should leave text fields unconstrained", async () => {
 
 			mount(bounds("a", "z"), { type: string });

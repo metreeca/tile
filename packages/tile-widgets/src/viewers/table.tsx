@@ -89,7 +89,11 @@ export type Column<I> = {
  * one they are sorted on first is announced as sorted. A button marked by the sort glyph at the end of the header row
  * restores the order the items were first shown in, and is disabled while they are shown in that order.
  *
- * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details.
+ * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details,
+ * unless `link` is turned off for screens where the items have no details of their own to open.
+ *
+ * Values hold to one line, clipped with an ellipsis where they outgrow their cells, and column labels, texts and
+ * numbers are shown whole in a tooltip, so a clipped one is never out of the reader's reach.
  *
  * In a `hierarchy`, the leading cells of a row repeating the ones above are faded and joined to them, so that items
  * sharing their first values read as a group. Cells are compared by the text they render, and a cell rendering anything
@@ -115,6 +119,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 	hierarchy,
 	striped,
+	link = true,
 
 	members,
 
@@ -138,6 +143,11 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 	 * Whether alternate rows are tinted, guiding the eye along rows too wide to follow at a glance; not if omitted.
 	 */
 	striped?: boolean
+
+	/**
+	 * Whether rows end with a link to the item they show, opening its details; linked if omitted.
+	 */
+	link?: boolean
 
 
 	/**
@@ -183,7 +193,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 						{entries.map(([header, { sort: expression, align }]) =>
 
-							<th key={header} scope="col" class={classes({ end: align === "end" })}
+							<th key={header} scope="col" title={header} class={classes({ end: align === "end" })}
 								aria-sort={expression === undefined ? undefined : announced(order, expression)}
 							>
 
@@ -207,12 +217,14 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 					<tr key={key(item)}>
 
 						{entries.map(([header, { align }], index) =>
-							<td key={header} class={classes({ end: align === "end", repeated: index < repeated })}>
+							<td key={header} title={text(values[index])}
+								class={classes({ end: align === "end", repeated: index < repeated })}
+							>
 								{values[index]}
 							</td>
 						)}
 
-						<td>{opt(identifier(item), id => <a href={id} title={"Open"}>
+						<td>{link && opt(identifier(item), id => <a href={id} title={"Open"}>
 							<ChevronRightIcon aria-label={"Open"}/>
 						</a>)}</td>
 
@@ -255,6 +267,17 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Spells out a value for the tooltip showing it whole where its cell clips it.
+ *
+ * @param value The value rendered in a cell
+ *
+ * @returns The text `value` renders, if a text or a number; `undefined` otherwise
+ */
+function text(value: ComponentChildren): Optional<string> {
+	return isString(value) || isNumber(value) ? String(value) : undefined;
+}
 
 /**
  * Counts the leading values of a row repeating the ones of the row above.

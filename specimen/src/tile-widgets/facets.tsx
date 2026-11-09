@@ -107,7 +107,7 @@ function Listing({
 
 	return <section>
 
-		<Table name="Products" members={members} placeholder={<TableIcon/>} columns={{
+		<Table name="Products" link={false} members={members} placeholder={<TableIcon/>} columns={{
 			Product: { sort: "name", render: item => text.write(item.label) },
 			Vendor: { sort: "vendor.label", render: item => item.vendor.label },
 			Price: { sort: "price", align: "end", render: item => item.price.toFixed(2) }

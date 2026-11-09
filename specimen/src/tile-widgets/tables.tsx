@@ -73,7 +73,7 @@ function Listing({
 		<div class="samples">
 			<Sample>
 
-				<Table name="Products" hierarchy members={members} placeholder={<TableIcon/>} columns={{
+				<Table name="Products" hierarchy link={false} members={members} placeholder={<TableIcon/>} columns={{
 					Vendor: { sort: "vendor.label", render: item => item.vendor.label },
 					Code: { sort: "sku", render: item => item.sku },
 					Product: { sort: "name", render: item => text.write(item.label) },

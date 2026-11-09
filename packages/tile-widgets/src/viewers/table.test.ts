@@ -65,6 +65,7 @@ function mount(lookup: unknown, {
 	name,
 	hierarchy,
 	striped,
+	link,
 	placeholder,
 	order = { label: "asc" }
 
@@ -73,6 +74,7 @@ function mount(lookup: unknown, {
 	name?: string
 	hierarchy?: boolean
 	striped?: boolean
+	link?: boolean
 	placeholder?: string
 	order?: { readonly label?: Order, readonly year?: Order }
 
@@ -89,6 +91,7 @@ function mount(lookup: unknown, {
 			name,
 			hierarchy,
 			striped,
+			link,
 			members,
 			placeholder,
 			columns: {
@@ -184,6 +187,35 @@ describe("Table", () => {
 		expect(header("Year").classList.contains("end")).toBe(true);
 		expect(document.querySelector("tile-table tbody td")?.classList.contains("end")).toBe(true);
 		expect(header("Label").classList.contains("end")).toBe(false);
+
+	});
+
+	describe("tooltips", () => {
+
+		it("should show each column label whole", async () => {
+
+			mount(catalogue(rows));
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			const headers = document.querySelectorAll("tile-table thead th");
+
+			expect(Array.from(headers, th => th.getAttribute("title")).slice(0, 3))
+				.toEqual(["Year", "Label", "Code"]);
+
+		});
+
+		it("should show each text or number value whole", async () => {
+
+			mount(catalogue(rows));
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			const values = document.querySelectorAll("tile-table tbody tr:first-child td");
+
+			expect(Array.from(values, td => td.getAttribute("title"))).toEqual(["2020", "alpha", null, null]);
+
+		});
 
 	});
 
@@ -336,14 +368,34 @@ describe("Table", () => {
 
 	});
 
-	it("should end each row with a link to the item", async () => {
+	describe("links", () => {
 
-		mount(catalogue(rows));
+		function links(): readonly (string | null)[] {
+			return Array.from(document.querySelectorAll("tile-table tbody a"), link => link.getAttribute("href"));
+		}
 
-		await vi.waitFor(() => expect(cells()).toHaveLength(3));
+		it("should end each row with a link to the item", async () => {
 
-		expect(Array.from(document.querySelectorAll("tile-table tbody a"), link => link.getAttribute("href")))
-			.toEqual(rows.map(row => row.id));
+			mount(catalogue(rows));
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			expect(links()).toEqual(rows.map(row => row.id));
+
+		});
+
+		it("should leave the trailing cells empty if asked to", async () => {
+
+			mount(catalogue(rows), { link: false });
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			expect(links()).toEqual([]);
+			const trs = document.querySelectorAll("tile-table tbody tr");
+
+			expect(Array.from(trs, row => row.querySelectorAll("td").length)).toEqual([4, 4, 4]);
+
+		});
 
 	});
 

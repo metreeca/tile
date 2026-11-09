@@ -25,7 +25,7 @@ tile-table {
 
     /*
      * Once the reader reorders the items, the columns keep the widths they were first shown at, so a new order bringing
-     * longer or shorter values into view never stretches or shrinks them; longer values wrap within their cells.
+     * longer or shorter values into view never stretches or shrinks them; longer values are clipped to their cells.
      */
 
     & table[data-frozen] {
@@ -40,26 +40,28 @@ tile-table {
         top: 0;
         z-index: var(--skin--z-index-sticky);
 
-        /* Headers centre their content, so glyphs line up whether or not a label sits beside them. */
-
-        vertical-align: middle;
-
     }
 
-    /* A sort glyph sits centred on the label, away from the values: opening an end-aligned header, closing any other. */
+    /*
+     * A header button is the header itself, not a form control, so it drops the box Skin gives buttons and its text
+     * sits where a plain header would. A sort glyph sits centred on the label, away from the values: opening an
+     * end-aligned header, closing any other. Every button is a line high, so the reset glyph standing alone centres on
+     * the labels beside it.
+     */
 
     & thead th > button {
-        align-items: center;
+
+        display: inline-flex;
+        vertical-align: top;
+
+        min-block-size: 1lh;
+        padding: 0;
+        border-style: none;
+
     }
+
     & thead th.end > button {
         flex-direction: row-reverse;
-    }
-
-    /* The reset glyph sits flush at the end of its target, in line with the links closing the rows below. */
-
-    & thead th:last-child > button {
-        justify-content: end;
-        padding-inline-end: 0;
     }
 
     /*
@@ -71,8 +73,17 @@ tile-table {
         color: var(--skin--color-disabled);
     }
 
+    /*
+     * Cells hold to one line, so every row stands a line high, and a value outgrowing its cell is clipped with an
+     * ellipsis rather than wrapped onto the lines below.
+     */
+
     & th,
     & td {
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
         /* Values set at the end of their cells line up figures by their last digit, in digits of equal width. */
 
@@ -81,11 +92,10 @@ tile-table {
             font-variant-numeric: tabular-nums;
         }
 
-        /* The trailing cell holds controls alone, kept on one line at the end of the row. */
+        /* The trailing cell holds controls alone, at the end of the row. */
 
         &:last-child {
             text-align: end;
-            white-space: nowrap;
         }
 
     }
@@ -102,12 +112,12 @@ tile-table {
     }
 
     /*
-     * The trailing column holds its controls alone and takes no share of the room the values spread over, which the
-     * design system hands an empty last header as a spacer, so the values stay on one line wherever the page allows.
+     * The trailing column takes the room the values leave, as the design system has an empty last header do, so the
+     * values keep their natural widths and the controls close each row at the far end of the table.
      */
 
     & th:last-child {
-        width: 0;
+        width: 100%;
     }
 
 }

@@ -23,6 +23,15 @@ tile-table {
 
     display: block;
 
+    /*
+     * Once the reader reorders the items, the columns keep the widths they were first shown at, so a new order bringing
+     * longer or shorter values into view never stretches or shrinks them; longer values wrap within their cells.
+     */
+
+    & table[data-frozen] {
+        table-layout: fixed;
+    }
+
     /* Headers stay at the top of the scrolling area while the rows pass under them, naming the columns throughout. */
 
     & thead th {

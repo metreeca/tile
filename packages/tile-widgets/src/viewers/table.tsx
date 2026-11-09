@@ -24,14 +24,16 @@
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";
+import { useModel } from "@metreeca/clay/model";
 import type { Frame } from "@metreeca/blue/value";
 import { isNumber, isObject, isString, type Lazy, opt, type Optional } from "@metreeca/core";
 import type { Relay } from "@metreeca/core/relay";
+import { createState } from "@metreeca/core/state";
 import { type Expression, getOrderDirection, getOrderPrecedence, type Order } from "@metreeca/qest/model";
 import type { Collections } from "@metreeca/tile/collection";
 import type { MembersCases, Ordering } from "@metreeca/tile/members";
 import { ChevronDownIcon, ChevronRightIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-preact";
-import { type ComponentChildren, createElement } from "preact";
+import { type ComponentChildren, createElement, type TargetedMouseEvent } from "preact";
 import { classes, Failure, Hint } from "../index.js";
 import "./table.css";
 
@@ -158,6 +160,8 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 	const entries = Object.entries(columns);
 
+	const { widths, freeze } = useModel(() => createLayout());
+
 	return members({
 
 		blank: () => placeholder && <Hint placeholder={placeholder} text={"Loading…"}/>,
@@ -166,7 +170,13 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 			? placeholder && <Hint placeholder={placeholder} text={"No Matches"}/>
 
-			: createElement("tile-table", {}, <table aria-label={name} data-striped={striped || undefined}>
+			: createElement("tile-table", {}, <table aria-label={name} data-striped={striped || undefined}
+				data-frozen={widths !== undefined || undefined}
+			>
+
+				{widths && <colgroup>{widths.map((width, index) =>
+					<col key={index} style={{ width: `${width}px` }}/>
+				)}</colgroup>}
 
 				<thead>
 					<tr>
@@ -177,9 +187,10 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 								aria-sort={expression === undefined ? undefined : announced(order, expression)}
 							>
 
-								{expression === undefined ? header : <button type="button"
-									onClick={() => sort({ [expression]: direction(order[expression]) > 0 ? "desc" : "asc" })}
-								>{header}{mark(order[expression])}</button>}
+								{expression === undefined ? header : <button type="button" onClick={event => {
+									freeze(measure(event));
+									sort({ [expression]: direction(order[expression]) > 0 ? "desc" : "asc" });
+								}}>{header}{mark(order[expression])}</button>}
 
 							</th>
 						)}
@@ -263,6 +274,51 @@ function repeats(values: readonly ComponentChildren[], above: Optional<readonly 
 
 }
 
+
+/**
+ * The column widths a table keeps once the reader reorders its items, so columns don't stretch or shrink to fit the
+ * values each new order brings into view.
+ */
+interface Layout {
+
+	readonly widths: Optional<readonly number[]>;
+
+	/**
+	 * Keeps the column widths on show, unless widths are already kept.
+	 *
+	 * @param widths The widths of the columns on show, if known
+	 *
+	 * @returns A layout keeping the first widths it was handed
+	 */
+	freeze(widths: Optional<readonly number[]>): this;
+
+}
+
+function createLayout(): Layout {
+	return createState<Layout>({
+
+		widths: undefined,
+
+		freeze(widths) {
+			return { widths: this.widths ?? widths };
+		}
+
+	});
+}
+
+
+/**
+ * Measures the columns of the header row a control sits in.
+ *
+ * @param event The activation of the control
+ *
+ * @returns The rendered widths of the header cells, in order; `undefined` if the control sits in no row
+ */
+function measure(event: TargetedMouseEvent<HTMLElement>): Optional<readonly number[]> {
+	return opt(event.currentTarget.closest("tr") ?? undefined, row =>
+		Array.from(row.cells, cell => cell.getBoundingClientRect().width)
+	);
+}
 
 /**
  * Resolves the announced sort state of a column.

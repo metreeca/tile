@@ -264,6 +264,43 @@ describe("Table", () => {
 
 		});
 
+		it("should keep the column widths shown before the first sort", async () => {
+
+			function widths(): readonly string[] {
+				return Array.from(document.querySelectorAll<HTMLTableColElement>("tile-table col"), col => col.style.width);
+			}
+
+			const measure = vi.spyOn(HTMLTableCellElement.prototype, "getBoundingClientRect")
+				.mockReturnValue(new DOMRect(0, 0, 100, 20));
+
+			try {
+
+				mount(catalogue(rows));
+
+				await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+				expect(widths()).toEqual([]);
+
+				act(() => sorter("Year")!.click());
+
+				await vi.waitFor(() => expect(widths()).toEqual(["100px", "100px", "100px", "100px"]));
+
+				measure.mockReturnValue(new DOMRect(0, 0, 50, 20));
+
+				act(() => sorter("Label")!.click());
+
+				await vi.waitFor(() => expect(header("Label").getAttribute("aria-sort")).toBe("ascending"));
+
+				expect(widths()).toEqual(["100px", "100px", "100px", "100px"]);
+
+			} finally {
+
+				measure.mockRestore();
+
+			}
+
+		});
+
 	});
 
 	describe("order reset", () => {

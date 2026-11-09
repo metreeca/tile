@@ -44,7 +44,7 @@ export function Tables() {
 	return <>
 
 		<p>A table shows the members of a collection one row per item, here the products priced 60 or more, sorted on
-			any sortable column by its header. Grouped by vendor, leading cells repeating the row above are faded.</p>
+			any sortable column by its header. Grouped by vendor, each vendor is shown once, staying in view while its products scroll past.</p>
 
 		<Listing collection={collection}/>
 

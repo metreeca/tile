@@ -95,10 +95,12 @@ export type Column<I> = {
  * Values hold to one line, clipped with an ellipsis where they outgrow their cells, and column labels, texts and
  * numbers are shown whole in a tooltip, so a clipped one is never out of the reader's reach.
  *
- * In a `hierarchy`, the leading cells of a row repeating the ones above are faded and joined to them, so that items
- * sharing their first values read as a group. Cells are compared by the text they render, and a cell rendering anything
- * other than text or a number never counts as repeating. A `striped` table tints alternate rows, which native tables
- * don't do, to guide the eye along rows too wide to follow by their rules alone.
+ * In a `hierarchy`, items sharing their first values read as a group: a leading value repeating the one above is shown
+ * once, in a cell spanning the rows of its group, and stays in view under the headers while those rows scroll past.
+ * Cells are compared by the text or number they render, and a cell rendering anything else never counts as repeating.
+ *
+ * A `striped` table tints alternate rows, which native tables don't do. The tint guides the eye along rows too wide
+ * to follow by their rules alone, where a reader would otherwise lose track of the row they are reading.
  *
  * Where a `placeholder` is supplied, a table with nothing to show fills its area with it, worded as still loading or as
  * matching nothing. A failed exchange is shown as a critical note instead, telling the reader why no rows are listed.
@@ -135,7 +137,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 
 	/**
-	 * Whether leading cells repeating the ones above are faded, grouping items by their first values; not if omitted.
+	 * Whether leading values repeating the ones above are shown once, grouping items by them; not if omitted.
 	 */
 	hierarchy?: boolean
 
@@ -212,17 +214,17 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 					</tr>
 				</thead>
 
-				<tbody>{rows(state).map(({ item, values, repeated }) =>
+				<tbody>{rows(state).map(({ item, values, spans }) =>
 
 					<tr key={key(item)}>
 
-						{entries.map(([header, { align }], index) =>
-							<td key={header} title={text(values[index])}
-								class={classes({ end: align === "end", repeated: index < repeated })}
+						{entries.map(([header, { align }], index) => opt(spans[index], span => span === 0 ? undefined
+							: <td key={header} title={text(values[index])} rowSpan={span > 1 ? span : undefined}
+								class={classes({ end: align === "end" })}
 							>
-								{values[index]}
+								{span > 1 ? <span>{values[index]}</span> : values[index]}
 							</td>
-						)}
+						))}
 
 						<td>{link && opt(identifier(item), id => <a href={id} title={"Open"}>
 							<ChevronRightIcon aria-label={"Open"}/>
@@ -239,27 +241,31 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 
 	/**
-	 * Renders the values of each item, counting the leading cells repeating the ones above.
+	 * Renders the values of each item, joining the leading values repeating the ones above.
 	 *
 	 * @param items The items to be shown
 	 *
-	 * @returns The rows showing `items`, each with the number of its leading cells to be faded
+	 * @returns The rows showing `items`, each with the rows its cells span, `0` for a cell joined to the one above
 	 */
 	function rows(items: readonly Frame<S, { readonly [K in P]: T }>[]): readonly {
 
 		readonly item: unknown
 		readonly values: readonly ComponentChildren[]
-		readonly repeated: number
+		readonly spans: readonly number[]
 
 	}[] {
 
-		return items
-			.map(item => ({ item, values: entries.map(([, { render }]) => render(item)) }))
-			.map(({ item, values }, index, rows) => ({
-				item,
-				values,
-				repeated: hierarchy ? repeats(values, rows[index-1]?.values) : 0
-			}));
+		const rendered = items.map(item => ({ item, values: entries.map(([, { render }]) => render(item)) }));
+
+		const repeated = rendered.map(({ values }, index) =>
+			hierarchy ? repeats(values, rendered[index-1]?.values) : 0
+		);
+
+		return rendered.map(({ item, values }, index) => ({
+			item,
+			values,
+			spans: values.map((_, column) => span(repeated, index, column))
+		}));
 
 	}
 
@@ -294,6 +300,24 @@ function repeats(values: readonly ComponentChildren[], above: Optional<readonly 
 	);
 
 	return index < 0 ? values.length : index;
+
+}
+
+/**
+ * Counts the rows a cell spans.
+ *
+ * @param repeated The number of leading values each row repeats from the row above
+ * @param row The index of the row holding the cell
+ * @param column The index of the column holding the cell
+ *
+ * @returns `0` if the cell repeats the one above; otherwise `1` plus the number of rows below repeating it
+ */
+function span(repeated: readonly number[], row: number, column: number): number {
+
+	const following = repeated.slice(row+1);
+	const end = following.findIndex(count => count <= column);
+
+	return column < (repeated[row] ?? 0) ? 0 : 1+(end < 0 ? following.length : end);
 
 }
 

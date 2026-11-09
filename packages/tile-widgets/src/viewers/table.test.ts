@@ -401,22 +401,25 @@ describe("Table", () => {
 
 	describe("hierarchy", () => {
 
-		function faded(): readonly (readonly boolean[])[] {
+		/**
+		 * Lists the value cells of each row, as `text:rows spanned`, leaving out the trailing link cell.
+		 */
+		function spans(): readonly (readonly string[])[] {
 			return Array.from(document.querySelectorAll("tile-table tbody tr"), row =>
-				Array.from(row.querySelectorAll("td"), cell => cell.classList.contains("repeated")).slice(0, 3)
+				Array.from(row.querySelectorAll("td"), cell => `${cell.textContent}:${cell.rowSpan}`).slice(0, -1)
 			);
 		}
 
-		it("should fade the leading cells repeating the ones above", async () => {
+		it("should join the leading cells repeating the ones above into one spanning their rows", async () => {
 
 			mount(catalogue(rows), { hierarchy: true });
 
 			await vi.waitFor(() => expect(cells()).toHaveLength(3));
 
-			expect(faded()).toEqual([
-				[false, false, false],
-				[true, false, false],
-				[false, false, false]
+			expect(spans()).toEqual([
+				["2020:2", "alpha:1", "alpha:1"],
+				["beta:1", "beta:1"],
+				["2021:1", "gamma:1", "gamma:1"]
 			]);
 
 		});
@@ -427,17 +430,24 @@ describe("Table", () => {
 
 			await vi.waitFor(() => expect(cells()).toHaveLength(2));
 
-			expect(faded()[1]).toEqual([true, true, false]);
+			expect(spans()).toEqual([
+				["2020:2", "alpha:2", "alpha:1"],
+				["alpha:1"]
+			]);
 
 		});
 
-		it("should fade nothing if not asked to", async () => {
+		it("should join nothing if not asked to", async () => {
 
 			mount(catalogue(rows));
 
 			await vi.waitFor(() => expect(cells()).toHaveLength(3));
 
-			expect(faded().flat()).not.toContain(true);
+			expect(spans()).toEqual([
+				["2020:1", "alpha:1", "alpha:1"],
+				["2020:1", "beta:1", "beta:1"],
+				["2021:1", "gamma:1", "gamma:1"]
+			]);
 
 		});
 

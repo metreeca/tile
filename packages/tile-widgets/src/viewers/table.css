@@ -101,14 +101,28 @@ tile-table {
     }
 
     /*
-     * A cell repeating the one above is joined to it, the rule between them hidden, so the rows sharing their first
-     * values read as a group. It takes the placeholder colour, the dimmest text role still holding 4.5:1 on the page
-     * and the stripe in both schemes, so the group stays named on every row however the table is scrolled.
+     * A value shared by a group of rows spans them in a single cell, and stays in view right under the headers while
+     * its rows scroll past, so the group is named however far the table is scrolled. The cell lets its value overflow,
+     * since a clipping cell would hold it in place, and the value clips itself to the cell width instead. It sticks
+     * below the header row (one line, its padding and its rule) by a further cell padding, level with the values of
+     * the first row in view, and leaves with the last row of its group, as the value of the next group takes its place.
      */
 
-    & td.repeated {
-        border-top-style: hidden;
-        color: var(--skin--color-placeholder);
+    & td[rowspan] {
+
+        overflow: visible;
+
+        & > span {
+
+            display: block;
+            position: sticky;
+            top: calc(1lh + 3 * var(--skin--spacing-050) + var(--skin--border-width));
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+        }
+
     }
 
     /*

@@ -53,15 +53,31 @@ tile-table {
 
         display: inline-flex;
         vertical-align: top;
+        column-gap: var(--skin--spacing-025);
 
         min-block-size: 1lh;
         padding: 0;
         border-style: none;
 
+        /*
+         * A header unsorted keeps the room its glyph takes once sorted, so the widths the columns are first measured at
+         * still fit the label beside its glyph after the reader sorts the items on it.
+         */
+
+        &:not(:has(svg)) {
+            padding-inline-end: calc(1em + var(--skin--spacing-025));
+        }
+
     }
 
     & thead th.end > button {
+
         flex-direction: row-reverse;
+
+        &:not(:has(svg)) {
+            padding-inline: calc(1em + var(--skin--spacing-025)) 0;
+        }
+
     }
 
     /*

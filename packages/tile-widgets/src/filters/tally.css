@@ -14,41 +14,12 @@
  * limitations under the License.
  */
 
-/* The block size the list of options scrolls within, once longer. */
+/* The number of options shown in full before the list scrolls. */
 
-@property --tile-tally-height {
-    syntax: "*";
+@property --tile-tally-rows {
+    syntax: "<integer>";
     inherits: true;
-    initial-value: 15em;
-}
-
-/*
- * The depth of the fade at each end of the list, grown and shrunk by scrolling. They are registered, unlike an internal
- * variable, because only a registered length is interpolated by an animation rather than flipped at its midpoint.
- */
-
-@property --tile-tally-shade-top {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-}
-
-@property --tile-tally-shade-bottom {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-}
-
-@keyframes tile-tally-shade-top {
-    to {
-        --tile-tally-shade-top: var(--skin--spacing-100);
-    }
-}
-
-@keyframes tile-tally-shade-bottom {
-    from {
-        --tile-tally-shade-bottom: var(--skin--spacing-100);
-    }
+    initial-value: 10;
 }
 
 /*
@@ -187,36 +158,18 @@ tile-tally {
 
     & > section {
 
-        max-block-size: var(--tile-tally-height);
+        /*
+         * A longer list scrolls within the box, which stops halfway down the first option past the rows shown in full,
+         * so the clipped option tells the reader that the list carries on beyond the edge.
+         */
+
+        max-block-size: calc(
+            (var(--tile-tally-rows) + 0.5) * 1lh + var(--skin--spacing-050) + var(--skin--border-width)
+        );
+
         overflow-y: auto;
 
         border-top-style: var(--skin--border-style);
-
-        /*
-         * Each end of the box fades the options running past it, so a reader sees the list carry on beyond the edge
-         * rather than stop at a line, as the columns of a shell do. The mask belongs to the box and not to the options,
-         * so the fade stays where the edge is, and it spares the rule above, which stays whole.
-         *
-         * A fade grows in only as the reader scrolls away from its end, so a list at rest, or with nothing to scroll,
-         * reads plainly. Browsers unable to tie an animation to scrolling show no fade at all.
-         */
-
-        mask-image: linear-gradient(
-            to bottom,
-            black var(--skin--border-width),
-            transparent var(--skin--border-width),
-            black calc(var(--skin--border-width) + var(--tile-tally-shade-top)),
-            black calc(100% - var(--tile-tally-shade-bottom)),
-            transparent 100%
-        );
-
-        @supports (animation-timeline: scroll()) {
-
-            animation: tile-tally-shade-top linear both, tile-tally-shade-bottom linear both;
-            animation-timeline: scroll(self);
-            animation-range: 0 var(--skin--spacing-100), calc(100% - var(--skin--spacing-100)) 100%;
-
-        }
 
         & > small {
             display: block;
@@ -238,9 +191,17 @@ tile-tally {
 
         }
 
+        /*
+         * The options are laid out as one grid of box, name and count columns shared by every row, so the counts line
+         * up down the list, and each row centres its cells vertically against one another.
+         */
+
         & > ul {
 
             display: grid;
+            grid-template-columns: min-content minmax(0, 1fr) min-content;
+            align-items: center;
+            column-gap: var(--skin--spacing-050);
 
             margin: 0;
             padding: var(--skin--spacing-050);
@@ -254,15 +215,21 @@ tile-tally {
              */
 
             & > li {
+
+                display: grid;
+                grid-column: 1 / -1;
+                grid-template-columns: subgrid;
+
                 margin: 0;
                 color: var(--skin--color-gray-070);
+
             }
 
             /*
-             * An option no item lets through under the other criteria takes the label colour, name and count alike,
-             * and the name of a linked resource keeps its underline. Live counts stay in the text colour, so a count
-             * of 0 reads as greyed beside them while holding the 4.5:1 a text role owes in both schemes. The 0 states
-             * the same thing in text, so colour is never alone.
+             * Counts are set in the label colour, so they read as guidance beside the names they qualify, holding the
+             * 4.5:1 a text role owes in both schemes. An option no item lets through under the other criteria takes
+             * the label colour for its name as well, and the name of a linked resource keeps its underline. The 0
+             * states the same thing in text, so colour is never alone.
              */
 
             & > li.unavailable {
@@ -307,11 +274,20 @@ tile-tally {
             & > li > label {
 
                 display: grid;
-                grid-template-columns: min-content minmax(0, 1fr) min-content;
+                grid-column: 1 / -1;
+                grid-template-columns: subgrid;
                 align-items: center;
-                column-gap: var(--skin--spacing-050);
 
                 cursor: pointer;
+
+                /* The box is set a step smaller than a form's, so the rows of a dense list read as values, not fields. */
+
+                & > input {
+
+                    inline-size: var(--skin--scaling-075);
+                    block-size: var(--skin--scaling-075);
+
+                }
 
                 /* The name is set in the strong weight, so a plain name reads alike beside the name of a linked one. */
 
@@ -326,7 +302,8 @@ tile-tally {
                 }
 
                 & > small {
-                    color: inherit;
+                    justify-self: end;
+                    color: var(--skin--color-label);
                     font-variant-numeric: tabular-nums;
                 }
 

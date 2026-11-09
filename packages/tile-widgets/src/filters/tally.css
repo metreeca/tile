@@ -228,8 +228,8 @@ tile-tally {
             /*
              * Counts are set in the label colour, so they read as guidance beside the names they qualify, holding the
              * 4.5:1 a text role owes in both schemes. An option no item lets through under the other criteria takes
-             * the label colour for its name as well, and the name of a linked resource keeps its underline. The 0
-             * states the same thing in text, so colour is never alone.
+             * the label colour for its name as well, and the name of a linked resource keeps its underline. Its 0
+             * count gives way to a centred dot in the place of the digit, so the column reads as one of figures.
              */
 
             & > li.unavailable {
@@ -238,6 +238,21 @@ tile-tally {
 
                 & a {
                     color: inherit;
+                }
+
+                & > label > small {
+
+                    position: relative;
+                    visibility: hidden;
+
+                    &::after {
+                        content: "•";
+                        position: absolute;
+                        inset: 0;
+                        text-align: center;
+                        visibility: visible;
+                    }
+
                 }
 
                 /*

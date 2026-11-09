@@ -132,6 +132,52 @@ describe("useCount()", () => {
 
 	});
 
+	describe("filtering", () => {
+
+		it("should tell an unfiltered count", async () => {
+
+			const { count } = mount(backend(counting(3)));
+
+			await vi.waitFor(() => expect(count()({ ready: ({ filtered }) => filtered })).toBe(false));
+
+		});
+
+		it("should tell a count filtered by the reader's criteria", async () => {
+
+			const { count } = mount(backend(counting(3)), { "~label": "item" });
+
+			await vi.waitFor(() => expect(count()({ ready: ({ filtered }) => filtered })).toBe(true));
+
+		});
+
+		it("should not take the collection scope for a filter", async () => {
+
+			const { count } = mount(backend(counting(3)), {}, { "?university": ["u1"] });
+
+			await vi.waitFor(() => expect(count()({ ready: ({ filtered }) => filtered })).toBe(false));
+
+		});
+
+		it("should keep describing the count on show while counting again", async () => {
+
+			const lookup = vi.fn().mockImplementationOnce(counting(62)).mockImplementation(() => new Promise(() => {}));
+			const { collection, count } = mount(backend(lookup));
+
+			await vi.waitFor(() => expect(count()({ ready: ({ state }) => state })).toBe(62));
+
+			act(() => void collection().filter({ "~label": "item" }));
+
+			await vi.waitFor(() => expect(lookup).toHaveBeenCalledTimes(2));
+
+			expect(count()({ ready: ({ state, filtered }) => ({ state, filtered }) })).toEqual({
+				state: 62,
+				filtered: false
+			});
+
+		});
+
+	});
+
 	it("should count nothing where the store holds no items", async () => {
 
 		const { count } = mount(backend(vi.fn(async () => immutable({ id: entry, members: [] }))));

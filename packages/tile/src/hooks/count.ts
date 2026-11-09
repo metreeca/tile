@@ -45,9 +45,20 @@ export type CountCases = {
 	readonly blank: void
 
 	/**
-	 * The items are counted; the count stays on show while the items are counted again under new criteria.
+	 * The items are counted.
+	 *
+	 * When the filters change, the last count stays on show until the new one arrives. Its `filtered` flag describes
+	 * that count rather than the filters now in force, so a counter always words the number it shows correctly.
 	 */
 	readonly ready: {
+
+		/**
+		 * Whether the count was taken with the reader's filters applied.
+		 *
+		 * The collection scope is not a filter, so a count under the scope alone is not filtered. A counter reads the
+		 * flag to tell the reader whether its number counts the matches of a search or every item on offer.
+		 */
+		readonly filtered: boolean
 
 		/**
 		 * The number of items the collection criteria let through.
@@ -120,7 +131,9 @@ export function useCount<S extends Lazy<ResourceShape>, P extends Collections<S>
 		lookup: () => store.lookup({ entry, shape: holder, model })
 			.then(match => opt(match, match => size(items(match, model)))),
 
-		modify: () => ({})
+		// the ready state is built as its count arrives, from the criteria the count was retrieved under
+
+		modify: () => ({ filtered: Object.keys(criteria).length > 0 })
 
 	}));
 

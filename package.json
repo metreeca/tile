@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "@metreeca/rack": "^0.6.0",
-    "@web/dev-server": "^1.0.0",
     "typedoc": "^0.28.20",
     "vitest": "^5.0.5"
   },

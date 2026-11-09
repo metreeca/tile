@@ -695,6 +695,42 @@ describe("Range", () => {
 
 		});
 
+		it("should select the text of a field focused by a click once the button is released", async () => {
+
+			mount(bounds("a", "z"), { type: string, criteria: { ">=year": "m" } });
+
+			await vi.waitFor(() => expect(lower()?.value).toBe("m"));
+
+			act(() => void lower()!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })));
+			focus(lower(), "focusin");
+
+			await new Promise(resolve => setTimeout(resolve));
+
+			act(() => lower()!.setSelectionRange(1, 1)); // the release of the button places the caret
+			act(() => void lower()!.dispatchEvent(new MouseEvent("mouseup", { bubbles: true })));
+
+			await vi.waitFor(() => expect([lower()?.selectionStart, lower()?.selectionEnd]).toEqual([0, 1]));
+
+		});
+
+		it("should let the release of a button on a field take its native effect", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			const press = (type: string) => {
+				const event = new MouseEvent(type, { bubbles: true, cancelable: true });
+				act(() => void lower()!.dispatchEvent(event));
+				return event.defaultPrevented;
+			};
+
+			expect(press("mousedown")).toBe(false);
+			focus(lower(), "focusin");
+			expect(press("mouseup")).toBe(false);
+
+		});
+
 		it("should apply nothing for a suggestion left as it is", async () => {
 
 			const onChange = vi.fn();

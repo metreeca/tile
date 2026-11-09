@@ -295,9 +295,16 @@ export function Range({
 			onInput={event => change(read(event.currentTarget))}
 			onKeyDown={event => keys({ Enter: () => apply(read(event.currentTarget)) })(event)}
 
-			// the click focusing the field would otherwise drop the selection as the button is released
+			/*
+			 * The release ending the click that focuses the field places the caret, dropping the selection made as
+			 * the field took focus, so the text is selected again once the button is released, wherever that happens.
+			 * The release itself is left alone: the native step buttons stop stepping only as they receive it.
+			 */
 
-			onMouseUp={event => event.preventDefault()}
+			onMouseDown={focused ? undefined : event => {
+				const element = event.currentTarget;
+				document.addEventListener("mouseup", () => select(element), { once: true });
+			}}
 
 		/>;
 

@@ -20,7 +20,6 @@
  * @module
  */
 
-import { More } from "@metreeca/clay-widgets/more";
 import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { base, Products } from "@metreeca/specimen/toys.js";
 import { type Collection, useCollection } from "@metreeca/tile/collection";
@@ -40,12 +39,12 @@ const entry = `${base}products/`;
  */
 export function Tables() {
 
-	const collection = useCollection({ entry, shape: Products });
+	const collection = useCollection({ entry, shape: Products, scope: { ">=price": 80 } });
 
 	return <>
 
-		<p>A table shows the members of a collection one row per item, sorted on any sortable column by its header.
-			Grouped by vendor, leading cells repeating the row above are faded.</p>
+		<p>A table shows the members of a collection one row per item, here the products priced 80 or more, sorted on
+			any sortable column by its header. Grouped by vendor, leading cells repeating the row above are faded.</p>
 
 		<Listing collection={collection}/>
 
@@ -66,14 +65,13 @@ function Listing({
 
 	const members = useMembers(collection, {
 		model: { id: {}, sku: {}, label: { "*": {} }, price: {}, stock: {}, vendor: { id: {}, label: {} } },
-		order: { "vendor.label": "asc" },
-		batch: 25
+		order: { "vendor.label": "asc" }
 	});
 
 	return <>
 
 		<div class="samples">
-			<Sample label="grouped by vendor">
+			<Sample>
 
 				<Table name="Products" hierarchy members={members} placeholder={<TableIcon/>} columns={{
 					Vendor: { sort: "vendor.label", render: item => item.vendor.label },
@@ -82,8 +80,6 @@ function Listing({
 					Price: { sort: "price", align: "end", render: item => item.price.toFixed(2) },
 					Stock: { sort: "stock", align: "end", render: item => item.stock }
 				}}/>
-
-				{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
 
 			</Sample>
 		</div>

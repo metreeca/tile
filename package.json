@@ -12,7 +12,7 @@
     "setup": "npm ci && ush ln && npm --prefix specimen run setup",
     "build": "npm run build --workspaces && ush rm docs && npx typedoc",
     "check": "npm run check --workspaces",
-    "proof": "npm run build && npx wds --root-dir docs --open",
+    "proof": "npm run build && ush ws --open docs",
     "watch": "npm --prefix specimen run watch"
   },
   "devDependencies": {

@@ -58,6 +58,11 @@ restates them.
 - **`npm run proof`** - Build and serve docs
 - **`npm run watch`** - Serve the specimen page with live reload
 
+> [!CAUTION]
+> The specimen dev server is normally already running at `http://localhost:5173`, picking up edits through live
+> reload. **NEVER** start, restart or stop a dev server: check visual changes against the running one, and where it
+> is down, ask the user to start it.
+
 # Package Layout
 
 The root `package.json` `workspaces` glob (`packages/*`) covers the framework packages, each in its own directory
@@ -201,6 +206,13 @@ duplicates tested code and drifts from it, missing the edge cases the shared one
 
 Keep a local helper only where the shared one genuinely doesn't fit, and record in its doc comment what the difference
 is, so the next reader doesn't take it for an oversight.
+
+# Immutable Results
+
+Every object or array a public API hands out, hook results, tuples and context values included, **MUST** be passed
+through `immutable()` from `@metreeca/core/values`, so a consumer can never change state it does not own. Values taken
+from outside, such as parsed JSON or a caller's initial value, are frozen too before they are handed back; an array
+rebuilt by a transition is frozen anew, while one left unchanged keeps its identity so the context renders nothing.
 
 # Testing
 

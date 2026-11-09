@@ -26,9 +26,40 @@ tile-table {
     /* Headers stay at the top of the scrolling area while the rows pass under them, naming the columns throughout. */
 
     & thead th {
+
         position: sticky;
         top: 0;
         z-index: var(--skin--z-index-sticky);
+
+        /* Headers centre their content, so glyphs line up whether or not a label sits beside them. */
+
+        vertical-align: middle;
+
+    }
+
+    /* A sort glyph sits centred on the label, away from the values: opening an end-aligned header, closing any other. */
+
+    & thead th > button {
+        align-items: center;
+    }
+    & thead th.end > button {
+        flex-direction: row-reverse;
+    }
+
+    /* The reset glyph sits flush at the end of its target, in line with the links closing the rows below. */
+
+    & thead th:last-child > button {
+        justify-content: end;
+        padding-inline-end: 0;
+    }
+
+    /*
+     * A sort mark takes the disabled colour, at 1.87:1 on the page in the light scheme and 2.00:1 in the dark one,
+     * so the header text leads; under the pointer it follows the text into the hover colour.
+     */
+
+    & thead th:not(:last-child) > button:not(:hover) > svg {
+        color: var(--skin--color-disabled);
     }
 
     & th,

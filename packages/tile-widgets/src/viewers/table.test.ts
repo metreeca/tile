@@ -20,6 +20,7 @@ import { id, multiple, required, resource } from "@metreeca/blue/resource";
 import { string } from "@metreeca/blue/string";
 import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
+import type { Order } from "@metreeca/qest/model";
 import { Store } from "@metreeca/tile";
 import { useCollection } from "@metreeca/tile/collection";
 import { useMembers } from "@metreeca/tile/members";
@@ -64,7 +65,8 @@ function mount(lookup: unknown, {
 	name,
 	hierarchy,
 	striped,
-	placeholder
+	placeholder,
+	order = { label: "asc" }
 
 }: {
 
@@ -72,6 +74,7 @@ function mount(lookup: unknown, {
 	hierarchy?: boolean
 	striped?: boolean
 	placeholder?: string
+	order?: { readonly label?: Order, readonly year?: Order }
 
 } = {}): void {
 
@@ -79,7 +82,7 @@ function mount(lookup: unknown, {
 
 		const members = useMembers(useCollection({ entry, shape: Catalogue }), {
 			model: { id: {}, label: {}, year: {} },
-			order: { label: "asc" }
+			order
 		});
 
 		return createElement(Table<typeof Catalogue, "members", { id: {}, label: {}, year: {} }>, {
@@ -194,6 +197,29 @@ describe("Table", () => {
 
 			expect(sorter("Year")).not.toBeNull();
 			expect(sorter("Code")).toBeNull();
+
+		});
+
+		it("should mark the direction on the columns the items are sorted on only", async () => {
+
+			mount(catalogue(rows));
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			expect(header("Label").querySelector("svg")).not.toBeNull();
+			expect(header("Year").querySelector("svg")).toBeNull();
+			expect(header("Code").querySelector("svg")).toBeNull();
+
+		});
+
+		it("should mark every column the items are sorted on", async () => {
+
+			mount(catalogue(rows), { order: { label: 1, year: -2 } });
+
+			await vi.waitFor(() => expect(cells()).toHaveLength(3));
+
+			expect(header("Label").querySelector("svg")).not.toBeNull();
+			expect(header("Year").querySelector("svg")).not.toBeNull();
 
 		});
 

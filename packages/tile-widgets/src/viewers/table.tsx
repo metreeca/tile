@@ -82,10 +82,10 @@ export type Column<I> = {
  * {members({ ready: ({ load }) => load && <button onClick={() => load()}>More</button> })}
  * ```
  *
- * The header of a sortable column is a button sorting the items on it, increasing first and reversing the order on each
- * further activation, marked by the direction the items are sorted in; the column the items are sorted on first is
- * announced as sorted. While the items are shown in an order other than the one they started in, a button marked by the
- * sort glyph at the end of the header row restores the order the items were first shown in.
+ * The label heading a sortable column is a button sorting the items on it, increasing first and reversing the order on
+ * each further activation. Every column the items are sorted on is marked by the direction they are sorted in, and the
+ * one they are sorted on first is announced as sorted. While the items are shown in an order other than the one they
+ * started in, a button marked by the sort glyph at the end of the header row restores the order first shown.
  *
  * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details.
  *
@@ -179,7 +179,7 @@ export function Table<S extends Lazy<ResourceShape>, P extends Collections<S>, T
 
 								{expression === undefined ? header : <button type="button"
 									onClick={() => sort({ [expression]: direction(order[expression]) > 0 ? "desc" : "asc" })}
-								>{mark(order[expression])}{header}</button>}
+								>{header}{mark(order[expression])}</button>}
 
 							</th>
 						)}
@@ -291,13 +291,13 @@ function announced(order: Ordering, expression: Expression): Optional<"ascending
  *
  * @param order The order the items are sorted in on the column, if any
  *
- * @returns The glyph stating `order`, or offering an order yet to be chosen if the items aren't sorted on the column
+ * @returns The glyph stating `order`; nothing if the items aren't sorted on the column
  */
 function mark(order: Optional<Order>): ComponentChildren {
 
 	const sign = direction(order);
 
-	return sign > 0 ? <ChevronDownIcon/> : sign < 0 ? <ChevronUpIcon/> : <ChevronsUpDownIcon/>;
+	return sign > 0 ? <ChevronDownIcon/> : sign < 0 ? <ChevronUpIcon/> : undefined;
 
 }
 

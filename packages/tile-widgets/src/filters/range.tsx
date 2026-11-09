@@ -280,6 +280,10 @@ export function Range({
 			min={ordered ? write(min) : undefined}
 			max={ordered ? write(max) : undefined}
 
+			// a number field takes any value, rather than only the ones a whole step away from its lower limit
+
+			step={shown === "number" ? "any" : undefined}
+
 			onFocusIn={event => {
 				enter(id);
 				select(event.currentTarget);

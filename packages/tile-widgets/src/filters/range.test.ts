@@ -751,6 +751,24 @@ describe("Range", () => {
 
 		});
 
+		it("should apply bounds off the steps from the values on offer", async () => {
+
+			const onChange = vi.fn();
+
+			mount(bounds(9.99, 199.99), { type: decimal, onChange });
+
+			await ready();
+
+			commit(lower(), "50");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 50 }));
+
+			commit(upper(), "100.5");
+
+			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({ ">=year": 50, "<=year": 100.5 }));
+
+		});
+
 		it("should bound instants shown as days by whole days", async () => {
 
 			const onChange = vi.fn();

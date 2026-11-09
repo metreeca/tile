@@ -20,7 +20,9 @@
  * @module
  */
 
+import { Infobox } from "@metreeca/clay-widgets/infobox";
 import { base, Product } from "@metreeca/specimen/toys.js";
+import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { useResource } from "@metreeca/tile/resource";
 import { text } from "@metreeca/tile/types/text";
 import { Frame } from "@metreeca/tile-widgets/viewers/frame";
@@ -43,13 +45,20 @@ export function Frames() {
 	return <>
 
 		<p>A frame shows a single resource held by the store, marking its area while the resource is retrieved and
-			keeping it on show while a change is retrieved again.</p>
+			keeping it on show while a change is retrieved again. A resource the store finds missing is shown as a
+			note in place of the frame.</p>
 
-		<Sample entry={entry}/>
+		<div class="samples">
 
-		<p>A resource the store finds missing is shown as a note in place of the frame.</p>
+			<Sample label="ready">
+				<Item entry={entry}/>
+			</Sample>
 
-		<Sample entry={missing}/>
+			<Sample label="missing">
+				<Item entry={missing}/>
+			</Sample>
+
+		</div>
 
 	</>;
 
@@ -57,9 +66,9 @@ export function Frames() {
 
 
 /**
- * Shows a toy product.
+ * Shows a toy product as an infobox.
  */
-function Sample({
+function Item({
 
 	entry
 
@@ -72,12 +81,33 @@ function Sample({
 	const product = useResource({
 		entry,
 		shape: Product,
-		model: { id: {}, label: { "*": {} }, comment: { "*": {} } }
+		model: {
+			id: {},
+			label: { "*": {} },
+			comment: { "*": {} },
+			sku: {},
+			condition: {},
+			price: {},
+			stock: {},
+			launched: {},
+			vendor: { id: {}, label: {} }
+		}
 	});
 
 	return <Frame resource={product} placeholder={<FileIcon/>}>{product => <>
+
 		<h3>{text.write(product.label)}</h3>
 		<p>{product.comment && text.write(product.comment)}</p>
+
+		<Infobox>{{
+			Code: product.sku,
+			Vendor: product.vendor.label,
+			Condition: product.condition,
+			Price: product.price.toFixed(2),
+			Stock: product.stock,
+			Launched: product.launched
+		}}</Infobox>
+
 	</>}</Frame>;
 
 }

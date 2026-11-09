@@ -22,6 +22,7 @@
 
 import { Button } from "@metreeca/clay-widgets/button";
 import { More } from "@metreeca/clay-widgets/more";
+import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { base, Products } from "@metreeca/specimen/toys.js";
 import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useKeywords } from "@metreeca/tile/keywords";
@@ -106,11 +107,17 @@ function Listing({
 			/>
 		</div>
 
-		<Sheet members={members} placeholder={<ListIcon/>}>{item =>
-			<div><code>{item.sku}</code> {text.write(item.label)}</div>
-		}</Sheet>
+		<div class="samples">
+			<Sample label="sorted by name">
 
-		{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+				<Sheet members={members} placeholder={<ListIcon/>}>{item =>
+					<div><code>{item.sku}</code> {text.write(item.label)}</div>
+				}</Sheet>
+
+				{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+
+			</Sample>
+		</div>
 
 	</>;
 

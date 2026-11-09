@@ -21,6 +21,7 @@
  */
 
 import { entry, Faceted } from "@metreeca/specimen/tile-widgets/facets.js";
+import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { Products } from "@metreeca/specimen/toys.js";
 import { useCollection } from "@metreeca/tile/collection";
 import { useTally } from "@metreeca/tile/tally";
@@ -44,11 +45,15 @@ export function Tallies() {
 			number of items holding it. The other tallies recount their values as the reader ticks, the counter tells
 			how many products match, and the table lists them.</p>
 
-		<Faceted collection={collection}>
-			<Tally name="Category" tally={useTally(collection, "categories", { label: "label", size: 5 })}/>
-			<Tally name="Condition" tally={useTally(collection, "condition")}/>
-			<Tally name="Vendor" compact tally={useTally(collection, "vendor", { label: "name", size: 5 })}/>
-		</Faceted>
+		<div class="samples">
+			<Sample label="narrowed by category, condition and vendor">
+				<Faceted collection={collection}>
+					<Tally name="Category" tally={useTally(collection, "categories", { label: "label", size: 5 })}/>
+					<Tally name="Condition" tally={useTally(collection, "condition")}/>
+					<Tally name="Vendor" compact tally={useTally(collection, "vendor", { label: "name", size: 5 })}/>
+				</Faceted>
+			</Sample>
+		</div>
 
 	</>;
 

@@ -21,6 +21,7 @@
  */
 
 import { More } from "@metreeca/clay-widgets/more";
+import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { base, Products } from "@metreeca/specimen/toys.js";
 import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useMembers } from "@metreeca/tile/members";
@@ -71,15 +72,21 @@ function Listing({
 
 	return <>
 
-		<Table name="Products" hierarchy members={members} placeholder={<TableIcon/>} columns={{
-			Vendor: { sort: "vendor.label", render: item => item.vendor.label },
-			Code: { sort: "sku", render: item => item.sku },
-			Product: { sort: "name", render: item => text.write(item.label) },
-			Price: { sort: "price", align: "end", render: item => item.price.toFixed(2) },
-			Stock: { sort: "stock", align: "end", render: item => item.stock }
-		}}/>
+		<div class="samples">
+			<Sample label="grouped by vendor">
 
-		{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+				<Table name="Products" hierarchy members={members} placeholder={<TableIcon/>} columns={{
+					Vendor: { sort: "vendor.label", render: item => item.vendor.label },
+					Code: { sort: "sku", render: item => item.sku },
+					Product: { sort: "name", render: item => text.write(item.label) },
+					Price: { sort: "price", align: "end", render: item => item.price.toFixed(2) },
+					Stock: { sort: "stock", align: "end", render: item => item.stock }
+				}}/>
+
+				{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
+
+			</Sample>
+		</div>
 
 	</>;
 

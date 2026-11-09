@@ -21,6 +21,7 @@
  */
 
 import { entry, Faceted } from "@metreeca/specimen/tile-widgets/facets.js";
+import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { Products } from "@metreeca/specimen/toys.js";
 import { useCollection } from "@metreeca/tile/collection";
 import { useRange } from "@metreeca/tile/range";
@@ -46,10 +47,14 @@ export function Ranges() {
 			the lowest and highest values on offer. The other ranges follow the bounds set, the counter tells how many
 			products match, and the table lists them.</p>
 
-		<Faceted collection={collection}>
-			<Range name="Price" type={decimal} range={useRange(collection, "price")}/>
-			<Range name="Launched" compact type={date} range={useRange(collection, "launched")}/>
-		</Faceted>
+		<div class="samples">
+			<Sample label="narrowed by price and launch date">
+				<Faceted collection={collection}>
+					<Range name="Price" type={decimal} range={useRange(collection, "price")}/>
+					<Range name="Launched" compact type={date} range={useRange(collection, "launched")}/>
+				</Faceted>
+			</Sample>
+		</div>
 
 	</>;
 

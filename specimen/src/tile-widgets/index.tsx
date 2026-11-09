@@ -31,8 +31,8 @@ import "@metreeca/specimen/tile-widgets/index.css";
 
 const samples: readonly Sample[] = [
 
-	{ id: "sheet", group: "Viewers", title: "Sheet", view: <Sheets/> },
 	{ id: "frame", group: "Viewers", title: "Frame", view: <Frames/> },
+	{ id: "sheet", group: "Viewers", title: "Sheet", view: <Sheets/> },
 	{ id: "table", group: "Viewers", title: "Table", view: <Tables/> },
 
 	{ id: "tally", group: "Filters", title: "Tally", view: <Tallies/> },

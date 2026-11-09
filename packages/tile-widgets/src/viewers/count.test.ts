@@ -21,7 +21,7 @@ import { immutable } from "@metreeca/core/values";
 import type { Store as Backend } from "@metreeca/keep";
 import type { Criteria } from "@metreeca/qest/model";
 import { Store } from "@metreeca/tile";
-import { useCollection } from "@metreeca/tile/collection";
+import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useCount } from "@metreeca/tile/count";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
@@ -50,13 +50,26 @@ function backend(lookup: unknown): Backend {
 	} as unknown as Backend; // ;(test stub) only the members the binding calls are provided
 }
 
-function mount(lookup: unknown, criteria: Criteria = {}): void {
+/**
+ * Mounts a counter over a catalogue held by a store answering with `lookup`, worded by `labels` if given.
+ *
+ * @returns A getter for the collection as last rendered, so a test narrows it as a facet would
+ */
+function mount(
+	lookup: unknown,
+	criteria: Criteria = {},
+	labels?: Parameters<typeof Count>[0]["labels"]
+): () => Collection<typeof Catalogue, "members"> {
+
+	const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
 
 	function Host() {
 
 		const collection = useCollection({ entry, shape: Catalogue, query: criteria });
 
-		return createElement(Count<typeof Catalogue, "members">, { collection, count: useCount(collection) });
+		collections(collection);
+
+		return createElement(Count<typeof Catalogue, "members">, { collection, count: useCount(collection), labels });
 
 	}
 
@@ -64,6 +77,8 @@ function mount(lookup: unknown, criteria: Criteria = {}): void {
 		factory: () => backend(lookup),
 		children: createElement(Host, {})
 	}), document.body));
+
+	return () => collections.mock.lastCall![0]; // test harness: Host has rendered at least once
 
 }
 
@@ -136,6 +151,22 @@ describe("Count", () => {
 
 	});
 
+	it("should keep the count and its wording together while counting again", async () => {
+
+		const lookup = vi.fn().mockImplementationOnce(counting(62)).mockImplementation(() => new Promise(() => {}));
+		const collection = mount(lookup);
+
+		await vi.waitFor(() => expect(counter()?.textContent).toBe("62 items"));
+
+		act(() => void collection().filter({ "~label": "item" }));
+
+		await vi.waitFor(() => expect(lookup).toHaveBeenCalledTimes(2));
+		await act(async () => {});
+
+		expect(counter()?.textContent).toBe("62 items");
+
+	});
+
 	describe("narrowed collections", () => {
 
 		const criteria = { "~label": "item" };
@@ -161,6 +192,53 @@ describe("Count", () => {
 			mount(counting(3), criteria);
 
 			await vi.waitFor(() => expect(counter()?.textContent).toBe("3 matches"));
+
+		});
+
+	});
+
+	describe("custom wording", () => {
+
+		const labels = {
+			empty: "nessun elemento",
+			item: "elemento",
+			items: "elementi",
+			unmatched: "nessun risultato",
+			match: "risultato",
+			matches: "risultati"
+		};
+
+		const criteria = { "~label": "item" };
+
+		it("should tell no items in the given wording", async () => {
+
+			mount(counting(0), {}, labels);
+
+			await vi.waitFor(() => expect(counter()?.textContent).toBe("nessun elemento"));
+
+		});
+
+		it("should tell items in the given wording", async () => {
+
+			mount(counting(3), {}, labels);
+
+			await vi.waitFor(() => expect(counter()?.textContent).toBe("3 elementi"));
+
+		});
+
+		it("should tell no matches in the given wording", async () => {
+
+			mount(counting(0), criteria, labels);
+
+			await vi.waitFor(() => expect(counter()?.textContent).toBe("nessun risultato"));
+
+		});
+
+		it("should tell a single match in the given wording", async () => {
+
+			mount(counting(1), criteria, labels);
+
+			await vi.waitFor(() => expect(counter()?.textContent).toBe("1 risultato"));
 
 		});
 

@@ -42,7 +42,7 @@ import { createOxiRepository } from "@metreeca/wire-sparql-oxigraph";
 import init from "oxigraph/web.js";
 
 
-export { base, Category, Product, Products, Vendor } from "@metreeca/keep-suite/toys";
+export { base, Categories, Category, Product, Products, Vendor } from "@metreeca/keep-suite/toys";
 
 
 await init(); // loads the Oxigraph WebAssembly module, which the repository needs before it opens

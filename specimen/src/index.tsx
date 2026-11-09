@@ -29,7 +29,8 @@ import { host } from "@metreeca/clay";
 import { Router, Routes } from "@metreeca/clay/router";
 import { createFetch } from "@metreeca/http";
 import { mock } from "@metreeca/http/mock";
-import { Root, TileWidgetsPath } from "@metreeca/specimen/index.core.js";
+import { Root, TilePath, TileWidgetsPath } from "@metreeca/specimen/index.core.js";
+import { Tile } from "@metreeca/specimen/tile/index.js";
 import { TileWidgets } from "@metreeca/specimen/tile-widgets/index.js";
 import { toys } from "@metreeca/specimen/toys.js";
 import { Store } from "@metreeca/tile";
@@ -52,8 +53,9 @@ function Specimen() {
 
 				<Routes>{{
 
-					[Root]: TileWidgetsPath,
+					[Root]: TilePath,
 
+					[TilePath]: <Tile/>,
 					[TileWidgetsPath]: <TileWidgets/>
 
 				}}</Routes>

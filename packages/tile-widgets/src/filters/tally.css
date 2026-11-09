@@ -159,12 +159,12 @@ tile-tally {
     & > section {
 
         /*
-         * A longer list scrolls within the box, which stops halfway down the first option past the rows shown in full,
-         * so the clipped option tells the reader that the list carries on beyond the edge.
+         * A longer list scrolls within the box, which stops just past the middle of the first option beyond those
+         * shown in full, so the clipped option tells the reader that the list carries on beyond the edge.
          */
 
         max-block-size: calc(
-            (var(--tile-tally-rows) + 0.5) * 1lh + var(--skin--spacing-050) + var(--skin--border-width)
+            (var(--tile-tally-rows) + 0.6) * 1lh + var(--skin--spacing-050) + var(--skin--border-width)
         );
 
         overflow-y: auto;
@@ -243,7 +243,7 @@ tile-tally {
                 /*
                  * Unless ticked, such an option is disabled and fades as a disabled control does, contrast being owed
                  * by no inactive control. A ticked one stays at full strength, since it is still there to be unticked.
-                 * The name of a linked resource is spared the fade, since the link still works and owes its 4.5:1.
+                 * The name of a linked resource fades alike, so every option the other criteria rule out reads as such.
                  */
 
                 &:has(input:disabled) > label {
@@ -251,7 +251,7 @@ tile-tally {
                     cursor: default;
 
                     & > input,
-                    & > span:not(:has(a)),
+                    & > span,
                     & > small {
                         opacity: var(--skin--opacity-disabled);
                     }

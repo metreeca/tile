@@ -39,11 +39,11 @@ const entry = `${base}products/`;
  */
 export function Tables() {
 
-	const collection = useCollection({ entry, shape: Products, scope: { ">=price": 80 } });
+	const collection = useCollection({ entry, shape: Products, scope: { ">=price": 60 } });
 
 	return <>
 
-		<p>A table shows the members of a collection one row per item, here the products priced 80 or more, sorted on
+		<p>A table shows the members of a collection one row per item, here the products priced 60 or more, sorted on
 			any sortable column by its header. Grouped by vendor, leading cells repeating the row above are faded.</p>
 
 		<Listing collection={collection}/>

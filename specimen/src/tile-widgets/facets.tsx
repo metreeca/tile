@@ -103,7 +103,7 @@ function Listing({
 	const members = useMembers(collection, {
 		model: { id: {}, sku: {}, label: { "*": {} }, price: {}, vendor: { id: {}, label: {} } },
 		order: { name: "asc" },
-		batch: 25
+		batch: 12
 	});
 
 	return <section>

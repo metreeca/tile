@@ -20,7 +20,6 @@
  * @module
  */
 
-import { More } from "@metreeca/clay-widgets/more";
 import { Strip } from "@metreeca/clay-widgets/strip";
 import { base, Products } from "@metreeca/specimen/toys.js";
 import type { Collection } from "@metreeca/tile/collection";
@@ -88,7 +87,7 @@ export function Faceted({
 
 
 /**
- * Lists the toy products matching the facets, by name.
+ * Lists the first dozen toy products matching the facets, by name.
  */
 function Listing({
 
@@ -113,8 +112,6 @@ function Listing({
 			Vendor: { sort: "vendor.label", render: item => item.vendor.label },
 			Price: { sort: "price", align: "end", render: item => item.price.toFixed(2) }
 		}}/>
-
-		{members({ ready: ({ load }) => load && <More onLoad={load}/> })}
 
 	</section>;
 

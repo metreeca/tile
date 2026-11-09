@@ -15,14 +15,21 @@
  */
 
 /*
- * A table takes the base rules the design system gives native tables, and scrolls sideways within its own box once
- * its columns outgrow the area around it, so a wide table never widens the page.
+ * A table takes the base rules the design system gives native tables. It sets up no scrolling of its own, which
+ * would capture its sticky headers, so the area around it scrolls a table outgrowing it in either direction.
  */
 
 tile-table {
 
     display: block;
-    overflow-x: auto;
+
+    /* Headers stay at the top of the scrolling area while the rows pass under them, naming the columns throughout. */
+
+    & thead th {
+        position: sticky;
+        top: 0;
+        z-index: var(--skin--z-index-sticky);
+    }
 
     & th,
     & td {

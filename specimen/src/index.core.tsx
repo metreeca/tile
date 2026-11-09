@@ -14,156 +14,223 @@
  * limitations under the License.
  */
 
+/**
+ * Specimen frame.
+ *
+ * Lays every package page out as one long scrolling sheet inside the frame an app lays its own screens out in: a bar
+ * carrying the packages and the page settings, an outline of the sections following the reader, and the sections
+ * themselves, each opened by its heading group, so the frame is shown by being used rather than described.
+ *
+ * @module
+ */
+
 import { app } from "@metreeca/clay";
+import { isContent } from "@metreeca/clay-widgets";
 import { Button } from "@metreeca/clay-widgets/button";
+import { Choice } from "@metreeca/clay-widgets/choice";
+import { Icon } from "@metreeca/clay-widgets/icon";
 import { Link } from "@metreeca/clay-widgets/link";
-import { Logo } from "@metreeca/clay-widgets/logo";
-import { useFetch } from "@metreeca/clay/fetch";
-import { Shell } from "@metreeca/clay-widgets/shell";
-import { TileWidgetsPath } from "@metreeca/specimen/tile-widgets/index.js";
-import {
-	ChevronsLeftRightIcon,
-	ChevronsRightLeftIcon,
-	LockIcon,
-	LogInIcon,
-	LogOutIcon,
-	PanelLeftCloseIcon,
-	PanelLeftOpenIcon,
-	SearchIcon,
-	UnlockIcon
-} from "lucide-preact";
-import type { ComponentChildren } from "preact";
-import { useState } from "preact/hooks";
+import { Strip } from "@metreeca/clay-widgets/strip";
+import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
+import { Tool } from "@metreeca/clay-widgets/tool";
+import { useRouter } from "@metreeca/clay/router";
+import { useStorage } from "@metreeca/clay/storage";
+import { type ComponentChildren, createElement, Fragment } from "preact";
+import { useEffect } from "preact/hooks";
 
 
 export const Root = "/";
 
+export const TileWidgetsPath = "/tile-widgets/";
+
+
+/**
+ * A section of a package page: the id it is linked to by, the group of the outline it is listed under, what it is
+ * called, the shorter name the outline lists it by if its title is too long for the rail, what it is about and the
+ * samples it shows to the reader as live widgets rather than as pictures or descriptions of them.
+ *
+ * A sample filling the window, such as a shell, stands on a screen of its own instead: it names the location of that
+ * screen, which the outline opens in a new tab, and takes no section on the page.
+ */
+export type Sample = {
+
+	readonly id: string
+	readonly group: string
+	readonly title: string
+	readonly label?: string
+
+} & ({
+
+	readonly lead?: ComponentChildren
+	readonly view: ComponentChildren
+
+} | {
+
+	readonly href: string
+
+})
+
+
+export const schemes = {
+	auto: <Icon.Monitor aria-label="System"><title>System Theme</title></Icon.Monitor>,
+	light: <Icon.Sun aria-label="Light"><title>Light Theme</title></Icon.Sun>,
+	dark: <Icon.Moon aria-label="Dark"><title>Dark Theme</title></Icon.Moon>
+};
+
+type Scheme = keyof typeof schemes
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Creates a package page.
+ *
+ * Opens the page with what the package is, lists every section in the outline of the tray under the group it belongs
+ * to, and sets the sections one after the other, each opened by its heading group.
+ *
+ * @param options The page configuration
+ *
+ * @returns The package page, inside the specimen frame
+ */
 export function Page({
 
-	tray,
-
-	children
+	eyebrow,
+	title,
+	lead,
+	samples
 
 }: {
 
-	tray?: ComponentChildren
-
-	children?: ComponentChildren
-
+	eyebrow: string
+	title: string
+	lead: ComponentChildren
+	samples: readonly Sample[]
 
 }) {
 
-	const fetch = useFetch();
+	const router = useRouter();
 
-	const [lock, setLock] = useState(false);
-	const [main, setMain] = useState(false);
-	const [wide, setWide] = useState(false);
+	const [scheme, setScheme] = useScheme();
 
-	const [user, setUser] = useState<string>();
+	return <Tool
 
-	function edit() {
+		meta={<Button
+			icon={<span class="brand">@metreeca/<strong>tile</strong></span>}
+			look="subtle"
+			name="@metreeca/tile"
+			onClick={() => router(Root)}
+		/>}
 
-		setLock(true);
+		head={<nav class="packages" aria-label="Packages">
+			<Link active look="subtle" href={`${TileWidgetsPath}*`}>Widgets</Link>
+		</nav>}
 
-		setTimeout(() => setLock(false), 1000);
-
-	}
-
-
-	return <Shell
-
-		lock={lock}
-		main={main}
-		wide={wide}
-
-		logo={<span class="brand">
-
-			<Link look="strong" href={Root}><Logo/><span>{app.name}</span></Link>
-
-		</span>}
-
-		meta={<>
-
-			<Button
-				icon={lock ? <UnlockIcon/> : <LockIcon/>}
-				look="subtle"
-				title={lock ? "Release the tray" : "Lock the tray"}
-				onClick={edit}
-			/>
-
-		</>}
-
-		head={<>
-
-			<Button
-				icon={main ? <PanelLeftOpenIcon/> : <PanelLeftCloseIcon/>}
-				look="subtle"
-				title={main ? "Show the tray" : "Hide the tray"}
-				onClick={() => setMain(!main)}
-			/>
-
-			<Button
-				icon={wide ? <ChevronsRightLeftIcon/> : <ChevronsLeftRightIcon/>}
-				look="subtle"
-				title={wide ? "Cap the measure" : "Take the width"}
-				onClick={() => setWide(!wide)}
-			/>
-
-			<Link active look="strong" href={`${TileWidgetsPath}*`}>Linked Data Widgets</Link>
-
-		</>}
-
-		menu={<>
+		menu={<Strip align="center" space="spacing100">
 
 			<small>v{VERSION}</small>
 
-			<Button
-				icon={<SearchIcon/>}
-				look="subtle"
-				name="Run an exchange"
-				title="Run an exchange"
-				onClick={() => { void fetch(app.base); }}
-			/>
+			<Choice name="Colour scheme" look="subtle" options={schemes} value={scheme} onChange={setScheme}/>
 
-		</>}
+		</Strip>}
 
-		tray={tray}
+		tray={<TOC name="Sections" compact entries={outline(samples)}/>}
 
-		info={user
-
-			? <>
-
-				<small>{user}</small>
-
-				<Button
-					icon={<LogOutIcon/>}
-					look="subtle"
-					name="Sign out"
-					title="Sign out"
-					onClick={() => setUser(undefined)}
-				/>
-
-			</>
-
-			: <Button
-				icon={<LogInIcon/>}
-				look="subtle"
-				name="Sign in"
-				title="Sign in"
-				onClick={() => setUser("user@example.com")}
-			/>
-
-		}
-
-		foot={<small>{app.copy}</small>}
+		copy={<small>{app.copy}</small>}
 
 	>
 
-		{children}
+		<Intro eyebrow={eyebrow} title={title} lead={lead}/>
 
-	</Shell>;
+		{samples.map(sample => "view" in sample && <Fragment key={sample.id}>
+			<Intro id={sample.id} level={2} eyebrow={sample.group} title={sample.title} lead={sample.lead}/>
+			{sample.view}
+		</Fragment>)}
+
+	</Tool>;
+
+}
+
+
+/**
+ * Adopts the colour scheme the reader chose, remembered across pages and tabs, pinning it on the root of the document.
+ *
+ * @returns The scheme in force and the way to choose another
+ */
+export function useScheme() {
+
+	const state = useStorage<Scheme>(localStorage, "specimen-scheme", "auto");
+
+	// the scheme is pinned on the root of the document, which no render of a page owns
+
+	useEffect(() => apply(state[0]), [state[0]]);
+
+	return state;
+
+}
+
+
+/**
+ * Opens a page or one of its samples with the heading group of the design system: the part of the page it belongs to,
+ * the title ranked at `level`, and what it is about; the id given is the target its outline entry links to.
+ */
+function Intro({
+
+	id,
+
+	level = 1,
+
+	eyebrow,
+	title,
+	lead
+
+}: {
+
+	id?: string
+
+	level?: 1 | 2
+
+	eyebrow: ComponentChildren
+	title: ComponentChildren
+	lead?: ComponentChildren
+
+}) {
+
+	return <hgroup id={id}>
+		<p>{eyebrow}</p>
+		{createElement(`h${level}`, {}, title)}
+		{isContent(lead) && <p>{lead}</p>}
+	</hgroup>;
+
+}
+
+/**
+ * Groups the sections of a page into the outline listing them, in the order the page holds them.
+ */
+function outline(samples: readonly Sample[]): readonly TOCEntry[] {
+
+	const groups = [...new Set(samples.map(({ group }) => group))];
+
+	return groups.map(group => ({
+		label: group,
+		entries: samples
+			.filter(sample => sample.group === group)
+			.map(sample => "href" in sample
+				? { label: sample.label ?? sample.title, href: sample.href, target: "_blank" }
+				: { label: sample.label ?? sample.title, href: `#${sample.id}` }
+			)
+	}));
+
+}
+
+/**
+ * Pins the colour scheme chosen on the root of the page, or leaves it to the platform.
+ */
+function apply(scheme: Scheme): void {
+
+	if ( scheme === "auto" ) {
+		document.documentElement.removeAttribute("data-scheme");
+	} else {
+		document.documentElement.setAttribute("data-scheme", scheme);
+	}
 
 }

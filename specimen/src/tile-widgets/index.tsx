@@ -14,53 +14,43 @@
  * limitations under the License.
  */
 
-import { Routes, useRoute } from "@metreeca/clay/router";
-import { Page } from "@metreeca/specimen/index.core.js";
+/**
+ * Widget samples.
+ *
+ * @module
+ */
+
+import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Frames } from "@metreeca/specimen/tile-widgets/frames.js";
 import { Sheets } from "@metreeca/specimen/tile-widgets/sheets.js";
 import { Tables } from "@metreeca/specimen/tile-widgets/tables.js";
 import "@metreeca/specimen/tile-widgets/index.css";
 
 
-export const TileWidgetsPath = "/tile-widgets/";
+const samples: readonly Sample[] = [
+
+	{ id: "sheet", group: "Viewers", title: "Sheet", view: <Sheets/> },
+	{ id: "frame", group: "Viewers", title: "Frame", view: <Frames/> },
+	{ id: "table", group: "Viewers", title: "Table", view: <Tables/> }
+
+];
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function TileWidgets() {
 
-	const sections = {
-
-		Sheet: <Sheets/>,
-		Frame: <Frames/>,
-		Table: <Tables/>
-
-	};
-
-	const route = useRoute();
-
-	const path = (label: string) => label.toLowerCase();
-
 	return <Page
 
-		tray={<nav aria-label="Sections"><ul>{Object.keys(sections).map(label => {
+		eyebrow="@metreeca/tile-widgets"
+		title="Linked Data Widgets"
+		lead={<>
+			The pieces a linked data interface is assembled from, each driven by the shape and the query of the
+			resources it shows. Every sample on this page is a live widget, reading from an in-memory toys store.
+		</>}
 
-			const href = `${TileWidgetsPath}${path(label)}`;
+		samples={samples}
 
-			return <li key={label}><a href={href} aria-current={route === href ? "page" : undefined}>{label}</a></li>;
-
-		})}</ul></nav>}
-
-	>
-
-		<Routes>{{
-
-			"/": `/${path("Sheet")}`,
-
-			...Object.fromEntries(Object.entries(sections).map(([label, view]) => [`/${path(label)}`, view]))
-
-		}}</Routes>
-
-	</Page>;
+	/>;
 
 }

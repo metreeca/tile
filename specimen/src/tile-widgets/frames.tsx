@@ -76,7 +76,7 @@ function Sample({
 	});
 
 	return <Frame resource={product} placeholder={<FileIcon/>}>{product => <>
-		<h2>{text.write(product.label)}</h2>
+		<h3>{text.write(product.label)}</h3>
 		<p>{product.comment && text.write(product.comment)}</p>
 	</>}</Frame>;
 

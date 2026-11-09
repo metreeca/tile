@@ -15,23 +15,92 @@
  */
 
 /*
- * The sampler retunes the frame it is laid out in by restating the frame's own properties on the page, which is what
- * they are there for: a page measure is not a design system token and is not themed, so one screen is changed without
- * touching any other.
+ * The specimen dresses the frame it is laid out in as the design system lab dresses its own page: the brand in the two
+ * accents, the packages and the page settings grouped at the end of the bar, figures opening each page, and every row
+ * of samples set in a framed panel, so a widget is read against a surface of its own rather than against the prose.
  */
 
-clay-shell {
+/* The brand reads in the subtle accent with the package name in the strong one, set in the heading face. */
 
-    --clay-shell-tray-width: 15rem;
+.brand {
+
+    font-family: var(--skin--font-family-heading);
+    font-weight: var(--skin--font-weight-strong);
+    color: var(--skin--color-subtle);
+
+    & > strong {
+        font-weight: inherit;
+        color: var(--skin--color-strong);
+    }
 
 }
 
 /*
- * The app name stands out from the frame around it, set a step over the running text.
+ * The packages stand as a row of quiet links ahead of the page settings, the one on show marked by the link itself,
+ * and step out of the bar below the medium viewport, where it has no room for them.
  */
 
-.brand {
+.packages {
 
-    font-size: var(--skin--font-size-large);
+    display: flex;
+    gap: var(--skin--spacing-100);
+    margin-inline-end: var(--skin--spacing-100);
+    font-size: var(--skin--font-size-small);
+
+    @container style(--skin--viewport-medium: off) {
+        display: none;
+    }
+
+}
+
+clay-tool {
+
+    /* The shell takes no height of its own, so every page gives it the whole of the window. */
+
+    block-size: 100dvh;
+
+    /* The head row is set a quarter over the running text, so the bar reads as the frame of the page. */
+
+    --clay-tool-head-font-size: 125%;
+
+    /* The home button spans the side head, its brand set at the start, so the whole bar leads back home. */
+
+    & > aside > header > clay-button {
+
+        flex: auto;
+
+        & > button {
+            justify-content: flex-start;
+        }
+
+    }
+
+    /*
+     * The heading group opening the page keeps the display size the design system gives it and starts the body, level
+     * with the first line of the outline beside it. The one opening each sample stands a step above the text and a
+     * step clear of the sample before it, so the page title alone reads as the loudest line on the page.
+     */
+
+    & hgroup:has(> h2) {
+
+        padding-top: var(--skin--spacing-100);
+
+        & > h2 {
+            font-size: var(--skin--font-size-large);
+        }
+
+    }
+
+    /*
+     * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
+     * their own; the panel keeps clear of the prose before and after it, as a figure does.
+     */
+
+    & .controls {
+        padding: var(--skin--spacing-150);
+        border-style: var(--skin--border-style);
+        border-radius: var(--skin--border-radius-075);
+        margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
+    }
 
 }

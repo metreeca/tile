@@ -44,12 +44,14 @@ tile-table {
     }
 
     /*
-     * A cell repeating the one above takes the label colour, which holds the 4.5:1 a text role owes in both schemes,
-     * so the rows sharing their first values read as a group while every value in them stays legible.
+     * A cell repeating the one above is joined to it, the rule between them hidden, so the rows sharing their first
+     * values read as a group. It takes the placeholder colour, the dimmest text role still holding 4.5:1 on the page
+     * and the stripe in both schemes, so the group stays named on every row however the table is scrolled.
      */
 
     & td.repeated {
-        color: var(--skin--color-label);
+        border-top-style: hidden;
+        color: var(--skin--color-placeholder);
     }
 
     /*

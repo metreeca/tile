@@ -89,10 +89,10 @@ export type Column<I> = {
  *
  * Items carrying an identifier end their row with a link to the resource it names, taking the reader to its details.
  *
- * In a `hierarchy`, the leading cells of a row repeating the ones above are faded, so that items sharing their first
- * values read as a group. Cells are compared by the text they render, and a cell rendering anything other than text or
- * a number never counts as repeating. A `striped` table tints alternate rows, which native tables don't do, to guide
- * the eye along rows too wide to follow by their rules alone.
+ * In a `hierarchy`, the leading cells of a row repeating the ones above are faded and joined to them, so that items
+ * sharing their first values read as a group. Cells are compared by the text they render, and a cell rendering anything
+ * other than text or a number never counts as repeating. A `striped` table tints alternate rows, which native tables
+ * don't do, to guide the eye along rows too wide to follow by their rules alone.
  *
  * Where a `placeholder` is supplied, a table with nothing to show fills its area with it, worded as still loading or as
  * matching nothing. A failed exchange is shown as a critical note instead, telling the reader why no rows are listed.

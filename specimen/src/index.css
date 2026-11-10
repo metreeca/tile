@@ -61,7 +61,7 @@ clay-tool {
 
     /* The head row is set a quarter over the running text, so the bar reads as the frame of the page. */
 
-    --clay-tool-head-font-size: 125%;
+    --clay-tool-head-font-size: var(--skin--font-size-large);
 
     /* The home button spans the side head, its brand set at the start, so the whole bar leads back home. */
 

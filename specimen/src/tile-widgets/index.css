@@ -39,6 +39,12 @@
  */
 
 .facets {
+
+    /*
+     * The facet column holds no narrower than a facet header with its name and glyphs side by side, a page layout
+     * measure in text widths that the design system leaves to each app.
+     */
+
     display: grid;
     grid-template-columns: minmax(14rem, 1fr) 3fr;
     align-items: start;
@@ -46,7 +52,7 @@
 
     margin-block-start: var(--skin--spacing-100);
 
-    @media (width < 48rem) {
+    @container style(--skin--viewport-medium: off) {
         grid-template-columns: minmax(0, 1fr);
     }
 
@@ -89,6 +95,8 @@ clay-strip[look]:has(> tile-count) {
 
 tile-sheet:has(> clay-card) {
 
+    /* A card holds no narrower than its title on one line beside the glyph, a gallery measure left to each app. */
+
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
     grid-auto-rows: 1fr;
@@ -104,7 +112,10 @@ tile-sheet:has(> clay-card) {
             box-shadow: var(--skin--box-shadow-raised);
         }
 
-        /* The glyph standing for the product rides with the text it sits in, so it is scaled through the font size. */
+        /*
+         * The glyph standing for the product rides with the text it sits in, so it is scaled through the font size. Its
+         * line is exactly as tall as the glyph, since leading meant for display text would push the card body down.
+         */
 
         & > i {
             font-size: var(--skin--scaling-200);
@@ -202,6 +213,11 @@ tile-sheet:has(> clay-card) {
     row-gap: var(--skin--spacing-050);
     margin: 0; /* spaced by the set it stands in, never by the flow of the prose */
 
+    /*
+     * The outline is dashed, unlike any border the design system draws, so it reads as the frame of the sample rather
+     * than as an edge of the widget inside it.
+     */
+
     & > div {
         display: flex;
         flex-direction: column;
@@ -218,7 +234,7 @@ tile-sheet:has(> clay-card) {
 
     & > figcaption {
         padding-inline: var(--sample-inset);
-        border-inline: var(--skin--border-width) solid transparent;
+        border-inline: var(--skin--border-width) var(--skin--border-style) transparent;
         color: var(--skin--color-label);
     }
 

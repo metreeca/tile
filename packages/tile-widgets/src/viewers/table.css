@@ -65,7 +65,7 @@ tile-table {
          */
 
         &:not(:has(svg)) {
-            padding-inline-end: calc(1em + var(--skin--spacing-025));
+            padding-inline-end: calc(var(--skin--scaling-100) + var(--skin--spacing-025));
         }
 
     }
@@ -75,7 +75,7 @@ tile-table {
         flex-direction: row-reverse;
 
         &:not(:has(svg)) {
-            padding-inline: calc(1em + var(--skin--spacing-025)) 0;
+            padding-inline: calc(var(--skin--scaling-100) + var(--skin--spacing-025)) 0;
         }
 
     }

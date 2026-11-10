@@ -90,6 +90,14 @@ A binding package styles what it draws through the `@metreeca/skin` tokens: its 
 the interface follows whatever theme an app sets there. A general-purpose context or hook a binding package needs
 belongs to `@metreeca/clay`, **NEVER** to a Tile package.
 
+> [!CAUTION]
+> **STICK** to the `@metreeca/skin` design system. Wherever Skin defines a token that sensibly fits a role, a sheet
+> **MUST** read it, keywords included, **NEVER** a literal (`solid`, `1px`) or a token borrowed from another role to
+> tune a look: a border is `var(--skin--border-width) var(--skin--border-style) var(--skin--border-color)`, the field
+> variant staying with fields. Where a look seems off, the fix belongs in Skin, not in a Tile sheet working around it.
+> A deviation is accepted **ONLY** with a solid rationale, stated in a comment beside the declaration it affects: a
+> value with no comment is a defect.
+
 ## Package Distribution
 
 A package boundary is drawn only where it spares a consumer something: an install, a peer dependency, or a release to

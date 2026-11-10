@@ -144,6 +144,7 @@ export function Range({
 	useEffect(() => edit === undefined || !edit.valid || Masked.has(input)
 		? undefined
 		: cancel(setTimeout(apply, AutoDelay)), [edit]);
+
 	const Glyph = Glyphs[type.label] ?? TypeIcon;
 
 	const bounded = range({ ready: ({ lower, upper }) => lower !== undefined || upper !== undefined }) ?? false;

@@ -50,11 +50,6 @@ tile-range {
         background-color: transparent;
     }
 
-    /*
-     * The glyph is decorative and set in the label colour, so it reads as guidance rather than as content. The name
-     * is text the reader relies on, so it takes the label colour too, which holds the 4.5:1 a text role owes.
-     */
-
     & > header {
 
         display: grid;
@@ -72,8 +67,6 @@ tile-range {
 
         padding-block: var(--skin--spacing-025);
         padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
-
-        color: var(--skin--color-label);
 
         /*
          * The name fills the row with its text centred in it, so the glyph seated on its baseline, or the pin standing

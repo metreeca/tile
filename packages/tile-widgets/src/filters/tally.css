@@ -57,9 +57,9 @@ tile-tally {
     }
 
     /*
-     * The glyph is decorative and set in the label colour, so it reads as guidance rather than as content. The
-     * placeholder doubles as the name of the facet, so it takes the label colour as well, holding the 4.5:1 a text
-     * role owes, where the placeholder colour would leave the name below legibility.
+     * The placeholder doubles as the name of the facet, so it takes the text colour, as the glyph beside it does,
+     * reading as the title of the facet rather than as the hint of an empty field. Once the field takes focus, the
+     * placeholder turns back to the placeholder colour, reading as the hint of a field waiting for text to be typed.
      */
 
     & > header {
@@ -98,10 +98,6 @@ tile-tally {
             outline-offset: calc(-2 * var(--skin--border-width));
         }
 
-        & > .lucide {
-            color: var(--skin--color-label);
-        }
-
         /* The controls are set as one item of the row, side by side with no gap, since each pads its own glyph. */
 
         & > span {
@@ -135,7 +131,13 @@ tile-tally {
             background-color: transparent;
 
             &:focus {
+
                 outline: none;
+
+                &::placeholder {
+                    color: var(--skin--color-placeholder);
+                }
+
             }
 
             /* The platform cancel button is left out, since the reset of the facet already empties the field. */
@@ -145,7 +147,7 @@ tile-tally {
             }
 
             &::placeholder {
-                color: var(--skin--color-label);
+                color: inherit;
             }
 
         }

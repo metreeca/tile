@@ -15,10 +15,10 @@
  */
 
 /**
- * Shared collection keywords.
+ * Shared collection search.
  *
- * Binds a search box to a shared collection, so that the keywords it hands over narrow what every lens over the
- * collection shows; pacing the keywords as the reader types is left to the search box.
+ * Binds a search box to a shared collection, so that the text it submits narrows what every lens over the collection
+ * shows. The search box decides when to submit the text as the reader types, for instance on a pause or on `Enter`.
  *
  * @module
  */
@@ -31,22 +31,24 @@ import type { Collection, Collections } from "./collection.core.js";
 
 
 /**
- * Shared collection keywords.
+ * Shared collection search.
+ *
+ * Tells which text narrows a shared collection and replaces it with new text.
  */
-export interface Keywords {
+export interface Search {
 
 	/**
-	 * The keywords narrowing the collection, empty where none do.
+	 * The text narrowing the collection, empty if no text narrows it.
 	 */
 	readonly text: string
 
 
 	/**
-	 * Narrows the collection by new keywords at once.
+	 * Narrows the collection by new text at once.
 	 *
-	 * @param text The keywords replacing the current ones, trimmed; blank keywords stop narrowing the collection
+	 * @param text The text replacing the current one, trimmed; blank text stops narrowing the collection
 	 */
-	search(text: string): void
+	submit(text: string): void
 
 }
 
@@ -54,29 +56,29 @@ export interface Keywords {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Binds a component to the keywords narrowing a shared collection.
+ * Binds a component to the search narrowing a shared collection.
  *
- * Narrows the collection to the items whose `expression` contains the keywords, trimmed. The keywords start from those
- * already narrowing the collection, and follow them whenever they are changed or cleared elsewhere, as by
- * {@link "collection"!Collection.clear clear}, so that a search box always shows what narrows the list.
+ * Narrows the collection to the items whose `expression` contains the submitted text, trimmed. The text starts from
+ * the one already narrowing the collection. It follows that text whenever another lens changes it or clears it, as
+ * {@link "collection"!Collection.clear clear} does, so a search box always shows what narrows the collection.
  *
- * The keywords are applied and handed back trimmed at every {@link Keywords.search search}, so the search box holds the
- * text as the reader types it, spaces between words included, and decides on its own when to hand it over.
+ * Every {@link Search.submit submit} trims the text, so `text` may differ from what the reader typed. A search box
+ * keeps its own copy of the typed text, spaces between words included, and decides on its own when to submit it.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
  *
  * @param collection The collection narrowed, as handed by {@link "collection"!useCollection useCollection}
- * @param expression The expression the keywords are matched against, as a property path: `label`
+ * @param expression The expression the text is matched against, as a property path: `label`
  *
- * @returns The keywords narrowing `collection` and the transition updating them
+ * @returns The text narrowing `collection` and the transition submitting new text
  */
-export function useKeywords<S extends Lazy<ResourceShape>, P extends Collections<S>>(
+export function useSearch<S extends Lazy<ResourceShape>, P extends Collections<S>>(
 
 	collection: Collection<S, P>,
 	expression: Expression
 
-): Keywords {
+): Search {
 
 	const key: `~${Expression}` = `~${expression}`;
 
@@ -84,7 +86,7 @@ export function useKeywords<S extends Lazy<ResourceShape>, P extends Collections
 
 		text: collection.query[key] ?? "",
 
-		search: (text: string) => collection.filter(
+		submit: (text: string) => collection.filter(
 			{ [key]: text.trim() || undefined } as Partial<Criteria> // ;(cast) computed keys widen to string
 		)
 

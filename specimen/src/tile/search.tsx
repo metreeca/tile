@@ -15,7 +15,7 @@
  */
 
 /**
- * Keywords samples.
+ * Search samples.
  *
  * @module
  */
@@ -24,7 +24,7 @@ import { Button } from "@metreeca/clay-widgets/button";
 import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { base, Products } from "@metreeca/specimen/toys.js";
 import { useCollection } from "@metreeca/tile/collection";
-import { useKeywords } from "@metreeca/tile/keywords";
+import { useSearch } from "@metreeca/tile/search";
 import { useMembers } from "@metreeca/tile/members";
 import { text } from "@metreeca/tile/types/text";
 import { useState } from "preact/hooks";
@@ -35,19 +35,19 @@ const entry = `${base}products/`;
 
 
 /**
- * Creates the keywords section.
+ * Creates the search section.
  *
- * Narrows the toy products to those whose name holds the keywords typed in a plain search box.
+ * Narrows the toy products to those whose name holds the text typed in a plain search box.
  *
- * @returns The keywords section
+ * @returns The search section
  */
-export function Keywords() {
+export function Search() {
 
 	const collection = useCollection({ entry, shape: Products });
 
-	const { text: keywords, search } = useKeywords(collection, "name");
+	const search = useSearch(collection, "name");
 
-	const [draft, setDraft] = useState(keywords);
+	const [draft, setDraft] = useState(search.text);
 
 	const members = useMembers(collection, {
 		model: { id: {}, sku: {}, label: { "*": {} } },
@@ -57,23 +57,23 @@ export function Keywords() {
 
 	return <>
 
-		<p>A search box bound with <code>useKeywords</code> narrows every lens over the collection to the items whose
-			name holds the keywords, here the first five products. When to hand the keywords over is the box's own
+		<p>A search box bound with <code>useSearch</code> narrows every lens over the collection to the items whose
+			name holds the text, here the first five products. When to submit the text is the box's own
 			call: this one waits for <code>Enter</code>, and clearing the collection elsewhere empties it.</p>
 
 		<div class="controls">
-			<input type="search" placeholder="Keywords" value={draft}
+			<input type="search" placeholder="Search" value={draft}
 				onInput={event => setDraft(event.currentTarget.value)}
-				onKeyDown={event => event.key === "Enter" && search(draft)}
+				onKeyDown={event => event.key === "Enter" && search.submit(draft)}
 			/>
 			<Button look="subtle" label="Clear" onClick={() => {
 				setDraft("");
-				search("");
+				search.submit("");
 			}}/>
 		</div>
 
 		<div class="samples">
-			<Sample label={keywords ? `matching "${keywords}"` : "no keywords"}>{members({
+			<Sample label={search.text ? `matching "${search.text}"` : "no search"}>{members({
 
 				blank: () => <p>Loading…</p>,
 

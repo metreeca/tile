@@ -54,7 +54,7 @@ tile-note > .lucide {
  * keeps a square target at least as tall as a line of text, so it is as easy to hit as a labelled one.
  */
 
-:is(tile-clear, tile-tally, tile-range) button {
+:is(tile-clear, tile-search, tile-tally, tile-range) button {
 
     display: inline-flex;
     vertical-align: middle;

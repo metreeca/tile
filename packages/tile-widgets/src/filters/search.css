@@ -1,0 +1,99 @@
+/*
+ * Copyright © 2023-2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A search box is drawn as the header of a tally facet, so the two read as one family when stacked: a bounded row
+ * holding the glyph, the field and the reset control, edged in the line a field takes and painted in the page colour,
+ * standing out as a control from whatever surface it sits on, the sunken tray above all.
+ */
+
+tile-search {
+
+    display: grid;
+    grid-template-columns: min-content minmax(0, 1fr);
+    grid-auto-columns: min-content;
+    grid-auto-flow: column;
+    align-items: center;
+    column-gap: var(--skin--spacing-050);
+
+    /* The row keeps room for the reset control whether shown or not, so the box holds still as it comes and goes. */
+
+    grid-template-rows: minmax(var(--skin--scaling-150), auto);
+
+    /* The control at the end stands as far from the edge as from the top and bottom of the box. */
+
+    padding-block: var(--skin--spacing-025);
+    padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
+
+    border-style: var(--skin--border-style);
+    border-color: var(--skin--border-color-field);
+    border-radius: var(--skin--border-radius-050);
+
+    background-color: var(--skin--background-color);
+
+    /* The field leaves its focus mark to the box, which draws it around the glyph and the control as well. */
+
+    &:has(> input:focus) {
+        outline: var(--skin--outline-focus);
+        outline-offset: calc(-1 * var(--skin--border-width));
+    }
+
+    /* The glyph is decorative, set in the text colour like the placeholder, as in the header of a tally facet. */
+
+    & > .lucide {
+        align-self: baseline;
+        translate: 0 calc(100% * 3 / 24); /* optical nudge seating the glyph on the baseline of the text */
+    }
+
+    /*
+     * The field fills the height of the row, so its text stays centred while the glyph is seated on its baseline. The
+     * placeholder names what the search is matched against, so it takes the text colour, reading as the title of the
+     * box as the name of a tally facet does. Once the field takes focus, the placeholder turns back to the placeholder
+     * colour, reading as the hint of an empty field waiting for text to be typed.
+     */
+
+    & > input {
+
+        align-self: baseline;
+        block-size: var(--skin--scaling-150);
+        min-width: 0;
+        padding: 0; /* The box already holds the field clear of the edge. */
+        border-style: none;
+        background-color: transparent;
+
+        &:focus {
+
+            outline: none;
+
+            &::placeholder {
+                color: var(--skin--color-placeholder);
+            }
+
+        }
+
+        /* The platform cancel button is left out, since the reset control already empties the field. */
+
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+
+        &::placeholder {
+            color: inherit;
+        }
+
+    }
+
+}

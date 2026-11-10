@@ -24,7 +24,7 @@ import { Page, type Sample } from "@metreeca/specimen/index.core.js";
 import { Actions } from "@metreeca/specimen/tile/actions.js";
 import { Collection } from "@metreeca/specimen/tile/collection.js";
 import { Count } from "@metreeca/specimen/tile/count.js";
-import { Keywords } from "@metreeca/specimen/tile/keywords.js";
+import { Search } from "@metreeca/specimen/tile/search.js";
 import { Members } from "@metreeca/specimen/tile/members.js";
 import { Query } from "@metreeca/specimen/tile/query.js";
 import { Range } from "@metreeca/specimen/tile/range.js";
@@ -44,7 +44,7 @@ const samples: readonly Sample[] = [
 	{ id: "actions", group: "Collections", title: "Actions", view: <Actions/> },
 	{ id: "members", group: "Collections", title: "Members", view: <Members/> },
 
-	{ id: "keywords", group: "Facets", title: "Keywords", view: <Keywords/> },
+	{ id: "search", group: "Facets", title: "Search", view: <Search/> },
 	{ id: "tally", group: "Facets", title: "Tally", view: <Tally/> },
 	{ id: "range", group: "Facets", title: "Range", view: <Range/> },
 	{ id: "count", group: "Facets", title: "Count", view: <Count/> }

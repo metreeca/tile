@@ -24,10 +24,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { type Collection } from "./collection.core.js";
 import { useCollection } from "./collection.js";
-import { type Keywords, useKeywords } from "./keywords.js";
+import { type Search, useSearch } from "./search.js";
 
 
-describe("useKeywords()", () => {
+describe("useSearch()", () => {
 
 	const entry = "https://example.com/catalogue/";
 
@@ -38,19 +38,19 @@ describe("useKeywords()", () => {
 	function mount(criteria: Criteria = {}): {
 
 		collection: () => Collection<typeof Catalogue, "members">
-		keywords: () => Keywords
+		search: () => Search
 
 	} {
 
 		const collections = vi.fn<(collection: Collection<typeof Catalogue, "members">) => void>();
-		const keywords = vi.fn<(keywords: Keywords) => void>();
+		const searches = vi.fn<(search: Search) => void>();
 
 		function Probe() {
 
 			const collection = useCollection({ entry, shape: Catalogue, query: criteria });
 
 			collections(collection);
-			keywords(useKeywords(collection, "label"));
+			searches(useSearch(collection, "label"));
 
 			return null;
 
@@ -60,7 +60,7 @@ describe("useKeywords()", () => {
 
 		return {
 			collection: () => collections.mock.lastCall![0], // test harness: Probe has rendered at least once
-			keywords: () => keywords.mock.lastCall![0]
+			search: () => searches.mock.lastCall![0]
 		};
 	}
 
@@ -79,63 +79,63 @@ describe("useKeywords()", () => {
 
 	describe("text", () => {
 
-		it("should start empty where no keywords narrow the collection", async () => {
-			expect(mount().keywords().text).toBe("");
+		it("should start empty where no text narrows the collection", async () => {
+			expect(mount().search().text).toBe("");
 		});
 
-		it("should start from the keywords narrowing the collection", async () => {
-			expect(mount({ "~label": "item" }).keywords().text).toBe("item");
+		it("should start from the text narrowing the collection", async () => {
+			expect(mount({ "~label": "item" }).search().text).toBe("item");
 		});
 
-		it("should follow the keywords as they are changed elsewhere", async () => {
+		it("should follow the text as it is changed elsewhere", async () => {
 
-			const { collection, keywords } = mount({ "~label": "item" });
+			const { collection, search } = mount({ "~label": "item" });
 
 			await step(() => collection().filter({ "~label": "other" }));
 
-			expect(keywords().text).toBe("other");
+			expect(search().text).toBe("other");
 
 		});
 
-		it("should follow the keywords as they are cleared elsewhere", async () => {
+		it("should follow the text as it is cleared elsewhere", async () => {
 
-			const { collection, keywords } = mount({ "~label": "item" });
+			const { collection, search } = mount({ "~label": "item" });
 
 			await step(() => collection().clear());
 
-			expect(keywords().text).toBe("");
+			expect(search().text).toBe("");
 
 		});
 
 	});
 
-	describe("search()", () => {
+	describe("submit()", () => {
 
-		it("should narrow the collection by the trimmed keywords at once", async () => {
+		it("should narrow the collection by the trimmed text at once", async () => {
 
-			const { collection, keywords } = mount();
+			const { collection, search } = mount();
 
-			await step(() => keywords().search(" item "));
+			await step(() => search().submit(" item "));
 
 			expect(collection().query).toEqual({ "~label": "item" });
 
 		});
 
-		it("should update the text to the keywords narrowing the collection", async () => {
+		it("should update the text to the trimmed text narrowing the collection", async () => {
 
-			const { keywords } = mount();
+			const { search } = mount();
 
-			await step(() => keywords().search(" item "));
+			await step(() => search().submit(" item "));
 
-			expect(keywords().text).toBe("item");
+			expect(search().text).toBe("item");
 
 		});
 
-		it("should stop narrowing the collection on blank keywords", async () => {
+		it("should stop narrowing the collection on blank text", async () => {
 
-			const { collection, keywords } = mount({ "~label": "item", "?university": ["u1"] });
+			const { collection, search } = mount({ "~label": "item", "?university": ["u1"] });
 
-			await step(() => keywords().search("  "));
+			await step(() => search().submit("  "));
 
 			expect(collection().query).toEqual({ "?university": ["u1"] });
 

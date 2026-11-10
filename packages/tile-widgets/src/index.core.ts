@@ -17,8 +17,8 @@
 /**
  * Headless facet fold.
  *
- * Holds whether a compact facet shows all it offers or only what the reader already picked, so a long column of
- * facets stays short until the reader turns to one of them. A rendering layer adopts it and supplies the disclosure,
+ * Holds whether a facet shows all it offers or only what the reader already picked, so a long column of
+ * facets stays short until the reader turns to one of them. A rendering layer adopts it and supplies the pin toggle,
  * the markup and the gestures opening and closing it, so any binding folds a facet the same way.
  *
  * @module
@@ -45,27 +45,39 @@ export interface Fold {
 	 */
 	readonly pinned: boolean;
 
+	/**
+	 * Whether focus is within the facet, so it offers the controls the reader works on it with.
+	 */
+	readonly focused: boolean;
+
 
 	/**
-	 * Opens the facet while the reader works on it, without pinning it.
+	 * Marks focus as within the facet, leaving it open or closed as it stands.
 	 *
-	 * @returns A fold showing all the facet offers, or this fold if already open
+	 * @returns A focused fold, or this fold if already focused
+	 */
+	focus(): this;
+
+	/**
+	 * Opens the facet while the reader works on it, without pinning it, as focus enters the part opening it.
+	 *
+	 * @returns A focused fold showing all the facet offers, or this fold if already so
 	 */
 	expand(): this;
 
 	/**
-	 * Closes the facet once the reader is done with it, unless the reader pinned it open.
+	 * Closes the facet as focus leaves it, unless the reader pinned it open.
 	 *
-	 * @returns A fold showing only what the reader picked, or this fold if already closed or pinned
+	 * @returns An unfocused fold showing only what the reader picked unless pinned, or this fold if already so
 	 */
 	collapse(): this;
 
 	/**
-	 * Opens and pins a closed facet, and closes an open one, pinned or not.
+	 * Pins the facet open, or unpins a pinned one, leaving it open until the reader is done with it.
 	 *
-	 * @returns A fold in the other position
+	 * @returns An open fold, pinned unless this fold was
 	 */
-	toggle(): this;
+	pin(): this;
 
 }
 
@@ -96,17 +108,22 @@ export function createFold({
 
 		open,
 		pinned: false,
+		focused: false,
+
+		focus() {
+			return { focused: true };
+		},
 
 		expand() {
-			return { open: true };
+			return { open: true, focused: true };
 		},
 
 		collapse() {
-			return { open: this.pinned };
+			return { open: this.pinned, focused: false };
 		},
 
-		toggle() {
-			return { open: !this.open, pinned: !this.open };
+		pin() {
+			return { open: true, pinned: !this.pinned };
 		}
 
 	});

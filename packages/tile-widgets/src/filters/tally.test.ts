@@ -57,7 +57,7 @@ function backend(lookup: unknown): Backend {
 
 function mount(lookup: unknown, {
 
-	compact,
+	collapsed,
 	criteria = {},
 	size,
 	onChange = () => {},
@@ -65,7 +65,7 @@ function mount(lookup: unknown, {
 
 }: {
 
-	readonly compact?: boolean
+	readonly collapsed?: boolean
 	readonly criteria?: Criteria
 	readonly size?: number
 	readonly onChange?: (criteria: Criteria) => void
@@ -79,7 +79,7 @@ function mount(lookup: unknown, {
 
 		return createElement(Tally, {
 			name: "Category",
-			...(compact === undefined ? {} : { compact }),
+			...(collapsed === undefined ? {} : { collapsed }),
 			tally: useTally(collection, "category", size ? { size } : {}),
 			...(children ? { children } : {})
 		});
@@ -126,6 +126,10 @@ function reset(): HTMLButtonElement | null {
 
 function disclosure(): HTMLButtonElement | null {
 	return document.querySelector("button[aria-expanded]");
+}
+
+function pin(): HTMLButtonElement | null {
+	return document.querySelector("button[aria-pressed]");
 }
 
 function focus(target: Element | null, type: "focusin" | "focusout", relatedTarget: Element | null = null): void {
@@ -213,46 +217,19 @@ describe("Tally", () => {
 
 		});
 
-		it("should offer no disclosure if compact is omitted", async () => {
+		it("should offer no disclosure", async () => {
 
-			mount(options([{ value: "c1", label: "Arts", count: 1 }]));
+			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { collapsed: true });
 
-			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
+			await ready();
 
 			expect(disclosure()).toBeNull();
 
 		});
 
-		it("should state whether the options are on show by the disclosure", async () => {
-
-			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			expect(disclosure()?.getAttribute("aria-expanded")).toBe("false");
-
-			act(() => disclosure()?.click());
-
-			await vi.waitFor(() => expect(disclosure()?.getAttribute("aria-expanded")).toBe("true"));
-
-		});
-
-		it("should control a rendered region by the disclosure", async () => {
-
-			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			const controls = disclosure()?.getAttribute("aria-controls") ?? "";
-
-			expect(controls).not.toBe("");
-			expect(document.getElementById(controls)).not.toBeNull();
-
-		});
-
 	});
 
-	describe("compact", () => {
+	describe("collapsed", () => {
 
 		const rows: readonly Row[] = [
 			{ value: "c1", label: "Arts", count: 1 },
@@ -261,7 +238,7 @@ describe("Tally", () => {
 
 		it("should show only the ticked options while closed", async () => {
 
-			mount(options(rows), { compact: true, criteria: { "?category": ["c2"] } });
+			mount(options(rows), { collapsed: true, criteria: { "?category": ["c2"] } });
 
 			await vi.waitFor(() => expect(labels()).toEqual(["Sciences 1"]));
 
@@ -269,9 +246,9 @@ describe("Tally", () => {
 
 		it("should show no options while closed with nothing ticked", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: true });
 
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
+			await ready();
 
 			expect(checkboxes()).toHaveLength(0);
 			expect(facet()?.textContent).not.toContain("No Matches");
@@ -281,7 +258,7 @@ describe("Tally", () => {
 		it("should not fetch more while closed", async () => {
 
 			mount(options([...rows, { value: "c3", label: "Laws", count: 1 }]), {
-				compact: true, size: 2, criteria: { "?category": ["c1"] }
+				collapsed: true, size: 2, criteria: { "?category": ["c1"] }
 			});
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(1));
@@ -290,21 +267,9 @@ describe("Tally", () => {
 
 		});
 
-		it("should show every option once opened by the disclosure", async () => {
-
-			mount(options(rows), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			act(() => disclosure()?.click());
-
-			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1", "Sciences 1"]));
-
-		});
-
 		it("should open as the search field takes focus", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: true });
 
 			await ready();
 
@@ -316,7 +281,7 @@ describe("Tally", () => {
 
 		it("should close as focus leaves the facet", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: true });
 
 			await ready();
 
@@ -332,7 +297,7 @@ describe("Tally", () => {
 
 		it("should stay open as focus moves within the facet", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: true });
 
 			await ready();
 
@@ -350,7 +315,7 @@ describe("Tally", () => {
 
 		it("should take focus itself, for browsers leaving it off the checkboxes and buttons pressed", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: true });
 
 			await ready();
 
@@ -360,7 +325,7 @@ describe("Tally", () => {
 
 		it("should stay open as focus moves to the facet itself", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: true });
 
 			await ready();
 
@@ -376,13 +341,17 @@ describe("Tally", () => {
 
 		});
 
-		it("should stay open as focus leaves the facet once opened by the disclosure", async () => {
+		it("should start open unless collapsed", async () => {
 
-			mount(options(rows), { compact: true });
+			mount(options(rows), { collapsed: false });
 
-			await ready();
+			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1", "Sciences 1"]));
 
-			act(() => disclosure()?.click());
+		});
+
+		it("should stay open as focus leaves the facet unless collapsed", async () => {
+
+			mount(options(rows), { collapsed: false });
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
 
@@ -394,39 +363,99 @@ describe("Tally", () => {
 
 		});
 
-		it("should close by the disclosure once opened by the search field", async () => {
+	});
 
-			mount(options(rows), { compact: true });
+	describe("pin", () => {
+
+		const rows: readonly Row[] = [
+			{ value: "c1", label: "Arts", count: 1 },
+			{ value: "c2", label: "Sciences", count: 1 }
+		];
+
+		it("should show the glyph in place of the pin while focus is outside the facet", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			expect(pin()).toBeNull();
+			expect(facet()?.querySelector("header > svg")).not.toBeNull();
+
+		});
+
+		it("should show the pin in place of the glyph while focus is within the facet", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			focus(facet(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			expect(facet()?.querySelector("header > svg")).toBeNull();
+
+		});
+
+		it("should show the glyph again as focus leaves the facet", async () => {
+
+			mount(options(rows), { collapsed: true });
 
 			await ready();
 
 			focus(field(), "focusin");
 
-			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
 
-			act(() => disclosure()?.click());
+			focus(field(), "focusout", document.body);
 
-			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
-
-		});
-
-		it("should start open by the disclosure unless compact", async () => {
-
-			mount(options(rows), { compact: false });
-
-			await vi.waitFor(() => expect(labels()).toEqual(["Arts 1", "Sciences 1"]));
-
-			expect(disclosure()?.getAttribute("aria-expanded")).toBe("true");
+			await vi.waitFor(() => expect(pin()).toBeNull());
 
 		});
 
-		it("should stay open as focus leaves the facet unless compact", async () => {
+		it("should state whether the facet is pinned", async () => {
 
-			mount(options(rows), { compact: false });
+			mount(options(rows), { collapsed: true });
 
-			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+			await ready();
 
-			focus(checkboxes()[0] ?? null, "focusout", document.body);
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
+
+			act(() => pin()?.click());
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
+
+		});
+
+		it("should start pinned unless collapsed", async () => {
+
+			mount(options(rows), { collapsed: false });
+
+			await ready();
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
+
+		});
+
+		it("should stay open as focus leaves the facet once pinned", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			act(() => pin()?.click());
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
+
+			focus(field(), "focusout", document.body);
 
 			await act(async () => {});
 
@@ -434,13 +463,21 @@ describe("Tally", () => {
 
 		});
 
-		it("should close by the disclosure unless compact", async () => {
+		it("should close as focus leaves the facet once unpinned", async () => {
 
-			mount(options(rows), { compact: false });
+			mount(options(rows), { collapsed: false });
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
 
-			act(() => disclosure()?.click());
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			act(() => pin()?.click());
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
+
+			focus(checkboxes()[0] ?? null, "focusout", document.body);
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
 

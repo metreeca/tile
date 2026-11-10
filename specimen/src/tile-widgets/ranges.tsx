@@ -51,7 +51,7 @@ export function Ranges() {
 			<Sample>
 				<Faceted collection={collection}>
 					<Range name="Price" type={decimal} range={useRange(collection, "price")}/>
-					<Range name="Launched" compact type={date} range={useRange(collection, "launched")}/>
+					<Range name="Launched" collapsed type={date} range={useRange(collection, "launched")}/>
 				</Faceted>
 			</Sample>
 		</div>

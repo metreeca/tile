@@ -34,7 +34,7 @@ import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { createFold } from "../index.core.js";
-import { AutoDelay, cancel, Disclosure, Failure, keys, leave } from "../index.js";
+import { AutoDelay, cancel, Failure, keys, leave, Pin } from "../index.js";
 import "./range.css";
 
 
@@ -59,10 +59,10 @@ import "./range.css";
  * A button marked by the reset glyph, shown while a bound is set, removes both bounds at once and leaves the facet
  * suggesting the values on offer again, as it did before the reader set either.
  *
- * A collapsible facet, one stating whether it is `compact`, folds down to its fields only while a bound is set.
- * Clicking its header opens it while the reader works on it, and focus leaving the facet closes it again; a disclosure
- * marked by the expand glyph opens it to stay open, until the reader closes it by the same disclosure. A compact facet
- * starts closed, any other starts open, as if opened by its disclosure when first rendered.
+ * The facet folds down to its fields only while a bound is set. Clicking its header opens it while the reader works on
+ * it, as does tabbing to it, and focus leaving the facet closes it again, unless the reader pinned it open by the pin
+ * toggle shown in place of the leading glyph while focus is within the facet. A `collapsed` facet starts closed, any
+ * other starts pinned open, until the reader unpins it and moves on to something else on the page.
  *
  * The facet is a group named by `name`, shown in its header beside a glyph marking the value type, and marked busy
  * while the values are retrieved for the first time; a failed retrieval is shown as a critical note in place of the
@@ -82,7 +82,7 @@ export function Range({
 
 	name,
 
-	compact,
+	collapsed = false,
 
 	type,
 
@@ -100,9 +100,9 @@ export function Range({
 	/**
 	 * Whether the facet starts closed, showing its fields only while a bound is set; open from the start if omitted.
 	 *
-	 * Either way, the reader opens and closes the facet by its disclosure or by clicking its header.
+	 * Either way, the reader opens the facet by clicking or tabbing to its header, and keeps it open by its pin toggle.
 	 */
-	compact?: boolean
+	collapsed?: boolean
 
 	/**
 	 * The type of the bounded values, choosing the native input the fields work on and how values are shown and read.
@@ -122,13 +122,11 @@ export function Range({
 
 	const id = useId();
 
-	const collapsible = compact !== undefined;
+	// a facet starting open is pinned, so it stays open until the reader unpins it
 
-	// a facet starting open is opened as by its disclosure, so it stays open until the reader closes it
-
-	const { open: unfolded, expand, collapse, toggle } = useModel(() => compact === false
-		? createFold().toggle()
-		: createFold()
+	const { open, pinned, focused: within, focus, expand, collapse, pin } = useModel(() => collapsed
+		? createFold()
+		: createFold().pin()
 	);
 
 	const { field: focused, enter, leave: quit } = useModel(() => createFocus());
@@ -152,8 +150,6 @@ export function Range({
 	const failed = range({ error: () => true }) ?? false;
 	const ready = range({ ready: () => true }) ?? false;
 
-	const open = !collapsible || unfolded;
-
 	// the fields wait for the values on offer, so the facet never shows a strip it is about to fill
 
 	const shown = failed || ready && (open || bounded);
@@ -166,17 +162,22 @@ export function Range({
 
 		"wide": input === "date" || input === "datetime-local" || undefined,
 
-		"onFocusOut": collapsible ? (event: FocusEvent) => leave(event, collapse) : undefined
+		/*
+		 * The header takes focus as clicked or tabbed to, so a collapsed facet with no bound set is still reached from
+		 * the keyboard; it opens the facet only as it takes focus itself, any other part only marks the facet focused.
+		 */
+
+		"onFocusIn": (event: FocusEvent) => event.target instanceof HTMLElement && event.target.localName === "header"
+			? expand()
+			: focus(),
+
+		"onFocusOut": (event: FocusEvent) => leave(event, collapse)
 
 	}, <>
 
-		{/* a collapsible header takes focus as clicked, opening the facet only as it takes focus itself, not its buttons */}
+		<header tabIndex={0}>
 
-		<header tabIndex={collapsible ? -1 : undefined} onFocusIn={collapsible ? (event: FocusEvent) => {
-			if ( event.target === event.currentTarget ) { expand(); }
-		} : undefined}>
-
-			<Glyph/>
+			{within ? <Pin pinned={pinned} onToggle={pin}/> : <Glyph/>}
 
 			<span id={`${id}-name`}>{name}</span>
 
@@ -192,8 +193,6 @@ export function Range({
 					}}
 
 				><XCircleIcon/></button>}
-
-				{collapsible && <Disclosure open={open} controls={`${id}-fields`} onToggle={toggle}/>}
 
 			</span>
 

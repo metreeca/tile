@@ -32,7 +32,7 @@ import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold } from "../index.core.js";
-import { AutoDelay, cancel, classes, Disclosure, Failure, keys, leave, More } from "../index.js";
+import { AutoDelay, cancel, classes, Failure, keys, leave, More, Pin } from "../index.js";
 import "./tally.css";
 
 
@@ -52,11 +52,10 @@ import "./tally.css";
  * by the reset glyph takes its place as long as values are ticked and deselects them all, so the two never stand side
  * by side. A long list is closed by a trigger fetching the next batch as it scrolls into view.
  *
- * A collapsible facet, one stating whether it is `compact`, folds down to the values ticked. Turning to the search
- * field opens it while the reader works on it, and focus leaving the facet closes it again, back to the values the
- * reader ticked; a disclosure marked by the expand glyph opens it to stay open, until the reader closes it by the same
- * disclosure, whether the facet was opened by the disclosure itself or by the search field. A compact facet starts
- * closed, any other starts open, as if opened by its disclosure when first rendered.
+ * The facet folds down to the values ticked. Turning to the search field opens it while the reader works on it, and
+ * focus leaving the facet closes it again, back to the values the reader ticked, unless the reader pinned it open by
+ * the pin toggle shown in place of the leading glyph while focus is within the facet. A `collapsed` facet starts
+ * closed, any other starts pinned open, until the reader unpins it and moves on to something else on the page.
  *
  * The facet is a group named by `name`, marked busy while the values are retrieved for the first time; a failed
  * retrieval is shown as a critical note in place of the values, until a later retrieval brings them back.
@@ -75,7 +74,7 @@ import "./tally.css";
  */
 export function Tally({
 
-	compact,
+	collapsed = false,
 
 	name,
 
@@ -88,9 +87,9 @@ export function Tally({
 	/**
 	 * Whether the facet starts closed, showing only the values ticked; open from the start if omitted.
 	 *
-	 * Either way, the reader opens and closes the facet by its disclosure or by turning to its search field.
+	 * Either way, the reader opens the facet by turning to its search field, and keeps it open by its pin toggle.
 	 */
-	compact?: boolean
+	collapsed?: boolean
 
 	/**
 	 * The name of the facet, stating what its values describe, as in `University`.
@@ -120,16 +119,12 @@ export function Tally({
 
 	const id = useId();
 
-	const collapsible = compact !== undefined;
+	// a facet starting open is pinned, so it stays open until the reader unpins it
 
-	// a facet starting open is opened as by its disclosure, so it stays open until the reader closes it
-
-	const { open: unfolded, expand, collapse, toggle } = useModel(() => compact === false
-		? createFold().toggle()
-		: createFold()
+	const { open, pinned, focused, focus, expand, collapse, pin } = useModel(() => collapsed
+		? createFold()
+		: createFold().pin()
 	);
-
-	const open = !collapsible || unfolded;
 
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
@@ -161,19 +156,24 @@ export function Tally({
 		 * as focus leaving it and close the facet before the click lands; the facet takes the focus in their place.
 		 */
 
-		"tabIndex": collapsible ? -1 : undefined,
+		"tabIndex": -1,
 
-		"onFocusOut": collapsible ? (event: FocusEvent) => leave(event, collapse) : undefined
+		// the search field opens the facet as it takes focus, any other part only marks the facet focused
+
+		"onFocusIn": (event: FocusEvent) => event.target instanceof HTMLInputElement && event.target.type === "search"
+			? expand()
+			: focus(),
+
+		"onFocusOut": (event: FocusEvent) => leave(event, collapse)
 
 	}, <>
 
 		<header>
 
-			<SquareCheckBigIcon/>
+			{focused ? <Pin pinned={pinned} onToggle={pin}/> : <SquareCheckBigIcon/>}
 
 			<input type="search" value={text} placeholder={name} aria-label={"Search"}
 
-				onFocusIn={collapsible ? expand : undefined}
 				onInput={event => setTyped({ text: event.currentTarget.value, from: keywords })}
 				onKeyDown={keys({ Enter: apply, ...(text === "" ? {} : { Escape: () => search("") }) })}
 
@@ -197,8 +197,6 @@ export function Tally({
 					}}
 
 				><XCircleIcon/></button>}
-
-				{collapsible && <Disclosure open={open} controls={id} onToggle={toggle}/>}
 
 			</span>
 

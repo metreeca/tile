@@ -50,7 +50,7 @@ export function Tallies() {
 				<Faceted collection={collection}>
 					<Tally name="Category" tally={useTally(collection, "categories", { label: "label", size: 5 })}/>
 					<Tally name="Condition" tally={useTally(collection, "condition")}/>
-					<Tally name="Vendor" compact tally={useTally(collection, "vendor", { label: "name", size: 5 })}/>
+					<Tally name="Vendor" collapsed tally={useTally(collection, "vendor", { label: "name", size: 5 })}/>
 				</Faceted>
 			</Sample>
 		</div>

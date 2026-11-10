@@ -29,10 +29,30 @@ describe("createFold", () => {
 		expect(createFold({ open: true }).open).toBe(true);
 	});
 
+	describe("focus()", () => {
+
+		it("should start unfocused", async () => {
+			expect(createFold().focused).toBe(false);
+		});
+
+		it("should mark the fold focused", async () => {
+			expect(createFold().focus().focused).toBe(true);
+		});
+
+		it("should leave the fold open as it stands", async () => {
+			expect(createFold().focus().open).toBe(false);
+		});
+
+	});
+
 	describe("expand()", () => {
 
 		it("should open a closed fold", async () => {
 			expect(createFold().expand().open).toBe(true);
+		});
+
+		it("should mark the fold it opens focused", async () => {
+			expect(createFold().expand().focused).toBe(true);
 		});
 
 		it("should not pin the fold it opens", async () => {
@@ -41,7 +61,7 @@ describe("createFold", () => {
 
 		it("should leave an open fold as it stands", async () => {
 
-			const fold = createFold({ open: true });
+			const fold = createFold({ open: true }).focus();
 
 			expect(fold.expand()).toBe(fold);
 
@@ -65,34 +85,46 @@ describe("createFold", () => {
 
 		it("should leave a pinned fold as it stands", async () => {
 
-			const fold = createFold().toggle();
+			const fold = createFold().pin();
 
 			expect(fold.collapse()).toBe(fold);
 
 		});
 
+		it("should mark the fold unfocused, pinned or not", async () => {
+			expect(createFold().pin().focus().collapse().focused).toBe(false);
+		});
+
+		it("should close a fold once unpinned", async () => {
+			expect(createFold().pin().pin().collapse().open).toBe(false);
+		});
+
 	});
 
-	describe("toggle()", () => {
+	describe("pin()", () => {
 
-		it("should open a closed fold", async () => {
-			expect(createFold().toggle().open).toBe(true);
-		});
+		it("should open a closed fold, pinning it", async () => {
 
-		it("should pin the fold it opens", async () => {
-			expect(createFold().toggle().pinned).toBe(true);
-		});
+			const fold = createFold().pin();
 
-		it("should close a pinned fold, unpinning it", async () => {
-
-			const fold = createFold().toggle().toggle();
-
-			expect([fold.open, fold.pinned]).toEqual([false, false]);
+			expect([fold.open, fold.pinned]).toEqual([true, true]);
 
 		});
 
-		it("should close an open fold", async () => {
-			expect(createFold({ open: true }).toggle().open).toBe(false);
+		it("should pin an open fold", async () => {
+
+			const fold = createFold({ open: true }).pin();
+
+			expect([fold.open, fold.pinned]).toEqual([true, true]);
+
+		});
+
+		it("should unpin a pinned fold, leaving it open", async () => {
+
+			const fold = createFold().pin().pin();
+
+			expect([fold.open, fold.pinned]).toEqual([true, false]);
+
 		});
 
 	});
@@ -101,7 +133,7 @@ describe("createFold", () => {
 
 		const fold = createFold();
 
-		fold.toggle();
+		fold.pin();
 
 		expect(fold.open).toBe(false);
 

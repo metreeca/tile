@@ -24,7 +24,7 @@
  */
 
 import { opt, type Optional } from "@metreeca/core";
-import { ChevronDownIcon, ChevronRightIcon, CircleAlertIcon, RefreshCwIcon } from "lucide-preact";
+import { CircleAlertIcon, PinIcon, RefreshCwIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import "./index.css";
@@ -167,35 +167,32 @@ export function More({
 }
 
 /**
- * Creates the disclosure of a compact facet.
+ * Creates the pin toggle of a facet.
+ *
+ * The facet header shows the toggle in place of its leading glyph while focus is within the facet, so the reader can
+ * keep the facet open after moving on, or let a pinned one close once done with it.
  *
  * @param options The part configuration
  *
- * @returns A button marked by the expand glyph while the facet is closed and by the collapse glyph while open,
- *     announcing to assistive technology whether the facet is expanded or collapsed
+ * @returns A toggle button marked by the pin glyph, upright and filled while the facet is pinned and tilted in
+ *     outline otherwise, with a tooltip naming the state the glyph shows and an accessible name that stays the same
+ *     as the state changes, announced to assistive technology as pressed while the facet is pinned
  */
-export function Disclosure({
+export function Pin({
 
-	open,
-
-	controls,
+	pinned,
 
 	onToggle
 
 }: {
 
 	/**
-	 * Whether the facet shows all it offers.
+	 * Whether the facet stays open as focus leaves it.
 	 */
-	open: boolean
+	pinned: boolean
 
 	/**
-	 * The id of the region the disclosure shows and hides, rendered whether shown or not.
-	 */
-	controls: string
-
-	/**
-	 * Called when the reader activates the disclosure.
+	 * Called when the reader activates the toggle.
 	 */
 	onToggle: () => void
 
@@ -203,13 +200,13 @@ export function Disclosure({
 
 	return <button type="button"
 
-		aria-controls={controls}
-		aria-expanded={open}
-		title={open ? "Collapse" : "Expand"}
+		aria-label={"Pin"}
+		aria-pressed={pinned}
+		title={pinned ? "Pinned" : "Unpinned"}
 
 		onClick={onToggle}
 
-	>{open ? <ChevronDownIcon/> : <ChevronRightIcon/>}</button>;
+	><PinIcon/></button>;
 
 }
 
@@ -228,7 +225,7 @@ export function cancel(timer: ReturnType<typeof setTimeout>): () => void {
 }
 
 /**
- * Closes a compact facet as focus leaves it.
+ * Closes a facet as focus leaves it.
  *
  * @param event The focus event leaving an element of the facet
  * @param collapse What closes the facet, called only if focus moves out of the facet rather than within it

@@ -75,7 +75,15 @@ tile-range {
 
         color: var(--skin--color-label);
 
+        /*
+         * The name fills the row with its text centred in it, so the glyph seated on its baseline, or the pin standing
+         * in for the glyph, stays level with the name whether the controls at the end of the row show or not.
+         */
+
         & > span:first-of-type {
+            align-self: baseline;
+            block-size: var(--skin--scaling-150);
+            align-content: center;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;

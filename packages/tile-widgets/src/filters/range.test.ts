@@ -61,14 +61,14 @@ function backend(lookup: unknown): Backend {
 
 function mount(lookup: unknown, {
 
-	compact,
+	collapsed,
 	type = integer,
 	criteria = {},
 	onChange = () => {}
 
 }: {
 
-	readonly compact?: boolean
+	readonly collapsed?: boolean
 	readonly type?: Type
 	readonly criteria?: Criteria
 	readonly onChange?: (criteria: Criteria) => void
@@ -81,7 +81,7 @@ function mount(lookup: unknown, {
 
 		return createElement(Range, {
 			name: "Year",
-			...(compact === undefined ? {} : { compact }),
+			...(collapsed === undefined ? {} : { collapsed }),
 			type,
 			range: useRange(collection, "year")
 		});
@@ -119,6 +119,10 @@ function disclosure(): HTMLButtonElement | null {
 	return document.querySelector("button[aria-expanded]");
 }
 
+function pin(): HTMLButtonElement | null {
+	return document.querySelector("button[aria-pressed]");
+}
+
 function focus(target: Element | null, type: "focusin" | "focusout", relatedTarget: Element | null = null): void {
 	act(() => void target!.dispatchEvent(new FocusEvent(type, { bubbles: true, relatedTarget })));
 }
@@ -140,6 +144,10 @@ function commit(input: HTMLInputElement | null, text: string): void {
 
 async function ready(): Promise<void> {
 	await vi.waitFor(() => expect(lower()).not.toBeNull());
+}
+
+async function loaded(): Promise<void> {
+	await vi.waitFor(() => expect(facet()?.getAttribute("aria-busy")).not.toBe("true"));
 }
 
 
@@ -201,52 +209,33 @@ describe("Range", () => {
 
 		});
 
-		it("should offer no disclosure if compact is omitted", async () => {
+		it("should let the keyboard reach its header", async () => {
 
-			mount(bounds(1990, 2020));
+			mount(bounds(1990, 2020), { collapsed: true });
 
-			await ready();
+			expect(header()?.getAttribute("tabindex")).toBe("0");
+
+		});
+
+		it("should offer no disclosure", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
 
 			expect(disclosure()).toBeNull();
 
 		});
 
-		it("should state whether the fields are on show by the disclosure", async () => {
-
-			mount(bounds(1990, 2020), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			expect(disclosure()?.getAttribute("aria-expanded")).toBe("false");
-
-			act(() => disclosure()?.click());
-
-			await vi.waitFor(() => expect(disclosure()?.getAttribute("aria-expanded")).toBe("true"));
-
-		});
-
-		it("should control a rendered region by the disclosure", async () => {
-
-			mount(bounds(1990, 2020), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			const controls = disclosure()?.getAttribute("aria-controls") ?? "";
-
-			expect(controls).not.toBe("");
-			expect(document.getElementById(controls)).not.toBeNull();
-
-		});
-
 	});
 
-	describe("compact", () => {
+	describe("collapsed", () => {
 
 		it("should show no fields while closed with no bound set", async () => {
 
-			mount(bounds(1990, 2020), { compact: true });
+			mount(bounds(1990, 2020), { collapsed: true });
 
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
+			await loaded();
 
 			expect(lower()).toBeNull();
 
@@ -254,21 +243,7 @@ describe("Range", () => {
 
 		it("should show the fields while closed with a bound set", async () => {
 
-			mount(bounds(1990, 2020), { compact: true, criteria: { ">=year": 2000 } });
-
-			await ready();
-
-			expect(disclosure()?.getAttribute("aria-expanded")).toBe("false");
-
-		});
-
-		it("should show the fields once opened by the disclosure", async () => {
-
-			mount(bounds(1990, 2020), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			act(() => disclosure()?.click());
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
 
 			await ready();
 
@@ -276,9 +251,9 @@ describe("Range", () => {
 
 		it("should open as its header takes focus", async () => {
 
-			mount(bounds(1990, 2020), { compact: true });
+			mount(bounds(1990, 2020), { collapsed: true });
 
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
+			await loaded();
 
 			focus(header(), "focusin");
 
@@ -286,25 +261,11 @@ describe("Range", () => {
 
 		});
 
-		it("should not open as the disclosure takes focus", async () => {
-
-			mount(bounds(1990, 2020), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			focus(disclosure(), "focusin");
-
-			await act(async () => {});
-
-			expect(lower()).toBeNull();
-
-		});
-
 		it("should close as focus leaves the facet once opened by its header", async () => {
 
-			mount(bounds(1990, 2020), { compact: true });
+			mount(bounds(1990, 2020), { collapsed: true });
 
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
+			await loaded();
 
 			focus(header(), "focusin");
 
@@ -316,29 +277,11 @@ describe("Range", () => {
 
 		});
 
-		it("should stay open as focus leaves the facet once opened by the disclosure", async () => {
-
-			mount(bounds(1990, 2020), { compact: true });
-
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
-
-			act(() => disclosure()?.click());
-
-			await ready();
-
-			focus(lower(), "focusout", document.body);
-
-			await act(async () => {});
-
-			expect(lower()).not.toBeNull();
-
-		});
-
 		it("should stay open as focus moves within the facet", async () => {
 
-			mount(bounds(1990, 2020), { compact: true });
+			mount(bounds(1990, 2020), { collapsed: true });
 
-			await vi.waitFor(() => expect(disclosure()).not.toBeNull());
+			await loaded();
 
 			focus(header(), "focusin");
 
@@ -352,19 +295,17 @@ describe("Range", () => {
 
 		});
 
-		it("should start open by the disclosure unless compact", async () => {
+		it("should start open unless collapsed", async () => {
 
-			mount(bounds(1990, 2020), { compact: false });
+			mount(bounds(1990, 2020), { collapsed: false });
 
 			await ready();
 
-			expect(disclosure()?.getAttribute("aria-expanded")).toBe("true");
-
 		});
 
-		it("should stay open as focus leaves the facet unless compact", async () => {
+		it("should stay open as focus leaves the facet unless collapsed", async () => {
 
-			mount(bounds(1990, 2020), { compact: false });
+			mount(bounds(1990, 2020), { collapsed: false });
 
 			await ready();
 
@@ -376,13 +317,134 @@ describe("Range", () => {
 
 		});
 
-		it("should close by the disclosure unless compact", async () => {
+	});
 
-			mount(bounds(1990, 2020), { compact: false });
+	describe("pin", () => {
+
+		it("should show the glyph in place of the pin while focus is outside the facet", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			expect(pin()).toBeNull();
+			expect(header()?.querySelector(":scope > svg")).not.toBeNull();
+
+		});
+
+		it("should show the pin in place of the glyph while focus is within the facet", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			expect(header()?.querySelector(":scope > svg")).toBeNull();
+
+		});
+
+		it("should show the glyph again as focus leaves the facet", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			focus(header(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(pin()).toBeNull());
+
+		});
+
+		it("should state whether the facet is pinned", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
+
+			act(() => pin()?.click());
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
+
+		});
+
+		it("should start pinned unless collapsed", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: false });
 
 			await ready();
 
-			act(() => disclosure()?.click());
+			focus(lower(), "focusin");
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
+
+		});
+
+		it("should not open as the pin takes focus", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(facet(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			focus(pin(), "focusin");
+
+			await act(async () => {});
+
+			expect(lower()).toBeNull();
+
+		});
+
+		it("should stay open as focus leaves the facet once pinned", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(header(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			act(() => pin()?.click());
+
+			await ready();
+
+			focus(lower(), "focusout", document.body);
+
+			await act(async () => {});
+
+			expect(lower()).not.toBeNull();
+
+		});
+
+		it("should close as focus leaves the facet once unpinned", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: false });
+
+			await ready();
+
+			focus(lower(), "focusin");
+
+			await vi.waitFor(() => expect(pin()).not.toBeNull());
+
+			act(() => pin()?.click());
+
+			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
+
+			focus(lower(), "focusout", document.body);
 
 			await vi.waitFor(() => expect(lower()).toBeNull());
 

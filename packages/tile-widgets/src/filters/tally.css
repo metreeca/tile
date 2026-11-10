@@ -120,10 +120,15 @@ tile-tally {
             translate: var(--skin--spacing-010); /* optical nudge toward the edge */
         }
 
-        /* The field leaves its focus mark to the header, which draws it around the glyph and controls as well. */
+        /*
+         * The field leaves its focus mark to the header, which draws it around the glyph and controls as well. It fills
+         * the height of the row, so its text stays centred while the glyph is seated on the baseline of that text.
+         */
 
         & > input {
 
+            align-self: baseline;
+            block-size: var(--skin--scaling-150);
             min-width: 0;
             padding: 0; /* The header already holds the field clear of the edge. */
             border-style: none;
@@ -185,13 +190,15 @@ tile-tally {
 
         /*
          * The options are laid out as one grid of box, name and count columns shared by every row, so the counts line
-         * up down the list, and each row centres its cells vertically against one another.
+         * up down the list, and each row seats its box, name and count on the one baseline of the name it holds. The
+         * box column takes the measure of the header glyph, its box centred under the glyph, so the names line up
+         * with the search field above them.
          */
 
         & > ul {
 
             display: grid;
-            grid-template-columns: min-content minmax(0, 1fr) min-content;
+            grid-template-columns: var(--skin--scaling-100) minmax(0, 1fr) min-content;
             align-items: center;
             column-gap: var(--skin--spacing-050);
 
@@ -280,16 +287,22 @@ tile-tally {
                 display: grid;
                 grid-column: 1 / -1;
                 grid-template-columns: subgrid;
-                align-items: center;
+                align-items: baseline;
 
                 cursor: pointer;
 
-                /* The box is set a step smaller than a form's, so the rows of a dense list read as values, not fields. */
+                /*
+                 * The box stands a capital high on the baseline, reading as a capital beside the name in any face, and
+                 * smaller than a form's, so the rows of a dense list read as values rather than fields; it is centred in
+                 * its column, so it stands under the middle of the header glyph.
+                 */
 
                 & > input {
 
-                    inline-size: var(--skin--scaling-075);
-                    block-size: var(--skin--scaling-075);
+                    justify-self: center;
+
+                    inline-size: 1cap;
+                    block-size: 1cap;
 
                 }
 

@@ -39,7 +39,7 @@
  * below a square, 3 units of its 24-unit grid, by translation, as a negative margin leaves the alignment untouched.
  */
 
-:is(tile-tally, tile-range) > header > :is(.lucide, button[aria-pressed]),
+:is(tile-tally, tile-range) > header > :is(.lucide, button),
 tile-note > .lucide {
     align-self: baseline;
     translate: 0 calc(100% * 3 / 24);
@@ -70,51 +70,70 @@ tile-note > .lucide {
 }
 
 
-/**** Pins ************************************************************************************************************/
+/**** Leads ***********************************************************************************************************/
 
 /*
- * The pin toggle takes the place of the leading glyph of a facet header while focus is within the facet, so it takes
- * the measure of the glyph too: the header holds still as they swap, its name lined up with the content below.
+ * The configure button leading a facet header takes the measure of a bare glyph, so the header holds still as the
+ * glyph of the facet and the check mark take turns in it, and its name lines up with the content below.
  */
 
-:is(tile-tally, tile-range) > header > button[aria-pressed] {
+:is(tile-tally, tile-range) > header > button {
+
+    --tile-lead-cover: transparent;
 
     min-width: 0;
     min-height: 0;
 
     padding: 0;
 
-    /* The toggle takes the label colour of the glyph it stands in for, leaving the hover colour to Skin. */
+    /*
+     * The button answers the pointer as a subtle button does, taking the neutral hover and pressed covers over its
+     * surface, so the reader tells it apart from a bare glyph. Sized to the glyph, it spreads its cover past the edge
+     * by a shadow, as far as a padded control would reach, rounding by half a step since the spread grows the radius.
+     */
+
+    background-color: var(--tile-lead-cover);
+    box-shadow: 0 0 0 var(--skin--spacing-025) var(--tile-lead-cover);
+    border-radius: calc(var(--skin--border-radius-025) / 2);
+
+    &:enabled:hover {
+        --tile-lead-cover: var(--skin--background-color-hover-neutral);
+    }
+
+    &:enabled:active {
+        --tile-lead-cover: var(--skin--background-color-pressed-neutral);
+    }
+
+    /* The button takes the label colour of a bare glyph, leaving the hover colour to Skin. */
 
     &:not(:hover) {
         color: var(--skin--color-label);
     }
 
-    /*
-     * The glyph keeps one shape and tells the state by its pose: a pin left loose leans over in outline, a pin pressed
-     * in stands upright and filled, so the reader never has to guess whether it shows the state or the action.
-     */
+}
 
-    > svg {
 
-        rotate: 45deg;
+/**** Settings ********************************************************************************************************/
 
-        transition-property: rotate, translate;
-        transition-duration: var(--skin--duration-fast);
-        transition-timing-function: var(--skin--easing-standard);
+/*
+ * The settings of a facet take the whole width of the region they stand in, laid out as one grid of name and box
+ * columns shared by every row and set in the label colour, so they read as the values of a control, as options do.
+ */
 
-    }
+tile-settings {
 
-    &[aria-pressed="true"] > svg {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) min-content;
+    align-items: center;
+    gap: var(--skin--spacing-050);
 
-        rotate: none;
+    padding: var(--skin--spacing-050);
 
-        /* An optical nudge below the spacing scale: the upright pin sinks a touch, as if pressed into the header. */
+    color: var(--skin--color-label);
 
-        translate: 0 0.05em;
-
-        fill: currentColor;
-
+    & > label {
+        display: contents;
     }
 
 }

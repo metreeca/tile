@@ -34,7 +34,7 @@ import { CalendarIcon, ClockIcon, HashIcon, TypeIcon, XCircleIcon } from "lucide
 import { type ComponentType, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { createFold } from "../index.core.js";
-import { AutoDelay, cancel, Failure, keys, leave, Pin } from "../index.js";
+import { AutoDelay, cancel, Configure, Failure, keys, leave, Settings } from "../index.js";
 import "./range.css";
 
 
@@ -59,10 +59,12 @@ import "./range.css";
  * A button marked by the reset glyph, shown while a bound is set, removes both bounds at once and leaves the facet
  * suggesting the values on offer again, as it did before the reader set either.
  *
- * The facet folds down to its fields only while a bound is set. Clicking its header opens it while the reader works on
- * it, as does tabbing to it, and focus leaving the facet closes it again, unless the reader pinned it open by the pin
- * toggle shown in place of the leading glyph while focus is within the facet. A `collapsed` facet starts closed, any
- * other starts pinned open, until the reader unpins it and moves on to something else on the page.
+ * The facet folds down to its fields only while a bound is set. Clicking or tabbing to its header opens it while the
+ * reader works on it. Focus leaving the facet closes it again while its `Collapse` setting is ticked, as `collapsed`
+ * states from the start, and otherwise leaves it open with its fields shown, whether or not a bound is set.
+ *
+ * A button marked by the glyph of the value type shows the settings of the facet in place of its fields. A check mark
+ * takes its place and ends the settings, as does focus leaving the facet, and the reset is withheld in the meantime.
  *
  * The facet is a group named by `name`, shown in its header beside a glyph marking the value type, and marked busy
  * while the values are retrieved for the first time; a failed retrieval is shown as a critical note in place of the
@@ -98,9 +100,9 @@ export function Range({
 	name: string
 
 	/**
-	 * Whether the facet starts closed, showing its fields only while a bound is set; open from the start if omitted.
+	 * Whether the facet starts closed and closes as focus leaves it, fields shown only with a bound set; open if omitted.
 	 *
-	 * Either way, the reader opens the facet by clicking or tabbing to its header, and keeps it open by its pin toggle.
+	 * Either way, the reader opens the facet by clicking or tabbing to its header, and changes this from its settings.
 	 */
 	collapsed?: boolean
 
@@ -122,12 +124,9 @@ export function Range({
 
 	const id = useId();
 
-	// a facet starting open is pinned, so it stays open until the reader unpins it
-
-	const { open, pinned, focused: within, focus, expand, collapse, pin } = useModel(() => collapsed
-		? createFold()
-		: createFold().pin()
-	);
+	const { open, collapsing, configuring, expand, collapse, configure, collapsible } = useModel(() => createFold({
+		open: !collapsed, collapsing: collapsed
+	}));
 
 	const { field: focused, enter, leave: quit } = useModel(() => createFocus());
 	const { edit, change, settle } = useModel(() => createPending());
@@ -153,7 +152,7 @@ export function Range({
 
 	// the fields wait for the values on offer, so the facet never shows a strip it is about to fill
 
-	const shown = failed || ready && (open || bounded);
+	const shown = configuring || failed || ready && (open || bounded);
 
 	return createElement("tile-range", {
 
@@ -165,26 +164,32 @@ export function Range({
 
 		/*
 		 * The header takes focus as clicked or tabbed to, so a collapsed facet with no bound set is still reached from
-		 * the keyboard; it opens the facet only as it takes focus itself, any other part only marks the facet focused.
+		 * the keyboard; it opens the facet only as it takes focus itself, any other part leaves it as it stands.
 		 */
 
-		"onFocusIn": (event: FocusEvent) => event.target instanceof HTMLElement && event.target.localName === "header"
-			? expand()
-			: focus(),
+		"onFocusIn": (event: FocusEvent) => {
+			if ( event.target instanceof HTMLElement && event.target.localName === "header" ) {
+				expand();
+			}
+		},
 
 		"onFocusOut": (event: FocusEvent) => leave(event, collapse)
 
 	}, <>
 
-		<header tabIndex={0}>
+		{/* while the settings are shown, the header leaves the keyboard path to the configure button and the settings */}
 
-			{within ? <Pin pinned={pinned} onToggle={pin}/> : <Glyph/>}
+		<header tabIndex={configuring ? -1 : 0}>
+
+			<Configure configuring={configuring} glyph={<Glyph/>} onToggle={configure}/>
 
 			<span id={`${id}-name`}>{name}</span>
 
 			<span>
 
-				{bounded && <button type="button"
+				{/* Safari leaves buttons off the keyboard path unless the reader opts in, so it states its place on it */}
+
+				{bounded && !configuring && <button type="button" tabIndex={0}
 
 					title={"Reset"}
 
@@ -199,7 +204,9 @@ export function Range({
 
 		</header>
 
-		<section id={`${id}-fields`} hidden={!shown}>{shown && range({
+		<section id={`${id}-fields`} hidden={!shown}>{configuring
+			? <Settings collapsing={collapsing} onCollapsing={collapsible}/>
+			: shown && range({
 
 			/*
 			 * The values on offer are narrowed by the bounds themselves, so they hold a field to its own side only

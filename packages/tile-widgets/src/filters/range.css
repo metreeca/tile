@@ -69,8 +69,8 @@ tile-range {
         padding-inline: var(--skin--spacing-050) var(--skin--spacing-025);
 
         /*
-         * The name fills the row with its text centred in it, so the glyph seated on its baseline, or the pin standing
-         * in for the glyph, stays level with the name whether the controls at the end of the row show or not.
+         * The name fills the row with its text centred in it, so the configure button seated on its baseline, glyph or
+         * check mark alike, stays level with the name whether the controls at the end of the row show or not.
          */
 
         & > span:first-of-type {
@@ -128,7 +128,7 @@ tile-range {
             padding-inline: var(--skin--spacing-050);
 
             /*
-             * The height is pinned to a line of text, since a native temporal input pads its entry mask on its own and
+             * The height is held to a line of text, since a native temporal input pads its entry mask on its own and
              * would otherwise grow as an empty field turns into one on focus, shifting everything below the facet.
              */
 

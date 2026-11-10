@@ -32,7 +32,7 @@ import { SquareCheckBigIcon, XCircleIcon, XIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createFold } from "../index.core.js";
-import { AutoDelay, cancel, classes, Failure, keys, leave, More, Pin } from "../index.js";
+import { AutoDelay, cancel, classes, Configure, Failure, keys, leave, More, Settings } from "../index.js";
 import "./tally.css";
 
 
@@ -53,9 +53,12 @@ import "./tally.css";
  * by side. A long list is closed by a trigger fetching the next batch as it scrolls into view.
  *
  * The facet folds down to the values ticked. Turning to the search field opens it while the reader works on it, and
- * focus leaving the facet closes it again, back to the values the reader ticked, unless the reader pinned it open by
- * the pin toggle shown in place of the leading glyph while focus is within the facet. A `collapsed` facet starts
- * closed, any other starts pinned open, until the reader unpins it and moves on to something else on the page.
+ * focus leaving a collapsing facet closes it again, back to the values the reader ticked.
+ *
+ * A button marked by the facet glyph shows the settings of the facet in place of its values. A check mark takes its
+ * place and ends the settings, as does focus leaving the facet. Meanwhile, the search field shows the facet name and
+ * takes no input, and the reset is withheld. The `Collapse` setting, ticked from the start as `collapsed` states,
+ * decides whether the facet closes as focus leaves it or stays open with every value on offer shown.
  *
  * The facet is a group named by `name`, marked busy while the values are retrieved for the first time; a failed
  * retrieval is shown as a critical note in place of the values, until a later retrieval brings them back.
@@ -85,9 +88,9 @@ export function Tally({
 }: {
 
 	/**
-	 * Whether the facet starts closed, showing only the values ticked; open from the start if omitted.
+	 * Whether the facet starts closed and closes as focus leaves it, showing only the values ticked; open if omitted.
 	 *
-	 * Either way, the reader opens the facet by turning to its search field, and keeps it open by its pin toggle.
+	 * Either way, the reader opens the facet by turning to its search field, and changes this from its settings.
 	 */
 	collapsed?: boolean
 
@@ -119,12 +122,9 @@ export function Tally({
 
 	const id = useId();
 
-	// a facet starting open is pinned, so it stays open until the reader unpins it
-
-	const { open, pinned, focused, focus, expand, collapse, pin } = useModel(() => collapsed
-		? createFold()
-		: createFold().pin()
-	);
+	const { open, collapsing, configuring, expand, collapse, configure, collapsible } = useModel(() => createFold({
+		open: !collapsed, collapsing: collapsed
+	}));
 
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
@@ -158,11 +158,13 @@ export function Tally({
 
 		"tabIndex": -1,
 
-		// the search field opens the facet as it takes focus, any other part only marks the facet focused
+		// the search field opens the facet as it takes focus, any other part leaves it as it stands
 
-		"onFocusIn": (event: FocusEvent) => event.target instanceof HTMLInputElement && event.target.type === "search"
-			? expand()
-			: focus(),
+		"onFocusIn": (event: FocusEvent) => {
+			if ( event.target instanceof HTMLInputElement && event.target.type === "search" ) {
+				expand();
+			}
+		},
 
 		"onFocusOut": (event: FocusEvent) => leave(event, collapse)
 
@@ -170,24 +172,31 @@ export function Tally({
 
 		<header>
 
-			{focused ? <Pin pinned={pinned} onToggle={pin}/> : <SquareCheckBigIcon/>}
+			<Configure configuring={configuring} glyph={<SquareCheckBigIcon/>} onToggle={configure}/>
 
-			<input type="search" value={text} placeholder={name} aria-label={"Search"}
+			{/* while configuring, the field holds the facet name, ignores keys and stays off the keyboard path */}
+
+			<input type="search" value={configuring ? name : text} placeholder={name} aria-label={"Search"}
+
+				readOnly={configuring}
+				tabIndex={configuring ? -1 : undefined}
 
 				onInput={event => setTyped({ text: event.currentTarget.value, from: keywords })}
-				onKeyDown={keys({ Enter: apply, ...(text === "" ? {} : { Escape: () => search("") }) })}
+				onKeyDown={configuring ? undefined : keys({ Enter: apply, ...(text === "" ? {} : { Escape: () => search("") }) })}
 
 			/>
 
 			<span>
 
-				{text !== "" ? <button type="button"
+				{/* Safari leaves buttons off the keyboard path unless the reader opts in, so each states its place on it */}
+
+				{text !== "" ? <button type="button" tabIndex={0}
 
 					title={"Clear"}
 
 					onClick={() => search("")}
 
-				><XIcon class={"clear"}/></button> : ticked && <button type="button"
+				><XIcon class={"clear"}/></button> : ticked && !configuring && <button type="button" tabIndex={0}
 
 					title={"Reset"}
 
@@ -204,7 +213,7 @@ export function Tally({
 
 		{/* the region is rendered from the first render, hidden until there is something to show in it */}
 
-		<section id={id} hidden={!failed && !(open ? filled : ticked)}>{tally({
+		<section id={id} hidden={!configuring && !failed && !(open ? filled : ticked)}>{configuring ? <Settings collapsing={collapsing} onCollapsing={collapsible}/> : tally({
 
 			ready: ({ state, select, load }) => <>
 

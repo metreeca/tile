@@ -17,9 +17,9 @@
 /**
  * Headless facet fold.
  *
- * Holds whether a facet shows all it offers or only what the reader already picked, so a long column of
- * facets stays short until the reader turns to one of them. A rendering layer adopts it and supplies the pin toggle,
- * the markup and the gestures opening and closing it, so any binding folds a facet the same way.
+ * Holds whether a facet shows all it offers or only what the reader already picked, so a long column of facets stays
+ * short until the reader turns to one of them, and whether it shows its settings instead. A rendering layer adopts it
+ * and supplies the markup and the gestures opening, closing and configuring it, so any binding folds a facet alike.
  *
  * @module
  */
@@ -41,43 +41,45 @@ export interface Fold {
 	readonly open: boolean;
 
 	/**
-	 * Whether the reader opened the facet on purpose, so it stays open until the reader closes it again.
+	 * Whether the facet closes as focus leaves it, rather than staying open until the reader changes the setting.
 	 */
-	readonly pinned: boolean;
+	readonly collapsing: boolean;
 
 	/**
-	 * Whether focus is within the facet, so it offers the controls the reader works on it with.
+	 * Whether the facet shows its settings in place of what it offers.
 	 */
-	readonly focused: boolean;
+	readonly configuring: boolean;
 
 
 	/**
-	 * Marks focus as within the facet, leaving it open or closed as it stands.
+	 * Opens the facet while the reader works on it, as focus enters the part opening it.
 	 *
-	 * @returns A focused fold, or this fold if already focused
-	 */
-	focus(): this;
-
-	/**
-	 * Opens the facet while the reader works on it, without pinning it, as focus enters the part opening it.
-	 *
-	 * @returns A focused fold showing all the facet offers, or this fold if already so
+	 * @returns A fold showing all the facet offers, or this fold if already so
 	 */
 	expand(): this;
 
 	/**
-	 * Closes the facet as focus leaves it, unless the reader pinned it open.
+	 * Closes a collapsing facet as focus leaves it, and turns any facet back from its settings.
 	 *
-	 * @returns An unfocused fold showing only what the reader picked unless pinned, or this fold if already so
+	 * @returns A fold off its settings and closed if collapsing, or this fold if already so
 	 */
 	collapse(): this;
 
 	/**
-	 * Pins the facet open, or unpins a pinned one, leaving it open until the reader is done with it.
+	 * Turns the facet to its settings, or back to what it offers, leaving it open or closed as it stands.
 	 *
-	 * @returns An open fold, pinned unless this fold was
+	 * @returns A fold showing its settings unless this fold was
 	 */
-	pin(): this;
+	configure(): this;
+
+	/**
+	 * Sets whether the facet closes as focus leaves it, opening a facet that will no longer close on its own.
+	 *
+	 * @param collapsing Whether the facet closes as focus leaves it
+	 *
+	 * @returns A fold collapsing as `collapsing` states, or this fold if already so
+	 */
+	collapsible(collapsing: boolean): this;
 
 }
 
@@ -89,11 +91,12 @@ export interface Fold {
  *
  * @param options The fold configuration
  *
- * @returns An immutable {@link Fold}, open as `open` states
+ * @returns An immutable {@link Fold}, open and collapsing as the options state
  */
 export function createFold({
 
-	open = false
+	open = false,
+	collapsing = true
 
 }: {
 
@@ -102,28 +105,33 @@ export function createFold({
 	 */
 	open?: boolean
 
+	/**
+	 * Whether the facet closes as focus leaves it; collapsing if omitted.
+	 */
+	collapsing?: boolean
+
 } = {}): Fold {
 
 	return createState<Fold>({
 
 		open,
-		pinned: false,
-		focused: false,
-
-		focus() {
-			return { focused: true };
-		},
+		collapsing,
+		configuring: false,
 
 		expand() {
-			return { open: true, focused: true };
+			return { open: true };
 		},
 
 		collapse() {
-			return { open: this.pinned, focused: false };
+			return { open: this.open && !this.collapsing, configuring: false };
 		},
 
-		pin() {
-			return { open: true, pinned: !this.pinned };
+		configure() {
+			return { configuring: !this.configuring };
+		},
+
+		collapsible(collapsing: boolean) {
+			return { collapsing, open: this.open || !collapsing };
 		}
 
 	});

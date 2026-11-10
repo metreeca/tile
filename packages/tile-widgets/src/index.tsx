@@ -18,13 +18,14 @@
  * Widget parts.
  *
  * Draws the parts the widgets share out of plain markup styled by `@metreeca/skin`, so a view, a facet or a form
- * marks loading, emptiness and failure alike, and opens, closes and grows alike, whichever widget it is.
+ * marks loading, emptiness and failure alike, and opens, closes, grows and turns to its settings alike, whichever
+ * widget it is, so a reader learns these gestures once for every widget the package offers.
  *
  * @module
  */
 
 import { opt, type Optional } from "@metreeca/core";
-import { CircleAlertIcon, PinIcon, RefreshCwIcon } from "lucide-preact";
+import { CheckIcon, CircleAlertIcon, RefreshCwIcon } from "lucide-preact";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import "./index.css";
@@ -167,46 +168,93 @@ export function More({
 }
 
 /**
- * Creates the pin toggle of a facet.
+ * Creates the configure button of a facet.
  *
- * The facet header shows the toggle in place of its leading glyph while focus is within the facet, so the reader can
- * keep the facet open after moving on, or let a pinned one close once done with it.
+ * Leads the facet header, marked by the glyph of the facet while the facet shows what it offers and by a check mark
+ * while it shows its settings, so the reader turns the facet to its settings and back again by the same button.
  *
  * @param options The part configuration
  *
- * @returns A toggle button marked by the pin glyph, upright and filled while the facet is pinned and tilted in
- *     outline otherwise, with a tooltip naming the state the glyph shows and an accessible name that stays the same
- *     as the state changes, announced to assistive technology as pressed while the facet is pinned
+ * @returns A button with a tooltip naming what pressing it does: `Configure` or `Done`
  */
-export function Pin({
+export function Configure({
 
-	pinned,
+	configuring,
+
+	glyph,
 
 	onToggle
 
 }: {
 
 	/**
-	 * Whether the facet stays open as focus leaves it.
+	 * Whether the facet shows its settings.
 	 */
-	pinned: boolean
+	configuring: boolean
 
 	/**
-	 * Called when the reader activates the toggle.
+	 * The glyph marking the facet.
+	 */
+	glyph: ComponentChildren
+
+	/**
+	 * Called when the reader presses the button.
 	 */
 	onToggle: () => void
 
 }) {
 
-	return <button type="button"
+	// Safari leaves buttons off the keyboard path unless the reader opts in, so the button states its place on it
 
-		aria-label={"Pin"}
-		aria-pressed={pinned}
-		title={pinned ? "Pinned" : "Unpinned"}
+	return <button type="button" tabIndex={0}
+
+		title={configuring ? "Done" : "Configure"}
 
 		onClick={onToggle}
 
-	><PinIcon/></button>;
+	>{configuring ? <CheckIcon/> : glyph}</button>;
+
+}
+
+/**
+ * Creates the settings of a facet.
+ *
+ * Lists each setting by its name beside the control changing it, starting with the `Collapse` checkbox stating
+ * whether the facet closes as focus leaves it or stays open until the reader changes the setting again.
+ *
+ * @param options The part configuration
+ *
+ * @returns The settings, applied as the reader changes them
+ */
+export function Settings({
+
+	collapsing,
+
+	onCollapsing
+
+}: {
+
+	/**
+	 * Whether the facet closes as focus leaves it.
+	 */
+	collapsing: boolean
+
+	/**
+	 * Called with the new setting when the reader ticks or unticks `Collapse`.
+	 */
+	onCollapsing: (collapsing: boolean) => void
+
+}) {
+
+	return createElement("tile-settings", {}, <label>
+
+		{"Collapse"}
+
+		<input type="checkbox" checked={collapsing}
+			onChange={event => onCollapsing(event.currentTarget.checked)}
+		/>
+
+	</label>);
 
 }
 
@@ -227,18 +275,27 @@ export function cancel(timer: ReturnType<typeof setTimeout>): () => void {
 /**
  * Closes a facet as focus leaves it.
  *
+ * Some browsers drop focus when a focused part is redrawn out of the page, such as an option of a list retrieved
+ * again. The facet stays open in that case and takes focus back itself, so a later move out of it still closes it.
+ * A facet element must therefore be focusable, as by a `tabIndex` of `-1`, or a redraw leaves it open and unfocused.
+ *
  * @param event The focus event leaving an element of the facet
- * @param collapse What closes the facet, called only if focus moves out of the facet rather than within it
+ * @param collapse What closes the facet, called only once focus has moved out of the facet, possibly after the event
  */
 export function leave(event: FocusEvent, collapse: () => void): void {
 
 	const facet = event.currentTarget;
+	const source = event.target;
 	const target = event.relatedTarget;
 
-	const within = facet instanceof Node && target instanceof Node && facet.contains(target);
+	if ( facet instanceof HTMLElement && source instanceof Node && target === null ) {
 
-	if ( !within ) {
+		queueMicrotask(() => source.isConnected ? collapse() : facet.focus({ preventScroll: true }));
+
+	} else if ( !(facet instanceof Node && target instanceof Node && facet.contains(target)) ) {
+
 		collapse();
+
 	}
 
 }

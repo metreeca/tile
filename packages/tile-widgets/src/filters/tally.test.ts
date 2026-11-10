@@ -124,12 +124,22 @@ function reset(): HTMLButtonElement | null {
 	return document.querySelector("button[title=Reset]");
 }
 
-function disclosure(): HTMLButtonElement | null {
-	return document.querySelector("button[aria-expanded]");
+function configure(): HTMLButtonElement | null {
+	return document.querySelector("tile-tally > header > button");
 }
 
-function pin(): HTMLButtonElement | null {
-	return document.querySelector("button[aria-pressed]");
+function setting(name: string): HTMLInputElement | null {
+	return [...document.querySelectorAll("tile-tally > section label")]
+		.find(label => label.textContent === name)
+		?.querySelector("input") ?? null;
+}
+
+function buckets(): Element | null {
+	return document.querySelector("tile-tally > section ul");
+}
+
+function disclosure(): HTMLButtonElement | null {
+	return document.querySelector("button[aria-expanded]");
 }
 
 function focus(target: Element | null, type: "focusin" | "focusout", relatedTarget: Element | null = null): void {
@@ -214,6 +224,17 @@ describe("Tally", () => {
 			await ready();
 
 			expect(field()?.placeholder).toBe("Category");
+
+		});
+
+		it("should lead the header with a configure button marked by the glyph", async () => {
+
+			mount(options([]));
+
+			await ready();
+
+			expect(configure()?.type).toBe("button");
+			expect(configure()?.querySelector("svg")).not.toBeNull();
 
 		});
 
@@ -313,6 +334,46 @@ describe("Tally", () => {
 
 		});
 
+		it("should close as focus leaves the facet for nothing", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			focus(field(), "focusout");
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
+
+		});
+
+		it("should stay open as a focused option is redrawn, as browsers taking focus off removed parts report", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			const removed = checkboxes()[0]!; // test harness: the facet is open
+
+			act(() => {
+				removed.dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: null }));
+				removed.remove();
+			});
+
+			await act(async () => {});
+
+			expect(checkboxes()).toHaveLength(1);
+			expect(document.activeElement).toBe(facet());
+
+		});
+
 		it("should take focus itself, for browsers leaving it off the checkboxes and buttons pressed", async () => {
 
 			mount(options(rows), { collapsed: true });
@@ -365,121 +426,211 @@ describe("Tally", () => {
 
 	});
 
-	describe("pin", () => {
+	describe("configure", () => {
 
 		const rows: readonly Row[] = [
 			{ value: "c1", label: "Arts", count: 1 },
 			{ value: "c2", label: "Sciences", count: 1 }
 		];
 
-		it("should show the glyph in place of the pin while focus is outside the facet", async () => {
+		it("should offer to configure while the options are shown", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			expect(configure()?.title).toBe("Configure");
+			expect(configure()?.querySelector(".lucide-square-check-big")).not.toBeNull();
+
+		});
+
+		it("should offer to be done while the settings are shown", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(configure()?.title).toBe("Done"));
+
+			expect(configure()?.querySelector(".lucide-check")).not.toBeNull();
+
+		});
+
+		it("should show the settings in place of the options", async () => {
+
+			mount(options(rows));
+
+			await vi.waitFor(() => expect(buckets()).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			expect(buckets()).toBeNull();
+
+		});
+
+		it("should show the settings while closed", async () => {
 
 			mount(options(rows), { collapsed: true });
 
 			await ready();
 
-			expect(pin()).toBeNull();
-			expect(facet()?.querySelector("header > svg")).not.toBeNull();
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			expect(facet()?.querySelector("section")?.hidden).toBe(false);
 
 		});
 
-		it("should show the pin in place of the glyph while focus is within the facet", async () => {
+		it("should show the options again as configure is pressed again", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(buckets()).not.toBeNull());
+
+			expect(setting("Collapse")).toBeNull();
+
+		});
+
+		it("should hide the settings as focus leaves the facet", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			focus(configure(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(setting("Collapse")).toBeNull());
+
+		});
+
+		it("should show the name read-only in the search field while the settings are shown", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			type("art");
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(field()?.readOnly).toBe(true));
+
+			expect(field()?.value).toBe("Category");
+
+		});
+
+		it("should let the keyboard reach the configure button, whatever the browser preferences", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			expect(configure()?.getAttribute("tabindex")).toBe("0");
+
+		});
+
+		it("should take the search field off the keyboard path while the settings are shown", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(field()?.getAttribute("tabindex")).toBe("-1"));
+
+		});
+
+		it("should not offer a reset while the settings are shown", async () => {
+
+			mount(options(rows), { criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(reset()).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(reset()).toBeNull());
+
+		});
+
+		it("should tick collapse as stated by collapsed", async () => {
 
 			mount(options(rows), { collapsed: true });
 
 			await ready();
 
-			focus(facet(), "focusin");
+			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
-
-			expect(facet()?.querySelector("header > svg")).toBeNull();
+			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(true));
 
 		});
 
-		it("should show the glyph again as focus leaves the facet", async () => {
+		it("should leave collapse unticked unless collapsed", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(false));
+
+		});
+
+		it("should close as focus leaves the facet once collapse is ticked", async () => {
+
+			mount(options(rows));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			await act(async () => void setting("Collapse")?.click()); // the fold renders before focus leaves
+
+			expect(setting("Collapse")?.checked).toBe(true);
+
+			focus(configure(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(facet()?.querySelector("section")?.hidden).toBe(true));
+
+		});
+
+		it("should stay open as focus leaves the facet once collapse is unticked", async () => {
 
 			mount(options(rows), { collapsed: true });
 
 			await ready();
 
-			focus(field(), "focusin");
+			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(true));
 
-			focus(field(), "focusout", document.body);
+			await act(async () => void setting("Collapse")?.click()); // the fold renders before focus leaves
 
-			await vi.waitFor(() => expect(pin()).toBeNull());
+			expect(setting("Collapse")?.checked).toBe(false);
 
-		});
-
-		it("should state whether the facet is pinned", async () => {
-
-			mount(options(rows), { collapsed: true });
-
-			await ready();
-
-			focus(field(), "focusin");
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
-
-			act(() => pin()?.click());
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
-
-		});
-
-		it("should start pinned unless collapsed", async () => {
-
-			mount(options(rows), { collapsed: false });
-
-			await ready();
-
-			focus(field(), "focusin");
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
-
-		});
-
-		it("should stay open as focus leaves the facet once pinned", async () => {
-
-			mount(options(rows), { collapsed: true });
-
-			await ready();
-
-			focus(field(), "focusin");
-
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
-
-			act(() => pin()?.click());
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
-
-			focus(field(), "focusout", document.body);
-
-			await act(async () => {});
-
-			expect(checkboxes()).toHaveLength(2);
-
-		});
-
-		it("should close as focus leaves the facet once unpinned", async () => {
-
-			mount(options(rows), { collapsed: false });
+			focus(configure(), "focusout", document.body);
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
-
-			focus(field(), "focusin");
-
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
-
-			act(() => pin()?.click());
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
-
-			focus(checkboxes()[0] ?? null, "focusout", document.body);
-
-			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
 
 		});
 
@@ -729,6 +880,18 @@ describe("Tally", () => {
 
 		});
 
+		it("should let the keyboard reach the clear, whatever the browser preferences", async () => {
+
+			mount(options([]));
+
+			await ready();
+
+			type("art");
+
+			await vi.waitFor(() => expect(clear()?.getAttribute("tabindex")).toBe("0"));
+
+		});
+
 		it("should not offer a clear while the field is empty", async () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { criteria: { "?category": ["c1"] } });
@@ -767,6 +930,14 @@ describe("Tally", () => {
 
 	describe("reset", () => {
 
+		it("should let the keyboard reach the reset, whatever the browser preferences", async () => {
+
+			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(reset()?.getAttribute("tabindex")).toBe("0"));
+
+		});
+
 		it("should not offer a reset while nothing is ticked", async () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 1 }]));
@@ -804,6 +975,7 @@ describe("Tally", () => {
 			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({}));
 
 		});
+
 
 	});
 

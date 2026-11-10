@@ -119,8 +119,14 @@ function disclosure(): HTMLButtonElement | null {
 	return document.querySelector("button[aria-expanded]");
 }
 
-function pin(): HTMLButtonElement | null {
-	return document.querySelector("button[aria-pressed]");
+function configure(): HTMLButtonElement | null {
+	return document.querySelector("tile-range > header > button");
+}
+
+function setting(name: string): HTMLInputElement | null {
+	return [...document.querySelectorAll("tile-range > section label")]
+		.find(label => label.textContent === name)
+		?.querySelector("input") ?? null;
 }
 
 function focus(target: Element | null, type: "focusin" | "focusout", relatedTarget: Element | null = null): void {
@@ -319,88 +325,124 @@ describe("Range", () => {
 
 	});
 
-	describe("pin", () => {
+	describe("configure", () => {
 
-		it("should show the glyph in place of the pin while focus is outside the facet", async () => {
+		it("should offer to configure while the fields are shown", async () => {
 
-			mount(bounds(1990, 2020), { collapsed: true });
-
-			await loaded();
-
-			expect(pin()).toBeNull();
-			expect(header()?.querySelector(":scope > svg")).not.toBeNull();
-
-		});
-
-		it("should show the pin in place of the glyph while focus is within the facet", async () => {
-
-			mount(bounds(1990, 2020), { collapsed: true });
-
-			await loaded();
-
-			focus(header(), "focusin");
-
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
-
-			expect(header()?.querySelector(":scope > svg")).toBeNull();
-
-		});
-
-		it("should show the glyph again as focus leaves the facet", async () => {
-
-			mount(bounds(1990, 2020), { collapsed: true });
-
-			await loaded();
-
-			focus(header(), "focusin");
-
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
-
-			focus(header(), "focusout", document.body);
-
-			await vi.waitFor(() => expect(pin()).toBeNull());
-
-		});
-
-		it("should state whether the facet is pinned", async () => {
-
-			mount(bounds(1990, 2020), { collapsed: true });
-
-			await loaded();
-
-			focus(header(), "focusin");
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
-
-			act(() => pin()?.click());
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
-
-		});
-
-		it("should start pinned unless collapsed", async () => {
-
-			mount(bounds(1990, 2020), { collapsed: false });
+			mount(bounds(1990, 2020));
 
 			await ready();
 
-			focus(lower(), "focusin");
-
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("true"));
+			expect(configure()?.title).toBe("Configure");
+			expect(configure()?.querySelector("svg")).not.toBeNull();
 
 		});
 
-		it("should not open as the pin takes focus", async () => {
+		it("should offer to be done while the settings are shown", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(configure()?.title).toBe("Done"));
+
+			expect(configure()?.querySelector(".lucide-check")).not.toBeNull();
+
+		});
+
+		it("should show the settings in place of the fields", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			expect(lower()).toBeNull();
+
+		});
+
+		it("should show the settings while closed", async () => {
 
 			mount(bounds(1990, 2020), { collapsed: true });
 
 			await loaded();
 
-			focus(facet(), "focusin");
+			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
 
-			focus(pin(), "focusin");
+			expect(facet()?.querySelector("section")?.hidden).toBe(false);
+
+		});
+
+		it("should show the fields again as configure is pressed again", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await ready();
+
+			expect(setting("Collapse")).toBeNull();
+
+		});
+
+		it("should hide the settings as focus leaves the facet", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			focus(configure(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(setting("Collapse")).toBeNull());
+
+		});
+
+		it("should let the keyboard reach the configure button, whatever the browser preferences", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			expect(configure()?.getAttribute("tabindex")).toBe("0");
+
+		});
+
+		it("should take its header off the keyboard path while the settings are shown", async () => {
+
+			mount(bounds(1990, 2020));
+
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(header()?.getAttribute("tabindex")).toBe("-1"));
+
+		});
+
+		it("should not open as the configure button takes focus", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			focus(configure(), "focusin");
 
 			await act(async () => {});
 
@@ -408,45 +450,79 @@ describe("Range", () => {
 
 		});
 
-		it("should stay open as focus leaves the facet once pinned", async () => {
+		it("should not offer a reset while the settings are shown", async () => {
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(clear()).toBeNull());
+
+		});
+
+		it("should tick collapse as stated by collapsed", async () => {
 
 			mount(bounds(1990, 2020), { collapsed: true });
 
 			await loaded();
 
-			focus(header(), "focusin");
+			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
-
-			act(() => pin()?.click());
-
-			await ready();
-
-			focus(lower(), "focusout", document.body);
-
-			await act(async () => {});
-
-			expect(lower()).not.toBeNull();
+			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(true));
 
 		});
 
-		it("should close as focus leaves the facet once unpinned", async () => {
+		it("should leave collapse unticked unless collapsed", async () => {
 
-			mount(bounds(1990, 2020), { collapsed: false });
+			mount(bounds(1990, 2020));
 
 			await ready();
 
-			focus(lower(), "focusin");
+			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(pin()).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(false));
 
-			act(() => pin()?.click());
+		});
 
-			await vi.waitFor(() => expect(pin()?.getAttribute("aria-pressed")).toBe("false"));
+		it("should close as focus leaves the facet once collapse is ticked", async () => {
 
-			focus(lower(), "focusout", document.body);
+			mount(bounds(1990, 2020));
 
-			await vi.waitFor(() => expect(lower()).toBeNull());
+			await ready();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+
+			await act(async () => void setting("Collapse")?.click()); // the fold renders before focus leaves
+
+			expect(setting("Collapse")?.checked).toBe(true);
+
+			focus(configure(), "focusout", document.body);
+
+			await vi.waitFor(() => expect(facet()?.querySelector("section")?.hidden).toBe(true));
+
+		});
+
+		it("should stay open as focus leaves the facet once collapse is unticked", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true });
+
+			await loaded();
+
+			act(() => configure()?.click());
+
+			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(true));
+
+			await act(async () => void setting("Collapse")?.click()); // the fold renders before focus leaves
+
+			expect(setting("Collapse")?.checked).toBe(false);
+
+			focus(configure(), "focusout", document.body);
+
+			await ready();
 
 		});
 
@@ -966,6 +1042,14 @@ describe("Range", () => {
 
 	describe("reset", () => {
 
+		it("should let the keyboard reach the reset, whatever the browser preferences", async () => {
+
+			mount(bounds(1990, 2020), { criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()?.getAttribute("tabindex")).toBe("0"));
+
+		});
+
 		it("should not offer a reset while no bound is set", async () => {
 
 			mount(bounds(1990, 2020));
@@ -989,6 +1073,7 @@ describe("Range", () => {
 			await vi.waitFor(() => expect(onChange).toHaveBeenLastCalledWith({}));
 
 		});
+
 
 	});
 

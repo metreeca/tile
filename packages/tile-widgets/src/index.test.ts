@@ -29,20 +29,12 @@ describe("createFold", () => {
 		expect(createFold({ open: true }).open).toBe(true);
 	});
 
-	describe("focus()", () => {
+	it("should start collapsing by default", async () => {
+		expect(createFold().collapsing).toBe(true);
+	});
 
-		it("should start unfocused", async () => {
-			expect(createFold().focused).toBe(false);
-		});
-
-		it("should mark the fold focused", async () => {
-			expect(createFold().focus().focused).toBe(true);
-		});
-
-		it("should leave the fold open as it stands", async () => {
-			expect(createFold().focus().open).toBe(false);
-		});
-
+	it("should start collapsing as stated", async () => {
+		expect(createFold({ collapsing: false }).collapsing).toBe(false);
 	});
 
 	describe("expand()", () => {
@@ -51,17 +43,13 @@ describe("createFold", () => {
 			expect(createFold().expand().open).toBe(true);
 		});
 
-		it("should mark the fold it opens focused", async () => {
-			expect(createFold().expand().focused).toBe(true);
-		});
-
-		it("should not pin the fold it opens", async () => {
-			expect(createFold().expand().pinned).toBe(false);
+		it("should leave the fold collapsing as it stands", async () => {
+			expect(createFold().expand().collapsing).toBe(true);
 		});
 
 		it("should leave an open fold as it stands", async () => {
 
-			const fold = createFold({ open: true }).focus();
+			const fold = createFold({ open: true });
 
 			expect(fold.expand()).toBe(fold);
 
@@ -71,7 +59,7 @@ describe("createFold", () => {
 
 	describe("collapse()", () => {
 
-		it("should close an open fold", async () => {
+		it("should close an open collapsing fold", async () => {
 			expect(createFold({ open: true }).collapse().open).toBe(false);
 		});
 
@@ -83,48 +71,56 @@ describe("createFold", () => {
 
 		});
 
-		it("should leave a pinned fold as it stands", async () => {
+		it("should leave an open fold not collapsing as it stands", async () => {
 
-			const fold = createFold().pin();
+			const fold = createFold({ open: true, collapsing: false });
 
 			expect(fold.collapse()).toBe(fold);
 
 		});
 
-		it("should mark the fold unfocused, pinned or not", async () => {
-			expect(createFold().pin().focus().collapse().focused).toBe(false);
-		});
-
-		it("should close a fold once unpinned", async () => {
-			expect(createFold().pin().pin().collapse().open).toBe(false);
+		it("should turn the fold back from its settings", async () => {
+			expect(createFold({ open: true, collapsing: false }).configure().collapse().configuring).toBe(false);
 		});
 
 	});
 
-	describe("pin()", () => {
+	describe("configure()", () => {
 
-		it("should open a closed fold, pinning it", async () => {
-
-			const fold = createFold().pin();
-
-			expect([fold.open, fold.pinned]).toEqual([true, true]);
-
+		it("should start showing what the facet offers", async () => {
+			expect(createFold().configuring).toBe(false);
 		});
 
-		it("should pin an open fold", async () => {
-
-			const fold = createFold({ open: true }).pin();
-
-			expect([fold.open, fold.pinned]).toEqual([true, true]);
-
+		it("should turn the fold to its settings", async () => {
+			expect(createFold().configure().configuring).toBe(true);
 		});
 
-		it("should unpin a pinned fold, leaving it open", async () => {
+		it("should turn the fold back from its settings", async () => {
+			expect(createFold().configure().configure().configuring).toBe(false);
+		});
 
-			const fold = createFold().pin().pin();
+		it("should leave the fold open or closed as it stands", async () => {
+			expect([createFold().configure().open, createFold({ open: true }).configure().open]).toEqual([false, true]);
+		});
 
-			expect([fold.open, fold.pinned]).toEqual([true, false]);
+	});
 
+	describe("collapsible()", () => {
+
+		it("should make the fold collapsing", async () => {
+			expect(createFold({ collapsing: false }).collapsible(true).collapsing).toBe(true);
+		});
+
+		it("should make the fold not collapsing", async () => {
+			expect(createFold().collapsible(false).collapsing).toBe(false);
+		});
+
+		it("should open a fold no longer collapsing", async () => {
+			expect(createFold().collapsible(false).open).toBe(true);
+		});
+
+		it("should leave a fold made collapsing open or closed as it stands", async () => {
+			expect(createFold({ open: true, collapsing: false }).collapsible(true).open).toBe(true);
 		});
 
 	});
@@ -133,7 +129,7 @@ describe("createFold", () => {
 
 		const fold = createFold();
 
-		fold.pin();
+		fold.expand();
 
 		expect(fold.open).toBe(false);
 

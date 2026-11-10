@@ -101,7 +101,9 @@ export function Search({
 
 		/>
 
-		{text !== "" && <button type="button"
+		{/* Safari leaves buttons off the keyboard path unless the reader opts in, so the button states its place on it */}
+
+		{text !== "" && <button type="button" tabIndex={0}
 
 			title={"Reset"}
 

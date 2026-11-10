@@ -72,6 +72,14 @@ describe("Clear", () => {
 
 	});
 
+	it("should let the keyboard reach the button, whatever the browser preferences", async () => {
+
+		mount({});
+
+		expect(button()?.getAttribute("tabindex")).toBe("0");
+
+	});
+
 	it("should be disabled while no criterion narrows the collection", async () => {
 
 		mount({});

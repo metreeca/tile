@@ -196,6 +196,16 @@ describe("Search", () => {
 
 		});
 
+		it("should let the keyboard reach the reset, whatever the browser preferences", async () => {
+
+			mount();
+
+			type("art");
+
+			expect(reset()?.getAttribute("tabindex")).toBe("0");
+
+		});
+
 		it("should offer a reset while text is typed", async () => {
 
 			mount();

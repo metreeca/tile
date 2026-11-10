@@ -172,7 +172,7 @@ A component holding state declares it as a `@metreeca/core` state object and ado
 `@metreeca/clay/model`, reading data and transitions straight off the model:
 
 ```tsx
-const { open, expand, collapse, toggle } = useModel(() => createFold());
+const { open, expand, collapse, configure } = useModel(() => createFold());
 ```
 
 - A transition renders the component again on its own, so a handler just calls it; a transition changing nothing

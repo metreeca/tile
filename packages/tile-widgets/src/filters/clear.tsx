@@ -64,7 +64,9 @@ export function Clear<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 
 }) {
 
-	return createElement("tile-clear", {}, <button type="button"
+	// Safari leaves buttons off the keyboard path unless the reader opts in, so the button states its place on it
+
+	return createElement("tile-clear", {}, <button type="button" tabIndex={0}
 
 		disabled={Object.keys(collection.query).length === 0}
 

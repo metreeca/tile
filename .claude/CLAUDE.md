@@ -59,9 +59,13 @@ restates them.
 - **`npm run watch`** - Serve the specimen page with live reload
 
 > [!CAUTION]
-> The specimen dev server is normally already running at `http://localhost:5173`, picking up edits through live
-> reload. **NEVER** start, restart or stop a dev server: check visual changes against the running one, and where it
-> is down, ask the user to start it.
+> The specimen dev server is normally already running, picking up edits through live reload. **NEVER** start, restart
+> or stop a dev server: check visual changes against the running one, and where it is down, ask the user to start it.
+>
+> Several Vite servers may run side by side (other apps built on Tile among them), so the specimen holds **NO** fixed
+> port: `5173` may well serve another app. Before checking anything, list the listening ports
+> (`lsof -iTCP -sTCP:LISTEN -P`) and pick the one whose page is titled `Metreeca/Tile`; the facets are under
+> `/tile-widgets/`.
 
 # Package Layout
 
@@ -228,6 +232,17 @@ An export entry lacking the condition falls back to `dist` as well, and tests th
 
 Headless state is tested without a DOM: a test that needs one belongs to a binding package, which supplies its own
 environment.
+
+> [!IMPORTANT]
+> The DOM environment comes from the package `check` script (`--environment happy-dom`), **NOT** from the root
+> `vitest.config.ts`. A bare `npx vitest run <path>`, from the root or from the package alike, runs DOM tests without
+> one and fails every test on `ReferenceError: document is not defined`. Run selected tests from the package directory
+> with the flags its `check` script passes:
+>
+> ```shell
+> cd packages/tile-widgets
+> npx vitest --config ../../vitest.config.ts --root . --environment happy-dom run src/filters/tally.test.ts
+> ```
 
 # Version Management
 

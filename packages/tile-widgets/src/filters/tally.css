@@ -36,6 +36,13 @@ tile-tally {
     border-radius: var(--skin--border-radius-050);
 
     /*
+     * The box holds a field, so its edge takes the line a field takes, matching the search fields beside the facets
+     * and holding the 3:1 a control boundary owes; the rule inside the box is drawn in the same line.
+     */
+
+    border-color: var(--skin--border-color-field);
+
+    /*
      * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
      * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
      */
@@ -153,6 +160,7 @@ tile-tally {
         overflow-y: auto;
 
         border-top-style: var(--skin--border-style);
+        border-top-color: var(--skin--border-color-field);
 
         & > small {
             display: block;

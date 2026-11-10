@@ -29,6 +29,13 @@ tile-range {
     border-radius: var(--skin--border-radius-050);
 
     /*
+     * The box holds the fields, so its edge takes the line a field takes, matching the search fields beside the facets
+     * and holding the 3:1 a control boundary owes; the rules inside the box are drawn in the same line.
+     */
+
+    border-color: var(--skin--border-color-field);
+
+    /*
      * The box is painted in the page colour, so a facet stands out as a control from whatever surface it sits on, the
      * sunken tray above all; the text roles inside hold their contrast against it by the design system contract.
      */
@@ -91,6 +98,7 @@ tile-range {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 
         border-top-style: var(--skin--border-style);
+        border-top-color: var(--skin--border-color-field);
 
         /*
          * The box bounds the fields, which keep the inset focus and invalid marks the base rules draw within them. A
@@ -104,10 +112,6 @@ tile-range {
             min-width: 0;
             border-style: none;
             border-radius: 0;
-
-            /* The rule splitting the fields matches the rules of the box, rather than the edge of a standalone field. */
-
-            border-color: var(--skin--border-color);
 
             &:first-child {
                 border-end-start-radius: var(--tile-range-corner);
@@ -129,6 +133,8 @@ tile-range {
 
             box-sizing: border-box;
             block-size: calc(1lh + 2 * var(--skin--spacing-025));
+
+            /* The rule splitting the fields is the edge of the second one, in the line the base rules give a field. */
 
             & + input {
                 border-inline-start-style: var(--skin--border-style);

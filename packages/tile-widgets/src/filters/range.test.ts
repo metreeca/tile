@@ -1074,6 +1074,41 @@ describe("Range", () => {
 
 		});
 
+		it("should keep an opened facet open, as the pressed reset goes away", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => header()?.focus());
+			act(() => clear()?.focus());
+			act(() => clear()?.click());
+
+			await vi.waitFor(() => expect(clear()).toBeNull());
+			await act(async () => {});
+
+			await ready();
+
+		});
+
+		it("should close the facet as focus leaves it after the reset", async () => {
+
+			mount(bounds(1990, 2020), { collapsed: true, criteria: { ">=year": 2000 } });
+
+			await vi.waitFor(() => expect(clear()).not.toBeNull());
+
+			act(() => header()?.focus());
+			act(() => clear()?.focus());
+			act(() => clear()?.click());
+
+			await vi.waitFor(() => expect(clear()).toBeNull());
+			await act(async () => {});
+
+			act(() => (document.activeElement as HTMLElement | null)?.blur()); // ;(test harness) focus is within the facet
+
+			await vi.waitFor(() => expect(lower()).toBeNull());
+
+		});
 
 	});
 

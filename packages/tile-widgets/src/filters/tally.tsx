@@ -176,7 +176,7 @@ export function Tally({
 
 			{/* while configuring, the field holds the facet name, ignores keys and stays off the keyboard path */}
 
-			<input type="search" value={configuring ? name : text} placeholder={name} aria-label={"Search"}
+			<input id={`${id}-search`} type="search" value={configuring ? name : text} placeholder={name} aria-label={"Search"}
 
 				readOnly={configuring}
 				tabIndex={configuring ? -1 : undefined}
@@ -200,7 +200,10 @@ export function Tally({
 
 					title={"Reset"}
 
+					// the reset goes away once pressed, so the search field takes focus in its place, keeping the facet open
+
 					onClick={() => {
+						document.getElementById(`${id}-search`)?.focus();
 						setTyped(undefined);
 						tally({ ready: ({ clear }) => clear() });
 					}}

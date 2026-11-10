@@ -179,7 +179,7 @@ export function Range({
 
 		{/* while the settings are shown, the header leaves the keyboard path to the configure button and the settings */}
 
-		<header tabIndex={configuring ? -1 : 0}>
+		<header id={`${id}-header`} tabIndex={configuring ? -1 : 0}>
 
 			<Configure configuring={configuring} glyph={<Glyph/>} onToggle={configure}/>
 
@@ -193,7 +193,10 @@ export function Range({
 
 					title={"Reset"}
 
+					// the reset goes away once pressed, so the header takes focus in its place, keeping the facet open
+
 					onClick={() => {
+						document.getElementById(`${id}-header`)?.focus();
 						settle();
 						range({ ready: ({ clear }) => clear() });
 					}}

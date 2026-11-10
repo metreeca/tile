@@ -930,6 +930,11 @@ describe("Tally", () => {
 
 	describe("reset", () => {
 
+		const rows: readonly Row[] = [
+			{ value: "c1", label: "Arts", count: 1 },
+			{ value: "c2", label: "Sciences", count: 1 }
+		];
+
 		it("should let the keyboard reach the reset, whatever the browser preferences", async () => {
 
 			mount(options([{ value: "c1", label: "Arts", count: 1 }]), { criteria: { "?category": ["c1"] } });
@@ -976,6 +981,47 @@ describe("Tally", () => {
 
 		});
 
+		it("should keep an opened facet open, as the pressed reset goes away", async () => {
+
+			mount(options(rows), { collapsed: true, criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(reset()).not.toBeNull());
+
+			act(() => field()?.focus());
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			act(() => reset()?.focus());
+			act(() => reset()?.click());
+
+			await vi.waitFor(() => expect(reset()).toBeNull());
+			await act(async () => {});
+
+			expect(checkboxes()).toHaveLength(2);
+
+		});
+
+		it("should close the facet as focus leaves it after the reset", async () => {
+
+			mount(options(rows), { collapsed: true, criteria: { "?category": ["c1"] } });
+
+			await vi.waitFor(() => expect(reset()).not.toBeNull());
+
+			act(() => field()?.focus());
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			act(() => reset()?.focus());
+			act(() => reset()?.click());
+
+			await vi.waitFor(() => expect(reset()).toBeNull());
+			await act(async () => {});
+
+			act(() => (document.activeElement as HTMLElement | null)?.blur()); // ;(test harness) focus is within the facet
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
+
+		});
 
 	});
 

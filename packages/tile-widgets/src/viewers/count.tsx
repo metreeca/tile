@@ -33,7 +33,7 @@ import "./count.css";
 
 
 /**
- * The default English wording of a count, given in lowercase for the counter to set in title case.
+ * The default English wording of a count, given in lowercase so the counter can take the casing of headings.
  */
 const Labels = {
 
@@ -53,8 +53,8 @@ const Labels = {
 /**
  * Creates a collection counter.
  *
- * Tells how many items the collection holds, as `12 Items`, or, once the reader filters it, how many of them match,
- * as `3 Matches`, grouping digits as the reader's locale does. The counter stays blank while the items are counted
+ * Tells how many items the collection holds, as `12 items`, or, once the reader filters it, how many of them match,
+ * as `3 matches`, grouping digits as the reader's locale does. The counter stays blank while the items are counted
  * for the first time or the count fails, and keeps the last count on show while the items are counted again.
  *
  * The counter is a status region, so assistive technology announces each new count without moving focus to it.
@@ -99,8 +99,8 @@ export function Count<S extends Lazy<ResourceShape>, P extends Collections<S>>({
 	 *
 	 * An unfiltered count reads `empty` if the collection holds no items, otherwise the number followed by `item` or
 	 * `items`. A filtered count reads `unmatched` if no item matches, otherwise the number followed by `match` or
-	 * `matches`. The empty phrases are given whole, so each language can word them in its own way. All the wording is
-	 * given in lowercase, and the counter sets it in title case, just as it does with the English default.
+	 * `matches`. The empty phrases are given whole, so each language can word them in its own way. The counter sets
+	 * the wording in the heading casing of its area, so an area set in title case shows `12 items` as `12 Items`.
 	 */
 	labels?: Readonly<Record<"empty" | "item" | "items" | "unmatched" | "match" | "matches", string>>
 

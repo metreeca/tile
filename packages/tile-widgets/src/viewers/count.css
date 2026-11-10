@@ -15,11 +15,13 @@
  */
 
 /*
- * The count takes the label colour, so it reads as a note on the collection rather than as part of its content.
+ * The count takes the label colour, so it reads as a note on the collection rather than as part of its content, and
+ * the heading casing, so a count set beside a title is recased along with it, as written unless an area retunes it.
  */
 
 tile-count {
 
     color: var(--skin--color-label);
+    text-transform: var(--skin--text-transform-heading);
 
 }

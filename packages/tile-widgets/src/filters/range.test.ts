@@ -528,13 +528,25 @@ describe("Range", () => {
 
 		});
 
-		it("should suggest nothing where no item holds a value", async () => {
+		it("should mark the fields by a dot where no item holds a value", async () => {
 
 			mount(bounds());
 
 			await ready();
 
-			expect([lower()?.placeholder, upper()?.placeholder]).toEqual(["", ""]);
+			expect([lower()?.placeholder, upper()?.placeholder]).toEqual(["•", "•"]);
+
+		});
+
+		it("should start a field from nothing where no item holds a value, as it takes focus", async () => {
+
+			mount(bounds());
+
+			await ready();
+
+			act(() => lower()?.focus());
+
+			expect(lower()?.value).toBe("");
 
 		});
 

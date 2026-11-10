@@ -43,10 +43,10 @@ import "./range.css";
  *
  * Shows a `From` and a `To` field on the native input suited to the value type: a `number` input for numbers and years,
  * a `date`, `time` or `datetime-local` input for temporal values, and a `text` input otherwise. Each field holds its
- * bound, if one is set. While empty, it suggests the lowest or highest value on offer, formatted as the type shows it.
- * An empty temporal field shows its suggestion as text, because the native input would draw its own entry mask in its
- * place, and turns into the native input as it takes focus. A field taking focus selects its text, so whatever the
- * reader types replaces it rather than adding to it.
+ * bound, if one is set. While empty, it suggests the lowest or highest value on offer, formatted as the type shows it,
+ * or a dot where no item holds a value, as a tally does. An empty temporal field shows its suggestion as text, because
+ * the native input would draw its own entry mask in its place, and turns into the native input as it takes focus. A
+ * field taking focus selects its text, so whatever the reader types replaces it rather than adding to it.
  *
  * A bound is applied once the reader pauses typing or stepping through values, or at once on `Enter` or on leaving the
  * field, so a run of steps narrows the collection only once. A temporal field waits for `Enter` or for the reader to
@@ -273,7 +273,9 @@ export function Range({
 		const shown = text === "" && !focused && Masked.has(input) ? "text" : input;
 		const ordered = shown !== "text";
 
-		return <input type={shown} value={text} placeholder={format(placeholder)}
+		// a field with no value to suggest is marked by a dot, as a tally marks a value no item holds
+
+		return <input type={shown} value={text} placeholder={format(placeholder) ?? "•"}
 
 			aria-label={id === "lower" ? "From" : "To"}
 

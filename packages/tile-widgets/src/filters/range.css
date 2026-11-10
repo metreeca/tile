@@ -141,6 +141,21 @@ tile-range {
                 border-inline-start-style: var(--skin--border-style);
             }
 
+            /*
+             * The dot marking a field with no value to suggest takes the disabled colour, as the dot of a tally does,
+             * and stands centred under the glyph of the header, which starts where the text of the field starts.
+             */
+
+            &[placeholder="•"]:placeholder-shown {
+
+                text-indent: calc((var(--skin--scaling-100) - 1ch) / 2); /* 1ch approximates the width of the dot */
+
+                &::placeholder {
+                    color: var(--skin--color-disabled);
+                }
+
+            }
+
         }
 
         /*

@@ -168,15 +168,9 @@ tile-tally {
         border-top-style: var(--skin--border-style);
         border-top-color: var(--skin--border-color-field);
 
-        & > small {
-            display: block;
-            padding: var(--skin--spacing-050);
-            color: var(--skin--color-label);
-        }
-
         /*
-         * A failed retrieval reads as one line set as the line telling that nothing matches, its mark sized to the text
-         * rather than to the space a note is handed elsewhere, so a facet failing never outweighs the facets around it.
+         * A failed retrieval reads as one line of small print, its mark sized to the text rather than to the space a
+         * note is handed elsewhere, so a facet failing never outweighs the facets around it in the list of facets.
          */
 
         & > tile-note {

@@ -128,8 +128,8 @@ export function Tally({
 
 	const keywords = tally({ ready: ({ keywords }) => keywords }) ?? "";
 
-	const ready = tally({ ready: () => true }) ?? false;
 	const failed = tally({ error: () => true }) ?? false;
+	const filled = tally({ ready: ({ state }) => state.length > 0 }) ?? false;
 	const ticked = tally({ ready: ({ state }) => state.some(({ selected }) => selected) }) ?? false;
 
 	/*
@@ -204,11 +204,11 @@ export function Tally({
 
 		{/* the region is rendered from the first render, hidden until there is something to show in it */}
 
-		<section id={id} hidden={!failed && !(ready && (open || ticked))}>{tally({
+		<section id={id} hidden={!failed && !(open ? filled : ticked)}>{tally({
 
 			ready: ({ state, select, load }) => <>
 
-				{open && state.length === 0 ? <small>No Matches</small> : <ul>{state.filter(({ selected }) =>
+				<ul>{state.filter(({ selected }) =>
 
 					open || selected
 
@@ -231,7 +231,7 @@ export function Tally({
 
 						</label>
 					</li>
-				)}</ul>}
+				)}</ul>
 
 				{open && load && <More onLoad={load}/>}
 

@@ -251,7 +251,7 @@ describe("Tally", () => {
 			await ready();
 
 			expect(checkboxes()).toHaveLength(0);
-			expect(facet()?.textContent).not.toContain("No Matches");
+			expect(facet()?.querySelector("section")?.hidden).toBe(true);
 
 		});
 
@@ -588,11 +588,13 @@ describe("Tally", () => {
 
 		});
 
-		it("should tell when no option matches", async () => {
+		it("should show only its header when no option matches", async () => {
 
 			mount(options([]));
 
-			await vi.waitFor(() => expect(facet()?.textContent).toContain("No Matches"));
+			await ready();
+
+			expect(facet()?.querySelector("section")?.hidden).toBe(true);
 
 		});
 

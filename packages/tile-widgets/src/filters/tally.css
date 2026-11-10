@@ -117,6 +117,7 @@ tile-tally {
         & > span > button > .clear {
             width: var(--skin--scaling-075);
             height: var(--skin--scaling-075);
+            translate: var(--skin--spacing-010); /* optical nudge toward the edge */
         }
 
         /* The field leaves its focus mark to the header, which draws it around the glyph and controls as well. */

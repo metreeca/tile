@@ -27,6 +27,7 @@ import { useCount } from "@metreeca/tile/count";
 import { useMembers } from "@metreeca/tile/members";
 import { text } from "@metreeca/tile/types/text";
 import { Clear } from "@metreeca/tile-widgets/filters/clear";
+import { Facets } from "@metreeca/tile-widgets/filters/facets";
 import { Count } from "@metreeca/tile-widgets/viewers/count";
 import { Table } from "@metreeca/tile-widgets/viewers/table";
 import { TableIcon } from "lucide-preact";
@@ -77,7 +78,7 @@ export function Faceted({
 		</Strip>
 
 		<div class="facets">
-			<aside>{children}</aside>
+			<Facets>{children}</Facets>
 			<Listing collection={collection}/>
 		</div>
 

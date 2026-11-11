@@ -56,17 +56,10 @@
         grid-template-columns: minmax(0, 1fr);
     }
 
-    & > aside {
+    /* The category facet shows five values in full, the rest scrolling within it. */
 
-        display: grid;
-        gap: var(--skin--spacing-100);
-
-        /* The category facet shows five values in full, the rest scrolling within it. */
-
-        & > tile-tally[aria-label="Category"] {
-            --tile-tally-rows: 5;
-        }
-
+    & > tile-facets > tile-tally[aria-label="Category"] {
+        --tile-tally-rows: 5;
     }
 
     & > section {

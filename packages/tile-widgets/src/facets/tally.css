@@ -167,6 +167,13 @@ tile-tally {
 
         overflow-y: auto;
 
+        /*
+         * The options are set a step tighter than running text, so a dense list fits more rows in the same height. The
+         * scroll bound above follows the tighter leading, since it counts the rows in lines of the section.
+         */
+
+        line-height: calc(var(--skin--line-height) * 0.95);
+
         border-top-style: var(--skin--border-style);
         border-top-color: var(--skin--border-color-field);
 
@@ -302,11 +309,19 @@ tile-tally {
 
                 }
 
-                /* The name is set in the strong weight, so a plain name reads alike beside the name of a linked one. */
+                /*
+                 * The name is set in the strong weight, so a plain name reads alike beside the name of a linked one. It
+                 * is clipped along the line alone, so the tighter leading never cuts off descenders or underlines, and
+                 * the clip stands clear of the name by the reach of the focus ring of a link, offset and width alike,
+                 * so the ring is drawn whole while the name keeps its place in the column.
+                 */
 
                 & > span {
 
-                    overflow: hidden;
+                    overflow-x: clip;
+
+                    padding-inline: calc(3 * var(--skin--border-width));
+                    margin-inline: calc(-3 * var(--skin--border-width));
                     text-overflow: ellipsis;
                     white-space: nowrap;
 
@@ -314,8 +329,14 @@ tile-tally {
 
                 }
 
+                /*
+                 * The counts are sized relative to the name of the option, so they stay a step below it at whatever
+                 * size the facet is set, and hold the same look whatever an app does to small print elsewhere.
+                 */
+
                 & > small {
                     justify-self: end;
+                    font-size: 90%;
                     font-variant-numeric: tabular-nums;
                 }
 

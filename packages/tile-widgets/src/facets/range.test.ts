@@ -1104,7 +1104,11 @@ describe("Range", () => {
 			await vi.waitFor(() => expect(clear()).toBeNull());
 			await act(async () => {});
 
-			act(() => (document.activeElement as HTMLElement | null)?.blur()); // ;(test harness) focus is within the facet
+			act(() => {
+				document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+				(document.activeElement as HTMLElement | null)?.blur(); // ;(test harness) focus is within the facet
+				document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+			});
 
 			await vi.waitFor(() => expect(lower()).toBeNull());
 

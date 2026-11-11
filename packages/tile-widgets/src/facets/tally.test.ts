@@ -334,7 +334,7 @@ describe("Tally", () => {
 
 		});
 
-		it("should close as focus leaves the facet for nothing", async () => {
+		it("should close as a press outside the facet takes focus away for nothing", async () => {
 
 			mount(options(rows), { collapsed: true });
 
@@ -344,9 +344,55 @@ describe("Tally", () => {
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
 
+			act(() => {
+				document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+				field()!.dispatchEvent(new FocusEvent("focusout", { bubbles: true, relatedTarget: null })); // test harness: the facet is ready
+				document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+			});
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
+
+		});
+
+		it("should close as the window loses focus", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			act(() => field()!.focus()); // test harness: the facet is ready
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
 			focus(field(), "focusout");
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
+
+		});
+
+		it("should stay open as a focused option is moved, as browsers taking focus off moved parts report", async () => {
+
+			mount(options(rows), { collapsed: true });
+
+			await ready();
+
+			focus(field(), "focusin");
+
+			await vi.waitFor(() => expect(checkboxes()).toHaveLength(2));
+
+			const moved = checkboxes()[1]!; // test harness: the facet is open
+
+			act(() => {
+				moved.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+				moved.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+			});
+
+			focus(moved, "focusout"); // the option is moved up as the press ticking it is released
+
+			await act(async () => {});
+
+			expect(checkboxes()).toHaveLength(2);
+			expect(document.activeElement).toBe(moved);
 
 		});
 
@@ -1017,7 +1063,11 @@ describe("Tally", () => {
 			await vi.waitFor(() => expect(reset()).toBeNull());
 			await act(async () => {});
 
-			act(() => (document.activeElement as HTMLElement | null)?.blur()); // ;(test harness) focus is within the facet
+			act(() => {
+				document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+				(document.activeElement as HTMLElement | null)?.blur(); // ;(test harness) focus is within the facet
+				document.body.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+			});
 
 			await vi.waitFor(() => expect(checkboxes()).toHaveLength(0));
 

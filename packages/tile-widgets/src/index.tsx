@@ -31,6 +31,18 @@ import { useEffect, useId } from "preact/hooks";
 import "./index.css";
 
 
+/*
+ * Whether the reader is pressing anywhere on the page: a press drops focus before it is released, so focus dropped
+ * while no press is held was dropped by a redraw. Module state, as presses outside every facet have to be seen too;
+ * clearing it on a timer would not do, as browsers may run a redraw dropping focus ahead of the timer.
+ */
+
+let pressing = false;
+
+globalThis.document?.addEventListener("mousedown", () => { pressing = true; }, { capture: true });
+globalThis.document?.addEventListener("mouseup", () => { pressing = false; }, { capture: true });
+
+
 /**
  * The delay a self-submitting control waits out before acting on what was typed (ms).
  */
@@ -275,9 +287,11 @@ export function cancel(timer: ReturnType<typeof setTimeout>): () => void {
 /**
  * Closes a facet as focus leaves it.
  *
- * Some browsers drop focus when a focused part is redrawn out of the page, such as an option of a list retrieved
- * again. The facet stays open in that case and takes focus back itself, so a later move out of it still closes it.
- * A facet element must therefore be focusable, as by a `tabIndex` of `-1`, or a redraw leaves it open and unfocused.
+ * The facet closes when the reader tabs out of it, presses outside it, or switches to another window. Some browsers
+ * also drop focus when a focused part is redrawn, for instance an option retrieved again or moved up the list as it
+ * is ticked. The facet stays open in that case, and focus returns to the redrawn part, or to the facet itself if the
+ * part is gone, so a later move out of the facet still closes it. A facet element must therefore be focusable, as by
+ * a `tabIndex` of `-1`, or a redraw leaves it open and unfocused, and nothing then closes it.
  *
  * @param event The focus event leaving an element of the facet
  * @param collapse What closes the facet, called only once focus has moved out of the facet, possibly after the event
@@ -288,9 +302,14 @@ export function leave(event: FocusEvent, collapse: () => void): void {
 	const source = event.target;
 	const target = event.relatedTarget;
 
-	if ( facet instanceof HTMLElement && source instanceof Node && target === null ) {
+	if ( facet instanceof HTMLElement && source instanceof HTMLElement && target === null ) {
 
-		queueMicrotask(() => source.isConnected ? collapse() : facet.focus({ preventScroll: true }));
+		const pressed = pressing;
+
+		queueMicrotask(() => pressed || document.activeElement === source ? collapse()
+			: source.isConnected ? source.focus({ preventScroll: true })
+				: facet.focus({ preventScroll: true })
+		);
 
 	} else if ( !(facet instanceof Node && target instanceof Node && facet.contains(target)) ) {
 

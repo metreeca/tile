@@ -65,8 +65,8 @@ export type InstantOpts = {
  * Instants are stored pinned to UTC with millisecond precision, as in `2024-03-05T13:30:00.000Z`; an instant stated
  * without an offset is taken as UTC. Text handed to an input carries milliseconds only for fractional seconds.
  *
- * Shown as {@link "date"!date date} or {@link "year"!year year} through {@link instantDate} and {@link instantYear},
- * instants are shown and edited as the day or year they fall in within the runtime time zone.
+ * Shown as {@link "types/date"!date date} or {@link "types/year"!year year} through {@link instantDate} and
+ * {@link instantYear}, instants are shown and edited as the day or year they fall in within the runtime time zone.
  */
 export const instant: Type<string, InstantOpts> = immutable({
 

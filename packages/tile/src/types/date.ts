@@ -49,7 +49,7 @@ export type DateOpts = {
  * Shows `xsd:date` values as the localised day they state, whatever their offset, and moves them to and from the
  * `YYYY-MM-DD` form a `date` input works on, rejecting days missing from the calendar.
  *
- * Shown as {@link "year"!year year} through {@link dateYear}, dates are shown and edited as the year they fall in.
+ * Shown as {@link "types/year"!year year} through {@link dateYear}, a date is shown and edited as the year it falls in.
  */
 export const date: Type<string, DateOpts> = immutable({
 

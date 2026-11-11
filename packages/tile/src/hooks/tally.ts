@@ -20,7 +20,7 @@
  * Binds a facet to a shared collection, so that it lists the values the items hold for an expression with the number
  * of items holding each, and narrows every lens over the collection to the items holding the values the reader picks.
  *
- * @module
+ * @module tally
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

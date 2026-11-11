@@ -29,7 +29,7 @@ import { mismatched, inconvertible } from "./index.core.js";
 /**
  * String type.
  *
- * Shows and edits strings as stored, whatever their language: localised text belongs to {@link "text"!text text}.
+ * Shows and edits strings as stored, whatever their language: localised text belongs to {@link "types/text"!text text}.
  */
 export const string: Type<string> = immutable({
 

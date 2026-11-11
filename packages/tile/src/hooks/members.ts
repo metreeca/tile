@@ -20,7 +20,7 @@
  * Binds a list or a table to the members of a shared collection, so that it retrieves them batch by batch as the
  * reader scrolls through them, rather than the whole collection at once, however long it grows.
  *
- * @module
+ * @module members
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

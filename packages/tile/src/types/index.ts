@@ -158,13 +158,13 @@ export type Type<V = unknown, O extends object = {}> = {
 /**
  * Picks the default type for a shape.
  *
- * - **boolean** — {@link "boolean"!boolean boolean}
- * - **number** — {@link "integer"!integer integer} for integral shapes, else {@link "decimal"!decimal decimal}
- * - **string** — by datatype: {@link "year"!year year} for `xsd:gYear`, {@link "date"!date date} for `xsd:date`,
- *   {@link "time"!time time} for `xsd:time`, {@link "instant"!instant instant} for `xsd:dateTime`,
- *   {@link "duration"!duration duration} for `xsd:duration`, else {@link "string"!string string}
- * - **dictionary** — {@link "text"!text text}
- * - **reference** and **resource** — {@link "reference"!reference reference}
+ * - **boolean** — {@link "types/boolean"!boolean boolean}
+ * - **number** — {@link "types/integer"!integer integer} if integral, else {@link "types/decimal"!decimal decimal}
+ * - **string** — {@link "types/year"!year year} for `xsd:gYear`, {@link "types/date"!date date} for `xsd:date`,
+ *   {@link "types/time"!time time} for `xsd:time`, {@link "types/instant"!instant instant} for `xsd:dateTime`,
+ *   {@link "types/duration"!duration duration} for `xsd:duration`, else {@link "types/string"!string string}
+ * - **dictionary** — {@link "types/text"!text text}
+ * - **reference** and **resource** — {@link "types/reference"!reference reference}
  * - **union** — a type showing each value with the default type of the branch it belongs to; input is read back by
  *   the first branch, in declaration order, that accepts it, so the most specific branches are best listed first
  *

@@ -20,7 +20,7 @@
  * Binds a search box to a shared collection, so that the text it submits narrows what every lens over the collection
  * shows. The search box decides when to submit the text as the reader types, for instance on a pause or on `Enter`.
  *
- * @module
+ * @module search
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

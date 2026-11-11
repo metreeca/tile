@@ -20,7 +20,7 @@
  * Binds a component to a resource held by the {@link "index"!Store shared store}, so that a view renders what the
  * store holds and writes changes back to it without driving exchanges of its own.
  *
- * @module
+ * @module resource
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

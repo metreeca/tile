@@ -21,7 +21,7 @@
  * and its counters show the same items, and a facet narrowing the collection narrows what every other lens shows,
  * with no wiring between the lenses themselves beyond the collection they are handed.
  *
- * @module
+ * @module collection
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

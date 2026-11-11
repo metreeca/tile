@@ -20,7 +20,7 @@
  * Holds the keywords a reader narrows the options of a facet by and the page of options on show, so that a facet over
  * a long list of values shows only the ones the reader is looking for, a page at a time.
  *
- * @module
+ * @module tally.core
  */
 
 import type { Optional } from "@metreeca/core";

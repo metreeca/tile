@@ -20,7 +20,7 @@
  * Binds a counter to a shared collection, so that it tells how many items the collection criteria let through and
  * follows every lens narrowing them, with no exchange of its own beyond the count.
  *
- * @module
+ * @module count
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

@@ -20,7 +20,7 @@
  * Offers a control that drops every criterion narrowing a collection, so that every lens showing the collection goes
  * back to all of its items in a single step, rather than one facet at a time.
  *
- * @module
+ * @module clear
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

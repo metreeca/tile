@@ -26,10 +26,10 @@ import type { Collection } from "@metreeca/tile/collection";
 import { useCount } from "@metreeca/tile/count";
 import { useMembers } from "@metreeca/tile/members";
 import { text } from "@metreeca/tile/types/text";
-import { Clear } from "@metreeca/tile-widgets/filters/clear";
-import { Facets } from "@metreeca/tile-widgets/filters/facets";
-import { Count } from "@metreeca/tile-widgets/viewers/count";
-import { Table } from "@metreeca/tile-widgets/viewers/table";
+import { Clear } from "@metreeca/tile-widgets/clear";
+import { Facets } from "@metreeca/tile-widgets/facets";
+import { Count } from "@metreeca/tile-widgets/count";
+import { Table } from "@metreeca/tile-widgets/table";
 import { TableIcon } from "lucide-preact";
 import type { ComponentChildren } from "preact";
 

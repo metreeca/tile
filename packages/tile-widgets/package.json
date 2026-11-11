@@ -30,13 +30,77 @@
     "*.css"
   ],
   "exports": {
-    "./*": {
-      "@metreeca/source": "./src/*.tsx",
-      "default": "./dist/*.js"
+    "./count": {
+      "@metreeca/source": "./src/viewers/count.tsx",
+      "default": "./dist/viewers/count.js"
     },
-    "./*.css": {
-      "@metreeca/source": "./src/*.css",
-      "default": "./dist/*.css"
+    "./count.css": {
+      "@metreeca/source": "./src/viewers/count.css",
+      "default": "./dist/viewers/count.css"
+    },
+    "./frame": {
+      "@metreeca/source": "./src/viewers/frame.tsx",
+      "default": "./dist/viewers/frame.js"
+    },
+    "./frame.css": {
+      "@metreeca/source": "./src/viewers/frame.css",
+      "default": "./dist/viewers/frame.css"
+    },
+    "./sheet": {
+      "@metreeca/source": "./src/viewers/sheet.tsx",
+      "default": "./dist/viewers/sheet.js"
+    },
+    "./sheet.css": {
+      "@metreeca/source": "./src/viewers/sheet.css",
+      "default": "./dist/viewers/sheet.css"
+    },
+    "./table": {
+      "@metreeca/source": "./src/viewers/table.tsx",
+      "default": "./dist/viewers/table.js"
+    },
+    "./table.css": {
+      "@metreeca/source": "./src/viewers/table.css",
+      "default": "./dist/viewers/table.css"
+    },
+    "./clear": {
+      "@metreeca/source": "./src/facets/clear.tsx",
+      "default": "./dist/facets/clear.js"
+    },
+    "./facets": {
+      "@metreeca/source": "./src/facets/facets.tsx",
+      "default": "./dist/facets/facets.js"
+    },
+    "./facets.css": {
+      "@metreeca/source": "./src/facets/facets.css",
+      "default": "./dist/facets/facets.css"
+    },
+    "./range": {
+      "@metreeca/source": "./src/facets/range.tsx",
+      "default": "./dist/facets/range.js"
+    },
+    "./range.css": {
+      "@metreeca/source": "./src/facets/range.css",
+      "default": "./dist/facets/range.css"
+    },
+    "./search": {
+      "@metreeca/source": "./src/facets/search.tsx",
+      "default": "./dist/facets/search.js"
+    },
+    "./search.css": {
+      "@metreeca/source": "./src/facets/search.css",
+      "default": "./dist/facets/search.css"
+    },
+    "./tally": {
+      "@metreeca/source": "./src/facets/tally.tsx",
+      "default": "./dist/facets/tally.js"
+    },
+    "./tally.css": {
+      "@metreeca/source": "./src/facets/tally.css",
+      "default": "./dist/facets/tally.css"
+    },
+    "./index.css": {
+      "@metreeca/source": "./src/index.css",
+      "default": "./dist/index.css"
     },
     "./*.core": null,
     "./index": null

@@ -17,10 +17,10 @@
 /**
  * Resource frame.
  *
- * Offers a frame for showing a single resource, the companion to the {@link "viewers/sheet"!Sheet Sheet} listing the members
+ * Offers a frame for showing a single resource, the companion to the {@link sheet!Sheet Sheet} listing the members
  * of a collection. The resource is read in place while it is retrieved, kept in step with the store or found missing.
  *
- * @module
+ * @module frame
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

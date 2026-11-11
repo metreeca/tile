@@ -20,7 +20,7 @@
  * Gathers related facets into a single column, so that the controls narrowing a collection read as one group and line
  * up with each other, whatever mix of searches, ranges and tallies the group holds.
  *
- * @module
+ * @module facets
  */
 
 import { type ComponentChildren, createElement } from "preact";

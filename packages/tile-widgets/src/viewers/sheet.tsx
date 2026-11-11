@@ -20,7 +20,7 @@
  * Offers a list for showing the members of a collection. A long collection is read batch by batch, as a trigger the
  * screen places after the list asks for the next one, so the reader never waits for the whole collection at once.
  *
- * @module
+ * @module sheet
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

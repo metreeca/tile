@@ -25,7 +25,7 @@ import { base, Products } from "@metreeca/specimen/toys.js";
 import { type Collection, useCollection } from "@metreeca/tile/collection";
 import { useMembers } from "@metreeca/tile/members";
 import { text } from "@metreeca/tile/types/text";
-import { Table } from "@metreeca/tile-widgets/viewers/table";
+import { Table } from "@metreeca/tile-widgets/table";
 import { TableIcon } from "lucide-preact";
 
 

@@ -20,7 +20,7 @@
  * Offers a facet that narrows a collection to the items holding the values the reader picks. Each value is shown with
  * the number of items holding it, and every lens over the same collection follows the values picked.
  *
- * @module
+ * @module tally
  */
 
 import { useModel } from "@metreeca/clay/model";

@@ -27,7 +27,7 @@ import { useCollection } from "@metreeca/tile/collection";
 import { useRange } from "@metreeca/tile/range";
 import { date } from "@metreeca/tile/types/date";
 import { decimal } from "@metreeca/tile/types/decimal";
-import { Range } from "@metreeca/tile-widgets/filters/range";
+import { Range } from "@metreeca/tile-widgets/range";
 
 
 /**

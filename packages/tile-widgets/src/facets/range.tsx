@@ -20,7 +20,7 @@
  * Offers a facet that narrows a collection to the items whose values fall between two bounds. The facet suggests the
  * lowest and highest values on offer, and every lens over the same collection follows the bounds the reader sets.
  *
- * @module
+ * @module range
  */
 
 import { useModel } from "@metreeca/clay/model";

@@ -25,7 +25,7 @@ import { base, Product } from "@metreeca/specimen/toys.js";
 import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { useResource } from "@metreeca/tile/resource";
 import { text } from "@metreeca/tile/types/text";
-import { Frame } from "@metreeca/tile-widgets/viewers/frame";
+import { Frame } from "@metreeca/tile-widgets/frame";
 import { FileIcon } from "lucide-preact";
 
 

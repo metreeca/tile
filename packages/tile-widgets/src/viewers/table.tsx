@@ -20,7 +20,7 @@
  * Offers a table for showing the members of a collection, one row per item and one column per value. The reader
  * compares items side by side, and sorts them on any column the screen makes sortable without leaving the table.
  *
- * @module
+ * @module table
  */
 
 import type { ResourceShape } from "@metreeca/blue/resource";

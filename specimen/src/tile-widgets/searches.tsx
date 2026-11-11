@@ -25,7 +25,7 @@ import { Sample } from "@metreeca/specimen/tile-widgets/sample.js";
 import { Products } from "@metreeca/specimen/toys.js";
 import { useCollection } from "@metreeca/tile/collection";
 import { useSearch } from "@metreeca/tile/search";
-import { Search } from "@metreeca/tile-widgets/filters/search";
+import { Search } from "@metreeca/tile-widgets/search";
 
 
 /**

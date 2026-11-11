@@ -20,7 +20,7 @@
  * Offers a search box narrowing a collection by the text the reader types. Every lens over the same collection
  * follows the search, so lists, facets and counters alike show only the items matching it.
  *
- * @module
+ * @module search
  */
 
 import type { Optional } from "@metreeca/core";
@@ -42,7 +42,7 @@ import "./search.css";
  * `Escape` empties the field and stops narrowing the collection, as does the reset button shown on a non-empty field.
  *
  * The field always shows the text narrowing the collection. If another lens changes or clears that text, as
- * {@link "filters/clear"!Clear Clear} does, the new text replaces what the reader typed, even before a pause.
+ * {@link clear!Clear Clear} does, the new text replaces what the reader typed, even before a pause.
  *
  * ```tsx
  * const collection = useCollection({ entry: "/events/", shape: Events });

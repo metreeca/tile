@@ -2,14 +2,14 @@
 
 Linked data UI toolkit for Preact.
 
-Preact lenses, facets and fields for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs. The
-[@metreeca/blue](https://github.com/metreeca/blue) shapes shared with the server decide what a screen shows, what a
-field accepts and when a value is valid, so neither side restates the model the other already holds.
+Preact lenses, facets and fields for [@metreeca/qest](https://github.com/metreeca/qest) linked data APIs:
+
+- **Shape-Driven Screens**: the [@metreeca/blue] shapes shared with the server decide what screens show and accept
+- **Accessible Widgets**: labelled controls, keyboard paths and status announcements designed to WCAG 2.2 AA
+- **Store-Backed Resources**: a [@metreeca/keep] store keeps caching, batching and validation out of interface code
 
 Screens are composed in JSX from linked data lenses, facets and fields, running within the contexts and hooks of
-[@metreeca/clay](https://github.com/metreeca/clay). Widgets bind to the resources of a
-[@metreeca/keep](https://github.com/metreeca/keep) store, which keeps caching, batching and validation out of
-interface code, so screens state what they present and the store settles how resources are exchanged.
+[@metreeca/clay](https://github.com/metreeca/clay), and leave the exchange of resources to the store.
 
 Their look comes from the [@metreeca/skin] design tokens alone: components render without the skin stylesheet, and
 follow the platform colour scheme once it is loaded, or whatever theme the app sets there instead.
@@ -40,6 +40,10 @@ app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as i
 | [@metreeca/tile-topics]  | SKOS topic widgets (planned)                   |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
+
+[@metreeca/blue]: https://github.com/metreeca/blue
+
+[@metreeca/keep]: https://github.com/metreeca/keep
 
 [@metreeca/tile]: https://metreeca.github.io/tile/modules/_metreeca_tile.html
 

@@ -31,8 +31,7 @@ import "../tile-widgets/index.css";
 /**
  * Creates the resource section.
  *
- * Binds two views to the same toy category, so a change written through one shows in both, beside a category the
- * store finds missing.
+ * Binds two widgets to one toy category, so a change written through either shows in both, beside a missing category.
  *
  * @returns The resource section
  */
@@ -41,17 +40,17 @@ export function Resource() {
 	return <>
 
 		<p>A component bound to a resource with <code>useResource</code> renders what the store holds and writes changes
-			back through it, with no exchange of its own: feature the category in either view and watch both follow, as
+			back through it, with no exchange of its own: feature the category in either widget and watch both follow, as
 			the store signals the change to every binding. A missing resource lands in the error case, with the way to
 			retry.</p>
 
 		<div class="samples">
 
-			<Sample label="first view">
+			<Sample label="first widget">
 				<Item entry={`${base}categories/1000`}/>
 			</Sample>
 
-			<Sample label="second view">
+			<Sample label="second widget">
 				<Item entry={`${base}categories/1000`}/>
 			</Sample>
 

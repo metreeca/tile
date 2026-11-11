@@ -17,7 +17,7 @@
 /**
  * Widget parts.
  *
- * Draws the parts the widgets share out of plain markup styled by `@metreeca/skin`, so a view, a facet or a form
+ * Draws the parts the widgets share out of plain markup styled by `@metreeca/skin`, so a lens, a facet or a field
  * marks loading, emptiness and failure alike, and opens, closes, grows and turns to its settings alike, whichever
  * widget it is, so a reader learns these gestures once for every widget the package offers.
  *

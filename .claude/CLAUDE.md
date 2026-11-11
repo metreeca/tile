@@ -82,7 +82,7 @@ emits nothing.
 
 Headless packages carry **NO** dependency on a rendering framework: Preact, and any other rendering layer added later,
 appears **ONLY** in its own binding packages (`tile` for the store bindings a component is wired to, `tile-widgets`
-for the views, facets and editing widgets built over them). A binding package adds observation and rendering over
+for the lenses, facets and fields built over them). A binding package adds observation and rendering over
 state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a second binding
 reaches the same behaviour without restating it.
 
@@ -106,11 +106,13 @@ what it imports.
 
 - **Store apart**: `tile` holds the store, the resource and collection bindings, the value types and the headless
   state they adopt, and is the only package taking the `@metreeca/keep` stack; every other package builds on it
-- **One widget package**: resource and collection views, facets and editing widgets share `tile-widgets` whatever
-  their role. They share one stack, and forms reuse what views draw, so a split by role spares nobody an install and
-  forces a placement call on every new widget. Within the package, each role takes a folder of its own: `viewers` for
-  the resource and collection views, `facets` for the controls narrowing a collection, and `fields` for the widgets
-  writing resources back, while the parts they draw alike stay at the package root. Folders **NEVER** appear in
+- **One widget package**: lenses, facets and fields share `tile-widgets` whatever their role. They share one stack,
+  and fields reuse what lenses draw, so a split by role spares nobody an install and forces a placement call on every
+  new widget. Within the package, each role takes a folder of its own: `lenses` for the widgets presenting a resource,
+  a collection being the property of the resource holding it (the sense Fresnel gives the word), `facets` for the
+  widgets narrowing a collection, and `fields` for the widgets writing resources back, while the parts they draw alike
+  stay at the package root. Prose keeps to the same terms: a lens presents, a facet narrows, a field writes, and
+  *widget* names any of them. Folders **NEVER** appear in
   import paths: `exports` lists every module, and its stylesheet, as a flat subpath (`@metreeca/tile-widgets/tally`),
   so module names stay unique across folders and a module added to a folder is reachable only once listed there
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
@@ -132,7 +134,7 @@ Every package states its summary in three places, which **MUST** be kept aligned
 - `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/tile` linked to the
   project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
-  that already states it (`Linked data views`, not `Preact linked data views`)
+  that already states it (`Linked data widgets`, not `Preact linked data widgets`)
 
 The suffix names the project repository as `@metreeca/tile`, for every package alike.
 

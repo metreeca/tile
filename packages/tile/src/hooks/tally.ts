@@ -113,8 +113,7 @@ export type TallyCases = {
 
 		/**
 		 * Shows one more batch of options, as many as the binding was created to show; offered while more options
-		 * follow the ones on show, so that a view closes the list with a trigger handed `load` for as long as it is
-		 * offered:
+		 * follow, so that a facet closes the list with a trigger handed `load` for as long as it is offered:
 		 *
 		 * ```tsx
 		 * {tally({ ready: ({ load }) => load && <button onClick={() => load()}>More</button> })}
@@ -178,7 +177,7 @@ export type TallyBucket = {
 
 	/**
 	 * The name the value is shown by: the literal as text or the label of the resource. Absent only for `null`, which
-	 * has no value behind it to supply a name, so the view showing the tally has to name it itself.
+	 * has no value behind it to supply a name, so the facet showing the tally has to name it itself.
 	 */
 	readonly label?: string
 

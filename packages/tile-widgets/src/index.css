@@ -49,7 +49,7 @@ tile-note > .lucide {
 /**** Controls ********************************************************************************************************/
 
 /*
- * The controls a widget carries stay on the page rather than boxed as the fields of a form are: a glyph or a label in
+ * The controls a widget carries stay on the page rather than boxed as text inputs are: a glyph or a label in
  * the text colour, which Skin turns to the hover colour under the pointer, while a control marked by a glyph alone
  * keeps a square target at least as tall as a line of text, so it is as easy to hit as a labelled one.
  */

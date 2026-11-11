@@ -12,13 +12,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile/types` — shape-driven value types, showing a stored value to a reader, handing it to a native input
   and reading back what the input yields, with `toType` picking the default type for a shape and `as()` showing a
   value as another type, as `instant.as(date)` shows and bounds instants by day
-- `@metreeca/tile` — collection lenses sharing one collection across a screen: `useMembers` growing the
+- `@metreeca/tile` — collection bindings sharing one collection across a screen: `useMembers` growing the
   items a batch at a time, `useActions` adding and removing them, `useCount`, `useSearch`, `useTally` and `useRange`
   narrowing them, and `useQuery` keeping the page criteria in the browser location
 - `@metreeca/tile` — `locale` on `Store`, retrieving localised content in the languages the reader prefers, so every
   binding shows, searches and sorts text in one language; it defaults to the languages the browser reports
 - `@metreeca/tile` — `scope` criteria on `useCollection`, fixing which items a collection holds beyond the
-  reach of the reader: every lens retrieves under them, and clearing the collection keeps them in place
+  reach of the reader: every widget retrieves under them, and clearing the collection keeps them in place
 - `@metreeca/tile-widgets` — `Frame` resource frame, `Table` collection table, `Search`, `Tally` and `Range` facets,
   `Clear` collection reset and `Count` collection counter, all bound to the collection shared across a screen
 
@@ -36,14 +36,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   and `roving` modules of `@metreeca/clay`, rendering `<clay-*>` elements tuned through `--clay-*` knobs (migration:
   replace the package names in dependencies and import paths, and `tile-` with `clay-` in the selectors and custom
   properties that stylesheets and inline styles aim at the elements, wherever an app restyles or retunes them)
-- `@metreeca/tile-lens` — **breaking**: renamed `@metreeca/tile-widgets`, the package holding every view, facet and
-  editing widget, with `Sheet` moving to the `viewers` subpath (migration: replace the package name in dependencies,
-  and `@metreeca/tile-lens/sheet` with `@metreeca/tile-widgets/viewers/sheet` in imports)
+- `@metreeca/tile-lens` — **breaking**: renamed `@metreeca/tile-widgets`, the package holding every lens, facet and
+  field (migration: replace the package name in dependencies and import paths, as in `@metreeca/tile-widgets/sheet`)
 - `@metreeca/tile` — **breaking**: `useCollection` binds a screen to the collection held by a resource,
-  shared by every lens on it, rather than retrieving items (migration: retrieve items through `useMembers`)
-- `@metreeca/tile-widgets/viewers/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by
+  shared by every widget on it, rather than retrieving items (migration: retrieve items through `useMembers`)
+- `@metreeca/tile-widgets/sheet` — **breaking**: `Sheet` renders the items of a `members` relay handed by
   `useMembers` in place of the `entry`, `shape` and `model` props (migration: retrieve the items with `useMembers`)
-- `@metreeca/tile-widgets` — the views draw their glyphs with `lucide-preact`, a new peer dependency the app installs
+- `@metreeca/tile-widgets` — the widgets draw their glyphs with `lucide-preact`, a new peer dependency the app installs
   once for every package drawing them, rather than through the `Icon` glyph roles; an app distributing a build ships
   the Lucide licence notices the package README names, as it does for any other third-party code the build includes
 
@@ -52,7 +51,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/tile` — **breaking**: the design system moves to its own `@metreeca/skin` package, renaming the
   `--tile--*` tokens to `--skin--*`, the `tile` token map to `skin` and the `tile` cascade layer to `skin` (migration:
   depend on `@metreeca/skin`, import from it, and replace the `--tile--` prefix in stylesheets and inline styles)
-- `@metreeca/tile-form` — empty placeholder package dropped, as the editing widgets join the views and facets in
+- `@metreeca/tile-form` — empty placeholder package dropped, as the fields join the lenses and facets in
   `@metreeca/tile-widgets` (migration: remove the dependency, which never exported anything)
 
 ### Security

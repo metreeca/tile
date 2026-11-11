@@ -30,7 +30,7 @@ import { malformed, mismatched, inconvertible } from "./index.core.js";
  * Boolean type.
  *
  * Shows truth values as `true` or `false`, and moves them to and from the same text, leaving their presentation as a
- * checkbox, a switch or a pair of labels to the view, which knows what each value means to its readers.
+ * checkbox, a switch or a pair of labels to the widget, which knows what each value means to its readers.
  */
 export const boolean: Type<boolean> = immutable({
 

@@ -54,8 +54,8 @@ export function Collection() {
 
 	return <>
 
-		<p>A collection held by the store is bound once with <code>useCollection</code>, and every lens over it is
-			handed the result: the lenses share the criteria narrowing it, with no wiring between them. Narrow the
+		<p>A collection held by the store is bound once with <code>useCollection</code>, and every widget over it is
+			handed the result: the widgets share the criteria narrowing it, with no wiring between them. Narrow the
 			products below and watch the counter and the list follow alike.</p>
 
 		<div class="controls">

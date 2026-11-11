@@ -31,36 +31,36 @@
   ],
   "exports": {
     "./count": {
-      "@metreeca/source": "./src/viewers/count.tsx",
-      "default": "./dist/viewers/count.js"
+      "@metreeca/source": "./src/lenses/count.tsx",
+      "default": "./dist/lenses/count.js"
     },
     "./count.css": {
-      "@metreeca/source": "./src/viewers/count.css",
-      "default": "./dist/viewers/count.css"
+      "@metreeca/source": "./src/lenses/count.css",
+      "default": "./dist/lenses/count.css"
     },
     "./frame": {
-      "@metreeca/source": "./src/viewers/frame.tsx",
-      "default": "./dist/viewers/frame.js"
+      "@metreeca/source": "./src/lenses/frame.tsx",
+      "default": "./dist/lenses/frame.js"
     },
     "./frame.css": {
-      "@metreeca/source": "./src/viewers/frame.css",
-      "default": "./dist/viewers/frame.css"
+      "@metreeca/source": "./src/lenses/frame.css",
+      "default": "./dist/lenses/frame.css"
     },
     "./sheet": {
-      "@metreeca/source": "./src/viewers/sheet.tsx",
-      "default": "./dist/viewers/sheet.js"
+      "@metreeca/source": "./src/lenses/sheet.tsx",
+      "default": "./dist/lenses/sheet.js"
     },
     "./sheet.css": {
-      "@metreeca/source": "./src/viewers/sheet.css",
-      "default": "./dist/viewers/sheet.css"
+      "@metreeca/source": "./src/lenses/sheet.css",
+      "default": "./dist/lenses/sheet.css"
     },
     "./table": {
-      "@metreeca/source": "./src/viewers/table.tsx",
-      "default": "./dist/viewers/table.js"
+      "@metreeca/source": "./src/lenses/table.tsx",
+      "default": "./dist/lenses/table.js"
     },
     "./table.css": {
-      "@metreeca/source": "./src/viewers/table.css",
-      "default": "./dist/viewers/table.css"
+      "@metreeca/source": "./src/lenses/table.css",
+      "default": "./dist/lenses/table.css"
     },
     "./clear": {
       "@metreeca/source": "./src/facets/clear.tsx",

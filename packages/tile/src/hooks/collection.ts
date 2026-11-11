@@ -17,9 +17,9 @@
 /**
  * Shared collection bindings.
  *
- * Binds a set of lenses to one collection held by the {@link "index"!Store shared store}, so that a list, its facets
- * and its counters show the same items, and a facet narrowing the collection narrows what every other lens shows,
- * with no wiring between the lenses themselves beyond the collection they are handed.
+ * Binds a set of widgets to one collection held by the {@link "index"!Store shared store}, so that the lenses
+ * presenting it show the same items, and a facet narrowing the collection narrows what every lens shows, with no
+ * wiring between the widgets themselves beyond the collection they are all handed.
  *
  * @module collection
  */
@@ -40,8 +40,8 @@ export type { Collection, Collections, Sole } from "./collection.core.js";
 /**
  * Binds a component to a collection held by the shared store.
  *
- * Creates the {@link Collection} the lenses rendered by the component share, held for the lifetime of the component:
- * the component renders again after every revision that changes the reader's criteria, and the lenses handed the
+ * Creates the {@link Collection} the widgets rendered by the component share, held for the lifetime of the component:
+ * the component renders again after every revision that changes the reader's criteria, and the widgets handed the
  * collection follow along. The collection is created again, and the reader's criteria start over, whenever the
  * resource, the shape, the collecting property or the scope change, so that a component moving on to another
  * collection never carries over the criteria the reader set on the previous one, which may not even apply to it.

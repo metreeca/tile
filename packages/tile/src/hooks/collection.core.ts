@@ -17,10 +17,10 @@
 /**
  * Shared collection state.
  *
- * Holds what lenses showing the same collection agree on: which collection it is, the criteria fixing which items it
- * holds, and the criteria the reader narrows it by. Lenses read the state to build their own retrievals and write the
- * reader's criteria back through its transitions, so that a facet narrowing the collection narrows what every other
- * lens shows, counters and lists alike, with no wiring between the lenses beyond the collection they are all handed.
+ * Holds what widgets handed the same collection agree on: which collection it is, the criteria fixing which items it
+ * holds, and the criteria the reader narrows it by. Widgets read the state to build their own retrievals and write the
+ * reader's criteria back through its transitions, so that a facet narrowing the collection narrows what every lens
+ * shows, counters and lists alike, with no wiring between the widgets beyond the collection they are all handed.
  *
  * @module collection.core
  */
@@ -48,7 +48,7 @@ const Narrowing = /^(?:<=?|>=?|~|\?|!)/;
  * Resolves the collections a resource holds.
  *
  * Yields the names of the multi-valued properties of the resource, declared or inherited, ranging over resources: the
- * properties a lens may list and add items to. The bare `ResourceShape` resolves to any name, so that any property
+ * properties a widget may list and add items to. The bare `ResourceShape` resolves to any name, so that any property
  * is accepted where only a generic shape is known, as in code generic over the shape it binds to.
  *
  * @typeParam S The shape describing the resource holding the collections, possibly deferred to break definition cycles
@@ -78,9 +78,9 @@ export type Sole<S extends Lazy<ResourceShape>> = Extract<{
 /**
  * Shared collection.
  *
- * The collection a set of lenses shows, with the criteria narrowing it. Only narrowing criteria are held:
+ * The collection a set of widgets shares, with the criteria narrowing it. Only narrowing criteria are held:
  * bounds (`<`, `>`, `<=`, `>=`), keywords (`~`) and value sets (`?`, `!`). Sort order (`^`) and focus (`+`) arrange
- * what a view shows rather than which items the collection holds, so each view keeps its own.
+ * what a lens shows rather than which items the collection holds, so each lens keeps its own.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
@@ -88,7 +88,7 @@ export type Sole<S extends Lazy<ResourceShape>> = Extract<{
 export interface Collection<S extends Lazy<ResourceShape>, P extends Collections<S> = Collections<S>> {
 
 	/**
-	 * The collection the lenses show.
+	 * The collection the widgets share.
 	 */
 	readonly target: {
 
@@ -111,7 +111,7 @@ export interface Collection<S extends Lazy<ResourceShape>, P extends Collections
 
 
 	/**
-	 * The criteria fixing which items the collection holds at all, beyond the reach of the reader: every lens
+	 * The criteria fixing which items the collection holds at all, beyond the reach of the reader: every widget
 	 * retrieves under them, over any reader's criterion on the same key, and {@link Collection.clear} keeps them.
 	 */
 	readonly scope: Criteria

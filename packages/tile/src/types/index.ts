@@ -19,7 +19,7 @@
  *
  * Defines the contract every value type honours: showing a stored value to a reader, handing it to a native input and
  * reading back what the input yields. Values are always kept in the form the store holds them, so a type never
- * restates the data model. The shape describing a value picks its default type. A view or a field may pass options to
+ * restates the data model. The shape describing a value picks its default type. A lens or a field may pass options to
  * that type to show a value differently, or show the value as another type, as `instant.as(date)` shows only its day.
  *
  * Text is localised for the locales the caller names, falling back to the runtime default; instants follow the runtime
@@ -75,10 +75,10 @@ export type Options = {
  *
  * Shows a value kept in the form the store holds it, and moves it to and from the text a native input works on.
  *
- * Every call takes the common options together with the options specific to the type. A view or a field passes
+ * Every call takes the common options together with the options specific to the type. A lens or a field passes
  * the latter to show the same value differently, as `{ fractionDigits: 2 }` does for decimals.
  *
- * {@link Type.as} shows and edits the values of a type as another type does, so a view or a field expecting that type
+ * {@link Type.as} shows and edits the values of a type as another type does, so a lens or a field expecting that type
  * can work on them: `instant.as(date)` shows and edits instants as the day they fall on. It works where the stored
  * values carry everything the other type shows: `instant.as(date)`, `instant.as(year)` and `date.as(year)`.
  *
@@ -88,7 +88,7 @@ export type Options = {
 export type Type<V = unknown, O extends object = {}> = {
 
 	/**
-	 * The name of the type, for messages and for views choosing a control by type.
+	 * The name of the type, for messages and for widgets choosing a control by type.
 	 */
 	readonly label: string
 
@@ -140,7 +140,7 @@ export type Type<V = unknown, O extends object = {}> = {
 	 * A type shown as itself is returned as is. A converted type is converted again from the type it stores, so
 	 * `instant.as(date).as(year)` returns `instant.as(year)`, and the same pair of types always returns the same type.
 	 *
-	 * A view or a field taking the returned type thus sees no change from one render to the next.
+	 * A lens or a field taking the returned type thus sees no change from one render to the next.
 	 *
 	 * @param type The type values are shown and edited as
 	 *

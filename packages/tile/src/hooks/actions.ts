@@ -18,7 +18,7 @@
  * Shared collection actions.
  *
  * Lets a component add items to and remove items from a collection held by the {@link "index"!Store shared store},
- * while the lenses showing the collection follow the change on their own, as the store signals it.
+ * while the widgets handed the collection follow the change on their own, as the store signals it.
  *
  * @module actions
  */
@@ -41,7 +41,7 @@ import { useStore } from "../index.js";
  * Shared collection actions.
  *
  * The operations adding items to and removing items from a collection, each settling once the store has handled the
- * write, every lens over the collection following the change as the store signals it.
+ * write, every widget over the collection following the change as the store signals it.
  *
  * @typeParam S The shape describing the resource holding the collection
  * @typeParam P The property of the resource collecting the items
@@ -53,8 +53,8 @@ export interface Actions<S extends Lazy<ResourceShape>, P extends Collections<S>
 	 *
 	 * @param state The new item, checked against the item shape; its identifier may be left for the store to assign
 	 *
-	 * @returns A promise resolving to the absolute identifier the store assigned to the new item, so that a view can
-	 *     move there, every lens following the change as the store signals it; rejects with the {@link Problem}
+	 * @returns A promise resolving to the absolute identifier the store assigned to the new item, so that a widget can
+	 *     move there, every widget following the change as the store signals it; rejects with the {@link Problem}
 	 *     describing the failure, if the item already exists or the creation fails
 	 */
 	create(state: Draft<S, { readonly [K in P]: {} }>): Promise<Reference>
@@ -63,12 +63,12 @@ export interface Actions<S extends Lazy<ResourceShape>, P extends Collections<S>
 	 * Removes items from the collection.
 	 *
 	 * Items are removed concurrently, each against the item shape: a failure rejects the whole removal, while the other
-	 * items may already be gone, as the store signals to the lenses showing the collection.
+	 * items may already be gone, as the store signals to the widgets handed the collection.
 	 *
 	 * @param entries The identifiers of the items to be removed, absolute or relative to the resource holding the
 	 *     collection, as `"2"` stands for `https://example.com/catalogue/2` in `https://example.com/catalogue/`
 	 *
-	 * @returns A promise resolving to the absolute identifiers of the removed items, in the order given, every lens
+	 * @returns A promise resolving to the absolute identifiers of the removed items, in the order given, every widget
 	 *     following the change as the store signals it; rejects with the {@link Problem} describing the first failure,
 	 *     if an item is missing or its removal fails, the items already removed staying removed
 	 *
@@ -90,7 +90,7 @@ export interface Actions<S extends Lazy<ResourceShape>, P extends Collections<S>
  * @param collection The collection acted on, as handed by {@link "collection"!useCollection useCollection}
  *
  * @returns The {@link Actions} on `collection`, writing through the store offered by the innermost enclosing
- *     {@link "index"!Store Store} context, the same store every lens over the collection reads
+ *     {@link "index"!Store Store} context, the same store every widget over the collection reads
  *
  * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  */

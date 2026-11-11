@@ -18,7 +18,7 @@
  * Collection tally facet.
  *
  * Offers a facet that narrows a collection to the items holding the values the reader picks. Each value is shown with
- * the number of items holding it, and every lens over the same collection follows the values picked.
+ * the number of items holding it, and every widget handed the same collection follows the values picked.
  *
  * @module tally
  */

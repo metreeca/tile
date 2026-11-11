@@ -289,8 +289,8 @@ tile-tally {
 
                 /*
                  * The box stands a capital high on the baseline, reading as a capital beside the name in any face, and
-                 * smaller than a form's, so the rows of a dense list read as values rather than fields; it is centred in
-                 * its column, so it stands under the middle of the header glyph.
+                 * smaller than a stock checkbox, so the rows of a dense list read as values rather than inputs; it is
+                 * centred in its column, so it stands under the middle of the header glyph.
                  */
 
                 & > input {

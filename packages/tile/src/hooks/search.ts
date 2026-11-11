@@ -59,7 +59,7 @@ export interface Search {
  * Binds a component to the search narrowing a shared collection.
  *
  * Narrows the collection to the items whose `expression` contains the submitted text, trimmed. The text starts from
- * the one already narrowing the collection. It follows that text whenever another lens changes it or clears it, as
+ * the one already narrowing the collection. It follows that text whenever another widget changes it or clears it, as
  * {@link "collection"!Collection.clear clear} does, so a search box always shows what narrows the collection.
  *
  * Every {@link Search.submit submit} trims the text, so `text` may differ from what the reader typed. A search box

@@ -18,7 +18,7 @@
  * Collection counter.
  *
  * Offers the counter telling a reader how many items a collection holds, or how many of them match the criteria
- * narrowing it, keeping in step with every other lens showing and narrowing the same collection.
+ * narrowing it, keeping in step with every other lens presenting the same collection and every facet narrowing it.
  *
  * @module count
  */

@@ -64,7 +64,7 @@ export type MembersCases<S extends Lazy<ResourceShape>, P extends Collections<S>
 		readonly state: Items<S, { readonly [K in P]: T }>
 
 		/**
-		 * The sort order the items are shown in, so that a view marks the expressions they are sorted on.
+		 * The sort order the items are shown in, so that a lens marks the expressions they are sorted on.
 		 */
 		readonly order: Ordering
 
@@ -78,12 +78,12 @@ export type MembersCases<S extends Lazy<ResourceShape>, P extends Collections<S>
 
 		/**
 		 * Sorts the items again in the order they started in, starting over the first batch; offered while they are
-		 * shown in another order, so that a view offers a reset control for as long as it is offered.
+		 * shown in another order, so that a lens offers a reset control for as long as it is offered.
 		 */
 		reset?(): void
 
 		/**
-		 * Retrieves one more batch; offered while the collection may hold more items, so that a view closes the
+		 * Retrieves one more batch; offered while the collection may hold more items, so that a lens closes the
 		 * list with a trigger handed `load` for as long as it is offered; a call while a batch is on its way is
 		 * ignored, so that a trigger left in view never asks twice for the same batch:
 		 *
@@ -136,7 +136,7 @@ export type Admitted<S extends Lazy<ResourceShape>, P extends Collections<S>, T>
  * Binds a component to the members of a shared collection.
  *
  * Retrieves from the store offered by the innermost enclosing {@link "index"!Store Store} context the first items of
- * the collection, narrowed by the collection criteria, one more batch each time the view asks for more. The members
+ * the collection, narrowed by the collection criteria, one more batch each time the lens asks for more. The members
  * start over the first batch, and again whenever the collection criteria, the model or the sort order change; the
  * model and the sort order are compared by content, so they may be written inline.
  *

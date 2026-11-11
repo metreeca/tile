@@ -19,7 +19,7 @@
  *
  * Offers the components of an interface one shared [store](https://metreeca.github.io/keep/) to read linked data
  * resources from and write them back to. The store is configured once, where the interface is assembled, rather than
- * at every call site. Components bind to the resources and collections it holds, so that every view stays in step
+ * at every call site. Components bind to the resources and collections it holds, so that every widget stays in step
  * with the store and none has to drive exchanges of its own, or track the changes made by others.
  *
  * @module index

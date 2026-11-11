@@ -18,7 +18,7 @@
  * Collection range facet.
  *
  * Offers a facet that narrows a collection to the items whose values fall between two bounds. The facet suggests the
- * lowest and highest values on offer, and every lens over the same collection follows the bounds the reader sets.
+ * lowest and highest values on offer, and every widget handed the same collection follows the bounds the reader sets.
  *
  * @module range
  */

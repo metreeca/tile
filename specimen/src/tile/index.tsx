@@ -43,11 +43,11 @@ const samples: readonly Sample[] = [
 	{ id: "query", group: "Collections", title: "Query", view: <Query/> },
 	{ id: "actions", group: "Collections", title: "Actions", view: <Actions/> },
 	{ id: "members", group: "Collections", title: "Members", view: <Members/> },
+	{ id: "count", group: "Collections", title: "Count", view: <Count/> },
 
 	{ id: "search", group: "Facets", title: "Search", view: <Search/> },
 	{ id: "tally", group: "Facets", title: "Tally", view: <Tally/> },
-	{ id: "range", group: "Facets", title: "Range", view: <Range/> },
-	{ id: "count", group: "Facets", title: "Count", view: <Count/> }
+	{ id: "range", group: "Facets", title: "Range", view: <Range/> }
 
 ];
 
@@ -62,7 +62,7 @@ export function Tile() {
 		title="Store and Bindings"
 		lead={<>
 			The linked data behaviour an interface is wired to, with no rendering of its own: one shared store, the
-			resources and collections components bind to, and the lenses narrowing and counting them. Every sample
+			resources and collections components bind to, and the facets and counters narrowing and counting them. Every sample
 			below draws its own markup over the same hooks the widgets use, reading from an in-memory toys store.
 		</>}
 

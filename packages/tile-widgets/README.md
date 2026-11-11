@@ -4,9 +4,9 @@
 
 Preact linked data widgets for [@metreeca/tile](https://github.com/metreeca/tile).
 
-Views of resources and collections, and the facets narrowing them, driven by shapes: the model decides which
-properties are shown, how each value reads and how a collection is narrowed, so a model change reaches the interface
-with no widget code to update by hand, on whichever screens the app shows the affected resources.
+Lenses presenting resources and their collections, facets narrowing those collections and fields writing resources
+back, all driven by shapes: the model decides which properties are shown, how each value reads and how a collection is
+narrowed, so a model change reaches every screen showing the affected resources with no widget code to update by hand.
 
 Widgets read their data through the [@metreeca/tile](https://github.com/metreeca/tile) store the app provides, and
 take their look from the [@metreeca/skin](https://metreeca.github.io/skin/) tokens an app restates for its brand.
@@ -43,6 +43,6 @@ npm install lucide-preact           # peer dependency
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/metreeca/tile?tab=Apache-2.0-1-ov-file) file for details.
 
-The views draw their glyphs with [Lucide](https://lucide.dev/), licensed under ISC, with the icons derived from
-[Feather](https://feathericons.com/) under MIT. An app distributing a build that includes the views must ship both
+The widgets draw their glyphs with [Lucide](https://lucide.dev/), licensed under ISC, with the icons derived from
+[Feather](https://feathericons.com/) under MIT. An app distributing a build that includes the widgets must ship both
 notices with it. The `LICENSE` file of the `lucide-preact` package carries them, ready to copy into a notice file.

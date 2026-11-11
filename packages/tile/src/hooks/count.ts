@@ -18,7 +18,7 @@
  * Shared collection count.
  *
  * Binds a counter to a shared collection, so that it tells how many items the collection criteria let through and
- * follows every lens narrowing them, with no exchange of its own beyond the count.
+ * follows every facet narrowing them, with no exchange of its own beyond the count.
  *
  * @module count
  */
@@ -103,7 +103,7 @@ export type CountCases = {
  * @typeParam P The property of the resource collecting the items
  *
  * @param collection The collection whose items are counted under its scope and the reader's criteria, as handed by
- *     {@link "collection"!useCollection useCollection} to every lens over it
+ *     {@link "collection"!useCollection useCollection} to every widget handed the collection
  *
  * @returns A {@link Relay} over the {@link CountCases} of the binding
  *

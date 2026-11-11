@@ -18,7 +18,7 @@
  * Collection members state.
  *
  * Holds how far a list or a table has read into a long collection and the order it shows the items in, so that the
- * view reads a long collection as the reader scrolls through it rather than retrieving it all at once.
+ * lens reads a long collection as the reader scrolls through it rather than retrieving it all at once.
  *
  * @module members.core
  */
@@ -70,7 +70,7 @@ export interface Members {
 }
 
 /**
- * View sort order.
+ * Lens sort order.
  *
  * Maps the expressions the items are sorted on, property paths possibly behind a transform pipe, to their direction,
  * as the qest `Order` states it: `{ label: "asc" }` or `{ "year:released": "desc" }`.

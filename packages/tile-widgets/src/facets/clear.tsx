@@ -17,8 +17,8 @@
 /**
  * Collection reset.
  *
- * Offers a control that drops every criterion narrowing a collection, so that every lens showing the collection goes
- * back to all of its items in a single step, rather than one facet at a time.
+ * Offers a control that drops every criterion narrowing a collection, so that every lens presenting the collection
+ * goes back to all of its items in a single step, rather than one facet at a time.
  *
  * @module clear
  */
@@ -35,7 +35,7 @@ import "../index.css";
  * Creates a collection reset.
  *
  * Shows a subtle button marked by the reset glyph, removing every criterion the reader set on the collection, so that
- * every lens handed the same collection, lists, facets and counters alike, follows along. The button is disabled while
+ * every widget handed the same collection, lenses and facets alike, follows along. The button is disabled while
  * no criterion narrows the collection, and its `Clear Filters` hint names it for assistive technology.
  *
  * ```tsx

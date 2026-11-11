@@ -17,7 +17,7 @@
 /**
  * Shared resource bindings.
  *
- * Binds a component to a resource held by the {@link "index"!Store shared store}, so that a view renders what the
+ * Binds a component to a resource held by the {@link "index"!Store shared store}, so that a widget renders what the
  * store holds and writes changes back to it without driving exchanges of its own.
  *
  * @module resource
@@ -72,7 +72,7 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
 		 * Removes the resource from the store.
 		 *
 		 * @returns A promise resolving to the absolute identifier of the collection the removed resource belonged to
-		 *     (`https://example.com/c/` for `https://example.com/c/r`), so that a view can move there; rejects with
+		 *     (`https://example.com/c/` for `https://example.com/c/r`), so that a widget can move there; rejects with
 		 *     the {@link Problem} the binding moves to `error` with, if the resource is missing or the removal fails
 		 */
 		delete(): Promise<Reference>
@@ -109,14 +109,13 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
  * Binds a component to a resource held by the shared store.
  *
  * Retrieves the resource from the store offered by the innermost enclosing {@link "index"!Store Store} context and
- * keeps the component in step with it, so that a view renders what the store holds and writes changes back without
- * driving exchanges of its own: the resource is retrieved again whenever the store signals a change to it, whoever
- * made it.
+ * keeps the component in step with it, so that a widget renders what the store holds and writes changes back with
+ * no exchange of its own: the resource is retrieved again whenever the store signals a change to it, whoever made it.
  *
  * A missing resource, a rejected write and a failed exchange alike move the binding to its `error` state, so that a
- * view shows them where it shows the resource and offers to retry from there; an operation the view called also
- * rejects with the same {@link Problem}, so that the view waiting on it can tell success from failure. A failed
- * exchange no view called for, retrieving the resource as the component renders or after the store signals a change,
+ * widget shows them where it shows the resource and offers to retry from there; an operation the widget called also
+ * rejects with the same {@link Problem}, so that the widget waiting on it can tell success from failure. A failed
+ * exchange no widget called for, retrieving the resource as the component renders or after the store signals a change,
  * is reported through the binding alone and never reaches the page: only a missing {@link "index"!Store Store} context
  * or an unforeseen failure does, for an enclosing {@link @metreeca/clay!board.Board Board} context to take up and
  * state to the reader along with every other issue the interface raises, rather than leaving it to the console.
@@ -127,20 +126,20 @@ export type ResourceCases<S extends Lazy<ResourceShape>, T extends Model<S, T>> 
  *
  * - a **fixed** template, declared in code, types the resource exactly with the values it asks for
  * - a **runtime** template, built as the interface runs, for instance as a user picks the values to show, types the
- *   resource only as loosely as the template itself is typed, so a view reads the values it holds by inspecting it
+ *   resource only as loosely as the template itself is typed, so a widget reads the values it holds by inspecting it
  *
  * @typeParam S The shape describing the resource
  * @typeParam T The template stating which values of the resource are wanted
  *
  * @param options The resource to be bound, the shape describing it and the values wanted; read as the component
- *     first renders and whenever the store, the resource identifier or the template change, so a view is expected
- *     to keep the shape stable for the lifetime of the component
+ *     first renders and whenever the store, the resource identifier or the template change, so a widget is expected
+ *     to keep the shape stable for the lifetime of the component, as a shape changing on its own is never read again
  *
- * @returns A {@link Relay} over the {@link ResourceCases} of the binding, to be matched by a view with a handler for
+ * @returns A {@link Relay} over the {@link ResourceCases} of the binding, to be matched by a widget with a handler for
  *     each: `blank` until the resource is first retrieved, `ready` with the resource and the operations writing it back
  *     to the store, or `error` with the {@link Problem} that prevented either; a state is kept until the next one
  *     supersedes it, including while the resource is retrieved again after a change, under a new identifier or on
- *     reload, so that a view never blanks out between retrievals
+ *     reload, so that a widget never blanks out between retrievals, keeping the last resource or failure on show
  *
  * @throws {@link !Error Error} If called outside any {@link "index"!Store Store} context
  * @throws {@link !RangeError RangeError} If `entry` is invalid, or relative while the location is not hierarchical

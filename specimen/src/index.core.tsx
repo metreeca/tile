@@ -137,7 +137,7 @@ export function Page({
 
 		tray={<TOC name="Sections" compact entries={outline(samples)}/>}
 
-		copy={<small>{app.copy}</small>}
+		foot={<small>{app.copy}</small>}
 
 	>
 

@@ -231,8 +231,8 @@ export function Configure({
 /**
  * Creates the settings of a facet.
  *
- * Lists each setting by its name beside the control changing it, starting with the `Collapse` checkbox stating
- * whether the facet closes as focus leaves it or stays open until the reader changes the setting again.
+ * Lists each setting by its name beside the control changing it, starting with the `Keep open` checkbox stating
+ * whether the facet stays open as focus leaves it, until the reader changes the setting again, or closes instead.
  *
  * @param options The part configuration
  *
@@ -252,7 +252,7 @@ export function Settings({
 	collapsing: boolean
 
 	/**
-	 * Called with the new setting when the reader ticks or unticks `Collapse`.
+	 * Called with the new setting when the reader ticks or unticks `Keep open`.
 	 */
 	onCollapsing: (collapsing: boolean) => void
 
@@ -260,10 +260,10 @@ export function Settings({
 
 	return createElement("tile-settings", {}, <label>
 
-		{"Collapse"}
+		{"Keep open"}
 
-		<input type="checkbox" checked={collapsing}
-			onChange={event => onCollapsing(event.currentTarget.checked)}
+		<input type="checkbox" checked={!collapsing}
+			onChange={event => onCollapsing(!event.currentTarget.checked)}
 		/>
 
 	</label>);

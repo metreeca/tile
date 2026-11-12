@@ -360,7 +360,7 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
 
 			expect(lower()).toBeNull();
 
@@ -374,7 +374,7 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
 
 			expect(facet()?.querySelector("section")?.hidden).toBe(false);
 
@@ -388,13 +388,13 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
 
 			act(() => configure()?.click());
 
 			await ready();
 
-			expect(setting("Collapse")).toBeNull();
+			expect(setting("Keep open")).toBeNull();
 
 		});
 
@@ -406,11 +406,11 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
 
 			focus(configure(), "focusout", document.body);
 
-			await vi.waitFor(() => expect(setting("Collapse")).toBeNull());
+			await vi.waitFor(() => expect(setting("Keep open")).toBeNull());
 
 		});
 
@@ -462,7 +462,7 @@ describe("Range", () => {
 
 		});
 
-		it("should tick collapse as stated by collapsed", async () => {
+		it("should leave keep open unticked if collapsed", async () => {
 
 			mount(bounds(1990, 2020), { collapsed: true });
 
@@ -470,11 +470,11 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(true));
+			await vi.waitFor(() => expect(setting("Keep open")?.checked).toBe(false));
 
 		});
 
-		it("should leave collapse unticked unless collapsed", async () => {
+		it("should tick keep open unless collapsed", async () => {
 
 			mount(bounds(1990, 2020));
 
@@ -482,11 +482,11 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(false));
+			await vi.waitFor(() => expect(setting("Keep open")?.checked).toBe(true));
 
 		});
 
-		it("should close as focus leaves the facet once collapse is ticked", async () => {
+		it("should close as focus leaves the facet once keep open is unticked", async () => {
 
 			mount(bounds(1990, 2020));
 
@@ -494,11 +494,11 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")).not.toBeNull());
+			await vi.waitFor(() => expect(setting("Keep open")).not.toBeNull());
 
-			await act(async () => void setting("Collapse")?.click()); // the fold renders before focus leaves
+			await act(async () => void setting("Keep open")?.click()); // the fold renders before focus leaves
 
-			expect(setting("Collapse")?.checked).toBe(true);
+			expect(setting("Keep open")?.checked).toBe(false);
 
 			focus(configure(), "focusout", document.body);
 
@@ -506,7 +506,7 @@ describe("Range", () => {
 
 		});
 
-		it("should stay open as focus leaves the facet once collapse is unticked", async () => {
+		it("should stay open as focus leaves the facet once keep open is ticked", async () => {
 
 			mount(bounds(1990, 2020), { collapsed: true });
 
@@ -514,11 +514,11 @@ describe("Range", () => {
 
 			act(() => configure()?.click());
 
-			await vi.waitFor(() => expect(setting("Collapse")?.checked).toBe(true));
+			await vi.waitFor(() => expect(setting("Keep open")?.checked).toBe(false));
 
-			await act(async () => void setting("Collapse")?.click()); // the fold renders before focus leaves
+			await act(async () => void setting("Keep open")?.click()); // the fold renders before focus leaves
 
-			expect(setting("Collapse")?.checked).toBe(false);
+			expect(setting("Keep open")?.checked).toBe(true);
 
 			focus(configure(), "focusout", document.body);
 

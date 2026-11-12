@@ -43,6 +43,7 @@ export const Root = "/";
 
 export const TilePath = "/tile/";
 export const TileWidgetsPath = "/tile-widgets/";
+export const TileApisPath = "/tile-apis/";
 
 
 /**
@@ -125,6 +126,7 @@ export function Page({
 		head={<nav class="packages" aria-label="Packages">
 			<Link active look="subtle" href={`${TilePath}*`}>Hooks</Link>
 			<Link active look="subtle" href={`${TileWidgetsPath}*`}>Widgets</Link>
+			<Link active look="subtle" href={`${TileApisPath}*`}>APIs</Link>
 		</nav>}
 
 		menu={<Strip align="center" space="spacing100">

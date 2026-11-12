@@ -38,6 +38,7 @@ app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as i
 | [@metreeca/tile-widgets] | Linked data widgets                            |
 | [@metreeca/tile-charts]  | Linked data charts (planned)                   |
 | [@metreeca/tile-topics]  | SKOS topic widgets (planned)                   |
+| [@metreeca/tile-apis]    | API documentation widgets (planned)            |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
@@ -52,6 +53,8 @@ app brands whatever Tile renders by overriding the [@metreeca/skin] tokens, as i
 [@metreeca/tile-charts]: https://metreeca.github.io/tile/modules/_metreeca_tile-charts.html
 
 [@metreeca/tile-topics]: https://metreeca.github.io/tile/modules/_metreeca_tile-topics.html
+
+[@metreeca/tile-apis]: https://metreeca.github.io/tile/modules/_metreeca_tile-apis.html
 
 # Usage
 
